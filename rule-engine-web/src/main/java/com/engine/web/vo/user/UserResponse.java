@@ -1,0 +1,23 @@
+package com.engine.web.vo.user;
+
+import lombok.Data;
+
+/**
+ * 〈一句话功能简述〉<br>
+ * 〈〉
+ *
+ * @author liqian
+ * @date 2020/9/24
+ */
+@Data
+public class UserResponse {
+
+    private Integer id;
+
+    private String username;
+
+    private String password;
+
+    private String email;
+
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.engine.web.store.mapper.RuleEngineRuleMapper">
+
+    <select id="countCondition" resultType="com.engine.web.store.entity.RuleEngineCondition">
+            select distinct rec.*
+            from rule_engine_rule rer,
+                 rule_engine_condition_group recg,
+                 rule_engine_condition rec,
+                 rule_engine_condition_group_condition recgc
+            where rer.deleted = 0
+              and recg.deleted = 0
+              and recgc.deleted = 0
+              and rec.deleted=0
+              and rer.id = recg.rule_id
+              and recg.id = recgc.condition_group_id
+              and rec.id=recgc.condition_id
+              and rer.id=#{ruleId}
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+*/logs/*
+logs/*
+
+*/target/
+target
+.idea
+*.iml
+
+*.DS_Store
+
+*/src/main/resources/application-test.yml
+*/src/main/resources/redisson.yml
+*/src/main/resources/*.json
+
+*/src/main/java/com/engine/core/*

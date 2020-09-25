@@ -1,0 +1,73 @@
+package com.engine.web.controller;
+
+
+import com.engine.web.service.VariableService;
+import com.engine.web.vo.base.request.IdRequest;
+import com.engine.web.vo.base.response.PageResult;
+import com.engine.web.vo.variable.*;
+import com.engine.web.vo.base.request.PageRequest;
+import com.engine.web.vo.base.response.PlainResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
+/**
+ * 〈一句话功能简述〉<br>
+ * 〈〉
+ *
+ * @author dingqianwen
+ * @date 2020/7/14
+ * @since 1.0.0
+ */
+@Api(tags = "变量控制器")
+@RestController
+@RequestMapping("ruleEngine/variable")
+public class VariableController {
+
+    @Resource
+    private VariableService variableService;
+
+    @PostMapping("add")
+    @ApiOperation("添加变量")
+    public PlainResult<Boolean> add(@RequestBody @Valid AddVariableRequest addConditionRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(variableService.add(addConditionRequest));
+        return plainResult;
+    }
+
+    @PostMapping("get")
+    @ApiOperation("根据id查询变量")
+    public PlainResult<GetVariableResponse> get(@RequestBody @Valid IdRequest idRequest) {
+        PlainResult<GetVariableResponse> plainResult = new PlainResult<>();
+        plainResult.setData(variableService.get(idRequest.getId()));
+        return plainResult;
+    }
+
+    @PostMapping("update")
+    @ApiOperation("根据id更新变量")
+    public PlainResult<Boolean> update(@RequestBody @Valid UpdateVariableRequest updateVariableRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(variableService.update(updateVariableRequest));
+        return plainResult;
+    }
+
+    @PostMapping("list")
+    @ApiOperation("变量列表")
+    public PageResult<ListVariableResponse> list(@RequestBody PageRequest<ListVariableRequest> pageRequest) {
+        return variableService.list(pageRequest);
+    }
+
+    @PostMapping("delete")
+    @ApiOperation("根据id删除变量")
+    public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(variableService.delete(idRequest.getId()));
+        return plainResult;
+    }
+}

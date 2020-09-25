@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.engine.web.store.mapper.RuleEngineElementMapper">
+
+    <select id="countRule" resultType="com.engine.web.store.entity.RuleEngineRule">
+        SELECT distinct rer.*
+        FROM rule_engine_rule rer,
+        rule_engine_rule_publish rerp
+        WHERE rer.deleted = 0
+        and rerp.deleted = 0
+        AND rer.id=rerp.rule_id
+        AND (JSON_CONTAINS(JSON_EXTRACT(rer.count_info, '$.elementIds'), JSON_ARRAY(#{id})) or JSON_CONTAINS(JSON_EXTRACT(rerp.count_info, '$.elementIds'), JSON_ARRAY(#{id})));
+    </select>
+</mapper>
