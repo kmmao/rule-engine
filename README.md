@@ -3,7 +3,19 @@
 
 项目展示地址：http://ruleengine.cn/   
 申请登录权限联系QQ：761945125  
-  
+
+### 技术栈/版本介绍：
+- 所涉及的相关的技术有：
+    - SpringBoot 2.1.2
+    - RabbitMQ
+    - Redis、Redisson
+    - MySQL 5.7.9
+    - Mybatis-plus
+    - Mybatis-plus-generator
+    - Maven 3.3
+    - Swagger
+    - alibaba OSS
+    
 ### 规则引擎执行流程图  
 <img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/规则引擎执行流程.png" width = "520" height = "600" alt="规则引擎执行流程" align=center />
 
