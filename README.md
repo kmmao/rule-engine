@@ -15,28 +15,24 @@
     - Maven 3.3
     - Swagger
     - alibaba OSS
-    
 ### 规则引擎执行流程图  
 <img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/规则引擎执行流程.png" width = "520" height = "600" alt="规则引擎执行流程" align=center />
+ 
+### 项目截图： 
 
-### 规则配置方式
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/config.png" width = "520" height = "600" alt="规则配置" align=center />
+| 规则配置 | 报警功能 |
+|---|---|
+| ![规则配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config.png) |![报警功能.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/exception.png)|
 
-### 规则配置预览
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_config.png" width = "600" height = "550" alt="规则配置预览" align=center />
+| 规则预览 | 测试运行 |
+|---|---|
+| ![规则预览.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_config.png) | ![测试运行.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/test_run.png) |
 
-### 提供了方便的规则快速运行测试
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/test_run.png" width = "480" height = "600" alt="规则运行" align=center />
+| 条件配置 | 创建变量 |
+|---|---|
+| ![条件配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config_condition.png) |![创建变量.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_var.png) |
 
-### 以及报警功能
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/exception.png" width = "300" height = "260" alt="报警功能" align=center />
+| 强大的函数支持 |
+|---|
+| ![强大的函数支持.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/function.png) |  
 
-### 灵活的条件配置
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/config_condition.png" width = "500" height = "430" alt="条件" align=center />
-
-### 强大的函数支持
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/function.png" width = "920" height = "600" alt="函数" align=center />
-
-
-### 支持创建复杂变量
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_var.png" width = "500" height = "430" alt="变量" align=center />
