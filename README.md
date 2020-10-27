@@ -21,17 +21,10 @@
  
 ### 项目截图
 
-| 规则配置 |
-|---|
-| ![规则配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config.png) |
+| 规则配置 | 规则预览 |
+|---|---|
+| ![规则配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config.png) | ![规则预览.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_config.png) |
 
-| 规则预览 |
-|---|
-| ![规则预览.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_config.png) |
-
-| 强大的函数支持 |
-|---|
-| ![强大的函数支持.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/function.png) |  
 
 ### 如果觉得本项目对您有任何一点帮助，请点右上角 "Star" 支持一下， 并向您的基友、同事们宣传一下吧，谢谢！
 
