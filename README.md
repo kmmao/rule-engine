@@ -21,17 +21,13 @@
  
 ### 项目截图
 
-| 规则配置 | 报警功能 |
-|---|---|
-| ![规则配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config.png) |![报警功能.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/exception.png)|
+| 规则配置 |
+|---|
+| ![规则配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config.png) |
 
-| 规则预览 | 测试运行 |
-|---|---|
-| ![规则预览.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_config.png) | ![测试运行.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/test_run.png) |
-
-| 条件配置 | 创建变量 |
-|---|---|
-| ![条件配置.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/config_condition.png) |![创建变量.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_var.png) |
+| 规则预览 |
+|---|
+| ![规则预览.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/view_config.png) |
 
 | 强大的函数支持 |
 |---|
