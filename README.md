@@ -2,7 +2,7 @@
 #### 业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑。
 
 项目展示地址：http://ruleengine.cn/   
-申请登录权限联系QQ：761945125  
+申请登录权限联系QQ：761945125，Email：761945125@qq.com
 
 ### 技术栈/版本介绍：
 - 所涉及的相关的技术有：
@@ -17,7 +17,10 @@
     - alibaba OSS
  
 ### 规则引擎执行流程图  
-<img src="https://github.com/DingQianWen/rule-engine/blob/master/static/img/规则引擎执行流程.png" width = "520" height = "600" alt="规则引擎执行流程" align=center />
+
+| 执行流程 |
+|---|
+| ![执行流程.png](https://github.com/DingQianWen/rule-engine/blob/master/static/img/规则引擎执行流程.png)|
  
 ### 项目截图
 
