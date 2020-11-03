@@ -45,6 +45,11 @@ public class RuleCountInfoService {
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
 
+    /**
+     * 异步更新引用此变量的规则统计信息
+     *
+     * @param varId 变量id
+     */
     @Async
     public void refreshByVarId(Integer varId) {
         log.info("开始更新引用此变量的规则统计信息,{}", varId);
@@ -52,6 +57,11 @@ public class RuleCountInfoService {
         this.refresh(ruleEngineRules);
     }
 
+    /**
+     * 异步更新引用此条件的规则统计信息
+     *
+     * @param conditionId 条件id
+     */
     @Async
     public void refreshByConditionId(Integer conditionId) {
         log.info("开始更新引用此条件的规则统计信息,{}", conditionId);
@@ -59,11 +69,21 @@ public class RuleCountInfoService {
         this.refresh(ruleEngineRules);
     }
 
+    /**
+     * 异步刷新引用此规则引用的基础组建数量
+     *
+     * @param ruleEngineRules rule
+     */
     @Async
     public void refreshAsync(List<RuleEngineRule> ruleEngineRules) {
         this.refresh(ruleEngineRules);
     }
 
+    /**
+     * 刷新引用此规则引用的基础组建数量
+     *
+     * @param ruleEngineRules rule
+     */
     public void refresh(List<RuleEngineRule> ruleEngineRules) {
         if (CollUtil.isEmpty(ruleEngineRules)) {
             log.info("没有查询到任何规则引用此数据");
@@ -73,14 +93,20 @@ public class RuleCountInfoService {
             RuleEngineRule ruleEngineRule = new RuleEngineRule();
             // 复制id 以及结果默认结果引用的组建信息
             BeanUtil.copyProperties(m, ruleEngineRule);
-            RuleCountInfo ruleCountInfo = this.countInfo(ruleEngineRule);
+            RuleCountInfo ruleCountInfo = this.countRuleInfo(ruleEngineRule);
             ruleEngineRule.setCountInfo(JSON.toJSONString(ruleCountInfo));
             return ruleEngineRule;
         }).collect(Collectors.toList());
         this.ruleEngineRuleManager.updateBatchById(ruleEngineRuleList);
     }
 
-    public RuleCountInfo countInfo(RuleEngineRule ruleEngineRule) {
+    /**
+     * 统计引用此规则的所有的元素变量
+     *
+     * @param ruleEngineRule rule
+     * @return RuleCountInfo
+     */
+    public RuleCountInfo countRuleInfo(RuleEngineRule ruleEngineRule) {
         RuleCountInfo countInfo = new RuleCountInfo();
         countInfo.setRuleId(ruleEngineRule.getId());
         // 查询规则引用的所有的条件
@@ -108,6 +134,12 @@ public class RuleCountInfoService {
         return countInfo;
     }
 
+    /**
+     * 统计函数参数中引用的元素/变量信息
+     *
+     * @param countInfo          countInfo
+     * @param ruleEngineVariable var
+     */
     private void countVariableElement(RuleCountInfo countInfo, RuleEngineVariable ruleEngineVariable) {
         countInfo.addVariableId(ruleEngineVariable.getId());
         if (ruleEngineVariable.getType().equals(VariableType.FUNCTION.getType())) {
@@ -123,6 +155,12 @@ public class RuleCountInfoService {
         }
     }
 
+    /**
+     * 统计规则结果中引用的元素变量
+     *
+     * @param countInfo      countInfo
+     * @param ruleEngineRule rule
+     */
     private void countResult(RuleCountInfo countInfo, RuleEngineRule ruleEngineRule) {
         Integer actionType = ruleEngineRule.getActionType();
         if (actionType == null) {

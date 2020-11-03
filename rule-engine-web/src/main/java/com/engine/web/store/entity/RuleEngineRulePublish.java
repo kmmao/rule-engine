@@ -32,6 +32,11 @@ public class RuleEngineRulePublish implements Serializable {
 
     private String ruleCode;
 
+    /**
+     * 2:已发布，1：待发布
+     */
+    private Integer status;
+
     private String data;
 
     /**

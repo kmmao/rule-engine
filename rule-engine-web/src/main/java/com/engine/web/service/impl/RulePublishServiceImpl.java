@@ -1,6 +1,7 @@
 package com.engine.web.service.impl;
 
 import com.engine.core.rule.Rule;
+import com.engine.web.enums.RuleStatus;
 import com.engine.web.service.RulePublishService;
 import com.engine.web.store.entity.RuleEngineRulePublish;
 import com.engine.web.store.manager.RuleEngineRulePublishManager;
@@ -47,7 +48,9 @@ public class RulePublishServiceImpl implements RulePublishService {
      */
     @Override
     public List<Rule> getAllPublishRule() {
-        List<RuleEngineRulePublish> rulePublishList = this.ruleEngineRulePublishManager.list();
+        List<RuleEngineRulePublish> rulePublishList = this.ruleEngineRulePublishManager.lambdaQuery()
+                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .list();
         List<Rule> rules = new ArrayList<>();
         for (RuleEngineRulePublish publish : rulePublishList) {
             Rule rule = new Rule();
