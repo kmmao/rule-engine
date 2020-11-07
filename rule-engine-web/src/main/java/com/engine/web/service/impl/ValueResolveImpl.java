@@ -78,10 +78,10 @@ public class ValueResolveImpl implements ValueResolve {
         VariableType variableTypeEnum = VariableType.getByType(type);
         switch (variableTypeEnum) {
             case ELEMENT:
-                RuleEngineElement ruleEngineElement = ruleEngineElementManager.getById(value);
+                RuleEngineElement ruleEngineElement = this.ruleEngineElementManager.getById(value);
                 return new Element(ruleEngineElement.getId(), ruleEngineElement.getName(), ruleEngineElement.getCode(), DataType.getByValue(valueType));
             case VARIABLE:
-                RuleEngineVariable engineVariable = ruleEngineVariableManager.getById(value);
+                RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(value);
                 return new Variable(engineVariable.getId(), engineVariable.getName(), DataType.getByValue(valueType));
             case CONSTANT:
                 return new Constant(value, DataType.getByValue(valueType));
@@ -98,18 +98,18 @@ public class ValueResolveImpl implements ValueResolve {
     @Override
     public DataCacheMap getCacheMap() {
         DataCacheMap cacheMap = new DataCacheMap();
-        List<RuleEngineElement> ruleEngineElements = ruleEngineElementManager.list();
+        List<RuleEngineElement> ruleEngineElements = this.ruleEngineElementManager.list();
         Map<Integer, RuleEngineElement> engineElementMap = ruleEngineElements.stream().collect(Collectors.toMap(RuleEngineElement::getId, Function.identity()));
         cacheMap.setElementMap(engineElementMap);
-        List<RuleEngineVariable> engineVariables = ruleEngineVariableManager.list();
+        List<RuleEngineVariable> engineVariables = this.ruleEngineVariableManager.list();
         Map<Integer, RuleEngineVariable> engineVariableMap = engineVariables.stream().collect(Collectors.toMap(RuleEngineVariable::getId, Function.identity()));
         cacheMap.setVariableMap(engineVariableMap);
 
-        List<RuleEngineFunction> engineFunctions = ruleEngineFunctionManager.list();
+        List<RuleEngineFunction> engineFunctions = this.ruleEngineFunctionManager.list();
         Map<Integer, RuleEngineFunction> engineFunctionMap = engineFunctions.stream().collect(Collectors.toMap(RuleEngineFunction::getId, Function.identity()));
         cacheMap.setFunctionMap(engineFunctionMap);
 
-        List<RuleEngineFunctionValue> engineFunctionValues = ruleEngineFunctionValueManager.list();
+        List<RuleEngineFunctionValue> engineFunctionValues = this.ruleEngineFunctionValueManager.list();
         Map<Integer, List<RuleEngineFunctionValue>> functionValueMap = engineFunctionValues.stream().collect(Collectors.groupingBy(RuleEngineFunctionValue::getVariableId));
         cacheMap.setFunctionValueMap(functionValueMap);
         return cacheMap;

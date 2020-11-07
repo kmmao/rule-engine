@@ -34,7 +34,6 @@ import java.util.Objects;
  * @date 2020/3/2
  * @since 1.0.0
  */
-@NoArgsConstructor
 @Data
 public class Constant implements Value {
 
@@ -51,8 +50,9 @@ public class Constant implements Value {
 
     public Constant(@Nullable Object value, @NonNull DataType dataType) {
         Objects.requireNonNull(dataType);
-        // 初始化值
-        this.value = this.dataConversion(value, dataType);
+        // 初始化值 发布规则解析json fastjson存在bug 暂时不支持 等待修复
+        //this.value = this.dataConversion(value, dataType);
+        this.value = value;
         this.dataType = dataType;
     }
 
@@ -110,6 +110,6 @@ public class Constant implements Value {
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
-        return this.getValue();
+        return this.dataConversion(this.getValue(), this.getDataType());
     }
 }

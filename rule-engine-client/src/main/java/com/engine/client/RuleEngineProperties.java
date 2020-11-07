@@ -21,11 +21,11 @@ public class RuleEngineProperties {
     /**
      * 规则引擎调用地址
      */
-    private String url;
+    private String url = "http://ruleserver.cn/ruleEngine/execute";
     /**
      * 工作空间code
      */
-    private String workspaceCode;
+    private String workspaceCode = "default";
 
     private String accessKeyId;
 
