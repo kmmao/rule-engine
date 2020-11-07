@@ -34,6 +34,7 @@ import java.util.Objects;
  * @date 2020/3/2
  * @since 1.0.0
  */
+@NoArgsConstructor
 @Data
 public class Constant implements Value {
 

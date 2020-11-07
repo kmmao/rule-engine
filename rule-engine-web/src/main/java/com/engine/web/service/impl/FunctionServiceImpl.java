@@ -167,8 +167,8 @@ public class FunctionServiceImpl implements FunctionService {
     private Map<String, Object> getParamValue(List<ParamValue> paramValue) {
         Map<String, Object> paramMap = new HashMap<>(paramValue.size());
         for (ParamValue value : paramValue) {
-            Constant constant = new Constant(value.getValue(), DataType.getByValue(value.getValueType()));
-            paramMap.put(value.getCode(), constant.getValue());
+            Constant constant = new Constant();
+            paramMap.put(value.getCode(), constant.dataConversion(value.getValue(), DataType.getByValue(value.getValueType())));
         }
         return paramMap;
     }
