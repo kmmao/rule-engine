@@ -54,7 +54,7 @@ public class Variable implements Value {
         Value value = configuration.getEngineVariable().getVariable(this.getVariableId());
         if (value instanceof Constant) {
             Constant constantVal = (Constant) value;
-            return constantVal.getValue();
+            return constantVal.getValue(input, configuration);
         }
         Function functionValue = (Function) value;
         return functionValue.getValue(input, configuration);
