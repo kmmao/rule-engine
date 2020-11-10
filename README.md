@@ -20,7 +20,6 @@
     - Mybatis-plus-generator
     - Maven 3.3
     - Swagger
-    - alibaba OSS
  
 ### 如果觉得本项目对您有任何一点帮助，请点右上角 "Star" 支持一下， 并向您的基友、同事们宣传一下吧，谢谢！
 
