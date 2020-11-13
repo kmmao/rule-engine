@@ -10,6 +10,9 @@
 项目展示地址：http://ruleengine.cn/   
 申请登录权限联系QQ：761945125，Email：761945125@qq.com
 
+### 技术文档
+简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
+
 ### 技术栈/版本介绍：
 - 所涉及的相关的技术有：
     - SpringBoot 2.1.2
@@ -20,8 +23,6 @@
     - Mybatis-plus-generator
     - Maven 3.3
     - Swagger  
-### 技术文档
-简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
 
 ### 下一步进展
 1、规则权限（开发中）  
