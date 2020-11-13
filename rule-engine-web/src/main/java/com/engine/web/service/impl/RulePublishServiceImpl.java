@@ -34,6 +34,7 @@ public class RulePublishServiceImpl implements RulePublishService {
     @Override
     public Rule getPublishRuleByCode(String ruleCode) {
         RuleEngineRulePublish rulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
+                .eq(RuleEngineRulePublish::getStatus,RuleStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleCode, ruleCode)
                 .one();
         Rule rule = new Rule();

@@ -1,5 +1,6 @@
 package com.engine.web.service.impl;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -253,6 +254,14 @@ public class FunctionServiceImpl implements FunctionService {
         return this.functionCompiler(name, javaCode);
     }
 
+    /**
+     * compiler message file broken: key=compiler.misc.msg.bug arguments=11.0.4, {1}, {2}, {3}, {4}, {5}, {6}, {7}
+     * 请切换到jdk1.8
+     *
+     * @param name     TestFunction
+     * @param javaCode java代码
+     * @return Class
+     */
     @Override
     public Class<?> functionCompiler(String name, String javaCode) {
         String className = FUNCTION_PACKAGE + StringPool.DOT + name;

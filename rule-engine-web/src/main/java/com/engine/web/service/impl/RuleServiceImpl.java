@@ -70,8 +70,6 @@ public class RuleServiceImpl implements RuleService {
     @Resource
     private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
     @Resource
-    private RuleEngineElementManager ruleEngineElementManager;
-    @Resource
     private RabbitTemplate rabbitTemplate;
     @Resource
     private Engine engine;
