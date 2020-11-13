@@ -20,7 +20,9 @@
     - Mybatis-plus-generator
     - Maven 3.3
     - Swagger  
-    
+### 技术文档
+简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
+
 ### 下一步进展
 1、规则权限（开发中）  
 2、规则监控（待开发）  
