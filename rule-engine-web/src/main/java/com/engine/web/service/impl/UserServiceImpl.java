@@ -140,6 +140,7 @@ public class UserServiceImpl implements UserService {
                 .eq(RuleEngineUser::getEmail, verifyEmailRequest.getEmail())
                 .one();
     }
+
     /**
      * 发送验证码消息
      *
@@ -178,8 +179,19 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserInfo() {
         RuleEngineUser engineUser = AuthInterceptor.USER.get();
         UserResponse userResponse = new UserResponse();
-        BeanUtil.copyProperties(engineUser,userResponse);
+        BeanUtil.copyProperties(engineUser, userResponse);
         return userResponse;
+    }
+
+    /**
+     * 退出登录
+     *
+     * @return true
+     */
+    @Override
+    public Boolean logout() {
+        CookieUtils.delete(AbstractTokenInterceptor.TOKEN);
+        return true;
     }
 
     /**

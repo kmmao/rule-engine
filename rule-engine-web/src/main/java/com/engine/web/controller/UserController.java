@@ -47,7 +47,7 @@ public class UserController {
     @NoAuth
     @PostMapping("register")
     @ApiOperation("用户注册")
-    public PlainResult<Boolean> register(@RequestBody @Valid RegisterRequest registerRequest){
+    public PlainResult<Boolean> register(@RequestBody @Valid RegisterRequest registerRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(userService.register(registerRequest));
         return plainResult;
@@ -77,12 +77,16 @@ public class UserController {
         return plainResult;
     }
 
+    /**
+     * 退出登录
+     *
+     * @return true
+     */
     @PostMapping("logout")
     @ApiOperation("退出登录")
     public PlainResult<?> logout() {
         PlainResult<Boolean> plainResult = new PlainResult<>();
-        HttpServletUtils.getRequest().getSession().removeAttribute("user");
-        plainResult.setData(true);
+        plainResult.setData(userService.logout());
         return plainResult;
     }
 

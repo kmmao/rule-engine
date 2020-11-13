@@ -32,19 +32,7 @@ public class RuleEngineRulePublish implements Serializable {
 
     private String ruleCode;
 
-    /**
-     * 2:已发布，1：待发布
-     */
-    private Integer status;
-
     private String data;
-
-    /**
-     * 规则的统计信息
-     * <p>
-     * {@link com.engine.web.vo.rule.RuleCountInfo}
-     */
-    private String countInfo;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

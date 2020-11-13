@@ -283,20 +283,6 @@ public class RuleServiceImpl implements RuleService {
         }
         releaseRequest.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
         this.updateRule(releaseRequest);
-
-        // 删除原有的待发布规则数据
-        this.ruleEngineRulePublishManager.lambdaUpdate()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
-                .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId()).remove();
-        // 添加新的待发布数据
-        Rule rule = this.ruleResolveService.getRuleByCode(ruleEngineRule.getCode());
-        RuleEngineRulePublish rulePublish = new RuleEngineRulePublish();
-        rulePublish.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
-        rulePublish.setRuleId(rule.getId());
-        rulePublish.setData(rule.toJson());
-        rulePublish.setRuleCode(rule.getCode());
-        rulePublish.setCountInfo(ruleEngineRule.getCountInfo());
-        this.ruleEngineRulePublishManager.save(rulePublish);
         return true;
     }
 
@@ -322,16 +308,13 @@ public class RuleServiceImpl implements RuleService {
                 .update();
         // 删除原有的已发布规则数据
         this.ruleEngineRulePublishManager.lambdaUpdate()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId()).remove();
         // 添加新的发布数据
         Rule rule = this.ruleResolveService.getRuleByCode(ruleEngineRule.getCode());
         RuleEngineRulePublish rulePublish = new RuleEngineRulePublish();
-        rulePublish.setStatus(RuleStatus.PUBLISHED.getStatus());
         rulePublish.setRuleId(rule.getId());
         rulePublish.setRuleCode(ruleEngineRule.getCode());
         rulePublish.setData(rule.toJson());
-        rulePublish.setCountInfo(ruleEngineRule.getCountInfo());
         this.ruleEngineRulePublishManager.save(rulePublish);
         // 加载规则
         RuleMessageVo ruleMessageVo = new RuleMessageVo();
@@ -423,7 +406,6 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public ViewRuleResponse getPublishRule(Integer id) {
         RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, id).one();
         if (engineRulePublish == null) {
             throw new ValidException("找不到发布的规则:{}", id);
@@ -442,15 +424,10 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public ViewRuleResponse getViewRule(Integer id) {
-        RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
-                .eq(RuleEngineRulePublish::getRuleId, id).one();
-        if (engineRulePublish == null) {
-            throw new ValidException("找不到待发布的规则:{}", id);
+        Rule rule = this.ruleResolveService.getRuleById(id);
+        if (rule == null) {
+            throw new ValidException("找不到预览的规则数据:{}", id);
         }
-        String data = engineRulePublish.getData();
-        Rule rule = new Rule();
-        rule.fromJson(data);
         return this.getRuleResponseProcess(rule);
     }
 

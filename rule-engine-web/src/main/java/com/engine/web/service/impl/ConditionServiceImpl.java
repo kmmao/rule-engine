@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.engine.core.exception.ValidException;
 import com.engine.core.value.VariableType;
-import com.engine.web.config.rabbit.RabbitTopicConfig;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.enums.RuleStatus;
 import com.engine.web.exception.ApiException;
@@ -27,7 +26,6 @@ import com.engine.web.store.manager.RuleEngineConditionManager;
 import com.engine.web.store.manager.RuleEngineElementManager;
 import com.engine.web.vo.base.response.Rows;
 import com.engine.web.vo.condition.*;
-import com.engine.web.vo.rule.RuleMessageVo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

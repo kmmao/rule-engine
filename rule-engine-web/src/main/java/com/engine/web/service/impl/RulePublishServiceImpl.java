@@ -34,7 +34,6 @@ public class RulePublishServiceImpl implements RulePublishService {
     @Override
     public Rule getPublishRuleByCode(String ruleCode) {
         RuleEngineRulePublish rulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus,RuleStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleCode, ruleCode)
                 .one();
         Rule rule = new Rule();
@@ -50,7 +49,6 @@ public class RulePublishServiceImpl implements RulePublishService {
     @Override
     public List<Rule> getAllPublishRule() {
         List<RuleEngineRulePublish> rulePublishList = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
                 .list();
         List<Rule> rules = new ArrayList<>();
         for (RuleEngineRulePublish publish : rulePublishList) {

@@ -76,30 +76,26 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             ResponseUtils.responseJson(BaseResult.err(BOOT10010004.getCode(), BOOT10010004.getMsg()));
             return false;
         }
-        String tokenNew;
         try {
-            // 对token进行验证与更新
-            tokenNew = JWTUtils.updateToken(token);
+            // 对token进行验证
+            JWTUtils.verifyToken(token);
         } catch (Exception e) {
-            log.warn("Token验证不通过!Token:{}", token);
+            log.warn("Token验证不通过,Token:{}", token);
             ResponseUtils.responseJson(BaseResult.err(BOOT10011039.getCode(), BOOT10011039.getMsg()));
             return false;
         }
-        //从redis获取到用户信息保存到本地
+        // 从redis获取到用户信息保存到本地
         RBucket<RuleEngineUser> bucket = redissonClient.getBucket(token);
-        if (bucket.get() == null) {
+        // 获取redis中存的用户信息
+        RuleEngineUser ruleEngineUser = bucket.get();
+        if (ruleEngineUser == null) {
             log.warn("验证信息失效!");
             ResponseUtils.responseJson(BaseResult.err(BOOT99990402.getCode(), BOOT99990402.getMsg()));
             return false;
         }
         //更新过期时间
         bucket.expire(JWTUtils.keepTime, TimeUnit.MILLISECONDS);
-        //获取redis中存的用户信息
-        RuleEngineUser ruleEngineUser = bucket.get();
-        //保存新的token名称
-        bucket.rename(tokenNew);
-        //把更新的TOKEN响应到浏览器Cookie
-        CookieUtils.set(TOKEN, tokenNew);
+        CookieUtils.set(TOKEN, token);
         //校验类上获取方法上的注解值roleCode是否匹配
         RoleAuth roleAuth = getRoleAuth(handler);
         //如果存在需要验证权限,并且权限没有验证通过时,提示无权限访问
