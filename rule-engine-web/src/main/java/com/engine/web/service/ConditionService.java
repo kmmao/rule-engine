@@ -31,6 +31,14 @@ public interface ConditionService {
     Boolean save(AddConditionRequest addConditionRequest);
 
     /**
+     * 条件名称是否存在
+     *
+     * @param name 条件名称
+     * @return true存在
+     */
+    Boolean conditionNameIsExists(String name);
+
+    /**
      * 根绝id查询条件信息
      *
      * @param id 条件id

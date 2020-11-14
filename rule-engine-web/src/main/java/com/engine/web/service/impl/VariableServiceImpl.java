@@ -61,6 +61,9 @@ public class VariableServiceImpl implements VariableService {
 
     @Override
     public Boolean add(AddVariableRequest addConditionRequest) {
+        if (this.varNameIsExists(addConditionRequest.getName())) {
+            throw new ValidException("变量名称：{}已经存在", addConditionRequest.getName());
+        }
         RuleEngineVariable engineVariable = new RuleEngineVariable();
         engineVariable.setName(addConditionRequest.getName());
         engineVariable.setDescription(addConditionRequest.getDescription());
@@ -84,6 +87,18 @@ public class VariableServiceImpl implements VariableService {
     }
 
     /**
+     * 变量名称是否存在
+     *
+     * @param name 变量名称
+     * @return true存在
+     */
+    @Override
+    public Boolean varNameIsExists(String name) {
+        Integer count = this.ruleEngineVariableManager.lambdaQuery().eq(RuleEngineVariable::getName, name).count();
+        return count != null && count > 1;
+    }
+
+    /**
      * 保存函数参数值
      *
      * @param functionId  函数id
@@ -102,7 +117,7 @@ public class VariableServiceImpl implements VariableService {
             engineFunctionValue.setValue(m.getValue());
             return engineFunctionValue;
         }).collect(Collectors.toList());
-        ruleEngineFunctionValueManager.saveBatch(engineFunctionValues);
+        this.ruleEngineFunctionValueManager.saveBatch(engineFunctionValues);
     }
 
     @Override
@@ -191,6 +206,11 @@ public class VariableServiceImpl implements VariableService {
         RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.getById(updateVariableRequest.getId());
         if (ruleEngineVariable == null) {
             throw new ValidException("找不到变量：{}", updateVariableRequest.getId());
+        }
+        if (!updateVariableRequest.getName().equals(ruleEngineVariable.getName())) {
+            if (this.varNameIsExists(updateVariableRequest.getName())) {
+                throw new ValidException("变量名称：{}已经存在", updateVariableRequest.getName());
+            }
         }
         RuleEngineVariable engineVariable = new RuleEngineVariable();
         engineVariable.setId(updateVariableRequest.getId());

@@ -17,4 +17,14 @@
               and rec.id=recgc.condition_id
               and rer.id=#{ruleId}
     </select>
+
+    <update id="updateById">
+        update rule_engine_rule 
+        set  abnormal_alarm=#{abnormalAlarm},status=#{status},
+             action_value=#{actionValue},action_type=#{actionType},
+             action_value_type=#{actionValueType},default_action_type=#{defaultActionType},
+             default_action_value=#{defaultActionValue},default_action_value_type=#{defaultActionValueType},
+             enable_default_action=#{enableDefaultAction}, count_info=#{countInfo}
+         where id=#{id}
+    </update>
 </mapper>

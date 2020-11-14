@@ -40,6 +40,9 @@ public class ElementServiceImpl implements ElementService {
 
     @Override
     public Boolean add(AddElementRequest addConditionRequest) {
+        if (this.elementCodeIsExists(addConditionRequest.getCode())) {
+            throw new ValidException("元素Code：{}已经存在", addConditionRequest.getName());
+        }
         RuleEngineElement engineElement = new RuleEngineElement();
         engineElement.setName(addConditionRequest.getName());
         engineElement.setCode(addConditionRequest.getCode());
@@ -47,6 +50,18 @@ public class ElementServiceImpl implements ElementService {
         engineElement.setValueType(addConditionRequest.getValueType());
         engineElement.setDeleted(DeletedEnum.ENABLE.getStatus());
         return ruleEngineElementManager.save(engineElement);
+    }
+
+    /**
+     * 元素code是否存在
+     *
+     * @param code 元素code
+     * @return true存在
+     */
+    @Override
+    public Boolean elementCodeIsExists(String code) {
+        Integer count = this.ruleEngineElementManager.lambdaQuery().eq(RuleEngineElement::getCode, code).count();
+        return count != null && count > 1;
     }
 
     @Override

@@ -16,6 +16,14 @@ import com.engine.web.vo.base.request.PageRequest;
 public interface VariableService {
     Boolean add(AddVariableRequest addConditionRequest);
 
+    /**
+     * 变量名称是否存在
+     *
+     * @param name 变量名称
+     * @return true存在
+     */
+    Boolean varNameIsExists(String name);
+
     PageResult<ListVariableResponse> list(PageRequest<ListVariableRequest> pageRequest);
 
     GetVariableResponse get(Integer id);

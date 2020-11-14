@@ -20,8 +20,26 @@
     </modules>
 
     <name>rule-com.engine</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+
+    <description>业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑</description>
+    <url>https://ruleengine.cn</url>
+    <inceptionYear>2020</inceptionYear>
+    <organization>
+        <name>ruleengine</name>
+    </organization>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>ruleengine</id>
+            <name>dingqianwen</name>
+            <email>761945125@qq.com</email>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

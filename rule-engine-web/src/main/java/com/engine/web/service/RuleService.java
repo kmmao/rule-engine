@@ -31,6 +31,14 @@ public interface RuleService {
     GetRuleResponse getRuleConfig(Integer id);
 
     /**
+     * 规则code是否存在
+     *
+     * @param code 规则code
+     * @return true存在
+     */
+    Boolean ruleCodeIsExists(String code);
+
+    /**
      * 更新规则信息
      *
      * @param updateRuleRequest 规则配置数据

@@ -67,6 +67,9 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean save(AddConditionRequest addConditionRequest) {
+        if (this.conditionNameIsExists(addConditionRequest.getName())) {
+            throw new ValidException("条件名称：{}已经存在", addConditionRequest.getName());
+        }
         RuleEngineCondition condition = new RuleEngineCondition();
         condition.setName(addConditionRequest.getName());
         condition.setDescription(addConditionRequest.getDescription());
@@ -74,6 +77,18 @@ public class ConditionServiceImpl implements ConditionService {
         configBeanCopyToCondition(condition, addConditionRequest.getConfig());
         condition.setDeleted(DeletedEnum.ENABLE.getStatus());
         return ruleEngineConditionManager.save(condition);
+    }
+
+    /**
+     * 条件名称是否存在
+     *
+     * @param name 条件名称
+     * @return true存在
+     */
+    @Override
+    public Boolean conditionNameIsExists(String name) {
+        Integer count = this.ruleEngineConditionManager.lambdaQuery().eq(RuleEngineCondition::getName, name).count();
+        return count != null && count > 1;
     }
 
     /**
@@ -290,6 +305,15 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean update(UpdateConditionRequest updateConditionRequest) {
+        RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.getById(updateConditionRequest.getId());
+        if (ruleEngineCondition == null) {
+            throw new ValidException("规则条件找不到：{}", updateConditionRequest.getId());
+        }
+        if (!ruleEngineCondition.getName().equals(updateConditionRequest.getName())) {
+            if (this.conditionNameIsExists(updateConditionRequest.getName())) {
+                throw new ValidException("条件名称：{}已经存在", updateConditionRequest.getName());
+            }
+        }
         Integer conditionId = updateConditionRequest.getId();
         // 更新条件
         RuleEngineCondition condition = new RuleEngineCondition();

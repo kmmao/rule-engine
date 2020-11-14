@@ -1,8 +1,10 @@
 package com.engine.web.service.impl;
 
+
 import com.engine.core.condition.ConditionGroup;
 import com.engine.core.value.*;
 import com.engine.web.service.ValueResolve;
+import com.engine.web.store.mapper.RuleEngineRuleMapper;
 import com.engine.web.vo.common.DataCacheMap;
 import com.engine.web.vo.condition.ConditionGroupCondition;
 import com.engine.web.vo.condition.ConfigBean;
@@ -19,7 +21,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
 import com.engine.core.DefaultInput;
 import com.engine.core.Engine;
 import com.engine.core.OutPut;
@@ -65,6 +66,8 @@ public class RuleServiceImpl implements RuleService {
 
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private RuleEngineRuleMapper ruleEngineRuleMapper;
     @Resource
     private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
     @Resource
@@ -123,6 +126,18 @@ public class RuleServiceImpl implements RuleService {
     }
 
     /**
+     * 规则code是否存在
+     *
+     * @param code 规则code
+     * @return true存在
+     */
+    @Override
+    public Boolean ruleCodeIsExists(String code) {
+        Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getCode, code).count();
+        return count != null && count > 1;
+    }
+
+    /**
      * 更新规则信息
      *
      * @param updateRuleRequest 规则配置数据
@@ -131,39 +146,39 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public Boolean updateRule(UpdateRuleRequest updateRuleRequest) {
         // 如果原来有条件信息，先删除原有信息
-        List<RuleEngineConditionGroup> engineConditionGroups = ruleEngineConditionGroupManager.lambdaQuery().eq(RuleEngineConditionGroup::getRuleId, updateRuleRequest.getId()).list();
+        List<RuleEngineConditionGroup> engineConditionGroups = ruleEngineConditionGroupManager.lambdaQuery()
+                .eq(RuleEngineConditionGroup::getRuleId, updateRuleRequest.getId())
+                .list();
         if (CollUtil.isNotEmpty(engineConditionGroups)) {
             List<Integer> engineConditionGroupIds = engineConditionGroups.stream().map(RuleEngineConditionGroup::getId).collect(Collectors.toList());
             this.ruleEngineConditionGroupManager.removeByIds(engineConditionGroupIds);
             // 删除条件组条件
-            this.ruleEngineConditionGroupConditionManager.lambdaUpdate().in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds).remove();
+            this.ruleEngineConditionGroupConditionManager.lambdaUpdate()
+                    .in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds)
+                    .remove();
         }
-        //  更新规则信息
-        LambdaUpdateChainWrapper<RuleEngineRule> updateChainWrapper = this.ruleEngineRuleManager.lambdaUpdate()
-                .set(RuleEngineRule::getId, updateRuleRequest.getId())
-                .set(RuleEngineRule::getAbnormalAlarm, JSONObject.toJSONString(updateRuleRequest.getAbnormalAlarm()))
-                .set(RuleEngineRule::getStatus, updateRuleRequest.getStatus());
-        // 保存结果
-        Action action = updateRuleRequest.getAction();
-        updateChainWrapper.set(RuleEngineRule::getActionType, action.getType())
-                .set(RuleEngineRule::getActionValue, action.getValue())
-                .set(RuleEngineRule::getActionValueType, action.getValueType());
-        // 保存默认结果
-        DefaultAction defaultAction = updateRuleRequest.getDefaultAction();
-        updateChainWrapper.set(RuleEngineRule::getDefaultActionType, defaultAction.getType())
-                .set(RuleEngineRule::getDefaultActionValue, defaultAction.getValue())
-                .set(RuleEngineRule::getDefaultActionValueType, defaultAction.getValueType())
-                .set(RuleEngineRule::getEnableDefaultAction, defaultAction.getEnableDefaultAction())
-                .eq(RuleEngineRule::getId, updateRuleRequest.getId())
-                .update();
         // 保存条件信息
         this.saveConditionGroup(updateRuleRequest.getId(), updateRuleRequest.getConditionGroup());
-        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(updateRuleRequest.getId());
+        //  更新规则信息
+        RuleEngineRule ruleEngineRule = new RuleEngineRule();
+        ruleEngineRule.setId(updateRuleRequest.getId());
+        ruleEngineRule.setStatus(updateRuleRequest.getStatus());
+        // 保存结果
+        Action action = updateRuleRequest.getAction();
+        ruleEngineRule.setActionType(action.getType());
+        ruleEngineRule.setActionValueType(action.getValueType());
+        ruleEngineRule.setActionValue(action.getValue());
+        // 保存默认结果
+        DefaultAction defaultAction = updateRuleRequest.getDefaultAction();
+        ruleEngineRule.setEnableDefaultAction(defaultAction.getEnableDefaultAction());
+        ruleEngineRule.setDefaultActionValue(defaultAction.getValue());
+        ruleEngineRule.setDefaultActionValueType(defaultAction.getValueType());
+        ruleEngineRule.setDefaultActionType(defaultAction.getType());
+        ruleEngineRule.setAbnormalAlarm(JSONObject.toJSONString(updateRuleRequest.getAbnormalAlarm()));
         // 统计引用的变量元素条件
         RuleCountInfo ruleCountInfo = this.ruleCountInfoService.countRuleInfo(ruleEngineRule);
-        this.ruleEngineRuleManager.lambdaUpdate().set(RuleEngineRule::getCountInfo, JSON.toJSONString(ruleCountInfo))
-                .eq(RuleEngineRule::getId, updateRuleRequest.getId())
-                .update();
+        ruleEngineRule.setCountInfo(JSON.toJSONString(ruleCountInfo));
+        this.ruleEngineRuleMapper.updateById(ruleEngineRule);
         return true;
     }
 
@@ -229,6 +244,12 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Integer saveOrUpdateRuleDefinition(RuleDefinition ruleDefinition) {
+        // 创建规则
+        if (ruleDefinition.getId() == null) {
+            if (this.ruleCodeIsExists(ruleDefinition.getCode())) {
+                throw new ValidException("规则Code：{}已经存在", ruleDefinition.getCode());
+            }
+        }
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setId(ruleDefinition.getId());
         ruleEngineRule.setName(ruleDefinition.getName());

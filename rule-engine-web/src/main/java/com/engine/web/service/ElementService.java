@@ -16,6 +16,14 @@ import com.engine.web.vo.base.request.PageRequest;
 public interface ElementService {
     Boolean add(AddElementRequest addConditionRequest);
 
+    /**
+     * 元素code是否存在
+     *
+     * @param code 元素code
+     * @return true存在
+     */
+    Boolean elementCodeIsExists(String code);
+
     PageResult<ListElementResponse> list(PageRequest<ListElementRequest> pageRequest);
 
     GetElementResponse get(Integer id);

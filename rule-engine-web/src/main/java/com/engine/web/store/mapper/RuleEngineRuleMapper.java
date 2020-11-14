@@ -25,4 +25,11 @@ public interface RuleEngineRuleMapper extends BaseMapper<RuleEngineRule> {
      */
     List<RuleEngineCondition> countCondition(@Param("ruleId") Integer ruleId);
 
+    /**
+     * 根据id更新
+     *
+     * @param ruleEngineRule 规则信息
+     */
+    int updateById(RuleEngineRule ruleEngineRule);
+
 }
