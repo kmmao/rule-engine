@@ -88,7 +88,7 @@ public class ConditionServiceImpl implements ConditionService {
     @Override
     public Boolean conditionNameIsExists(String name) {
         Integer count = this.ruleEngineConditionManager.lambdaQuery().eq(RuleEngineCondition::getName, name).count();
-        return count != null && count > 1;
+        return count != null && count >= 1;
     }
 
     /**

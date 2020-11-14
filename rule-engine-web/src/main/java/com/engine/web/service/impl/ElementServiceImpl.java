@@ -61,7 +61,7 @@ public class ElementServiceImpl implements ElementService {
     @Override
     public Boolean elementCodeIsExists(String code) {
         Integer count = this.ruleEngineElementManager.lambdaQuery().eq(RuleEngineElement::getCode, code).count();
-        return count != null && count > 1;
+        return count != null && count >= 1;
     }
 
     @Override

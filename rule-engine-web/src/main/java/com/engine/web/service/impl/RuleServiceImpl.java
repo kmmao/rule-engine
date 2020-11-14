@@ -134,7 +134,7 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public Boolean ruleCodeIsExists(String code) {
         Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getCode, code).count();
-        return count != null && count > 1;
+        return count != null && count >= 1;
     }
 
     /**
@@ -336,6 +336,7 @@ public class RuleServiceImpl implements RuleService {
         rulePublish.setRuleId(rule.getId());
         rulePublish.setRuleCode(ruleEngineRule.getCode());
         rulePublish.setData(rule.toJson());
+        rulePublish.setCountInfo(ruleEngineRule.getCountInfo());
         this.ruleEngineRulePublishManager.save(rulePublish);
         // 加载规则
         RuleMessageVo ruleMessageVo = new RuleMessageVo();

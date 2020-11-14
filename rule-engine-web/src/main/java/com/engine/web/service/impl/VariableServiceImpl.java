@@ -95,7 +95,7 @@ public class VariableServiceImpl implements VariableService {
     @Override
     public Boolean varNameIsExists(String name) {
         Integer count = this.ruleEngineVariableManager.lambdaQuery().eq(RuleEngineVariable::getName, name).count();
-        return count != null && count > 1;
+        return count != null && count >= 1;
     }
 
     /**
