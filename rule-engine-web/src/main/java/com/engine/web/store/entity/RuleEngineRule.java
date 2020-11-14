@@ -56,13 +56,6 @@ public class RuleEngineRule implements Serializable {
     private Integer defaultActionType;
 
     /**
-     * 规则的统计信息
-     * <p>
-     * {@link com.engine.web.vo.rule.RuleCountInfo}
-     */
-    private String countInfo;
-
-    /**
      * 注意，规则模拟运行不会触发
      * <p>
      * {@link Rule.AbnormalAlarm}

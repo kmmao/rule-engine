@@ -37,9 +37,7 @@ public class RuleTestServiceImpl implements RuleTestService {
     @Resource
     private RuleResolveService ruleResolveService;
     @Resource
-    private RuleEngineRuleManager ruleEngineRuleManager;
-    @Resource
-    private VariableResolveService variableResolveService;
+    private Engine engine;
 
     @Override
     public Object run(ExecuteRuleRequest executeRuleRequest) {
@@ -53,18 +51,8 @@ public class RuleTestServiceImpl implements RuleTestService {
         DefaultEngine engine = new DefaultEngine();
         Rule rule = ruleResolveService.getRuleByCode(executeRuleRequest.getRuleCode());
         engine.addRule(rule);
-        RuleEngineRule ruleEngineRule = ruleEngineRuleManager.getById(rule.getId());
         // 加载变量
-        EngineVariable engineVariable = engine.getEngineVariable();
-        String countInfo = ruleEngineRule.getCountInfo();
-        if (countInfo != null) {
-            RuleCountInfo ruleCountInfo = JSONObject.parseObject(countInfo, RuleCountInfo.class);
-            Set<Integer> variableIds = ruleCountInfo.getVariableIds();
-            for (Integer variableId : variableIds) {
-                Value value = variableResolveService.getVarById(variableId);
-                engineVariable.addVariable(variableId, value);
-            }
-        }
+        engine.getConfiguration().setEngineVariable(this.engine.getEngineVariable());
         // 配置监听器
         engine.setRuleListener(new RuleListener() {
 

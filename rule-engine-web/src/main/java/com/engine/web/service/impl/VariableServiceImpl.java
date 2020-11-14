@@ -1,5 +1,6 @@
 package com.engine.web.service.impl;
 
+
 import com.engine.web.store.entity.RuleEngineFunction;
 import com.engine.web.store.manager.*;
 
@@ -13,7 +14,6 @@ import com.engine.web.config.rabbit.RabbitTopicConfig;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.service.VariableService;
 import com.engine.web.store.entity.RuleEngineFunctionValue;
-import com.engine.web.store.entity.RuleEngineRule;
 import com.engine.web.store.entity.RuleEngineVariable;
 import com.engine.web.store.mapper.RuleEngineVariableMapper;
 import com.engine.web.util.PageUtils;
@@ -55,7 +55,7 @@ public class VariableServiceImpl implements VariableService {
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
-    private RuleCountInfoService ruleCountInfoService;
+    private RuleParameterService ruleCountInfoService;
     @Resource
     private ApplicationContext applicationContext;
 
@@ -231,8 +231,6 @@ public class VariableServiceImpl implements VariableService {
             List<ParamValue> paramValues = updateVariableRequest.getParamValues();
             this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable.getId(), paramValues);
         }
-        // 刷新引用此规则的统计信息
-        this.ruleCountInfoService.refreshByVarId(updateVariableRequest.getId());
         // 通知加载变量
         VariableMessageVo variableMessageVo = new VariableMessageVo();
         variableMessageVo.setType(VariableMessageVo.Type.UPDATE);
@@ -255,8 +253,9 @@ public class VariableServiceImpl implements VariableService {
 
     @Override
     public Boolean delete(Integer id) {
-        List<RuleEngineRule> ruleEngineRules = ruleEngineVariableMapper.countRule(id);
-        if (CollUtil.isNotEmpty(ruleEngineRules)) {
+        // TODO: 2020/11/15  ....
+        List<VariableRuleCount> ruleCountList = null;
+        if (CollUtil.isNotEmpty(ruleCountList)) {
             throw new ValidException("有规则在引用此变量，无法删除");
         }
         VariableMessageVo variableMessageVo = new VariableMessageVo();

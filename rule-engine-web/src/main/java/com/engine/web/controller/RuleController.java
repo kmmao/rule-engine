@@ -1,5 +1,6 @@
 package com.engine.web.controller;
 
+import com.engine.web.annotation.RoleAuth;
 import com.engine.web.service.RuleService;
 import com.engine.web.vo.base.request.IdRequest;
 import com.engine.web.vo.base.request.PageRequest;
@@ -165,6 +166,7 @@ public class RuleController {
      * @param idRequest 规则id
      * @return true
      */
+    @RoleAuth
     @PostMapping("delete")
     @ApiOperation("删除规则")
     public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {

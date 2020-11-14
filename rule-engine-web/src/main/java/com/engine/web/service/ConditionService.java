@@ -9,6 +9,7 @@ import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.condition.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +72,10 @@ public interface ConditionService {
      * @return page
      */
     PageResult<ListConditionResponse> list(PageRequest<ListConditionRequest> pageRequest);
+
+    Map<Integer, RuleEngineVariable> getConditionVariableMap(Collection<RuleEngineCondition> ruleEngineConditions);
+
+    Map<Integer, RuleEngineElement> getConditionElementMap(Collection<RuleEngineCondition> ruleEngineConditions);
 
     /**
      * 更新条件

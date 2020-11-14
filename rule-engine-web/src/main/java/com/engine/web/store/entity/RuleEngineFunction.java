@@ -34,18 +34,6 @@ public class RuleEngineFunction implements Serializable {
 
     private String returnValueType;
 
-    /**
-     * 0 系统自带，1 动态上传解析
-     * <p>
-     * {@link com.engine.web.enums.FunctionSource}
-     */
-    private Integer source;
-
-    /**
-     * 如果为1时，此字段为函数源代码，可以被加载执行
-     */
-    private String functionJavaCode;
-
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

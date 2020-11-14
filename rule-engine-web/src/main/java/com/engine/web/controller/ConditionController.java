@@ -1,6 +1,7 @@
 package com.engine.web.controller;
 
 
+import com.engine.web.annotation.RoleAuth;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.condition.*;
 import com.engine.web.service.ConditionService;
@@ -63,6 +64,7 @@ public class ConditionController {
         return conditionService.list(pageRequest);
     }
 
+    @RoleAuth
     @PostMapping("delete")
     @ApiOperation("根据id删除条件")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {

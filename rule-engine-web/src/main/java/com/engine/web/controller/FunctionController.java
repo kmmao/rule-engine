@@ -48,25 +48,6 @@ public class FunctionController {
         return plainResult;
     }
 
-    @RoleAuth
-    @PostMapping("add")
-    @ApiOperation("添加函数")
-    public PlainResult<Boolean> add(@Valid AddFunction addFunction) {
-        PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(functionService.add(addFunction));
-        return plainResult;
-    }
-
-    @RoleAuth
-    @PostMapping("update")
-    @ApiOperation("更新函数")
-    public PlainResult<Boolean> update(@Valid UpdateFunction updateFunction) {
-        PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(functionService.update(updateFunction));
-        return plainResult;
-    }
-
-
     @PostMapping("run")
     @ApiOperation("函数模拟测试")
     public PlainResult<Object> run(@Valid @RequestBody RunFunction runFunction) {

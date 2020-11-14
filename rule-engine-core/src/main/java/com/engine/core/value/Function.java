@@ -44,6 +44,8 @@ import java.util.Optional;
 @Data
 public class Function implements Value {
 
+    private Integer id;
+
     private Object abstractFunction;
 
     private DataType dataType;
@@ -58,7 +60,8 @@ public class Function implements Value {
     @Setter
     private Map<String, Value> param;
 
-    public Function(String name, Object abstractFunction, DataType dataType, Map<String, Value> param) {
+    public Function(Integer id, String name, Object abstractFunction, DataType dataType, Map<String, Value> param) {
+        this.id = id;
         this.name = name;
         this.abstractFunction = abstractFunction;
         this.dataType = dataType;

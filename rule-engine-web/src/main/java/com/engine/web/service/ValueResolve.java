@@ -42,5 +42,10 @@ public interface ValueResolve {
      */
     Value getValue(Integer type, String valueType, String value);
 
+    /**
+     * 获取规则/变量配置所需数据缓存
+     *
+     * @return CacheMap
+     */
     DataCacheMap getCacheMap(RuleCountInfo ruleCountInfo);
 }

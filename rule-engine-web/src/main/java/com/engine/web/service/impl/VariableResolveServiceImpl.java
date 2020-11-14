@@ -1,10 +1,9 @@
 package com.engine.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
+
 import com.engine.core.value.*;
-import com.engine.web.enums.FunctionSource;
-import com.engine.web.service.FunctionService;
+
 import com.engine.web.service.VariableResolveService;
 import com.engine.web.vo.common.DataCacheMap;
 import com.engine.web.service.ValueResolve;
@@ -15,9 +14,7 @@ import com.engine.web.store.manager.RuleEngineFunctionManager;
 import com.engine.web.store.manager.RuleEngineFunctionValueManager;
 import com.engine.web.store.manager.RuleEngineVariableManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +43,6 @@ public class VariableResolveServiceImpl implements VariableResolveService {
     private ValueResolve valueResolve;
     @Resource
     private ApplicationContext applicationContext;
-    @Resource
-    private FunctionService functionService;
 
     /**
      * 获取所有的变量/函数配置信息
@@ -62,12 +57,16 @@ public class VariableResolveServiceImpl implements VariableResolveService {
         //查询到所有的变量
         Collection<RuleEngineVariable> ruleEngineVariables = cacheMap.getVariableMap().values();
         for (RuleEngineVariable engineVariable : ruleEngineVariables) {
-            Integer type = engineVariable.getType();
-            if (VariableType.CONSTANT.getType().equals(type)) {
-                Value value = valueResolve.getValue(VariableType.CONSTANT.getType(), engineVariable.getValueType(), engineVariable.getValue(), cacheMap);
-                maps.put(engineVariable.getId(), value);
-            } else if (VariableType.FUNCTION.getType().equals(type)) {
-                maps.put(engineVariable.getId(), functionProcess(engineVariable, cacheMap));
+            try {
+                Integer type = engineVariable.getType();
+                if (VariableType.CONSTANT.getType().equals(type)) {
+                    Value value = valueResolve.getValue(VariableType.CONSTANT.getType(), engineVariable.getValueType(), engineVariable.getValue(), cacheMap);
+                    maps.put(engineVariable.getId(), value);
+                } else if (VariableType.FUNCTION.getType().equals(type)) {
+                    maps.put(engineVariable.getId(), functionProcess(engineVariable, cacheMap));
+                }
+            } catch (Exception e) {
+                log.warn("加载变量失败，变量Id：{}", engineVariable.getId(), e);
             }
         }
         return maps;
@@ -88,11 +87,6 @@ public class VariableResolveServiceImpl implements VariableResolveService {
         }
         RuleEngineFunction engineFunction = ruleEngineFunctionManager.getById(ruleEngineVariable.getValue());
 
-        // 如果为用户上传的java 源码，则先解析后加载到Spring容器中
-        if (FunctionSource.JAVA_CODE.getValue().equals(engineFunction.getSource())) {
-            this.registerFunction(engineFunction);
-        }
-
         List<RuleEngineFunctionValue> functionValueList = ruleEngineFunctionValueManager.lambdaQuery()
                 .eq(RuleEngineFunctionValue::getFunctionId, ruleEngineVariable.getValue())
                 .eq(RuleEngineFunctionValue::getVariableId, ruleEngineVariable.getId()).list();
@@ -104,28 +98,10 @@ public class VariableResolveServiceImpl implements VariableResolveService {
             }
         }
         Object abstractFunction = applicationContext.getBean(engineFunction.getExecutor());
-        return new Function(engineFunction.getName(), abstractFunction, DataType.getByValue(engineFunction.getReturnValueType()), param);
+        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, DataType.getByValue(engineFunction.getReturnValueType()), param);
 
     }
 
-    /**
-     * 如果为用户上传的java 源码，则先解析后加载到Spring容器中
-     *
-     * @param engineFunction 函数信息
-     */
-    private void registerFunction(RuleEngineFunction engineFunction) {
-        String executor = engineFunction.getExecutor();
-        String functionJavaCode = engineFunction.getFunctionJavaCode();
-        Class<?> clazz = this.functionService.functionTryCompiler(StrUtil.upperFirst(executor), functionJavaCode);
-        // 如果不存在这个bean
-        if (!applicationContext.containsBean(executor)) {
-            // 加载到Spring容器中
-            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
-            AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
-            BeanDefinitionRegistry beanDefinitionRegistry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
-            beanDefinitionRegistry.registerBeanDefinition(executor, beanDefinition);
-        }
-    }
 
     /**
      * 规则引擎函数处理
@@ -139,11 +115,6 @@ public class VariableResolveServiceImpl implements VariableResolveService {
         Integer functionId = Integer.valueOf(ruleEngineVariable.getValue());
         RuleEngineFunction engineFunction = cacheMap.getFunctionMap().get(functionId);
 
-        // 如果为用户上传的java 源码，则先解析后加载到Spring容器中
-        if (FunctionSource.JAVA_CODE.getValue().equals(engineFunction.getSource())) {
-            this.registerFunction(engineFunction);
-        }
-
         List<RuleEngineFunctionValue> functionValueList = cacheMap.getFunctionValueMap().get(ruleEngineVariable.getId());
         Map<String, Value> param = new HashMap<>(10);
         if (CollUtil.isNotEmpty(functionValueList)) {
@@ -152,6 +123,6 @@ public class VariableResolveServiceImpl implements VariableResolveService {
             }
         }
         Object abstractFunction = this.applicationContext.getBean(engineFunction.getExecutor());
-        return new Function(engineFunction.getName(), abstractFunction, DataType.getByValue(engineFunction.getReturnValueType()), param);
+        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, DataType.getByValue(engineFunction.getReturnValueType()), param);
     }
 }

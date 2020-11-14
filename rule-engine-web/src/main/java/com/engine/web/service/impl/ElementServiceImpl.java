@@ -5,17 +5,20 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.engine.core.exception.ValidException;
+import com.engine.core.value.VariableType;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.service.ElementService;
-import com.engine.web.store.entity.RuleEngineRule;
+import com.engine.web.store.entity.*;
+import com.engine.web.store.manager.RuleEngineConditionManager;
 import com.engine.web.store.manager.RuleEngineElementManager;
+import com.engine.web.store.manager.RuleEngineFunctionValueManager;
+import com.engine.web.store.manager.RuleEngineVariableManager;
 import com.engine.web.store.mapper.RuleEngineElementMapper;
 import com.engine.web.util.PageUtils;
 import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageBase;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.element.*;
-import com.engine.web.store.entity.RuleEngineElement;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,6 +40,10 @@ public class ElementServiceImpl implements ElementService {
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
     private RuleEngineElementMapper ruleEngineElementMapper;
+    @Resource
+    private RuleEngineFunctionValueManager ruleEngineFunctionValueManager;
+    @Resource
+    private RuleEngineConditionManager ruleEngineConditionManager;
 
     @Override
     public Boolean add(AddElementRequest addConditionRequest) {
@@ -116,9 +123,22 @@ public class ElementServiceImpl implements ElementService {
 
     @Override
     public Boolean delete(Integer id) {
-        List<RuleEngineRule> ruleEngineRules = ruleEngineElementMapper.countRule(id);
-        if (CollUtil.isNotEmpty(ruleEngineRules)) {
-            throw new ValidException("有规则在引用此元素，无法删除");
+        // TODO: 2020/11/15 rule action
+        {
+            Integer count = ruleEngineFunctionValueManager.lambdaQuery().eq(RuleEngineFunctionValue::getType, VariableType.ELEMENT.getType())
+                    .eq(RuleEngineFunctionValue::getValue, id).count();
+            if (count != null && count > 0) {
+                throw new ValidException("有函数在引用此元素，无法删除");
+            }
+        }
+        Integer count = ruleEngineConditionManager.lambdaQuery()
+                .and(a ->
+                        a.eq(RuleEngineCondition::getLeftType, VariableType.ELEMENT.getType())
+                                .eq(RuleEngineCondition::getLeftValue, id)
+                ).or(o -> o.eq(RuleEngineCondition::getRightType, VariableType.ELEMENT.getType())
+                        .eq(RuleEngineCondition::getRightValue, id)).count();
+        if (count != null && count > 0) {
+            throw new ValidException("有条件在引用此元素，无法删除");
         }
         return ruleEngineElementManager.removeById(id);
     }

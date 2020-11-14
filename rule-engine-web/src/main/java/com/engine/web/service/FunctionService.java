@@ -18,13 +18,6 @@ public interface FunctionService {
 
     GetFunctionResponse get(Integer id);
 
-    Boolean add(AddFunction addFunction);
-
-    Class<?> functionTryCompiler(String name, String javaCode);
-
-    Class<?> functionCompiler(String className, String javaCode);
-
-    Boolean update(UpdateFunction updateFunction);
 
     Object run(RunFunction runFunction);
 }

@@ -1,5 +1,6 @@
 package com.engine.web.controller;
 
+import com.engine.web.annotation.RoleAuth;
 import com.engine.web.vo.base.request.IdRequest;
 import com.engine.web.vo.base.response.BaseResult;
 import com.engine.web.vo.base.response.PageResult;
@@ -63,6 +64,7 @@ public class ElementController {
         return plainResult;
     }
 
+    @RoleAuth
     @PostMapping("delete")
     @ApiOperation("根据id删除元素")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {

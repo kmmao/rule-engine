@@ -18,12 +18,5 @@ import java.util.List;
  */
 public interface RuleEngineConditionMapper extends BaseMapper<RuleEngineCondition> {
 
-    /**
-     * 统计此条件用到的所有规则
-     *
-     * @param conditionId 条件id
-     * @return list
-     */
-    List<RuleEngineRule> countRule(@Param("conditionId") Integer conditionId);
 
 }

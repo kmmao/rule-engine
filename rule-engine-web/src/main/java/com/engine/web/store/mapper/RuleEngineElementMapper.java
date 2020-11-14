@@ -16,11 +16,4 @@ import java.util.List;
  */
 public interface RuleEngineElementMapper extends BaseMapper<RuleEngineElement> {
 
-    /**
-     * 统计引用此规则的元素
-     *
-     * @param id 元素id
-     * @return list
-     */
-    List<RuleEngineRule> countRule(Integer id);
 }

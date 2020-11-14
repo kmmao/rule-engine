@@ -1,6 +1,7 @@
 package com.engine.web.controller;
 
 
+import com.engine.web.annotation.RoleAuth;
 import com.engine.web.service.VariableService;
 import com.engine.web.vo.base.request.IdRequest;
 import com.engine.web.vo.base.response.PageResult;
@@ -63,6 +64,7 @@ public class VariableController {
         return variableService.list(pageRequest);
     }
 
+    @RoleAuth
     @PostMapping("delete")
     @ApiOperation("根据id删除变量")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {

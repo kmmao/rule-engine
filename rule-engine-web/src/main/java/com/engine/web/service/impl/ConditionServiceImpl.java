@@ -55,8 +55,6 @@ public class ConditionServiceImpl implements ConditionService {
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
-    private RuleCountInfoService ruleCountInfoService;
-    @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
 
     /**
@@ -211,31 +209,8 @@ public class ConditionServiceImpl implements ConditionService {
         if (CollUtil.isEmpty(engineConditions)) {
             return pageResult;
         }
-
-        // 获取条件中的所有的变量元素数据
-        Set<String> elementIds = new HashSet<>();
-        Set<String> variableIds = new HashSet<>();
-        for (RuleEngineCondition engineCondition : engineConditions) {
-            Integer rightType = engineCondition.getRightType();
-            if (rightType.equals(VariableType.VARIABLE.getType())) {
-                variableIds.add(engineCondition.getRightValue());
-            } else if (rightType.equals(VariableType.ELEMENT.getType())) {
-                elementIds.add(engineCondition.getRightValue());
-            }
-            Integer leftType = engineCondition.getLeftType();
-            if (leftType.equals(VariableType.VARIABLE.getType())) {
-                variableIds.add(engineCondition.getLeftValue());
-            } else if (leftType.equals(VariableType.ELEMENT.getType())) {
-                elementIds.add(engineCondition.getLeftValue());
-            }
-        }
-        Map<Integer, RuleEngineVariable> variableMap = Optional.of(variableIds).filter(CollUtil::isNotEmpty)
-                .map(m -> ruleEngineVariableManager.lambdaQuery().in(RuleEngineVariable::getId, m).list()
-                        .stream().collect(Collectors.toMap(RuleEngineVariable::getId, Function.identity()))).orElse(new HashMap<>());
-
-        Map<Integer, RuleEngineElement> elementMap = Optional.of(elementIds).filter(CollUtil::isNotEmpty)
-                .map(m -> ruleEngineElementManager.lambdaQuery().in(RuleEngineElement::getId, m).list()
-                        .stream().collect(Collectors.toMap(RuleEngineElement::getId, Function.identity()))).orElse(new HashMap<>());
+        Map<Integer, RuleEngineElement> elementMap = this.getConditionElementMap(engineConditions);
+        Map<Integer, RuleEngineVariable> variableMap = this.getConditionVariableMap(engineConditions);
         // 类型转换处理
         List<ListConditionResponse> conditionResponses = engineConditions.stream().map(m -> {
             ListConditionResponse listConditionResponse = new ListConditionResponse();
@@ -264,6 +239,43 @@ public class ConditionServiceImpl implements ConditionService {
         ConfigBean.Value rightValue = getConfigBeanValue(m.getRightType(), m.getRightValue(), m.getRightValueType(), variableMap, elementMap);
         configBean.setRightValue(rightValue);
         return configBean;
+    }
+
+    @Override
+    public Map<Integer, RuleEngineVariable> getConditionVariableMap(Collection<RuleEngineCondition> ruleEngineConditions) {
+        // 获取条件中的所有的变量数据
+        Set<String> variableIds = new HashSet<>();
+        for (RuleEngineCondition engineCondition : ruleEngineConditions) {
+            Integer rightType = engineCondition.getRightType();
+            if (rightType.equals(VariableType.VARIABLE.getType())) {
+                variableIds.add(engineCondition.getRightValue());
+            }
+            Integer leftType = engineCondition.getLeftType();
+            if (leftType.equals(VariableType.VARIABLE.getType())) {
+                variableIds.add(engineCondition.getLeftValue());
+            }
+        }
+        return Optional.of(variableIds).filter(CollUtil::isNotEmpty)
+                .map(m -> ruleEngineVariableManager.lambdaQuery().in(RuleEngineVariable::getId, m).list()
+                        .stream().collect(Collectors.toMap(RuleEngineVariable::getId, Function.identity()))).orElse(new HashMap<>());
+    }
+
+    @Override
+    public Map<Integer, RuleEngineElement> getConditionElementMap(Collection<RuleEngineCondition> ruleEngineConditions) {
+        Set<String> elementIds = new HashSet<>();
+        for (RuleEngineCondition engineCondition : ruleEngineConditions) {
+            Integer rightType = engineCondition.getRightType();
+            if (rightType.equals(VariableType.ELEMENT.getType())) {
+                elementIds.add(engineCondition.getRightValue());
+            }
+            Integer leftType = engineCondition.getLeftType();
+            if (leftType.equals(VariableType.ELEMENT.getType())) {
+                elementIds.add(engineCondition.getLeftValue());
+            }
+        }
+        return Optional.of(elementIds).filter(CollUtil::isNotEmpty)
+                .map(m -> ruleEngineElementManager.lambdaQuery().in(RuleEngineElement::getId, m).list()
+                        .stream().collect(Collectors.toMap(RuleEngineElement::getId, Function.identity()))).orElse(new HashMap<>());
     }
 
     /**
@@ -324,7 +336,8 @@ public class ConditionServiceImpl implements ConditionService {
         configBeanCopyToCondition(condition, updateConditionRequest.getConfig());
         this.ruleEngineConditionManager.updateById(condition);
         // 规则重新发布
-        List<RuleEngineRule> ruleEngineRules = this.ruleEngineConditionMapper.countRule(updateConditionRequest.getId());
+        // TODO: 2020/11/15  ....
+        List<RuleEngineRule> ruleEngineRules = null;
         if (CollUtil.isNotEmpty(ruleEngineRules)) {
             List<RuleEngineRule> updateRuleEngineRule = ruleEngineRules.stream()
                     .filter(f -> f.getStatus().equals(RuleStatus.PUBLISHED.getStatus()))
@@ -334,8 +347,6 @@ public class ConditionServiceImpl implements ConditionService {
             if (CollUtil.isNotEmpty(updateRuleEngineRule)) {
                 this.ruleEngineRuleManager.updateBatchById(updateRuleEngineRule);
             }
-            // 刷新引用次条件的规则组建引用
-            this.ruleCountInfoService.refreshAsync(ruleEngineRules);
         }
         return true;
     }
@@ -367,7 +378,8 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean delete(Integer id) {
-        List<RuleEngineRule> ruleEngineRules = ruleEngineConditionMapper.countRule(id);
+        // TODO: 2020/11/15 ...
+        List<RuleEngineRule> ruleEngineRules = null;
         if (CollUtil.isNotEmpty(ruleEngineRules)) {
             throw new ValidException("有规则在引用此条件，无法删除");
         }

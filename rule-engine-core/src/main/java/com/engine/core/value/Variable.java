@@ -52,7 +52,7 @@ public class Variable implements Value {
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
-        Object value = configuration.getEngineVariable().getVariable(id);
+        Value value = configuration.getEngineVariable().getVariable(this.getId());
         if (value instanceof Constant) {
             Constant constantVal = (Constant) value;
             return dataConversion(constantVal.getValue(), getDataType());

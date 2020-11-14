@@ -34,8 +34,6 @@ public class RuleEngineRulePublish implements Serializable {
 
     private String data;
 
-    private String countInfo;
-
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

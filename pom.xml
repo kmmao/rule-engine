@@ -48,12 +48,6 @@
     </properties>
 
     <dependencies>
-       <!-- 动态解析编译java文件-->
-        <dependency>
-            <groupId>com.itranswarp</groupId>
-            <artifactId>compiler</artifactId>
-            <version>1.0</version>
-        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

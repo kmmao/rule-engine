@@ -88,19 +88,6 @@ public class Rule implements RuleParse {
 
     }
 
-    /**
-     * 规则入参
-     */
-    private Set<Parameter> parameters = new HashSet<>();
-
-    public void addParameter(String name, String code, String valueType) {
-        Parameter parameter = new Parameter();
-        parameter.setName(name);
-        parameter.setCode(code);
-        parameter.setValueType(valueType);
-        this.parameters.add(parameter);
-    }
-
     @Data
     public static class Parameter {
 

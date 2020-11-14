@@ -3,6 +3,7 @@ package com.engine.web.store.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.engine.web.store.entity.RuleEngineRule;
 import com.engine.web.store.entity.RuleEngineVariable;
+import com.engine.web.vo.variable.VariableRuleCount;
 
 import java.util.List;
 
@@ -16,11 +17,4 @@ import java.util.List;
  */
 public interface RuleEngineVariableMapper extends BaseMapper<RuleEngineVariable> {
 
-    /**
-     * 统计用到此变量的规则
-     *
-     * @param id 变量id
-     * @return list
-     */
-    List<RuleEngineRule> countRule(Integer id);
 }
