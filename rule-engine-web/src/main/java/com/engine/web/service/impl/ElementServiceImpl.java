@@ -41,7 +41,7 @@ public class ElementServiceImpl implements ElementService {
     @Override
     public Boolean add(AddElementRequest addConditionRequest) {
         if (this.elementCodeIsExists(addConditionRequest.getCode())) {
-            throw new ValidException("元素Code：{}已经存在", addConditionRequest.getName());
+            throw new ValidException("元素Code：{}已经存在", addConditionRequest.getCode());
         }
         RuleEngineElement engineElement = new RuleEngineElement();
         engineElement.setName(addConditionRequest.getName());

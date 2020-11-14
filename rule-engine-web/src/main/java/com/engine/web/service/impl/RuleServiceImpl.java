@@ -3,6 +3,7 @@ package com.engine.web.service.impl;
 
 import com.engine.core.condition.ConditionGroup;
 import com.engine.core.value.*;
+import com.engine.web.interceptor.AuthInterceptor;
 import com.engine.web.service.ValueResolve;
 import com.engine.web.store.mapper.RuleEngineRuleMapper;
 import com.engine.web.vo.common.DataCacheMap;
@@ -245,12 +246,15 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public Integer saveOrUpdateRuleDefinition(RuleDefinition ruleDefinition) {
         // 创建规则
+        RuleEngineRule ruleEngineRule = new RuleEngineRule();
         if (ruleDefinition.getId() == null) {
             if (this.ruleCodeIsExists(ruleDefinition.getCode())) {
                 throw new ValidException("规则Code：{}已经存在", ruleDefinition.getCode());
             }
+            RuleEngineUser ruleEngineUser = AuthInterceptor.USER.get();
+            ruleEngineRule.setCreateUserId(ruleEngineUser.getId());
+            ruleEngineRule.setCreateUserName(ruleEngineUser.getUsername());
         }
-        RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setId(ruleDefinition.getId());
         ruleEngineRule.setName(ruleDefinition.getName());
         ruleEngineRule.setCode(ruleDefinition.getCode());
