@@ -30,6 +30,6 @@ public interface RuleEngineRuleMapper extends BaseMapper<RuleEngineRule> {
      *
      * @param ruleEngineRule 规则信息
      */
-    int updateById(RuleEngineRule ruleEngineRule);
+    int updateRuleById(RuleEngineRule ruleEngineRule);
 
 }

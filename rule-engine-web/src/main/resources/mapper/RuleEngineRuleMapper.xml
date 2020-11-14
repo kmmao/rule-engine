@@ -18,8 +18,8 @@
               and rer.id=#{ruleId}
     </select>
 
-    <update id="updateById">
-        update rule_engine_rule 
+    <update id="updateRuleById">
+        update rule_engine_rule
         set  abnormal_alarm=#{abnormalAlarm},status=#{status},
              action_value=#{actionValue},action_type=#{actionType},
              action_value_type=#{actionValueType},default_action_type=#{defaultActionType},

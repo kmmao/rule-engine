@@ -178,7 +178,7 @@ public class RuleServiceImpl implements RuleService {
         // 统计引用的变量元素条件
         RuleCountInfo ruleCountInfo = this.ruleCountInfoService.countRuleInfo(ruleEngineRule);
         ruleEngineRule.setCountInfo(JSON.toJSONString(ruleCountInfo));
-        this.ruleEngineRuleMapper.updateById(ruleEngineRule);
+        this.ruleEngineRuleMapper.updateRuleById(ruleEngineRule);
         return true;
     }
 
