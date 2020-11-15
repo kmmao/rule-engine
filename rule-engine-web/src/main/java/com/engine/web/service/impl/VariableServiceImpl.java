@@ -1,11 +1,10 @@
 package com.engine.web.service.impl;
 
 
-import com.engine.web.store.entity.RuleEngineFunction;
+import com.engine.web.store.entity.*;
 import com.engine.web.store.manager.*;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.engine.core.exception.ValidException;
@@ -13,8 +12,6 @@ import com.engine.core.value.VariableType;
 import com.engine.web.config.rabbit.RabbitTopicConfig;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.service.VariableService;
-import com.engine.web.store.entity.RuleEngineFunctionValue;
-import com.engine.web.store.entity.RuleEngineVariable;
 import com.engine.web.store.mapper.RuleEngineVariableMapper;
 import com.engine.web.util.PageUtils;
 import com.engine.web.vo.base.request.PageRequest;
@@ -55,9 +52,11 @@ public class VariableServiceImpl implements VariableService {
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
-    private RuleParameterService ruleCountInfoService;
-    @Resource
     private ApplicationContext applicationContext;
+    @Resource
+    private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private RuleEngineConditionManager ruleEngineConditionManager;
 
     @Override
     public Boolean add(AddVariableRequest addConditionRequest) {
@@ -257,10 +256,38 @@ public class VariableServiceImpl implements VariableService {
         if (engineVariable == null) {
             throw new ValidException("找不到要删除的变量：{}", id);
         }
-        // TODO: 2020/11/15  ....
-        List<VariableRuleCount> ruleCountList = null;
-        if (CollUtil.isNotEmpty(ruleCountList)) {
-            throw new ValidException("有规则在引用此变量，无法删除");
+        {
+            Integer count = ruleEngineVariableMapper.countPublishRuleVar(id);
+            if (count != null && count > 0) {
+                throw new ValidException("有发布规则在引用此变量，无法删除");
+            }
+        }
+        {
+            Integer count = this.ruleEngineFunctionValueManager.lambdaQuery()
+                    .eq(RuleEngineFunctionValue::getType, VariableType.VARIABLE.getType())
+                    .eq(RuleEngineFunctionValue::getValue, id).count();
+            if (count != null && count > 0) {
+                throw new ValidException("有函数值在引用此变量，无法删除");
+            }
+        }
+        {
+            Integer count = this.ruleEngineRuleManager.lambdaQuery()
+                    .and(a -> a.eq(RuleEngineRule::getActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getActionValue, id))
+                    .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getDefaultActionValue, id)).count();
+            if (count != null && count > 0) {
+                throw new ValidException("有规则在引用此变量，无法删除");
+            }
+        }
+        {
+            Integer count = ruleEngineConditionManager.lambdaQuery()
+                    .and(a ->
+                            a.eq(RuleEngineCondition::getLeftType, VariableType.VARIABLE.getType())
+                                    .eq(RuleEngineCondition::getLeftValue, id)
+                    ).or(o -> o.eq(RuleEngineCondition::getRightType, VariableType.VARIABLE.getType())
+                            .eq(RuleEngineCondition::getRightValue, id)).count();
+            if (count != null && count > 0) {
+                throw new ValidException("有条件在引用此变量，无法删除");
+            }
         }
         VariableMessageVo variableMessageVo = new VariableMessageVo();
         variableMessageVo.setType(VariableMessageVo.Type.REMOVE);

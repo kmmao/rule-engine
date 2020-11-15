@@ -3,4 +3,10 @@
 <mapper namespace="com.engine.web.store.mapper.RuleEngineVariableMapper">
 
 
+    <select id="countPublishRuleVar" resultType="java.lang.Integer">
+         select count(*)
+            from rule_engine_rule_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.data -> '$**.variableId', JSON_ARRAY(#{variableId}))
+    </select>
+
 </mapper>

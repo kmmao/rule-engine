@@ -75,7 +75,7 @@ public class RuleParameterService {
      */
     private void getFromVariableElement(Set<Rule.Parameter> parameters, Value value) {
         if (value instanceof Variable) {
-            Value val = this.engine.getEngineVariable().getVariable(((Variable) value).getId());
+            Value val = this.engine.getEngineVariable().getVariable(((Variable) value).getVariableId());
             if (val instanceof Function) {
                 Function function = (Function) val;
                 Map<String, Value> param = function.getParam();

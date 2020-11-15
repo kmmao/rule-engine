@@ -4,9 +4,7 @@ package com.engine.web.service.impl;
 import com.engine.core.condition.ConditionGroup;
 import com.engine.core.value.*;
 import com.engine.web.interceptor.AuthInterceptor;
-import com.engine.web.service.ValueResolve;
 import com.engine.web.store.mapper.RuleEngineRuleMapper;
-import com.engine.web.vo.common.DataCacheMap;
 import com.engine.web.vo.condition.ConditionGroupCondition;
 import com.engine.web.vo.condition.ConfigBean;
 
@@ -567,9 +565,9 @@ public class RuleServiceImpl implements RuleService {
         } else if (cValue instanceof Variable) {
             value.setType(VariableType.VARIABLE.getType());
             Variable variable = (Variable) cValue;
-            value.setValue(String.valueOf(variable.getId()));
+            value.setValue(String.valueOf(variable.getVariableId()));
             value.setValueName(variable.getName());
-            com.engine.core.value.Value cVariable = engine.getEngineVariable().getVariable(variable.getId());
+            com.engine.core.value.Value cVariable = engine.getEngineVariable().getVariable(variable.getVariableId());
             if (cVariable instanceof Constant) {
                 Constant constant = (Constant) cVariable;
                 value.setVariableValue(String.valueOf(constant.getValue()));

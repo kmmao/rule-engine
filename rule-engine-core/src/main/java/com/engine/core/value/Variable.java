@@ -31,7 +31,7 @@ import lombok.Data;
 @Data
 public class Variable implements Value {
 
-    private Integer id;
+    private Integer variableId;
 
     /**
      * 变量名称
@@ -44,15 +44,15 @@ public class Variable implements Value {
     private DataType dataType;
 
 
-    public Variable(Integer id, String name, DataType dataType) {
-        this.id = id;
+    public Variable(Integer variableId, String name, DataType dataType) {
+        this.variableId = variableId;
         this.name = name;
         this.dataType = dataType;
     }
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
-        Value value = configuration.getEngineVariable().getVariable(this.getId());
+        Value value = configuration.getEngineVariable().getVariable(this.getVariableId());
         if (value instanceof Constant) {
             Constant constantVal = (Constant) value;
             return dataConversion(constantVal.getValue(), getDataType());
