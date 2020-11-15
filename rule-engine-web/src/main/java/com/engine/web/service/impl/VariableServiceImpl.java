@@ -253,6 +253,10 @@ public class VariableServiceImpl implements VariableService {
 
     @Override
     public Boolean delete(Integer id) {
+        RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(id);
+        if (engineVariable == null) {
+            throw new ValidException("找不到要删除的变量：{}", id);
+        }
         // TODO: 2020/11/15  ....
         List<VariableRuleCount> ruleCountList = null;
         if (CollUtil.isNotEmpty(ruleCountList)) {
@@ -262,6 +266,10 @@ public class VariableServiceImpl implements VariableService {
         variableMessageVo.setType(VariableMessageVo.Type.REMOVE);
         variableMessageVo.setId(id);
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.VAR_EXCHANGE, RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY, variableMessageVo);
+        // 删除变量函数值
+        this.ruleEngineFunctionValueManager.lambdaUpdate()
+                .eq(RuleEngineFunctionValue::getVariableId, engineVariable.getId())
+                .remove();
         return ruleEngineVariableManager.removeById(id);
     }
 

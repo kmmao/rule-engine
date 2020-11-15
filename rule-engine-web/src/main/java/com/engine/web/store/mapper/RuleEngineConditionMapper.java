@@ -18,5 +18,11 @@ import java.util.List;
  */
 public interface RuleEngineConditionMapper extends BaseMapper<RuleEngineCondition> {
 
+    /**
+     * 更新引用此规则的条件到待发布
+     *
+     * @param conditionId 条件id
+     */
+    void updateRuleWaitPublish(Integer conditionId);
 
 }

@@ -10,20 +10,14 @@ import com.engine.core.value.VariableType;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.enums.RuleStatus;
 import com.engine.web.exception.ApiException;
-import com.engine.web.store.entity.RuleEngineCondition;
-import com.engine.web.store.entity.RuleEngineElement;
-import com.engine.web.store.entity.RuleEngineRule;
-import com.engine.web.store.entity.RuleEngineVariable;
-import com.engine.web.store.manager.RuleEngineRuleManager;
-import com.engine.web.store.manager.RuleEngineVariableManager;
+import com.engine.web.store.entity.*;
+import com.engine.web.store.manager.*;
 import com.engine.web.store.mapper.RuleEngineConditionMapper;
 import com.engine.web.util.PageUtils;
 import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageBase;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.service.ConditionService;
-import com.engine.web.store.manager.RuleEngineConditionManager;
-import com.engine.web.store.manager.RuleEngineElementManager;
 import com.engine.web.vo.base.response.Rows;
 import com.engine.web.vo.condition.*;
 import org.springframework.stereotype.Component;
@@ -56,6 +50,10 @@ public class ConditionServiceImpl implements ConditionService {
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
+    @Resource
+    private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
 
     /**
      * 保存条件
@@ -335,19 +333,8 @@ public class ConditionServiceImpl implements ConditionService {
         // 条件配置信息
         configBeanCopyToCondition(condition, updateConditionRequest.getConfig());
         this.ruleEngineConditionManager.updateById(condition);
-        // 规则重新发布
-        // TODO: 2020/11/15  ....
-        List<RuleEngineRule> ruleEngineRules = null;
-        if (CollUtil.isNotEmpty(ruleEngineRules)) {
-            List<RuleEngineRule> updateRuleEngineRule = ruleEngineRules.stream()
-                    .filter(f -> f.getStatus().equals(RuleStatus.PUBLISHED.getStatus()))
-                    .peek(p -> p.setStatus(RuleStatus.WAIT_PUBLISH.getStatus()))
-                    .collect(Collectors.toList());
-            // 条件的修改触发，如果存在的是已发布版本需要更新为待发布
-            if (CollUtil.isNotEmpty(updateRuleEngineRule)) {
-                this.ruleEngineRuleManager.updateBatchById(updateRuleEngineRule);
-            }
-        }
+        // 更新引用此规则的条件到待发布
+        this.ruleEngineConditionMapper.updateRuleWaitPublish(conditionId);
         return true;
     }
 
@@ -378,9 +365,9 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean delete(Integer id) {
-        // TODO: 2020/11/15 ...
-        List<RuleEngineRule> ruleEngineRules = null;
-        if (CollUtil.isNotEmpty(ruleEngineRules)) {
+        Integer count = ruleEngineConditionGroupConditionManager.lambdaQuery()
+                .eq(RuleEngineConditionGroupCondition::getConditionId, id).count();
+        if (count != null && count > 0) {
             throw new ValidException("有规则在引用此条件，无法删除");
         }
         return this.ruleEngineConditionManager.removeById(id);

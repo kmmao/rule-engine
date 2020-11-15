@@ -3,4 +3,21 @@
 <mapper namespace="com.engine.web.store.mapper.RuleEngineConditionMapper">
 
 
+    <update id="updateRuleWaitPublish">
+        update rule_engine_rule rule
+        set rule.status=1
+        where rule.status = 2
+          and rule.id in (select rri.id
+                          from (select rer.id
+                                from rule_engine_rule rer,
+                                     rule_engine_condition_group recg,
+                                     rule_engine_condition_group_condition recgc
+                                where rer.deleted = 0
+                                  and recg.deleted = 0
+                                  and recgc.deleted = 0
+                                  and rer.id = recg.rule_id
+                                  and recg.id = recgc.condition_group_id
+                                  and recgc.condition_id = #{conditionId}) as rri);
+    </update>
+
 </mapper>

@@ -9,10 +9,7 @@ import com.engine.core.value.VariableType;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.service.ElementService;
 import com.engine.web.store.entity.*;
-import com.engine.web.store.manager.RuleEngineConditionManager;
-import com.engine.web.store.manager.RuleEngineElementManager;
-import com.engine.web.store.manager.RuleEngineFunctionValueManager;
-import com.engine.web.store.manager.RuleEngineVariableManager;
+import com.engine.web.store.manager.*;
 import com.engine.web.store.mapper.RuleEngineElementMapper;
 import com.engine.web.util.PageUtils;
 import com.engine.web.vo.base.request.PageRequest;
@@ -44,6 +41,8 @@ public class ElementServiceImpl implements ElementService {
     private RuleEngineFunctionValueManager ruleEngineFunctionValueManager;
     @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
+    @Resource
+    private RuleEngineRuleManager ruleEngineRuleManager;
 
     @Override
     public Boolean add(AddElementRequest addConditionRequest) {
@@ -123,12 +122,20 @@ public class ElementServiceImpl implements ElementService {
 
     @Override
     public Boolean delete(Integer id) {
-        // TODO: 2020/11/15 rule action
         {
-            Integer count = ruleEngineFunctionValueManager.lambdaQuery().eq(RuleEngineFunctionValue::getType, VariableType.ELEMENT.getType())
+            Integer count = this.ruleEngineFunctionValueManager.lambdaQuery()
+                    .eq(RuleEngineFunctionValue::getType, VariableType.ELEMENT.getType())
                     .eq(RuleEngineFunctionValue::getValue, id).count();
             if (count != null && count > 0) {
                 throw new ValidException("有函数在引用此元素，无法删除");
+            }
+        }
+        {
+            Integer count = this.ruleEngineRuleManager.lambdaQuery()
+                    .and(a -> a.eq(RuleEngineRule::getActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getActionValue, id))
+                    .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getDefaultActionValue, id)).count();
+            if (count != null && count > 0) {
+                throw new ValidException("有规则在引用此元素，无法删除");
             }
         }
         Integer count = ruleEngineConditionManager.lambdaQuery()
