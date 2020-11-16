@@ -27,6 +27,6 @@ public class RunFunction {
     /**
      * 函数运行入参
      */
-    private List<ParamValue> paramValue = new ArrayList<>();
+    private List<ParamValue> paramValues = new ArrayList<>();
 
 }

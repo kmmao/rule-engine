@@ -140,7 +140,7 @@ public class ApiExceptionHandler {
     }
 
     /**
-     * 参数异常
+     * 非法或不适当的参数
      *
      * @return BaseResult
      */

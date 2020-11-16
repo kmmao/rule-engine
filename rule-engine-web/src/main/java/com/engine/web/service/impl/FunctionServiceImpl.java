@@ -130,7 +130,7 @@ public class FunctionServiceImpl implements FunctionService {
         if (applicationContext.containsBean(executor)) {
             Object bean = applicationContext.getBean(executor);
             // 执行函数入参
-            Map<String, Object> paramValue = this.getParamValue(runFunction.getParamValue());
+            Map<String, Object> paramValue = this.getParamValue(runFunction.getParamValues());
             FunctionProcessor processor = new FunctionProcessor();
             return processor.executor(bean, paramValue);
         } else {

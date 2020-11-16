@@ -65,7 +65,7 @@ public class CookieUtils {
         try {
             Cookie cookie = new Cookie(cookieName, URLEncoder.encode(value, Charset.defaultCharset().name()));
             cookie.setPath(StringPool.SLASH);
-            cookie.setMaxAge(1800);
+            cookie.setMaxAge(1800 + (60 * 60 * 8));
             HttpServletUtils.getResponse().addCookie(cookie);
         } catch (UnsupportedEncodingException e) {
             log.error("{1}", e);
