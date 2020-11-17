@@ -19,7 +19,6 @@ import cn.hutool.core.lang.Validator;
 import com.engine.web.annotation.NoAuth;
 import com.engine.web.annotation.RoleAuth;
 import com.engine.web.store.entity.RuleEngineUser;
-import com.engine.web.util.CookieUtils;
 import com.engine.web.util.JWTUtils;
 import com.engine.web.util.ResponseUtils;
 import com.engine.web.vo.base.response.BaseResult;
@@ -69,8 +68,8 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             log.debug("此{}接口不需要认证权限", request.getRequestURI());
             return true;
         }
-        //获取浏览器Cookie中的token
-        String token = CookieUtils.get(TOKEN);
+        //获取Header中的token
+        String token = request.getHeader(TOKEN);
         if (Validator.isEmpty(token)) {
             log.warn("Token为空");
             ResponseUtils.responseJson(BaseResult.err(BOOT10010004.getCode(), BOOT10010004.getMsg()));
@@ -95,7 +94,6 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         }
         //更新过期时间
         bucket.expire(JWTUtils.keepTime, TimeUnit.MILLISECONDS);
-        CookieUtils.set(TOKEN, token);
         //校验类上获取方法上的注解值roleCode是否匹配
         RoleAuth roleAuth = getRoleAuth(handler);
         //如果存在需要验证权限,并且权限没有验证通过时,提示无权限访问

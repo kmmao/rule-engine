@@ -3,6 +3,9 @@ package com.engine.web.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈通用错误码〉
@@ -11,7 +14,6 @@ import lombok.Getter;
  * @create 2019/8/13
  * @since 1.0.0
  */
-@AllArgsConstructor
 public enum ErrorCodeEnum {
 
     /**
@@ -103,4 +105,27 @@ public enum ErrorCodeEnum {
     private int code;
     @Getter
     private String msg;
+
+    ErrorCodeEnum(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    static Map<Integer, ErrorCodeEnum> map = new HashMap<>();
+
+    static {
+        ErrorCodeEnum[] values = values();
+        for (ErrorCodeEnum value : values) {
+            map.put(value.getCode(), value);
+        }
+    }
+
+    public static String getMagByCode(Integer code) {
+        return map.get(code).getMsg();
+    }
+
+    public static ErrorCodeEnum get(Integer code) {
+        return map.get(code);
+    }
+
 }

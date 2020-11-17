@@ -82,6 +82,7 @@ public class UserController {
      *
      * @return true
      */
+    @Deprecated
     @PostMapping("logout")
     @ApiOperation("退出登录")
     public PlainResult<?> logout() {

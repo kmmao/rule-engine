@@ -15,6 +15,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,9 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("登录密码错误!");
         }
         String token = JWTUtils.genderToken(String.valueOf(ruleEngineUser.getId()), "boot", ruleEngineUser.getUsername());
-        CookieUtils.set(AbstractTokenInterceptor.TOKEN, token);
+        HttpServletResponse response = HttpServletUtils.getResponse();
+        response.setHeader(HttpServletUtils.ACCESS_CONTROL_EXPOSE_HEADERS, AbstractTokenInterceptor.TOKEN);
+        response.setHeader(AbstractTokenInterceptor.TOKEN, token);
         RBucket<Object> bucket = redissonClient.getBucket(token);
         //保存到redis,用户访问时获取
         bucket.set(ruleEngineUser, JWTUtils.keepTime, TimeUnit.MILLISECONDS);
@@ -188,9 +191,9 @@ public class UserServiceImpl implements UserService {
      *
      * @return true
      */
+    @Deprecated
     @Override
     public Boolean logout() {
-        CookieUtils.delete(AbstractTokenInterceptor.TOKEN);
         return true;
     }
 

@@ -33,6 +33,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HttpServletUtils {
+
+    public static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+
     /**
      * 获取当前请求的request
      *
