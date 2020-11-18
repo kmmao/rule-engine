@@ -182,23 +182,26 @@ public class FunctionProcessor {
             } else if (List.class.isAssignableFrom(parameterType) || Set.class.isAssignableFrom(parameterType)) {
                 Type parameterParameterizedType = parameter.getParameterizedType();
                 Collection<?> value = (Collection<?>) paramMap.get(getParameterName(parameter));
-                // 校验集合是否为null
+                // 校验集合参数
                 this.paramValid(parameter, value);
-                Stream<?> stream = value.stream();
-                if (parameterParameterizedType instanceof ParameterizedType) {
-                    ParameterizedType parameterizedType = (ParameterizedType) parameterParameterizedType;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    // 判断方法集合类型
-                    if (typeArgument.equals(BigDecimal.class)) {
-                        stream = stream.map(m -> new BigDecimal(String.valueOf(m)));
-                    } else if (typeArgument.equals(Integer.class)) {
-                        stream = stream.map(m -> new Integer(String.valueOf(m)));
+                // bug 修复，空集合参数导致空指针问题
+                if (value != null) {
+                    Stream<?> stream = value.stream();
+                    if (parameterParameterizedType instanceof ParameterizedType) {
+                        ParameterizedType parameterizedType = (ParameterizedType) parameterParameterizedType;
+                        Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                        // 判断方法集合类型
+                        if (typeArgument.equals(BigDecimal.class)) {
+                            stream = stream.map(m -> new BigDecimal(String.valueOf(m)));
+                        } else if (typeArgument.equals(Integer.class)) {
+                            stream = stream.map(m -> new Integer(String.valueOf(m)));
+                        }
                     }
-                }
-                if (Set.class.isAssignableFrom(parameterType)) {
-                    args[i] = stream.collect(Collectors.toSet());
-                } else {
-                    args[i] = stream.collect(Collectors.toList());
+                    if (Set.class.isAssignableFrom(parameterType)) {
+                        args[i] = stream.collect(Collectors.toSet());
+                    } else {
+                        args[i] = stream.collect(Collectors.toList());
+                    }
                 }
             } else {
                 Constructor<?> constructor = parameterType.getConstructor();

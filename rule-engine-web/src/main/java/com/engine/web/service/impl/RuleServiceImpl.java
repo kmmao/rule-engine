@@ -519,6 +519,7 @@ public class RuleServiceImpl implements RuleService {
         ruleResponse.setDefaultAction(defaultAction);
         ruleResponse.setAbnormalAlarm(rule.getAbnormalAlarm());
         // 规则调用接口，以及规则入参
+        // TODO: 2020/11/19  废除getRuleExeInterfaceUrl 增加字符串字母转大写 小写 转拼音,集合排序 正序倒序 函数
         ruleResponse.setRuleInterfaceDescription(this.getRuleInterfaceDescriptionResponse(rule));
         return ruleResponse;
     }
