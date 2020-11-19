@@ -586,13 +586,14 @@ public class RuleServiceImpl implements RuleService {
      * @return Action
      */
     public ConfigBean.Value getAction(String value, Integer type, String valueType) {
-        if (Validator.isEmpty(type)) {
-            return null;
-        }
-        if (Validator.isEmpty(value)) {
-            return null;
-        }
         ConfigBean.Value action = new ConfigBean.Value();
+        if (Validator.isEmpty(type)) {
+            return action;
+        }
+        action.setType(type);
+        if (Validator.isEmpty(value)) {
+            return action;
+        }
         if (type.equals(VariableType.ELEMENT.getType())) {
             action.setValueName(this.ruleEngineElementManager.getById(value).getName());
         } else if (type.equals(VariableType.VARIABLE.getType())) {
@@ -603,7 +604,6 @@ public class RuleServiceImpl implements RuleService {
             }
         }
         action.setValue(value);
-        action.setType(type);
         action.setValueType(valueType);
         return action;
     }
