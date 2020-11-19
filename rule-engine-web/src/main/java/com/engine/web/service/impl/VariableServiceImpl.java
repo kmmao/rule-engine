@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -75,7 +76,7 @@ public class VariableServiceImpl implements VariableService {
             // 保存函数参数值
             List<ParamValue> paramValues = addConditionRequest.getParamValues();
             RuleEngineFunction ruleEngineFunction = this.getCurrentFunction(engineVariable.getValue());
-            this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable.getId(), paramValues);
+            this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable, paramValues);
         }
         // 通知加载变量
         VariableMessageVo variableMessageVo = new VariableMessageVo();
@@ -100,17 +101,21 @@ public class VariableServiceImpl implements VariableService {
     /**
      * 保存函数参数值
      *
-     * @param functionId  函数id
-     * @param variableId  变量id
-     * @param paramValues 函数参数值
+     * @param functionId     函数id
+     * @param engineVariable 变量
+     * @param paramValues    函数参数值
      */
-    public void saveFunctionParamValues(Integer functionId, Integer variableId, List<ParamValue> paramValues) {
+    public void saveFunctionParamValues(Integer functionId, RuleEngineVariable engineVariable, List<ParamValue> paramValues) {
         List<RuleEngineFunctionValue> engineFunctionValues = paramValues.stream().map(m -> {
+            // 变量自己不能引用自己
+            if (Objects.equals(engineVariable.getName(), m.getName())) {
+                throw new ValidException("变量不可以引用自身");
+            }
             RuleEngineFunctionValue engineFunctionValue = new RuleEngineFunctionValue();
             engineFunctionValue.setFunctionId(functionId);
             engineFunctionValue.setParamCode(m.getCode());
             engineFunctionValue.setParamName(m.getName());
-            engineFunctionValue.setVariableId(variableId);
+            engineFunctionValue.setVariableId(engineVariable.getId());
             engineFunctionValue.setType(m.getType());
             engineFunctionValue.setValueType(m.getValueType());
             engineFunctionValue.setValue(m.getValue());
@@ -228,7 +233,7 @@ public class VariableServiceImpl implements VariableService {
             RuleEngineFunction ruleEngineFunction = this.getCurrentFunction(engineVariable.getValue());
             // 保存函数参数值
             List<ParamValue> paramValues = updateVariableRequest.getParamValues();
-            this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable.getId(), paramValues);
+            this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable, paramValues);
         }
         // 通知加载变量
         VariableMessageVo variableMessageVo = new VariableMessageVo();

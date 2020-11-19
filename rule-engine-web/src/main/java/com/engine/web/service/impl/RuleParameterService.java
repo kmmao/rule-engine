@@ -5,6 +5,7 @@ import com.engine.core.Engine;
 import com.engine.core.condition.Condition;
 import com.engine.core.condition.ConditionGroup;
 import com.engine.core.condition.ConditionSet;
+import com.engine.core.exception.ValidException;
 import com.engine.core.rule.Rule;
 import com.engine.core.value.*;
 import com.engine.web.vo.rule.RuleCountInfo;
@@ -88,7 +89,12 @@ public class RuleParameterService {
                         parameter.setValueType(v.getValueType());
                         parameters.add(parameter);
                     } else if (v instanceof Variable) {
-                        this.getFromVariableElement(parameters, v);
+                        try {
+                            this.getFromVariableElement(parameters, v);
+                        } catch (StackOverflowError e) {
+                            log.error("堆栈溢出错误", e);
+                            throw new ValidException("请检查规则变量是否存在循环引用");
+                        }
                     }
                 }
             }

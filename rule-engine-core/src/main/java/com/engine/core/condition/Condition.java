@@ -17,7 +17,6 @@ package com.engine.core.condition;
 
 import com.engine.core.Configuration;
 import com.engine.core.Input;
-import com.engine.core.EngineVariable;
 import com.engine.core.exception.ConditionException;
 import com.engine.core.value.DataType;
 import com.engine.core.value.Value;
