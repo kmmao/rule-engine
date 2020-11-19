@@ -589,19 +589,20 @@ public class RuleServiceImpl implements RuleService {
         if (Validator.isEmpty(type)) {
             return null;
         }
-        String valueName = value;
+        if (Validator.isEmpty(value)) {
+            return null;
+        }
         ConfigBean.Value action = new ConfigBean.Value();
         if (type.equals(VariableType.ELEMENT.getType())) {
-            valueName = this.ruleEngineElementManager.getById(value).getName();
+            action.setValueName(this.ruleEngineElementManager.getById(value).getName());
         } else if (type.equals(VariableType.VARIABLE.getType())) {
             RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(value);
-            valueName = engineVariable.getName();
+            action.setValueName(engineVariable.getName());
             if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
                 action.setVariableValue(engineVariable.getValue());
             }
         }
         action.setValue(value);
-        action.setValueName(valueName);
         action.setType(type);
         action.setValueType(valueType);
         return action;
