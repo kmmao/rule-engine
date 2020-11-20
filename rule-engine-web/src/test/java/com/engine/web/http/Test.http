@@ -1,2 +1,14 @@
 POST http://localhost:8010/ruleEngine/function/test
 ###
+
+POST localhost:8010/ruleEngine/execute
+Content-Type: application/json
+
+{
+      "ruleCode": "phoneRuletest",
+      "param": {
+        "phone": "123"
+      }
+}
+
+###

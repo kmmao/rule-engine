@@ -86,6 +86,11 @@ public class Rule implements RuleParse {
          */
         private String[] email;
 
+        /**
+         * 规则执行超时阈值，默认3秒
+         */
+        private long timeOutThreshold = 3000;
+
     }
 
     @Data
@@ -116,8 +121,11 @@ public class Rule implements RuleParse {
             //条件全部命中时候执行
             return this.getActionValue();
         } finally {
-            log.info("引擎计算耗时:{}ms", System.currentTimeMillis() - startTime);
-            // TODO: 2020/9/9 配置 耗时达到指定阀值时报警
+            long cost = System.currentTimeMillis() - startTime;
+            log.info("引擎计算耗时:{}ms", cost);
+            if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
+                log.warn("警告：规则执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
+            }
         }
     }
 

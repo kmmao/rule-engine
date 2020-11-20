@@ -7,7 +7,7 @@ import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.engine.core.FunctionProcessor;
+import com.engine.core.FunctionExecutor;
 import com.engine.core.exception.ValidException;
 import com.engine.core.value.Constant;
 import com.engine.core.value.DataType;
@@ -131,7 +131,7 @@ public class FunctionServiceImpl implements FunctionService {
             Object bean = applicationContext.getBean(executor);
             // 执行函数入参
             Map<String, Object> paramValue = this.getParamValue(runFunction.getParamValues());
-            FunctionProcessor processor = new FunctionProcessor();
+            FunctionExecutor processor = new FunctionExecutor();
             return processor.executor(bean, paramValue);
         } else {
             throw new ValidException("容器中找不到{}函数", executor);

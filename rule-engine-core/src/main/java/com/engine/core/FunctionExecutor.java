@@ -20,7 +20,6 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.engine.core.annotation.Executor;
 import com.engine.core.exception.FunctionException;
-import com.engine.core.annotation.FailureStrategy;
 import com.engine.core.annotation.Param;
 import com.engine.core.exception.ValidException;
 import com.engine.core.exception.ValueException;
@@ -43,7 +42,7 @@ import java.util.stream.Stream;
  * @since 1.0.0
  */
 @Slf4j
-public class FunctionProcessor {
+public class FunctionExecutor {
 
     /**
      * 参数绑定用，基本数据类型绑定解析
@@ -57,6 +56,8 @@ public class FunctionProcessor {
         }
     };
 
+    private FunctionProcess functionProcess = new FunctionProcess();
+
     /**
      * 函数执行器
      *
@@ -65,31 +66,8 @@ public class FunctionProcessor {
      * @return 函数执行结果
      */
     public Object executor(Object abstractFunction, Map<String, Object> paramMap) {
-        Method executor = null;
-        Method failureStrategy = null;
-        Method[] methods = abstractFunction.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(Executor.class)) {
-                //如果已经存在，则抛出异常
-                if (executor != null) {
-                    throw new FunctionException("函数中存在多个@Executor");
-                }
-                executor = method;
-            } else if (method.isAnnotationPresent(FailureStrategy.class)) {
-                //如果已经存在，则抛出异常
-                if (failureStrategy != null) {
-                    throw new FunctionException("函数中存在多个@FailureStrategy");
-                }
-                failureStrategy = method;
-            }
-        }
-        String functionName = abstractFunction.getClass().getSimpleName();
-        if (executor == null) {
-            throw new FunctionException("{}中没有找到可执行函数方法", functionName);
-        }
-        if (failureStrategy != null && !executor.getReturnType().equals(failureStrategy.getReturnType())) {
-            throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executor.getReturnType(), failureStrategy.getReturnType());
-        }
+        log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramMap);
+        Method executor = this.functionProcess.getExecutorMethod(abstractFunction);
         Executor annotation = executor.getAnnotation(Executor.class);
         Object[] args = getBindArgs(executor.getParameters(), paramMap);
         try {
@@ -113,12 +91,17 @@ public class FunctionProcessor {
                 }
                 i++;
             } while (i <= maxAttempts);
+            String functionName = abstractFunction.getClass().getSimpleName();
             throw new FunctionException("{} Function execution failed", functionName);
         } catch (InvocationTargetException e) {
             Throwable targetException = e.getTargetException();
             log.warn("函数主方法执行失败", targetException);
             //如果存在失败策略方法
+            Method failureStrategy = this.functionProcess.getFailureStrategyMethod(abstractFunction);
             if (failureStrategy != null) {
+                if (!executor.getReturnType().equals(failureStrategy.getReturnType())) {
+                    throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executor.getReturnType(), failureStrategy.getReturnType());
+                }
                 Class<? extends Throwable>[] noFailureFor = annotation.noFailureFor();
                 //如果遇到这种类型的异常，都是直接抛出的
                 for (Class<? extends Throwable> aClass : noFailureFor) {

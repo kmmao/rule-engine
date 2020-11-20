@@ -21,7 +21,7 @@ import com.engine.core.cache.FunctionCache;
 import com.engine.core.cache.KeyGenerator;
 import com.engine.core.exception.FunctionException;
 import com.engine.core.Input;
-import com.engine.core.FunctionProcessor;
+import com.engine.core.FunctionExecutor;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,7 @@ public class Function implements Value {
     /**
      * 函数执行器
      */
-    private FunctionProcessor processor = new FunctionProcessor();
+    private FunctionExecutor processor = new FunctionExecutor();
 
     @Setter
     private Map<String, Value> param;

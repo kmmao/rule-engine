@@ -17,7 +17,6 @@ package com.engine.core.value;
 
 import com.engine.core.Configuration;
 import com.engine.core.Input;
-import com.engine.core.EngineVariable;
 import lombok.Data;
 
 /**
@@ -36,7 +35,7 @@ public class Variable implements Value {
     /**
      * 变量名称
      */
-    private String name;
+    private String variableName;
 
     /**
      * 变量值类型
@@ -44,9 +43,9 @@ public class Variable implements Value {
     private DataType dataType;
 
 
-    public Variable(Integer variableId, String name, DataType dataType) {
+    public Variable(Integer variableId, String variableName, DataType dataType) {
         this.variableId = variableId;
-        this.name = name;
+        this.variableName = variableName;
         this.dataType = dataType;
     }
 

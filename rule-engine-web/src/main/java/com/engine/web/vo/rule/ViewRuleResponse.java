@@ -1,7 +1,10 @@
 package com.engine.web.vo.rule;
 
+import com.engine.core.rule.Rule;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Set;
 
 
 /**
@@ -16,6 +19,9 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ViewRuleResponse extends GetRuleResponse {
 
-    private RuleInterfaceDescriptionResponse ruleInterfaceDescription;
+    /**
+     * 规则入参
+     */
+    private Set<Rule.Parameter> parameters;
 
 }

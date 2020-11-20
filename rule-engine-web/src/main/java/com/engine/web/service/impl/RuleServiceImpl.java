@@ -492,8 +492,7 @@ public class RuleServiceImpl implements RuleService {
             for (Condition condition : conditions) {
                 ConditionGroupCondition conditionSet = new ConditionGroupCondition();
                 ConditionResponse conditionResponse = new ConditionResponse();
-                conditionResponse.setName(conditionResponse.getName());
-                conditionResponse.setDescription(conditionResponse.getDescription());
+                conditionResponse.setName(condition.getName());
                 ConfigBean configBean = new ConfigBean();
                 configBean.setLeftValue(this.getConfigValue(condition.getLeftValue()));
                 configBean.setSymbol(condition.getOperator().getExplanation());
@@ -519,30 +518,10 @@ public class RuleServiceImpl implements RuleService {
         ruleResponse.setDefaultAction(defaultAction);
         ruleResponse.setAbnormalAlarm(rule.getAbnormalAlarm());
         // 规则调用接口，以及规则入参
-        // TODO: 2020/11/19  废除getRuleExeInterfaceUrl 增加字符串字母转大写 小写 转拼音,集合排序 正序倒序 函数
-        ruleResponse.setRuleInterfaceDescription(this.getRuleInterfaceDescriptionResponse(rule));
+        ruleResponse.setParameters(this.ruleCountInfoService.getParameters(rule));
         return ruleResponse;
     }
 
-    /**
-     * 规则调用接口，以及规则入参
-     *
-     * @param rule rule
-     * @return RuleInterfaceDescriptionResponse
-     */
-    private RuleInterfaceDescriptionResponse getRuleInterfaceDescriptionResponse(Rule rule) {
-        RuleInterfaceDescriptionResponse interfaceDescriptionResponse = new RuleInterfaceDescriptionResponse();
-        String ruleExeInterfaceUrlRuleCode = "getRuleExeInterfaceUrl";
-        if (engine.isExistsRule(ruleExeInterfaceUrlRuleCode)) {
-            // 获取规则调用地址
-            OutPut outPut = engine.execute(new DefaultInput(), ruleExeInterfaceUrlRuleCode);
-            interfaceDescriptionResponse.setRequestUrl(String.valueOf(outPut.getValue()));
-        } else {
-            interfaceDescriptionResponse.setRequestUrl("请配置规则:" + ruleExeInterfaceUrlRuleCode);
-        }
-        interfaceDescriptionResponse.setParameters(this.ruleCountInfoService.getParameters(rule));
-        return interfaceDescriptionResponse;
-    }
 
     /**
      * 解析值/变量/元素/固定值
@@ -567,8 +546,8 @@ public class RuleServiceImpl implements RuleService {
             value.setType(VariableType.VARIABLE.getType());
             Variable variable = (Variable) cValue;
             value.setValue(String.valueOf(variable.getVariableId()));
-            value.setValueName(variable.getName());
-            com.engine.core.value.Value cVariable = engine.getEngineVariable().getVariable(variable.getVariableId());
+            value.setValueName(variable.getVariableName());
+            Value cVariable = this.engine.getEngineVariable().getVariable(variable.getVariableId());
             if (cVariable instanceof Constant) {
                 Constant constant = (Constant) cVariable;
                 value.setVariableValue(String.valueOf(constant.getValue()));
@@ -590,6 +569,7 @@ public class RuleServiceImpl implements RuleService {
         if (Validator.isEmpty(type)) {
             return action;
         }
+        action.setValueType(valueType);
         action.setType(type);
         if (Validator.isEmpty(value)) {
             return action;
@@ -604,7 +584,6 @@ public class RuleServiceImpl implements RuleService {
             }
         }
         action.setValue(value);
-        action.setValueType(valueType);
         return action;
     }
 
