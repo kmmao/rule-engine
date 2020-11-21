@@ -6,9 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.engine.core.exception.ValidException;
 import com.engine.web.interceptor.AuthInterceptor;
 import com.engine.web.service.WorkspaceService;
-import com.engine.web.store.entity.RuleEngineUser;
 import com.engine.web.store.entity.RuleEngineWorkspace;
 import com.engine.web.store.manager.RuleEngineWorkspaceManager;
+import com.engine.web.store.mapper.RuleEngineWorkspaceMapper;
+import com.engine.web.vo.user.UserData;
 import com.engine.web.vo.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
@@ -37,24 +38,33 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private RuleEngineWorkspaceManager ruleEngineWorkspaceManager;
     @Resource
     private RedissonClient redissonClient;
+    @Resource
+    private RuleEngineWorkspaceMapper ruleEngineWorkspaceMapper;
 
     /**
-     * 所有用户组
+     * 用户有权限的工作空间
      *
      * @return list
      */
     @Override
     public List<Workspace> list() {
-        List<RuleEngineWorkspace> ruleEngineWorkspaces = this.ruleEngineWorkspaceManager.list();
-        if (CollUtil.isEmpty(ruleEngineWorkspaces)) {
-            return Collections.emptyList();
+        UserData userData = AuthInterceptor.USER.get();
+        Boolean isAdmin = userData.getIsAdmin();
+        if (isAdmin) {
+            List<RuleEngineWorkspace> ruleEngineWorkspaces = this.ruleEngineWorkspaceManager.list();
+            if (CollUtil.isEmpty(ruleEngineWorkspaces)) {
+                return Collections.emptyList();
+            } else {
+                return ruleEngineWorkspaces.stream().map(m -> {
+                    Workspace workspace = new Workspace();
+                    workspace.setId(m.getId());
+                    workspace.setName(m.getName());
+                    return workspace;
+                }).collect(Collectors.toList());
+            }
         }
-        return ruleEngineWorkspaces.stream().map(m -> {
-            Workspace workspace = new Workspace();
-            workspace.setId(m.getId());
-            workspace.setName(m.getName());
-            return workspace;
-        }).collect(Collectors.toList());
+        Integer userId = userData.getId();
+        return this.ruleEngineWorkspaceMapper.listWorkspaceByUserId(userId);
     }
 
     /**
@@ -64,8 +74,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public Workspace currentWorkspace() {
-        RuleEngineUser ruleEngineUser = AuthInterceptor.USER.get();
-        RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + ruleEngineUser.getId());
+        UserData userData = AuthInterceptor.USER.get();
+        RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + userData.getId());
         if (bucket.isExists()) {
             Workspace workspace = bucket.get();
             log.info("当前工作空间：" + workspace);
@@ -99,8 +109,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (engineWorkspace == null) {
             throw new ValidException("找不到此工作空间：" + id);
         }
-        RuleEngineUser ruleEngineUser = AuthInterceptor.USER.get();
-        RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + ruleEngineUser.getId());
+        UserData userData = AuthInterceptor.USER.get();
+        RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + userData.getId());
         Workspace workspace = new Workspace();
         workspace.setId(engineWorkspace.getId());
         workspace.setName(engineWorkspace.getName());

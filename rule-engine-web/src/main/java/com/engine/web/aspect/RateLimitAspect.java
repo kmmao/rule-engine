@@ -20,6 +20,7 @@ import com.engine.web.annotation.RateLimit;
 import com.engine.web.interceptor.AbstractTokenInterceptor;
 import com.engine.web.store.entity.RuleEngineUser;
 import com.engine.web.util.HttpServletUtils;
+import com.engine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -76,11 +77,11 @@ public class RateLimitAspect {
                 key += HttpServletUtils.getRequest().getRequestURI();
                 break;
             case USER:
-                RuleEngineUser ruleEngineUser = AbstractTokenInterceptor.USER.get();
-                if (ruleEngineUser == null) {
+                UserData userData = AbstractTokenInterceptor.USER.get();
+                if (userData == null) {
                     throw new RuntimeException("选择根据用户限流,但是并没有获取到用户登录信息!");
                 }
-                key += ruleEngineUser.getId().toString();
+                key += userData.getId().toString();
             case URL_IP:
                 HttpServletRequest request = HttpServletUtils.getRequest();
                 key += request.getRequestURI() + request.getRemoteAddr();

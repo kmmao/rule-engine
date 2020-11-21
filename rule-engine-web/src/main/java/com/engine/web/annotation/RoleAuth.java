@@ -39,14 +39,14 @@ public @interface RoleAuth {
     /**
      * 默认可以访问的角色code
      */
-    String DEFAULT_CODE = "admin";
+    String ADMIN = "admin";
 
     /**
      * 哪些角色可以访问此类/方法
      *
      * @return String
      */
-    String[] code() default DEFAULT_CODE;
+    String[] code() default ADMIN;
 
 
     /**

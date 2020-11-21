@@ -17,7 +17,7 @@ public interface WorkspaceService {
     String CURRENT_WORKSPACE = "rule_engine_current_workspace:";
 
     /**
-     * 所有用户组
+     * 用户有权限的工作空间
      *
      * @return list
      */

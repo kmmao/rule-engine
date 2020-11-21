@@ -43,7 +43,7 @@ public class RedisHeartbeatTimer {
     /**
      * 解决长时间未使用redis导致连接中断
      */
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "*/20 * * * * ?")
     public void executor() {
         log.debug("connection redis heartbeat");
         RBucket<Boolean> bucket = redissonClient.getBucket(HEARTBEAT);

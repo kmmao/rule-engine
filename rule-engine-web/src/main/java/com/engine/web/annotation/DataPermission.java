@@ -15,6 +15,8 @@
  */
 package com.engine.web.annotation;
 
+import com.engine.web.enums.DataPermissionType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,5 +33,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DataPermission {
+
+    /**
+     * 根据SpEL表达式获取到操作的数据id
+     *
+     * @return spel表达式
+     */
+    String id();
+
+    /**
+     * 0 元素 1 变量 2 条件 3规则
+     *
+     * @return DataPermissionType
+     */
+    DataPermissionType dataType();
 
 }

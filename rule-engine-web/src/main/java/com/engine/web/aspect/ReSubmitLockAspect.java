@@ -20,6 +20,7 @@ import com.engine.web.annotation.ReSubmitLock;
 import com.engine.web.enums.ErrorCodeEnum;
 import com.engine.web.interceptor.AuthInterceptor;
 import com.engine.web.store.entity.RuleEngineUser;
+import com.engine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -61,12 +62,12 @@ public class ReSubmitLockAspect {
         long time = lock.timeOut();
         //锁前缀加当前登录用户加被执行的类名加方法名
         String className = joinPoint.getTarget().getClass().getName();
-        RuleEngineUser user = AuthInterceptor.USER.get();
+        UserData userData = AuthInterceptor.USER.get();
         //生成lock key
         StringBuilder builder = new StringBuilder();
         builder.append(RESUBMIT_LOCK_KEY_PRE)
                 .append(StringPool.UNDERSCORE)
-                .append(user.getId())
+                .append(userData.getId())
                 .append(StringPool.UNDERSCORE)
                 .append(className)
                 .append(StringPool.UNDERSCORE)

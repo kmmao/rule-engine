@@ -2,6 +2,10 @@ package com.engine.web.store.mapper;
 
 import com.engine.web.store.entity.RuleEngineWorkspace;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.engine.web.vo.workspace.Workspace;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +16,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-11-21
  */
 public interface RuleEngineWorkspaceMapper extends BaseMapper<RuleEngineWorkspace> {
+
+    /**
+     * 根据用户id获取用户有权限的工作空间
+     *
+     * @param userId 用户id
+     * @return list
+     */
+    List<Workspace> listWorkspaceByUserId(@Param("userId") Integer userId);
 
 }

@@ -33,7 +33,7 @@ public class WorkspaceController {
     private WorkspaceService workspaceService;
 
     @PostMapping("list")
-    @ApiOperation("工作空间列表")
+    @ApiOperation("用户有权限的工作空间列表")
     public BaseResult list() {
         PlainResult<List<Workspace>> plainResult = new PlainResult<>();
         plainResult.setData(workspaceService.list());

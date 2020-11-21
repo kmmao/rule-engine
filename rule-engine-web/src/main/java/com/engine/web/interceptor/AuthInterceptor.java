@@ -17,17 +17,13 @@ package com.engine.web.interceptor;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.engine.web.annotation.RoleAuth;
 import com.engine.web.service.RoleService;
-import com.engine.web.store.entity.RuleEngineRole;
-import com.engine.web.store.entity.RuleEngineUser;
+import com.engine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -69,19 +65,23 @@ public class AuthInterceptor extends AbstractTokenInterceptor {
      *
      * @param code     权限code
      * @param transfer transfer
-     * @param userId   用户id
+     * @param userData 用户数据
      * @return true
      */
     @Override
-    public boolean auth(String[] code, boolean transfer, Integer userId) {
-        List<RuleEngineRole> bootRoles = roleService.listRoleByUserId(userId);
+    public boolean auth(String[] code, boolean transfer, UserData userData) {
+        Boolean isAdmin = userData.getIsAdmin();
+        if (isAdmin) {
+            return true;
+        }
+        List<UserData.Role> bootRoles = userData.getRoles();
         //如果当前用户没有任何角色,返回false,无权限
         if (CollUtil.isEmpty(bootRoles)) {
             return false;
         }
         //如果当前角色与方法@RoleAuth设置的匹配,返回true
         Set<String> roleCodeSet = new HashSet<>(Arrays.asList(code));
-        for (RuleEngineRole role : bootRoles) {
+        for (UserData.Role role : bootRoles) {
             if (roleCodeSet.contains(role.getCode())) {
                 return true;
             }
@@ -96,7 +96,7 @@ public class AuthInterceptor extends AbstractTokenInterceptor {
             }
             for (String roleId : roleIdSet) {
                 Set<String> rolePathSplit = new HashSet<>(Arrays.asList(roleId.split(StringPool.AT)));
-                for (RuleEngineRole role : bootRoles) {
+                for (UserData.Role role : bootRoles) {
                     if (rolePathSplit.contains(String.valueOf(role.getId()))) {
                         return true;
                     }

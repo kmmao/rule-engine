@@ -44,6 +44,7 @@ import com.engine.web.util.PageUtils;
 import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageBase;
 import com.engine.web.vo.base.response.PageResult;
+import com.engine.web.vo.user.UserData;
 import com.engine.web.vo.workspace.Workspace;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -273,9 +274,9 @@ public class RuleServiceImpl implements RuleService {
             if (this.ruleCodeIsExists(ruleDefinition.getCode())) {
                 throw new ValidException("规则Code：{}已经存在", ruleDefinition.getCode());
             }
-            RuleEngineUser ruleEngineUser = AuthInterceptor.USER.get();
-            ruleEngineRule.setCreateUserId(ruleEngineUser.getId());
-            ruleEngineRule.setCreateUserName(ruleEngineUser.getUsername());
+            UserData userData = AuthInterceptor.USER.get();
+            ruleEngineRule.setCreateUserId(userData.getId());
+            ruleEngineRule.setCreateUserName(userData.getUsername());
             Workspace workspace = this.workspaceService.currentWorkspace();
             ruleEngineRule.setWorkspaceId(workspace.getId());
         }

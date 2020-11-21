@@ -6,13 +6,16 @@ import com.engine.web.enums.HtmlTemplatesEnum;
 import com.engine.web.enums.VerifyCodeType;
 import com.engine.web.interceptor.AbstractTokenInterceptor;
 import com.engine.web.interceptor.AuthInterceptor;
+import com.engine.web.service.RoleService;
 import com.engine.web.service.UserService;
+import com.engine.web.store.entity.RuleEngineRole;
 import com.engine.web.store.entity.RuleEngineUser;
 import com.engine.web.store.manager.RuleEngineUserManager;
 import com.engine.web.util.*;
 import com.engine.web.vo.user.*;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,8 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -44,6 +49,8 @@ public class UserServiceImpl implements UserService {
     private AliOSSClient aliOSSClient;
     @Resource
     private AliOSSClient.Properties properties;
+    @Resource
+    private RoleService roleService;
 
     /**
      * 注册时验证码存入redis的前缀
@@ -69,10 +76,31 @@ public class UserServiceImpl implements UserService {
         HttpServletResponse response = HttpServletUtils.getResponse();
         response.setHeader(HttpServletUtils.ACCESS_CONTROL_EXPOSE_HEADERS, AbstractTokenInterceptor.TOKEN);
         response.setHeader(AbstractTokenInterceptor.TOKEN, token);
-        RBucket<Object> bucket = redissonClient.getBucket(token);
-        //保存到redis,用户访问时获取
-        bucket.set(ruleEngineUser, JWTUtils.keepTime, TimeUnit.MILLISECONDS);
+        this.refreshUserData(token, ruleEngineUser);
         return true;
+    }
+
+    /**
+     * 刷新存在redis中的用户数据
+     *
+     * @param token          token
+     * @param ruleEngineUser 用户信息
+     */
+    private void refreshUserData(String token, RuleEngineUser ruleEngineUser) {
+        UserData userData = new UserData();
+        BeanUtils.copyProperties(ruleEngineUser, userData);
+        // 重新拉取用户角色信息
+        List<RuleEngineRole> bootRoles = this.roleService.listRoleByUserId(ruleEngineUser.getId());
+        userData.setRoles(bootRoles.stream().map(m -> {
+            UserData.Role role = new UserData.Role();
+            role.setId(m.getId());
+            role.setName(m.getName());
+            role.setCode(m.getCode());
+            return role;
+        }).collect(Collectors.toList()));
+        RBucket<UserData> bucket = this.redissonClient.getBucket(token);
+        //保存到redis,用户访问时获取
+        bucket.set(userData, JWTUtils.keepTime, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -186,9 +214,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserInfo() {
-        RuleEngineUser engineUser = AuthInterceptor.USER.get();
+        UserData userData = AuthInterceptor.USER.get();
         UserResponse userResponse = new UserResponse();
-        BeanUtil.copyProperties(engineUser, userResponse);
+        BeanUtil.copyProperties(userData, userResponse);
         return userResponse;
     }
 
@@ -238,8 +266,7 @@ public class UserServiceImpl implements UserService {
         this.ruleEngineUserManager.updateById(ruleEngineUser);
         // 更新用户信息
         String token = HttpServletUtils.getRequest().getHeader(AuthInterceptor.TOKEN);
-        RBucket<Object> bucket = redissonClient.getBucket(token);
-        bucket.set(ruleEngineUser, JWTUtils.keepTime, TimeUnit.MILLISECONDS);
+        this.refreshUserData(token, ruleEngineUser);
         return true;
     }
 

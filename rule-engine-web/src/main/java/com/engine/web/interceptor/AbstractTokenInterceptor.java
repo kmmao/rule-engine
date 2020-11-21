@@ -18,10 +18,10 @@ package com.engine.web.interceptor;
 import cn.hutool.core.lang.Validator;
 import com.engine.web.annotation.NoAuth;
 import com.engine.web.annotation.RoleAuth;
-import com.engine.web.store.entity.RuleEngineUser;
 import com.engine.web.util.JWTUtils;
 import com.engine.web.util.ResponseUtils;
 import com.engine.web.vo.base.response.BaseResult;
+import com.engine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -55,7 +55,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
 
     public static final String TOKEN = "token";
 
-    public static final ThreadLocal<RuleEngineUser> USER = new ThreadLocal<>();
+    public static final ThreadLocal<UserData> USER = new ThreadLocal<>();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -84,10 +84,10 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             return false;
         }
         // 从redis获取到用户信息保存到本地
-        RBucket<RuleEngineUser> bucket = redissonClient.getBucket(token);
+        RBucket<UserData> bucket = redissonClient.getBucket(token);
         // 获取redis中存的用户信息
-        RuleEngineUser ruleEngineUser = bucket.get();
-        if (ruleEngineUser == null) {
+        UserData userData = bucket.get();
+        if (userData == null) {
             log.warn("验证信息失效!");
             ResponseUtils.responseJson(BaseResult.err(BOOT99990402.getCode(), BOOT99990402.getMsg()));
             return false;
@@ -97,14 +97,14 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         //校验类上获取方法上的注解值roleCode是否匹配
         RoleAuth roleAuth = getRoleAuth(handler);
         //如果存在需要验证权限,并且权限没有验证通过时,提示无权限访问
-        if (roleAuth != null && !auth(roleAuth.code(), roleAuth.transfer(), ruleEngineUser.getId())) {
+        if (roleAuth != null && !auth(roleAuth.code(), roleAuth.transfer(), userData)) {
             //Token验证通过,但是用户无权限访问
-            log.warn("无权限访问,User:{}", ruleEngineUser);
+            log.warn("无权限访问,User:{}", userData);
             ResponseUtils.responseJson(BaseResult.err(BOOT99990401.getCode(), BOOT99990401.getMsg()));
             return false;
         }
-        log.debug("权限验证通过,User:{}", ruleEngineUser);
-        USER.set(ruleEngineUser);
+        log.debug("权限验证通过,User:{}", userData);
+        USER.set(userData);
         return true;
     }
 
@@ -163,10 +163,10 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
      *
      * @param code     权限code
      * @param transfer transfer
-     * @param userId   用户id
+     * @param userData 用户数据
      * @return true
      */
-    public abstract boolean auth(String[] code, boolean transfer, Integer userId);
+    public abstract boolean auth(String[] code, boolean transfer, UserData userData);
 
 }
 
