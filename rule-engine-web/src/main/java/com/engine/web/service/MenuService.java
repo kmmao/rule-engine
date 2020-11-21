@@ -20,4 +20,11 @@ public interface MenuService {
      * @return List
      */
     List<ListMenuResponse> listMenuByUserId(Integer userId);
+
+    /**
+     * 当前用户菜单树
+     *
+     * @return list
+     */
+    List<ListMenuResponse> menuTree();
 }

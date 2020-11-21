@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.engine.core.exception.ValidException;
 import com.engine.core.value.VariableType;
 import com.engine.web.enums.DeletedEnum;
-import com.engine.web.enums.RuleStatus;
 import com.engine.web.exception.ApiException;
+import com.engine.web.service.WorkspaceService;
 import com.engine.web.store.entity.*;
 import com.engine.web.store.manager.*;
 import com.engine.web.store.mapper.RuleEngineConditionMapper;
@@ -20,6 +20,7 @@ import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.service.ConditionService;
 import com.engine.web.vo.base.response.Rows;
 import com.engine.web.vo.condition.*;
+import com.engine.web.vo.workspace.Workspace;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +50,10 @@ public class ConditionServiceImpl implements ConditionService {
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
-    private RuleEngineRuleManager ruleEngineRuleManager;
-    @Resource
     private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
     @Resource
-    private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
+    private WorkspaceService workspaceService;
+
 
     /**
      * 保存条件
@@ -66,11 +66,13 @@ public class ConditionServiceImpl implements ConditionService {
         if (this.conditionNameIsExists(addConditionRequest.getName())) {
             throw new ValidException("条件名称：{}已经存在", addConditionRequest.getName());
         }
+        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineCondition condition = new RuleEngineCondition();
         condition.setName(addConditionRequest.getName());
         condition.setDescription(addConditionRequest.getDescription());
         // 条件配置信息
-        configBeanCopyToCondition(condition, addConditionRequest.getConfig());
+        this.configBeanCopyToCondition(condition, addConditionRequest.getConfig());
+        condition.setWorkspaceId(workspace.getId());
         condition.setDeleted(DeletedEnum.ENABLE.getStatus());
         return ruleEngineConditionManager.save(condition);
     }
@@ -83,7 +85,11 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean conditionNameIsExists(String name) {
-        Integer count = this.ruleEngineConditionManager.lambdaQuery().eq(RuleEngineCondition::getName, name).count();
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        Integer count = this.ruleEngineConditionManager.lambdaQuery()
+                .eq(RuleEngineCondition::getWorkspaceId, workspace.getId())
+                .eq(RuleEngineCondition::getName, name)
+                .count();
         return count != null && count >= 1;
     }
 
@@ -194,14 +200,16 @@ public class ConditionServiceImpl implements ConditionService {
     public PageResult<ListConditionResponse> list(PageRequest<ListConditionRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
+        Workspace workspace = this.workspaceService.currentWorkspace();
         QueryWrapper<RuleEngineCondition> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(RuleEngineCondition::getWorkspaceId, workspace.getId());
         // 查询的数据排序
         PageUtils.defaultOrder(orders, wrapper);
         ListConditionRequest query = pageRequest.getQuery();
         if (Validator.isNotEmpty(query.getName())) {
             wrapper.lambda().like(RuleEngineCondition::getName, query.getName());
         }
-        IPage<RuleEngineCondition> iPage = ruleEngineConditionManager.page(new Page<>(page.getPageIndex(), page.getPageSize()), wrapper);
+        IPage<RuleEngineCondition> iPage = this.ruleEngineConditionManager.page(new Page<>(page.getPageIndex(), page.getPageSize()), wrapper);
         List<RuleEngineCondition> engineConditions = iPage.getRecords();
         PageResult<ListConditionResponse> pageResult = new PageResult<>();
         if (CollUtil.isEmpty(engineConditions)) {

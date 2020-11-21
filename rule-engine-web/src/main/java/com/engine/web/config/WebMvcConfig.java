@@ -56,7 +56,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(mdcLogInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(STATIC_RESOURCE);
-        registry.addInterceptor(authInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(authInterceptor).addPathPatterns("/**")
+                .excludePathPatterns(STATIC_RESOURCE);;
     }
 
 }

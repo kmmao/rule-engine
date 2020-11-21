@@ -7,6 +7,7 @@ import com.engine.core.exception.ValidException;
 import com.engine.core.value.VariableType;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.service.ElementService;
+import com.engine.web.service.WorkspaceService;
 import com.engine.web.store.entity.*;
 import com.engine.web.store.manager.*;
 import com.engine.web.util.PageUtils;
@@ -14,6 +15,7 @@ import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageBase;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.element.*;
+import com.engine.web.vo.workspace.Workspace;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,15 +40,19 @@ public class ElementServiceImpl implements ElementService {
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private WorkspaceService workspaceService;
 
     @Override
     public Boolean add(AddElementRequest addConditionRequest) {
         if (this.elementCodeIsExists(addConditionRequest.getCode())) {
             throw new ValidException("元素Code：{}已经存在", addConditionRequest.getCode());
         }
+        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineElement engineElement = new RuleEngineElement();
         engineElement.setName(addConditionRequest.getName());
         engineElement.setCode(addConditionRequest.getCode());
+        engineElement.setWorkspaceId(workspace.getId());
         engineElement.setDescription(addConditionRequest.getDescription());
         engineElement.setValueType(addConditionRequest.getValueType());
         engineElement.setDeleted(DeletedEnum.ENABLE.getStatus());
@@ -61,7 +67,11 @@ public class ElementServiceImpl implements ElementService {
      */
     @Override
     public Boolean elementCodeIsExists(String code) {
-        Integer count = this.ruleEngineElementManager.lambdaQuery().eq(RuleEngineElement::getCode, code).count();
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        Integer count = this.ruleEngineElementManager.lambdaQuery()
+                .eq(RuleEngineElement::getWorkspaceId, workspace.getId())
+                .eq(RuleEngineElement::getCode, code)
+                .count();
         return count != null && count >= 1;
     }
 
@@ -69,9 +79,10 @@ public class ElementServiceImpl implements ElementService {
     public PageResult<ListElementResponse> list(PageRequest<ListElementRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
+        Workspace workspace = this.workspaceService.currentWorkspace();
         return PageUtils.page(ruleEngineElementManager, page, () -> {
             QueryWrapper<RuleEngineElement> wrapper = new QueryWrapper<>();
-
+            wrapper.lambda().eq(RuleEngineElement::getWorkspaceId, workspace.getId());
             PageUtils.defaultOrder(orders, wrapper);
 
             ListElementRequest query = pageRequest.getQuery();

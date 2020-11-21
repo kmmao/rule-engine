@@ -1,0 +1,109 @@
+package com.engine.web.util;
+
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.lang.Validator;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.ObjectMetadata;
+import com.engine.web.enums.ErrorCodeEnum;
+import com.engine.web.enums.ErrorLevelEnum;
+import com.engine.web.message.ExceptionMessage;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.validation.ValidationException;
+import java.io.InputStream;
+import java.util.Date;
+
+/**
+ * 〈一句话功能简述〉<br>
+ * 〈〉
+ *
+ * @author 丁乾文
+ * @create 2019/8/14
+ * @since 1.0.0
+ */
+@Slf4j
+@Component
+public class AliOSSClient {
+
+    @Resource
+    private Properties properties;
+    @Resource
+    private ExceptionMessage exceptionMessage;
+    @Resource
+    private OSSClient ossClient;
+
+    @Data
+    @Component
+    @ConfigurationProperties("aliyun.oss")
+    public static class Properties {
+        private String endPoint;
+        private String accessKeyId;
+        private String accessKeySecret;
+        private String bucketName;
+        private String defaultFolder;
+    }
+
+    /**
+     * 初始化OSSClient,由spring创建单例的bean进行维护
+     *
+     * @return OSSClient
+     */
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnBean(Properties.class)
+    private OSSClient ossClient() {
+        log.info("init ossClient");
+        return new OSSClient(properties.getEndPoint(), properties.getAccessKeyId(), properties.getAccessKeySecret());
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param is       文件数据
+     * @param fileName 文件名称
+     * @param folder   文件夹
+     * @return url连接
+     */
+    public String upload(InputStream is, String fileName, String folder) {
+        //创建OSS客户端
+        try {
+            String dir = Validator.isEmpty(folder) ? fileName : folder + "/" + fileName;
+            //文件大小
+            long fileSize = is.available();
+            //创建上传文件的Metadata
+            ObjectMetadata metadata = new ObjectMetadata();
+            //上传文件的长度
+            metadata.setContentLength(fileSize);
+            //指定该object被下载时的网页的缓存行为
+            metadata.setCacheControl("no-cache");
+            //指定该object下设置Header
+            metadata.setHeader("Pragma", "no-cache");
+            //指定该object被下载时的内容编码方式
+            metadata.setContentEncoding("utf-8");
+            //文件的MIME，定义文件的类型及网页编码，决定浏览器将以什么形式、什么编码读取文件。如果用户没有指定则根据Key或文件名的扩展名生成，
+            //如果没有扩展名则填默认值application/octet-stream
+            metadata.setContentType(FileTypeUtils.getContentType(fileName));
+            //指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
+            metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte.");
+            //此处上传文件
+            this.ossClient.putObject(properties.getBucketName(), dir, is, metadata);
+            //1000年
+            Date expiration = new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 365 * 1000);
+            //生成URL
+            String url = this.ossClient.generatePresignedUrl(properties.getBucketName(), dir, expiration).toString();
+            log.info("上传{}文件成功,URL:{}", fileName, url);
+            return url;
+        } catch (Exception e) {
+            log.error("{1}", e);
+            this.exceptionMessage.send(ErrorCodeEnum.BOOT10011036.getMsg(), e, ErrorLevelEnum.OTHER);
+            throw new ValidationException(ErrorCodeEnum.BOOT10011036.getMsg());
+        } finally {
+            IoUtil.close(is);
+        }
+    }
+}

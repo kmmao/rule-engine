@@ -45,4 +45,17 @@ public class MenuController {
         plainResult.setData(menuService.listMenuByUserId(idRequest.getId()));
         return plainResult;
     }
+
+    /**
+     * 当前用户菜单树
+     *
+     * @return BaseResult
+     */
+    @PostMapping("menuTree")
+    @ApiOperation("当前用户菜单树!")
+    public BaseResult menuTree() {
+        PlainResult<List<ListMenuResponse>> plainResult = new PlainResult<>();
+        plainResult.setData(menuService.menuTree());
+        return plainResult;
+    }
 }

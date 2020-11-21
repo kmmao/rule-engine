@@ -1,6 +1,7 @@
 package com.engine.web.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.engine.core.exception.ValidException;
 import com.engine.web.enums.HtmlTemplatesEnum;
 import com.engine.web.enums.VerifyCodeType;
 import com.engine.web.interceptor.AbstractTokenInterceptor;
@@ -13,10 +14,12 @@ import com.engine.web.vo.user.*;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,11 +36,14 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RuleEngineUserManager ruleEngineUserManager;
-
     @Resource
     private RedissonClient redissonClient;
     @Resource
     private EmailClient emailClient;
+    @Resource
+    private AliOSSClient aliOSSClient;
+    @Resource
+    private AliOSSClient.Properties properties;
 
     /**
      * 注册时验证码存入redis的前缀
@@ -194,6 +200,46 @@ public class UserServiceImpl implements UserService {
     @Deprecated
     @Override
     public Boolean logout() {
+        return true;
+    }
+
+    /**
+     * 上传用户头像
+     *
+     * @param file 图片文件
+     * @return 图片url
+     */
+    @Override
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        String defaultFolder = this.properties.getDefaultFolder();
+        return aliOSSClient.upload(file.getInputStream(), file.getOriginalFilename(), defaultFolder);
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param userInfoRequest 根据id更新用户信息
+     * @return 用户信息
+     */
+    @Override
+    public Boolean updateUserInfo(UpdateUserInfoRequest userInfoRequest) {
+        if (!AuthInterceptor.USER.get().getId().equals(userInfoRequest.getId())) {
+            throw new ValidException("无权限修改!");
+        }
+        RuleEngineUser ruleEngineUser = this.ruleEngineUserManager.getById(userInfoRequest.getId());
+        if (ruleEngineUser == null) {
+            throw new ValidException("没有此用户!");
+        }
+        ruleEngineUser.setId(userInfoRequest.getId());
+        ruleEngineUser.setEmail(userInfoRequest.getEmail());
+        ruleEngineUser.setPhone(userInfoRequest.getPhone());
+        ruleEngineUser.setAvatar(userInfoRequest.getAvatar());
+        ruleEngineUser.setSex(userInfoRequest.getSex());
+        this.ruleEngineUserManager.updateById(ruleEngineUser);
+        // 更新用户信息
+        String token = HttpServletUtils.getRequest().getHeader(AuthInterceptor.TOKEN);
+        RBucket<Object> bucket = redissonClient.getBucket(token);
+        bucket.set(ruleEngineUser, JWTUtils.keepTime, TimeUnit.MILLISECONDS);
         return true;
     }
 

@@ -7,10 +7,7 @@ import com.engine.web.service.UserService;
 import com.engine.web.util.HttpServletUtils;
 import com.engine.web.vo.base.response.BaseResult;
 import com.engine.web.vo.base.response.PlainResult;
-import com.engine.web.vo.user.GetVerifyCodeByEmailRequest;
-import com.engine.web.vo.user.LoginRequest;
-import com.engine.web.vo.user.RegisterRequest;
-import com.engine.web.vo.user.UserResponse;
+import com.engine.web.vo.user.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.val;
@@ -18,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -107,4 +106,31 @@ public class UserController {
         return result;
     }
 
+    /**
+     * 上传用户头像
+     *
+     * @param file 图片文件
+     * @return 图片url
+     */
+    @PostMapping("uploadAvatar")
+    @ApiOperation("上传用户头像")
+    public BaseResult uploadAvatar(MultipartFile file) throws IOException {
+        val result = new PlainResult<>();
+        result.setData(userService.uploadAvatar(file));
+        return result;
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param updateUserInfoRequest 根据id更新用户信息
+     * @return 用户信息
+     */
+    @ApiOperation("更新用户信息")
+    @PostMapping("/updateUserInfo")
+    public BaseResult updateUserInfo(@RequestBody @Valid UpdateUserInfoRequest updateUserInfoRequest) {
+        val result = new PlainResult<>();
+        result.setData(userService.updateUserInfo(updateUserInfoRequest));
+        return result;
+    }
 }

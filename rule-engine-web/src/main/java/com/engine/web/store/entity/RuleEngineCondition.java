@@ -29,6 +29,9 @@ public class RuleEngineCondition implements Serializable {
     private String name;
 
     private String description;
+
+    private Integer workspaceId;
+
     /**
      * 0：元素，1:变量
      */

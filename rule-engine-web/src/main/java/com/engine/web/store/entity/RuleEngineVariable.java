@@ -30,6 +30,8 @@ public class RuleEngineVariable implements Serializable {
 
     private String description;
 
+    private Integer workspaceId;
+
     private Integer type;
 
     private String valueType;

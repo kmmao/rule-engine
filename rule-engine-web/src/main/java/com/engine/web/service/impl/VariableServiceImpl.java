@@ -1,6 +1,7 @@
 package com.engine.web.service.impl;
 
 
+import com.engine.web.service.WorkspaceService;
 import com.engine.web.store.entity.*;
 import com.engine.web.store.manager.*;
 
@@ -18,6 +19,7 @@ import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageBase;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.variable.*;
+import com.engine.web.vo.workspace.Workspace;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,8 @@ public class VariableServiceImpl implements VariableService {
     private RuleEngineRuleManager ruleEngineRuleManager;
     @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
+    @Resource
+    private WorkspaceService workspaceService;
 
     @Override
     public Boolean add(AddVariableRequest addConditionRequest) {
@@ -71,6 +75,8 @@ public class VariableServiceImpl implements VariableService {
         engineVariable.setValue(addConditionRequest.getValue());
         engineVariable.setType(addConditionRequest.getType());
         engineVariable.setDeleted(DeletedEnum.ENABLE.getStatus());
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        engineVariable.setWorkspaceId(workspace.getId());
         this.ruleEngineVariableManager.save(engineVariable);
         if (addConditionRequest.getType().equals(VariableType.FUNCTION.getType())) {
             // 保存函数参数值
@@ -94,7 +100,10 @@ public class VariableServiceImpl implements VariableService {
      */
     @Override
     public Boolean varNameIsExists(String name) {
-        Integer count = this.ruleEngineVariableManager.lambdaQuery().eq(RuleEngineVariable::getName, name).count();
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        Integer count = this.ruleEngineVariableManager.lambdaQuery()
+                .eq(RuleEngineVariable::getWorkspaceId, workspace.getId())
+                .eq(RuleEngineVariable::getName, name).count();
         return count != null && count >= 1;
     }
 
@@ -128,9 +137,10 @@ public class VariableServiceImpl implements VariableService {
     public PageResult<ListVariableResponse> list(PageRequest<ListVariableRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
+        Workspace workspace = this.workspaceService.currentWorkspace();
         return PageUtils.page(ruleEngineVariableManager, page, () -> {
             QueryWrapper<RuleEngineVariable> wrapper = new QueryWrapper<>();
-
+            wrapper.lambda().eq(RuleEngineVariable::getWorkspaceId, workspace.getId());
             PageUtils.defaultOrder(orders, wrapper);
 
             ListVariableRequest query = pageRequest.getQuery();

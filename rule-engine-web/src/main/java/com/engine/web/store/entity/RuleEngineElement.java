@@ -30,6 +30,8 @@ public class RuleEngineElement implements Serializable {
 
     private String code;
 
+    private Integer workspaceId;
+
     private String valueType;
 
     private String description;

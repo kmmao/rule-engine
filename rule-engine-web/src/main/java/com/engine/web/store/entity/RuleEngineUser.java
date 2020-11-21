@@ -34,6 +34,13 @@ public class RuleEngineUser implements Serializable {
 
     private String email;
 
+    private String avatar;
+
+    private String sex;
+
+    private Long phone;
+
+
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

@@ -4,6 +4,7 @@ package com.engine.web.service.impl;
 import com.engine.core.condition.ConditionGroup;
 import com.engine.core.value.*;
 import com.engine.web.interceptor.AuthInterceptor;
+import com.engine.web.service.WorkspaceService;
 import com.engine.web.store.mapper.RuleEngineRuleMapper;
 import com.engine.web.vo.condition.ConditionGroupCondition;
 import com.engine.web.vo.condition.ConfigBean;
@@ -43,6 +44,7 @@ import com.engine.web.util.PageUtils;
 import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageBase;
 import com.engine.web.vo.base.response.PageResult;
+import com.engine.web.vo.workspace.Workspace;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,6 +92,8 @@ public class RuleServiceImpl implements RuleService {
     private RuleEngineVariableManager ruleEngineVariableManager;
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
+    @Resource
+    private WorkspaceService workspaceService;
 
     /**
      * 规则列表
@@ -101,8 +105,10 @@ public class RuleServiceImpl implements RuleService {
     public PageResult<ListRuleResponse> list(PageRequest<ListRuleRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
+        Workspace workspace = this.workspaceService.currentWorkspace();
         return PageUtils.page(ruleEngineRuleManager, page, () -> {
             QueryWrapper<RuleEngineRule> wrapper = new QueryWrapper<>();
+            wrapper.lambda().eq(RuleEngineRule::getWorkspaceId, workspace.getId());
             PageUtils.defaultOrder(orders, wrapper);
 
             ListRuleRequest query = pageRequest.getQuery();
@@ -137,7 +143,11 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean ruleCodeIsExists(String code) {
-        Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getCode, code).count();
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        Integer count = this.ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                .eq(RuleEngineRule::getCode, code)
+                .count();
         return count != null && count >= 1;
     }
 
@@ -266,6 +276,8 @@ public class RuleServiceImpl implements RuleService {
             RuleEngineUser ruleEngineUser = AuthInterceptor.USER.get();
             ruleEngineRule.setCreateUserId(ruleEngineUser.getId());
             ruleEngineRule.setCreateUserName(ruleEngineUser.getUsername());
+            Workspace workspace = this.workspaceService.currentWorkspace();
+            ruleEngineRule.setWorkspaceId(workspace.getId());
         }
         ruleEngineRule.setId(ruleDefinition.getId());
         ruleEngineRule.setName(ruleDefinition.getName());
@@ -352,6 +364,7 @@ public class RuleServiceImpl implements RuleService {
         rulePublish.setRuleId(rule.getId());
         rulePublish.setRuleCode(ruleEngineRule.getCode());
         rulePublish.setData(rule.toJson());
+        rulePublish.setWorkspaceId(ruleEngineRule.getWorkspaceId());
         this.ruleEngineRulePublishManager.save(rulePublish);
         // 加载规则
         RuleMessageVo ruleMessageVo = new RuleMessageVo();

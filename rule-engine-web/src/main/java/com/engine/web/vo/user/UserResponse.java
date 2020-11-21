@@ -16,8 +16,12 @@ public class UserResponse {
 
     private String username;
 
-    private String password;
-
     private String email;
+
+    private Long phone;
+
+    private String avatar;
+
+    private String sex;
 
 }
