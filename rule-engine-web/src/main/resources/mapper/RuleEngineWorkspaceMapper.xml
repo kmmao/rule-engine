@@ -3,7 +3,7 @@
 <mapper namespace="com.engine.web.store.mapper.RuleEngineWorkspaceMapper">
 
     <select id="listWorkspaceByUserId" resultType="com.engine.web.vo.workspace.Workspace">
-        select * from rule_engine_user_workspace reuw,rule_engine_workspace rew
+        select rew.id,rew.code,rew.name from rule_engine_user_workspace reuw,rule_engine_workspace rew
         where reuw.user_id=#{userId}
             and reuw.workspace_id=rew.id
             and reuw.deleted=0
