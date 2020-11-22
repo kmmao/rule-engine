@@ -111,7 +111,10 @@ public class ElementServiceImpl implements ElementService {
 
     @Override
     public GetElementResponse get(Integer id) {
-        RuleEngineElement engineElement = ruleEngineElementManager.getById(id);
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineElement engineElement = ruleEngineElementManager.lambdaQuery()
+                .eq(RuleEngineElement::getId, id)
+                .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).one();
         GetElementResponse elementResponse = new GetElementResponse();
         BeanUtil.copyProperties(engineElement, elementResponse);
         return elementResponse;
@@ -119,7 +122,13 @@ public class ElementServiceImpl implements ElementService {
 
     @Override
     public Boolean update(UpdateElementRequest updateElementRequest) {
-        RuleEngineElement engineElement = new RuleEngineElement();
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineElement engineElement = this.ruleEngineElementManager.lambdaQuery()
+                .eq(RuleEngineElement::getId, updateElementRequest.getId())
+                .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).one();
+        if (engineElement == null) {
+            throw new ValidException("找不到更新的元素");
+        }
         engineElement.setId(updateElementRequest.getId());
         engineElement.setName(updateElementRequest.getName());
         engineElement.setDescription(updateElementRequest.getDescription());

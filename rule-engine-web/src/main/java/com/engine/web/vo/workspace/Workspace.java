@@ -21,4 +21,6 @@ public class Workspace implements Serializable {
 
     private String name;
 
+    private String code;
+
 }

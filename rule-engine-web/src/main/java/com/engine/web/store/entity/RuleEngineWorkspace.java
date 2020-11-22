@@ -32,6 +32,8 @@ public class RuleEngineWorkspace implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private String code;
+
     private String name;
 
     private String description;

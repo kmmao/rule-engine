@@ -56,18 +56,20 @@ public class RuleMessage {
     )
     public void message(RuleMessageVo ruleMessageVo) {
         log.info("规则消息：{}", ruleMessageVo);
+        String workspaceCode = ruleMessageVo.getWorkspaceCode();
+        String ruleCode = ruleMessageVo.getRuleCode();
         switch (ruleMessageVo.getType()) {
             case UPDATE:
                 log.info("开始更新规则：{}", ruleMessageVo.getRuleCode());
-                defaultEngine.addRule(rulePublishService.getPublishRuleByCode(ruleMessageVo.getRuleCode()));
+                this.defaultEngine.addRule(rulePublishService.getPublishRule(workspaceCode, ruleCode));
                 break;
             case LOAD:
                 log.info("开始加载规则：{}", ruleMessageVo.getRuleCode());
-                defaultEngine.addRule(rulePublishService.getPublishRuleByCode(ruleMessageVo.getRuleCode()));
+                this.defaultEngine.addRule(rulePublishService.getPublishRule(workspaceCode, ruleCode));
                 break;
             case REMOVE:
                 log.info("开始移除规则：{}", ruleMessageVo.getRuleCode());
-                defaultEngine.removeRule(ruleMessageVo.getRuleCode());
+                this.defaultEngine.removeRule(workspaceCode, ruleCode);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + ruleMessageVo.getType());

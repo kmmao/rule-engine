@@ -1,26 +1,17 @@
 package com.engine.web.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.engine.core.*;
 import com.engine.core.exception.ValidException;
 import com.engine.core.rule.Rule;
 import com.engine.core.rule.RuleListener;
-import com.engine.core.value.Value;
-import com.engine.web.enums.ErrorLevelEnum;
 import com.engine.web.service.RuleResolveService;
 import com.engine.web.service.RuleTestService;
-import com.engine.web.service.VariableResolveService;
-import com.engine.web.store.entity.RuleEngineRule;
-import com.engine.web.store.manager.RuleEngineRuleManager;
 import com.engine.web.vo.rule.ExecuteRuleRequest;
-import com.engine.web.vo.rule.RuleCountInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -40,16 +31,16 @@ public class RuleTestServiceImpl implements RuleTestService {
     private Engine engine;
 
     @Override
-    public Object run(ExecuteRuleRequest executeRuleRequest) {
-        log.info("模拟运行规则：{}", executeRuleRequest.getRuleCode());
+    public Object run(ExecuteRuleRequest executeRule) {
+        log.info("模拟运行规则：{}", executeRule.getRuleCode());
         Input input = new DefaultInput();
-        Map<String, Object> params = executeRuleRequest.getParam();
+        Map<String, Object> params = executeRule.getParam();
         for (Map.Entry<String, Object> param : params.entrySet()) {
             input.put(param.getKey(), param.getValue());
         }
         log.info("初始化规则引擎");
         DefaultEngine engine = new DefaultEngine();
-        Rule rule = ruleResolveService.getRuleByCode(executeRuleRequest.getRuleCode());
+        Rule rule = ruleResolveService.getRuleByCode(executeRule.getRuleCode());
         engine.addRule(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.engine.getEngineVariable());
@@ -73,7 +64,7 @@ public class RuleTestServiceImpl implements RuleTestService {
             }
 
         });
-        return engine.execute(input, executeRuleRequest.getRuleCode());
+        return engine.execute(input, executeRule.getWorkspaceCode(), executeRule.getRuleCode());
     }
 
 }

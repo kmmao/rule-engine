@@ -26,6 +26,10 @@ public class GetRuleResponse {
 
     private String description;
 
+    private Integer workspaceId;
+
+    private String workspaceCode;
+
     private List<ConditionGroupConfig> conditionGroup;
 
     private ConfigBean.Value action;

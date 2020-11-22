@@ -1,7 +1,6 @@
 package com.engine.web.service.impl;
 
 import com.engine.core.rule.Rule;
-import com.engine.web.enums.RuleStatus;
 import com.engine.web.service.RulePublishService;
 import com.engine.web.store.entity.RuleEngineRulePublish;
 import com.engine.web.store.manager.RuleEngineRulePublishManager;
@@ -28,13 +27,15 @@ public class RulePublishServiceImpl implements RulePublishService {
     /**
      * 根据规则code，查询发布规则
      *
-     * @param ruleCode 规则code
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则code
      * @return 规则
      */
     @Override
-    public Rule getPublishRuleByCode(String ruleCode) {
+    public Rule getPublishRule(String workspaceCode, String ruleCode) {
         RuleEngineRulePublish rulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
                 .eq(RuleEngineRulePublish::getRuleCode, ruleCode)
+                .eq(RuleEngineRulePublish::getWorkspaceCode, workspaceCode)
                 .one();
         Rule rule = new Rule();
         rule.fromJson(rulePublish.getData());

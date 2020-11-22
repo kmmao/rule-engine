@@ -21,9 +21,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.engine.core.DefaultInput;
 import com.engine.core.Engine;
-import com.engine.core.OutPut;
 import com.engine.core.exception.ValidException;
 import com.engine.core.rule.Rule;
 import com.engine.web.enums.EnableEnum;
@@ -128,7 +126,7 @@ public class RuleServiceImpl implements RuleService {
             listRuleResponse.setId(m.getId());
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setIsPublish(engine.isExistsRule(m.getCode()));
+            listRuleResponse.setIsPublish(engine.isExistsRule(m.getWorkspaceCode(), m.getCode()));
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateTime(m.getCreateTime());
@@ -160,12 +158,19 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean updateRule(UpdateRuleRequest updateRuleRequest) {
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getId, updateRuleRequest.getId())
+                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                .one();
+        if (ruleEngineRule == null) {
+            throw new ValidException("不存在规则:{}", updateRuleRequest.getId());
+        }
         // 如果原来有条件信息，先删除原有信息
         this.removeConditionGroupByRuleId(updateRuleRequest.getId());
         // 保存条件信息
         this.saveConditionGroup(updateRuleRequest.getId(), updateRuleRequest.getConditionGroup());
         //  更新规则信息
-        RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setId(updateRuleRequest.getId());
         ruleEngineRule.setStatus(updateRuleRequest.getStatus());
         // 保存结果
@@ -229,9 +234,11 @@ public class RuleServiceImpl implements RuleService {
         if (engineRule == null) {
             return false;
         }
-        if (engine.isExistsRule(engineRule.getCode())) {
+        if (engine.isExistsRule(engineRule.getWorkspaceCode(), engineRule.getCode())) {
             RuleMessageVo ruleMessageVo = new RuleMessageVo();
             ruleMessageVo.setType(RuleMessageVo.Type.REMOVE);
+            ruleMessageVo.setWorkspaceId(engineRule.getWorkspaceId());
+            ruleMessageVo.setWorkspaceCode(engineRule.getWorkspaceCode());
             ruleMessageVo.setRuleCode(engineRule.getCode());
             this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
         }
@@ -270,6 +277,7 @@ public class RuleServiceImpl implements RuleService {
     public Integer saveOrUpdateRuleDefinition(RuleDefinition ruleDefinition) {
         // 创建规则
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
+        Workspace workspace = this.workspaceService.currentWorkspace();
         if (ruleDefinition.getId() == null) {
             if (this.ruleCodeIsExists(ruleDefinition.getCode())) {
                 throw new ValidException("规则Code：{}已经存在", ruleDefinition.getCode());
@@ -277,8 +285,16 @@ public class RuleServiceImpl implements RuleService {
             UserData userData = AuthInterceptor.USER.get();
             ruleEngineRule.setCreateUserId(userData.getId());
             ruleEngineRule.setCreateUserName(userData.getUsername());
-            Workspace workspace = this.workspaceService.currentWorkspace();
             ruleEngineRule.setWorkspaceId(workspace.getId());
+            ruleEngineRule.setWorkspaceCode(workspace.getCode());
+        } else {
+            Integer count = this.ruleEngineRuleManager.lambdaQuery()
+                    .eq(RuleEngineRule::getId, ruleDefinition.getId())
+                    .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                    .count();
+            if (count == null || count == 0) {
+                throw new ValidException("不存在规则:{}", ruleDefinition.getId());
+            }
         }
         ruleEngineRule.setId(ruleDefinition.getId());
         ruleEngineRule.setName(ruleDefinition.getName());
@@ -297,12 +313,16 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public RuleDefinition getRuleDefinition(Integer id) {
-        RuleEngineRule engineRule = this.ruleEngineRuleManager.getById(id);
-        if (engineRule == null) {
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getId, id)
+                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                .one();
+        if (ruleEngineRule == null) {
             return null;
         }
         RuleDefinition ruleDefinition = new RuleDefinition();
-        BeanUtil.copyProperties(engineRule, ruleDefinition);
+        BeanUtil.copyProperties(ruleEngineRule, ruleDefinition);
         return ruleDefinition;
     }
 
@@ -327,10 +347,6 @@ public class RuleServiceImpl implements RuleService {
                 throw new ValidException("默认结果值不能为空");
             }
         }
-        RuleEngineRule ruleEngineRule = ruleEngineRuleManager.getById(releaseRequest.getId());
-        if (ruleEngineRule == null) {
-            throw new ValidException("不存在规则:{}", releaseRequest.getId());
-        }
         releaseRequest.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
         this.updateRule(releaseRequest);
         return true;
@@ -344,7 +360,11 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean publish(Integer id) {
-        RuleEngineRule ruleEngineRule = ruleEngineRuleManager.getById(id);
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineRule ruleEngineRule = ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getId, id)
+                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                .one();
         if (ruleEngineRule == null) {
             throw new ValidException("不存在规则:{}", id);
         }
@@ -366,11 +386,14 @@ public class RuleServiceImpl implements RuleService {
         rulePublish.setRuleCode(ruleEngineRule.getCode());
         rulePublish.setData(rule.toJson());
         rulePublish.setWorkspaceId(ruleEngineRule.getWorkspaceId());
+        rulePublish.setWorkspaceCode(ruleEngineRule.getWorkspaceCode());
         this.ruleEngineRulePublishManager.save(rulePublish);
         // 加载规则
         RuleMessageVo ruleMessageVo = new RuleMessageVo();
         ruleMessageVo.setType(RuleMessageVo.Type.LOAD);
         ruleMessageVo.setRuleCode(ruleEngineRule.getCode());
+        ruleMessageVo.setWorkspaceId(ruleEngineRule.getWorkspaceId());
+        ruleMessageVo.setWorkspaceCode(ruleEngineRule.getWorkspaceCode());
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
         return true;
     }
@@ -383,7 +406,11 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public GetRuleResponse getRuleConfig(Integer id) {
-        RuleEngineRule ruleEngineRule = ruleEngineRuleManager.getById(id);
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getId, id)
+                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                .one();
         if (ruleEngineRule == null) {
             return null;
         }
@@ -458,8 +485,11 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public ViewRuleResponse getPublishRule(Integer id) {
+        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getRuleId, id).one();
+                .eq(RuleEngineRulePublish::getRuleId, id)
+                .eq(RuleEngineRulePublish::getWorkspaceId, workspace.getId())
+                .one();
         if (engineRulePublish == null) {
             throw new ValidException("找不到发布的规则:{}", id);
         }
@@ -477,10 +507,15 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public ViewRuleResponse getViewRule(Integer id) {
-        Rule rule = this.ruleResolveService.getRuleById(id);
-        if (rule == null) {
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getId, id)
+                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
+                .one();
+        if (ruleEngineRule == null) {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
+        Rule rule = this.ruleResolveService.ruleProcess(ruleEngineRule);
         return this.getRuleResponseProcess(rule);
     }
 
@@ -495,6 +530,8 @@ public class RuleServiceImpl implements RuleService {
         ruleResponse.setId(rule.getId());
         ruleResponse.setName(rule.getName());
         ruleResponse.setCode(rule.getCode());
+        ruleResponse.setWorkspaceId(rule.getWorkspaceId());
+        ruleResponse.setWorkspaceCode(rule.getWorkspaceCode());
         ruleResponse.setDescription(rule.getDescription());
 
         List<ConditionGroup> conditionGroups = rule.getConditionSet().getConditionGroups();

@@ -34,6 +34,8 @@ public class RuleEngineRulePublish implements Serializable {
 
     private Integer workspaceId;
 
+    private String workspaceCode;
+
     private String data;
 
     @TableField(fill = FieldFill.INSERT)

@@ -101,7 +101,10 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public ConditionResponse getById(Integer id) {
-        RuleEngineCondition condition = ruleEngineConditionManager.getById(id);
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineCondition condition = this.ruleEngineConditionManager.lambdaQuery()
+                .eq(RuleEngineCondition::getId, id)
+                .eq(RuleEngineCondition::getWorkspaceId, workspace.getId()).one();
         if (condition == null) {
             throw new ApiException("根据Id:{},没有查询到数据", id);
         }
@@ -323,7 +326,11 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean update(UpdateConditionRequest updateConditionRequest) {
-        RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.getById(updateConditionRequest.getId());
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.lambdaQuery()
+                .eq(RuleEngineCondition::getId, updateConditionRequest.getId())
+                .eq(RuleEngineCondition::getWorkspaceId, workspace.getId())
+                .one();
         if (ruleEngineCondition == null) {
             throw new ValidException("规则条件找不到：{}", updateConditionRequest.getId());
         }
@@ -374,7 +381,8 @@ public class ConditionServiceImpl implements ConditionService {
     @Override
     public Boolean delete(Integer id) {
         Integer count = ruleEngineConditionGroupConditionManager.lambdaQuery()
-                .eq(RuleEngineConditionGroupCondition::getConditionId, id).count();
+                .eq(RuleEngineConditionGroupCondition::getConditionId, id)
+                .count();
         if (count != null && count > 0) {
             throw new ValidException("有规则在引用此条件，无法删除");
         }

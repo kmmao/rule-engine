@@ -25,4 +25,12 @@ public interface RuleEngineWorkspaceMapper extends BaseMapper<RuleEngineWorkspac
      */
     List<Workspace> listWorkspaceByUserId(@Param("userId") Integer userId);
 
+    /**
+     * 是否存在此用户这个工作空间权限
+     *
+     * @param workspaceId 工作空间id
+     * @param userId      用户id
+     * @return count
+     */
+    Integer countWorkspace(Integer workspaceId, Integer userId);
 }

@@ -44,6 +44,7 @@ public class RabbitMqTest extends BaseTest {
         RuleMessageVo ruleMessageVo = new RuleMessageVo();
         ruleMessageVo.setType(RuleMessageVo.Type.LOAD);
         ruleMessageVo.setRuleCode("test");
+        ruleMessageVo.setWorkspaceCode("");
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
     }
 

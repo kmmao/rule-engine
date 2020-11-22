@@ -57,6 +57,14 @@ public class Rule implements RuleParse {
     private String name;
 
     private String description;
+
+    /**
+     * 工作空间
+     */
+    private Integer workspaceId;
+
+    private String workspaceCode;
+
     /**
      * 当条件全部满足时候返回此规则结果
      */

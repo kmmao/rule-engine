@@ -1,6 +1,7 @@
 package com.engine.web.service;
 
 import com.engine.core.rule.Rule;
+import com.engine.web.store.entity.RuleEngineRule;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface RuleResolveService {
      * @return rule
      */
     Rule getRuleById(Integer id);
+
+    Rule ruleProcess(RuleEngineRule ruleEngineRule);
 }

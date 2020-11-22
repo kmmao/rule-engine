@@ -42,17 +42,17 @@ public class RuleOutServiceImpl implements RuleOutService {
     /**
      * 执行单个规则，获取执行结果
      *
-     * @param executeRuleRequest 执行规则入参
+     * @param executeRule 执行规则入参
      * @return 规则执行结果
      */
     @Override
-    public Object executeRule(ExecuteRuleRequest executeRuleRequest) {
+    public Object executeRule(ExecuteRuleRequest executeRule) {
         Input input = new DefaultInput();
-        Map<String, Object> params = executeRuleRequest.getParam();
+        Map<String, Object> params = executeRule.getParam();
         for (Map.Entry<String, Object> param : params.entrySet()) {
             input.put(param.getKey(), param.getValue());
         }
-        return engine.execute(input, executeRuleRequest.getRuleCode());
+        return engine.execute(input, executeRule.getWorkspaceCode(), executeRule.getRuleCode());
     }
 
     /**

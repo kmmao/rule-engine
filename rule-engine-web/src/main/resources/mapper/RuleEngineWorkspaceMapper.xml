@@ -9,4 +9,10 @@
             and reuw.deleted=0
             and rew.deleted=0
     </select>
+
+    <select id="countWorkspace" resultType="java.lang.Integer">
+           select COUNT(*) from rule_engine_user_workspace reuw
+                where reuw.user_id=#{userId}
+                 and reuw.deleted=0
+    </select>
 </mapper>

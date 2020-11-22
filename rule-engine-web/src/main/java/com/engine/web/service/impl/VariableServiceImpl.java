@@ -173,7 +173,11 @@ public class VariableServiceImpl implements VariableService {
      */
     @Override
     public GetVariableResponse get(Integer id) {
-        RuleEngineVariable ruleEngineVariable = ruleEngineVariableManager.getById(id);
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.lambdaQuery()
+                .eq(RuleEngineVariable::getId, id)
+                .eq(RuleEngineVariable::getWorkspaceId, workspace.getId())
+                .one();
         if (ruleEngineVariable == null) {
             return null;
         }
@@ -217,9 +221,13 @@ public class VariableServiceImpl implements VariableService {
 
     @Override
     public Boolean update(UpdateVariableRequest updateVariableRequest) {
-        RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.getById(updateVariableRequest.getId());
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.lambdaQuery()
+                .eq(RuleEngineVariable::getId, updateVariableRequest.getId())
+                .eq(RuleEngineVariable::getWorkspaceId, workspace.getId())
+                .one();
         if (ruleEngineVariable == null) {
-            throw new ValidException("找不到变量：{}", updateVariableRequest.getId());
+            throw new ValidException("找不到更新的变量：{}", updateVariableRequest.getId());
         }
         if (!updateVariableRequest.getName().equals(ruleEngineVariable.getName())) {
             if (this.varNameIsExists(updateVariableRequest.getName())) {

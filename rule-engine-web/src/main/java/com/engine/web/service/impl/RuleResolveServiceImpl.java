@@ -79,11 +79,14 @@ public class RuleResolveServiceImpl implements RuleResolveService {
      * @param ruleEngineRule ruleEngineRule
      * @return Rule
      */
-    private Rule ruleProcess(RuleEngineRule ruleEngineRule) {
+    @Override
+    public Rule ruleProcess(RuleEngineRule ruleEngineRule) {
         Rule rule = new Rule();
         rule.setId(ruleEngineRule.getId());
         rule.setCode(ruleEngineRule.getCode());
         rule.setName(ruleEngineRule.getName());
+        rule.setWorkspaceId(ruleEngineRule.getWorkspaceId());
+        rule.setWorkspaceCode(ruleEngineRule.getWorkspaceCode());
         rule.setDescription(ruleEngineRule.getDescription());
         rule.setConditionSet(this.loadConditionSet(ruleEngineRule.getId()));
         rule.setActionValue(valueResolve.getValue(ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType(), ruleEngineRule.getActionValue()));

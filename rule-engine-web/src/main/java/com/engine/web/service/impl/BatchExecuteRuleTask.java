@@ -47,7 +47,7 @@ public class BatchExecuteRuleTask implements Runnable {
             BatchExecuteRuleResponse ruleResponse = new BatchExecuteRuleResponse();
             ruleResponse.setSymbol(executeInfo.getSymbol());
             try {
-                OutPut outPut = engine.execute(input, executeInfo.getRuleCode());
+                OutPut outPut = engine.execute(input, executeInfo.getWorkspaceCode(), executeInfo.getRuleCode());
                 ruleResponse.setResult(outPut);
             } catch (Exception e) {
                 log.error("执行规则异常", e);

@@ -68,16 +68,17 @@ public class ExecuteRuleFunction {
             throw new FunctionException("规则执行函数入参错误");
         }
         String ruleCode = executeRule.getRuleCode();
+        String workspaceCode = executeRule.getWorkspaceCode();
         Engine engine = applicationContext.getBean(Engine.class);
-        if (!engine.isExistsRule(ruleCode)) {
-            throw new FunctionException("规则在引擎中不存在：{}", ruleCode);
+        if (!engine.isExistsRule(workspaceCode, ruleCode)) {
+            throw new FunctionException("规则在引擎中不存在：{}:{}", workspaceCode, ruleCode);
         }
         // 规则入参
         Map<String, Object> inputParam = executeRule.getParam();
         Input input = new DefaultInput();
         inputParam.forEach(input::put);
         // 执行规则
-        OutPut execute = engine.execute(input, ruleCode);
+        OutPut execute = engine.execute(input, workspaceCode, ruleCode);
         return execute.getValue();
     }
 
@@ -88,6 +89,8 @@ public class ExecuteRuleFunction {
 
     @Data
     public static class ExecuteRule {
+
+        private String workspaceCode;
 
         /**
          * 执行的规则code

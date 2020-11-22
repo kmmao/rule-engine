@@ -35,6 +35,8 @@ public class RuleEngineRule implements Serializable {
 
     private Integer workspaceId;
 
+    private String workspaceCode;
+
     private Integer createUserId;
 
     private String createUserName;

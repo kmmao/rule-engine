@@ -18,6 +18,9 @@ import java.util.Map;
 public class ExecuteRuleRequest {
 
     @NotEmpty
+    private String workspaceCode;
+
+    @NotEmpty
     private String ruleCode;
 
     private Map<String, Object> param = new HashMap<>();

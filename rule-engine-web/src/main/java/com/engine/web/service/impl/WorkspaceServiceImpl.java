@@ -90,6 +90,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 Workspace workspace = new Workspace();
                 workspace.setId(ruleEngineWorkspace.getId());
                 workspace.setName(ruleEngineWorkspace.getName());
+                workspace.setCode(ruleEngineWorkspace.getCode());
                 bucket.set(workspace);
                 return workspace;
             }
@@ -110,10 +111,18 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             throw new ValidException("找不到此工作空间：" + id);
         }
         UserData userData = AuthInterceptor.USER.get();
+        if (!userData.getIsAdmin()) {
+            // 如果不是超级管理员，查看是否有此工作空间的工作空间权限
+            Integer count = this.ruleEngineWorkspaceMapper.countWorkspace(id, userData.getId());
+            if (count == null || count == 0) {
+                throw new ValidException("你没有此工作空间权限");
+            }
+        }
         RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + userData.getId());
         Workspace workspace = new Workspace();
         workspace.setId(engineWorkspace.getId());
         workspace.setName(engineWorkspace.getName());
+        workspace.setCode(engineWorkspace.getCode());
         bucket.set(workspace);
         return true;
     }

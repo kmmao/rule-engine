@@ -16,6 +16,7 @@
 package com.engine.core;
 
 import com.engine.core.rule.Rule;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -32,19 +33,21 @@ public interface Engine {
     /**
      * 根据入参来执行引擎，并返回结果
      *
-     * @param input    输入参数
-     * @param ruleCode 规则Code
+     * @param input         输入参数
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则Code
      * @return 规则引擎计算的结果
      */
-    OutPut execute(Input input, String ruleCode);
+    OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String ruleCode);
 
     /**
      * 是否存在某规则
      *
-     * @param ruleCode 规则code
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则code
      * @return true存在
      */
-    boolean isExistsRule(String ruleCode);
+    boolean isExistsRule(String workspaceCode, String ruleCode);
 
     /**
      * 添加一个规则
@@ -63,9 +66,10 @@ public interface Engine {
     /**
      * 从规则引擎中删除一个规则
      *
-     * @param ruleCode 规则code
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则code
      */
-    void removeRule(String ruleCode);
+    void removeRule(String workspaceCode, @NonNull String ruleCode);
 
     /**
      * 获取规则引擎变量
@@ -75,11 +79,12 @@ public interface Engine {
     EngineVariable getEngineVariable();
 
     /**
-     * 规则引擎中的规则数量
+     * 获取规则引擎中的规则
      *
-     * @return int
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则code
+     * @return rule
      */
-    int size();
+    Rule getRule(String workspaceCode, String ruleCode);
 
-    Rule getRule(String ruleCode);
 }

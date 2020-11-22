@@ -24,9 +24,10 @@ public interface RulePublishService {
     /**
      * 根据规则code，查询发布规则
      *
-     * @param ruleCode 规则code
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则code
      * @return 规则
      */
-    Rule getPublishRuleByCode(String ruleCode);
+    Rule getPublishRule(String workspaceCode, String ruleCode);
 
 }

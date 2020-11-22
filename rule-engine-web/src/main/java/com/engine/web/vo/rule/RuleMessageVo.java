@@ -15,12 +15,16 @@ public class RuleMessageVo {
 
     private RuleMessageVo.Type type;
 
+    private String workspaceCode;
+
+    private Integer workspaceId;
+
     private String ruleCode;
 
     public enum Type {
         /**
          * 规则加载，以及移除
          */
-        LOAD,UPDATE, REMOVE
+        LOAD, UPDATE, REMOVE
     }
 }

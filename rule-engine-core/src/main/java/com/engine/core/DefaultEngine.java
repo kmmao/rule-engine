@@ -28,10 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
 import java.io.Closeable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -52,7 +49,7 @@ public class DefaultEngine implements Engine, Closeable {
     /**
      * 启动时加载的规则
      */
-    private Map<String, Rule> ruleMap = new ConcurrentHashMap<>();
+    private Map<String, Map<String, Rule>> workspaceMap = new ConcurrentHashMap<>();
 
     /**
      * 规则引擎运行所需的参数
@@ -81,19 +78,14 @@ public class DefaultEngine implements Engine, Closeable {
         return this.configuration.getEngineVariable();
     }
 
-    /**
-     * 规则引擎中的规则数量
-     *
-     * @return int
-     */
-    @Override
-    public int size() {
-        return this.ruleMap.size();
-    }
 
     @Override
-    public Rule getRule(String ruleCode) {
-        return this.ruleMap.get(ruleCode);
+    public Rule getRule(String workspaceCode, String ruleCode) {
+        Map<String, Rule> workspaceMap = this.workspaceMap.get(workspaceCode);
+        if (workspaceMap == null) {
+            throw new EngineException("Can't find this workspace：" + workspaceCode);
+        }
+        return workspaceMap.get(ruleCode);
     }
 
     /**
@@ -124,10 +116,10 @@ public class DefaultEngine implements Engine, Closeable {
      * @return 规则执行结果
      */
     @Override
-    public OutPut execute(@NonNull Input input, @NonNull String ruleCode) {
+    public OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String ruleCode) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(ruleCode);
-        Rule rule = ruleMap.get(ruleCode);
+        Rule rule = this.getRule(workspaceCode, ruleCode);
         if (rule == null) {
             throw new EngineException("no rule:{}", ruleCode);
         }
@@ -156,8 +148,14 @@ public class DefaultEngine implements Engine, Closeable {
      * @return true存在
      */
     @Override
-    public boolean isExistsRule(String ruleCode) {
-        return this.ruleMap.containsKey(ruleCode);
+    public boolean isExistsRule(String workspaceCode, String ruleCode) {
+        if (workspaceCode == null || ruleCode == null) {
+            return false;
+        }
+        if (!this.workspaceMap.containsKey(workspaceCode)) {
+            return false;
+        }
+        return this.workspaceMap.get(workspaceCode).containsKey(ruleCode);
     }
 
     /**
@@ -166,10 +164,14 @@ public class DefaultEngine implements Engine, Closeable {
      * @param rule 规则配置信息
      */
     @Override
-    public void addRule(@NonNull Rule rule) {
+    public synchronized void addRule(@NonNull Rule rule) {
         Objects.requireNonNull(rule);
+        String workspaceCode = Objects.requireNonNull(rule.getWorkspaceCode());
         String ruleCode = Objects.requireNonNull(rule.getCode());
-        this.ruleMap.put(ruleCode, rule);
+        if (!this.workspaceMap.containsKey(workspaceCode)) {
+            this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>());
+        }
+        this.workspaceMap.get(workspaceCode).put(ruleCode, rule);
     }
 
     /**
@@ -189,9 +191,11 @@ public class DefaultEngine implements Engine, Closeable {
      * @param ruleCode 规则code
      */
     @Override
-    public void removeRule(@NonNull String ruleCode) {
+    public void removeRule(String workspaceCode, @NonNull String ruleCode) {
         Objects.requireNonNull(ruleCode);
-        this.ruleMap.remove(ruleCode);
+        if (this.workspaceMap.containsKey(workspaceCode)) {
+            this.workspaceMap.get(workspaceCode).remove(ruleCode);
+        }
     }
 
     /**
@@ -199,7 +203,7 @@ public class DefaultEngine implements Engine, Closeable {
      */
     @Override
     public void close() {
-        this.ruleMap.clear();
+        this.workspaceMap.clear();
         this.configuration.getEngineVariable().close();
         this.configuration.getFunctionCache().clear();
         log.info("The rules engine has been destroyed");
