@@ -93,7 +93,7 @@ public class ElementServiceImpl implements ElementService {
                 wrapper.lambda().like(RuleEngineElement::getName, query.getName());
             }
             if (Validator.isNotEmpty(query.getCode())) {
-                wrapper.lambda().like(RuleEngineElement::getName, query.getCode());
+                wrapper.lambda().like(RuleEngineElement::getCode, query.getCode());
             }
             return wrapper;
         }, m -> {
