@@ -81,6 +81,8 @@ public class DefaultEngine implements Engine, Closeable {
 
     @Override
     public Rule getRule(String workspaceCode, String ruleCode) {
+        Objects.requireNonNull(workspaceCode);
+        Objects.requireNonNull(ruleCode);
         Map<String, Rule> workspaceMap = this.workspaceMap.get(workspaceCode);
         if (workspaceMap == null) {
             throw new EngineException("Can't find this workspace：" + workspaceCode);
@@ -118,6 +120,7 @@ public class DefaultEngine implements Engine, Closeable {
     @Override
     public OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String ruleCode) {
         Objects.requireNonNull(input);
+        Objects.requireNonNull(workspaceCode);
         Objects.requireNonNull(ruleCode);
         Rule rule = this.getRule(workspaceCode, ruleCode);
         if (rule == null) {
@@ -192,7 +195,6 @@ public class DefaultEngine implements Engine, Closeable {
      */
     @Override
     public void removeRule(String workspaceCode, @NonNull String ruleCode) {
-        Objects.requireNonNull(ruleCode);
         if (this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.get(workspaceCode).remove(ruleCode);
         }
