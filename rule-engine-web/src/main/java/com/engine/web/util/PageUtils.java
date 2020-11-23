@@ -54,9 +54,9 @@ public class PageUtils {
      * <blockquote>
      * <pre>
      * PageResult<BootUserResponse> page = PageUtils.page(bootUserManager, pageRequest.getPage(), queryWrapper, e -> {
-     *       BootUserResponse vo = new BootUserResponse();
+     *      BootUserResponse vo = new BootUserResponse();
      *      vo.setId(e.getId());
-     *       vo.setUsername(e.getUsername());
+     *      vo.setUsername(e.getUsername());
      *      vo.setPassword(e.getPassword());
      *      return vo;
      * });
@@ -93,11 +93,11 @@ public class PageUtils {
      * 使用案例:
      * <blockquote>
      * <pre>
-     *        PageResult<RuleEngineBiz> page = page(ruleEngineBizManager, pageBase, () -> {
-     *             QueryWrapper<RuleEngineBiz> wrapper = new QueryWrapper<>();
+     *        PageResult<BootUserResponse> page = page(bootUserManager, pageBase, () -> {
+     *             QueryWrapper<BootUserResponse> wrapper = new QueryWrapper<>();
      *             //查询条件
-     *             if (Validator.isNotEmpty(bizCode)) {
-     *                 wrapper.lambda().eq(RuleEngineBiz::getBizCode, bizCode);
+     *             if (Validator.isNotEmpty(username)) {
+     *                 wrapper.lambda().eq(BootUserResponse::getUserName, username);
      *             }
      *             //选择排序
      *             defaultOrder(orders, wrapper);
