@@ -49,6 +49,11 @@ public class Function implements Value {
 
     private Integer id;
 
+    private String name;
+
+
+    private DataType dataType;
+
     /**
      * 需要执行的函数
      */
@@ -63,9 +68,19 @@ public class Function implements Value {
      */
     private Method failureStrategy;
 
-    private DataType dataType;
+    /**
+     * 函数缓存key生成
+     */
+    private KeyGenerator keyGenerator;
+    /**
+     * 是否启用缓存
+     */
+    private Boolean enableCache = false;
 
-    private String name;
+    /**
+     * 缓存的生存时间，单位：ms
+     */
+    private long liveOutTime;
 
     /**
      * 函数执行器
@@ -84,6 +99,32 @@ public class Function implements Value {
         // 预解析函数中的方法
         this.initExecutorMethod();
         this.initFailureStrategyMethod();
+        this.initKeyGenerator();
+    }
+
+    /**
+     * 初始化函数缓存key生成
+     */
+    private void initKeyGenerator() {
+        Class<?> abstractFunctionClass = this.abstractFunction.getClass();
+        if (!abstractFunctionClass.isAnnotationPresent(FunctionCacheable.class)) {
+            return;
+        }
+        FunctionCacheable functionCacheable = abstractFunctionClass.getAnnotation(FunctionCacheable.class);
+        if (functionCacheable.enable()) {
+            this.enableCache = true;
+            this.liveOutTime = functionCacheable.liveOutTime();
+            Class<? extends KeyGenerator> keyGeneratorClass = functionCacheable.keyGenerator();
+            try {
+                Constructor<? extends KeyGenerator> constructor = keyGeneratorClass.getConstructor();
+                if (!Modifier.isPublic(constructor.getModifiers())) {
+                    constructor.setAccessible(true);
+                }
+                this.keyGenerator = constructor.newInstance();
+            } catch (Exception e) {
+                throw new FunctionException("Function failed to generate cache key");
+            }
+        }
     }
 
     public Function(Object abstractFunction) {
@@ -101,20 +142,8 @@ public class Function implements Value {
         FunctionCache functionCache = configuration.getFunctionCache();
         Class<?> abstractFunctionClass = this.abstractFunction.getClass();
         Object value;
-        FunctionCacheable enableFunctionCache = abstractFunctionClass.getAnnotation(FunctionCacheable.class);
-        if (enableFunctionCache != null && enableFunctionCache.enable()) {
-            Class<? extends KeyGenerator> keyGeneratorClass = enableFunctionCache.keyGenerator();
-            KeyGenerator keyGenerator;
-            try {
-                Constructor<? extends KeyGenerator> constructor = keyGeneratorClass.getConstructor();
-                if (!Modifier.isPublic(constructor.getModifiers())) {
-                    constructor.setAccessible(true);
-                }
-                keyGenerator = constructor.newInstance();
-            } catch (Exception e) {
-                throw new FunctionException("Function failed to generate cache key");
-            }
-            String key = keyGenerator.generate(this.abstractFunction, paramMap);
+        if (this.enableCache) {
+            String key = this.keyGenerator.generate(this.abstractFunction, paramMap);
             value = functionCache.get(key);
             if (value != null) {
                 log.debug("{}函数存在缓存", abstractFunctionClass.getSimpleName());
@@ -122,7 +151,7 @@ public class Function implements Value {
             } else {
                 log.debug("{}函数不存在缓存,开始执行函数", abstractFunctionClass.getSimpleName());
                 value = this.executor(paramMap);
-                functionCache.put(key, value, enableFunctionCache.liveOutTime());
+                functionCache.put(key, value, this.liveOutTime);
             }
         } else {
             value = this.executor(paramMap);
