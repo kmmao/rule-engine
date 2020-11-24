@@ -17,6 +17,7 @@ package com.engine.core;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.engine.core.annotation.Executor;
 import com.engine.core.exception.FunctionException;
@@ -48,6 +49,9 @@ public class FunctionExecutor {
      * 参数绑定用，基本数据类型绑定解析
      */
     private static final Set<Class<?>> BASIC_TYPE = new HashSet<Class<?>>() {
+
+        private static final long serialVersionUID = 5728375214844388515L;
+
         {
             add(String.class);
             add(Integer.class);
@@ -56,7 +60,6 @@ public class FunctionExecutor {
         }
     };
 
-    private FunctionProcess functionProcess = new FunctionProcess();
 
     /**
      * 函数执行器
@@ -65,18 +68,14 @@ public class FunctionExecutor {
      * @param paramMap         函数入参
      * @return 函数执行结果
      */
-    public Object executor(Object abstractFunction, Map<String, Object> paramMap) {
+    public Object executor(Object abstractFunction, Method executor, Method failureStrategy, Map<String, Object> paramMap) {
         log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramMap);
-        Method executor = this.functionProcess.getExecutorMethod(abstractFunction);
         Executor annotation = executor.getAnnotation(Executor.class);
-        Object[] args = getBindArgs(executor.getParameters(), paramMap);
+        Object[] args = this.getBindArgs(executor.getParameters(), paramMap);
         try {
             int maxAttempts = annotation.maxAttempts();
             int i = 0;
             do {
-                if (!Modifier.isPublic(executor.getModifiers())) {
-                    executor.setAccessible(true);
-                }
                 try {
                     return executor.invoke(abstractFunction, args);
                 } catch (IllegalAccessException e) {
@@ -96,8 +95,7 @@ public class FunctionExecutor {
         } catch (InvocationTargetException e) {
             Throwable targetException = e.getTargetException();
             log.warn("函数主方法执行失败", targetException);
-            //如果存在失败策略方法
-            Method failureStrategy = this.functionProcess.getFailureStrategyMethod(abstractFunction);
+            // 如果存在失败策略方法
             if (failureStrategy != null) {
                 if (!executor.getReturnType().equals(failureStrategy.getReturnType())) {
                     throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executor.getReturnType(), failureStrategy.getReturnType());
@@ -114,9 +112,6 @@ public class FunctionExecutor {
                 for (Class<? extends Throwable> aClass : failureFor) {
                     if (aClass.isAssignableFrom(targetException.getClass())) {
                         log.info("开始执行函数失败策略方法");
-                        if (!Modifier.isPublic(failureStrategy.getModifiers())) {
-                            failureStrategy.setAccessible(true);
-                        }
                         try {
                             return failureStrategy.invoke(abstractFunction, getBindArgs(failureStrategy.getParameters(), paramMap));
                         } catch (IllegalAccessException ex) {
@@ -143,6 +138,9 @@ public class FunctionExecutor {
      */
     @SneakyThrows
     private Object[] getBindArgs(Parameter[] parameters, Map<String, Object> paramMap) {
+        if (ArrayUtil.isEmpty(parameters)) {
+            return new Object[]{};
+        }
         Object[] args = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
@@ -175,9 +173,9 @@ public class FunctionExecutor {
                         Type typeArgument = parameterizedType.getActualTypeArguments()[0];
                         // 判断方法集合类型
                         if (typeArgument.equals(BigDecimal.class)) {
-                            stream = stream.map(m -> new BigDecimal(String.valueOf(m)));
+                            stream = stream.map(String::valueOf).map(BigDecimal::new);
                         } else if (typeArgument.equals(Integer.class)) {
-                            stream = stream.map(m -> new Integer(String.valueOf(m)));
+                            stream = stream.map(String::valueOf).map(Integer::valueOf);
                         }
                     }
                     if (Set.class.isAssignableFrom(parameterType)) {
@@ -202,7 +200,13 @@ public class FunctionExecutor {
                     Iterator<ConstraintViolation<Object>> iter = constraintViolations.iterator();
                     if (iter.hasNext()) {
                         ConstraintViolation<Object> next = iter.next();
-                        throw new ValueException(next.getPropertyPath().toString() + next.getMessage());
+                        String messageTemplate = next.getMessageTemplate();
+                        if (messageTemplate != null) {
+                            if (messageTemplate.startsWith(StrUtil.DELIM_START) && messageTemplate.endsWith(StrUtil.DELIM_END)) {
+                                throw new ValueException(next.getPropertyPath().toString() + next.getMessage());
+                            }
+                        }
+                        throw new ValueException(next.getMessage());
                     }
                 }
                 args[i] = newInstance;
