@@ -70,10 +70,10 @@ public class FunctionExecutor {
      */
     public Object executor(Object abstractFunction, Method executor, Method failureStrategy, Map<String, Object> paramMap) {
         log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramMap);
-        Executor annotation = executor.getAnnotation(Executor.class);
+        Executor executorAnnotation = executor.getAnnotation(Executor.class);
         Object[] args = this.getBindArgs(executor.getParameters(), paramMap);
         try {
-            int maxAttempts = annotation.maxAttempts();
+            int maxAttempts = executorAnnotation.maxAttempts();
             int i = 0;
             do {
                 try {
@@ -85,8 +85,8 @@ public class FunctionExecutor {
                     if (i == maxAttempts || maxAttempts < 0) {
                         throw e;
                     }
-                    log.warn("执行函数主方法异常，{}ms后重试调用，异常原因：{}", annotation.delay(), e);
-                    ThreadUtil.sleep(annotation.delay());
+                    log.warn("执行函数主方法异常，{}ms后重试调用，异常原因：{}", executorAnnotation.delay(), e);
+                    ThreadUtil.sleep(executorAnnotation.delay());
                 }
                 i++;
             } while (i <= maxAttempts);
@@ -97,10 +97,7 @@ public class FunctionExecutor {
             log.warn("函数主方法执行失败", targetException);
             // 如果存在失败策略方法
             if (failureStrategy != null) {
-                if (!executor.getReturnType().equals(failureStrategy.getReturnType())) {
-                    throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executor.getReturnType(), failureStrategy.getReturnType());
-                }
-                Class<? extends Throwable>[] noFailureFor = annotation.noFailureFor();
+                Class<? extends Throwable>[] noFailureFor = executorAnnotation.noFailureFor();
                 //如果遇到这种类型的异常，都是直接抛出的
                 for (Class<? extends Throwable> aClass : noFailureFor) {
                     if (aClass.isAssignableFrom(targetException.getClass())) {
@@ -108,7 +105,7 @@ public class FunctionExecutor {
                     }
                 }
                 //再判断是否满足失败函数触发的异常
-                Class<? extends Throwable>[] failureFor = annotation.failureFor();
+                Class<? extends Throwable>[] failureFor = executorAnnotation.failureFor();
                 for (Class<? extends Throwable> aClass : failureFor) {
                     if (aClass.isAssignableFrom(targetException.getClass())) {
                         log.info("开始执行函数失败策略方法");
