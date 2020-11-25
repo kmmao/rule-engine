@@ -213,6 +213,9 @@ public class Function implements Value {
         if (this.failureStrategy == null) {
             return;
         }
+        if (!this.executor.getReturnType().equals(this.failureStrategy.getReturnType())) {
+            throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executor.getReturnType(), failureStrategy.getReturnType());
+        }
         if (!Modifier.isPublic(this.failureStrategy.getModifiers())) {
             this.failureStrategy.setAccessible(true);
         }
