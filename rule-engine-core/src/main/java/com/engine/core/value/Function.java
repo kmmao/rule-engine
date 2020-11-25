@@ -138,16 +138,15 @@ public class Function implements Value {
         for (Map.Entry<String, Value> entry : this.param.entrySet()) {
             paramMap.put(entry.getKey(), entry.getValue().getValue(input, configuration));
         }
-        //获取缓存实现类
-        FunctionCache functionCache = configuration.getFunctionCache();
-        Class<?> abstractFunctionClass = this.abstractFunction.getClass();
         Object value;
         if (this.enableCache) {
+            // 获取缓存实现类
+            FunctionCache functionCache = configuration.getFunctionCache();
+            Class<?> abstractFunctionClass = this.abstractFunction.getClass();
             String key = this.keyGenerator.generate(this.abstractFunction, paramMap);
             value = functionCache.get(key);
             if (value != null) {
                 log.debug("{}函数存在缓存", abstractFunctionClass.getSimpleName());
-                return value;
             } else {
                 log.debug("{}函数不存在缓存,开始执行函数", abstractFunctionClass.getSimpleName());
                 value = this.executor(paramMap);
