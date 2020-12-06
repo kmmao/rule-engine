@@ -54,7 +54,7 @@ public class Variable implements Value {
         Value value = configuration.getEngineVariable().getVariable(this.getVariableId());
         if (value instanceof Constant) {
             Constant constantVal = (Constant) value;
-            return dataConversion(constantVal.getValue(), getDataType());
+            return constantVal.getValue();
         }
         Function functionValue = (Function) value;
         return functionValue.getValue(input, configuration);
@@ -67,6 +67,7 @@ public class Variable implements Value {
 
     @Override
     public DataType getDataType() {
-        return dataType;
+        return this.dataType;
     }
+
 }

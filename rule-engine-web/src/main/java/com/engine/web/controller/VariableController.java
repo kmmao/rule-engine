@@ -34,6 +34,12 @@ public class VariableController {
     @Resource
     private VariableService variableService;
 
+    /**
+     * 添加变量
+     *
+     * @param addConditionRequest 变量信息
+     * @return true
+     */
     @PostMapping("add")
     @ApiOperation("添加变量")
     public PlainResult<Boolean> add(@RequestBody @Valid AddVariableRequest addConditionRequest) {
@@ -42,6 +48,12 @@ public class VariableController {
         return plainResult;
     }
 
+    /**
+     * 根据id查询变量
+     *
+     * @param idRequest 变量id
+     * @return var
+     */
     @PostMapping("get")
     @ApiOperation("根据id查询变量")
     public PlainResult<GetVariableResponse> get(@RequestBody @Valid IdRequest idRequest) {
@@ -50,6 +62,12 @@ public class VariableController {
         return plainResult;
     }
 
+    /**
+     * 根据id更新变量
+     *
+     * @param updateVariableRequest param
+     * @return true
+     */
     @PostMapping("update")
     @ApiOperation("根据id更新变量")
     public PlainResult<Boolean> update(@RequestBody @Valid UpdateVariableRequest updateVariableRequest) {
@@ -58,12 +76,24 @@ public class VariableController {
         return plainResult;
     }
 
+    /**
+     * 变量列表
+     *
+     * @param pageRequest param
+     * @return result
+     */
     @PostMapping("list")
     @ApiOperation("变量列表")
     public PageResult<ListVariableResponse> list(@RequestBody PageRequest<ListVariableRequest> pageRequest) {
         return variableService.list(pageRequest);
     }
 
+    /**
+     * 根据id删除变量
+     *
+     * @param idRequest 变量id
+     * @return true
+     */
     @RoleAuth
     @PostMapping("delete")
     @ApiOperation("根据id删除变量")

@@ -51,6 +51,12 @@ public class FunctionServiceImpl implements FunctionService {
 
     private static final String FUNCTION_PACKAGE = "com.engine.web.function";
 
+    /**
+     * 函数列表
+     *
+     * @param pageRequest param
+     * @return list
+     */
     @Override
     public PageResult<ListFunctionResponse> list(PageRequest<ListFunctionRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
@@ -92,6 +98,12 @@ public class FunctionServiceImpl implements FunctionService {
         return pageResult;
     }
 
+    /**
+     * 查询函数详情
+     *
+     * @param idRequest 函数id
+     * @return 函数信息
+     */
     @Override
     public GetFunctionResponse get(Integer id) {
         RuleEngineFunction ruleEngineFunction = this.ruleEngineFunctionManager.getById(id);
@@ -125,6 +137,12 @@ public class FunctionServiceImpl implements FunctionService {
         }
     }
 
+    /**
+     * 函数模拟测试
+     *
+     * @param runFunction 函数入参值
+     * @return result
+     */
     @Override
     public Object run(RunFunction runFunction) {
         RuleEngineFunction engineFunction = this.ruleEngineFunctionManager.getById(runFunction.getId());
@@ -140,16 +158,27 @@ public class FunctionServiceImpl implements FunctionService {
         }
     }
 
+    /**
+     * 处理函数值
+     *
+     * @param paramValue 函数参数值
+     * @return map
+     */
     private Map<String, Object> getParamValue(List<ParamValue> paramValue) {
         Map<String, Object> paramMap = new HashMap<>(paramValue.size());
         for (ParamValue value : paramValue) {
-            Constant constant = new Constant();
-            Object dataConversion = constant.dataConversion(value.getValue(), DataType.getByValue(value.getValueType()));
-            paramMap.put(value.getCode(), dataConversion);
+            Constant constant = new Constant(value.getValue(), DataType.getByValue(value.getValueType()));
+            paramMap.put(value.getCode(), constant.getValue());
         }
         return paramMap;
     }
 
+    /**
+     * 处理函数参数
+     *
+     * @param functionParamList 函数参数列表
+     * @return list
+     */
     private List<FunctionParam> getFunctionParam(List<RuleEngineFunctionParam> functionParamList) {
         List<FunctionParam> params = new ArrayList<>();
         if (CollUtil.isNotEmpty(functionParamList)) {

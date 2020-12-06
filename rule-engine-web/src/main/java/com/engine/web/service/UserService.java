@@ -14,8 +14,20 @@ import java.io.IOException;
  */
 public interface UserService {
 
+    /**
+     * 用户登录
+     *
+     * @param loginRequest 登录信息
+     * @return true表示登录成功
+     */
     boolean login(LoginRequest loginRequest);
 
+    /**
+     * 用户注册
+     *
+     * @param registerRequest 注册信息
+     * @return true表示注册成功
+     */
     Boolean register(RegisterRequest registerRequest);
 
     /**
@@ -50,6 +62,11 @@ public interface UserService {
      */
     Boolean updatePassword(ForgotRequest forgotRequest);
 
+    /**
+     * 获取登录人信息
+     *
+     * @return user
+     */
     UserResponse getUserInfo();
 
     /**

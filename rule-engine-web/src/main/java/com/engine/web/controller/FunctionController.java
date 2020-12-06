@@ -34,12 +34,24 @@ public class FunctionController {
     @Resource
     private FunctionService functionService;
 
+    /**
+     * 函数列表
+     *
+     * @param pageRequest param
+     * @return list
+     */
     @PostMapping("list")
     @ApiOperation("函数列表")
     public PageResult<ListFunctionResponse> list(@RequestBody PageRequest<ListFunctionRequest> pageRequest) {
         return functionService.list(pageRequest);
     }
 
+    /**
+     * 查询函数详情
+     *
+     * @param idRequest 函数id
+     * @return 函数信息
+     */
     @PostMapping("get")
     @ApiOperation("查询函数详情")
     public PlainResult<GetFunctionResponse> get(@RequestBody @Valid IdRequest idRequest) {
@@ -48,6 +60,12 @@ public class FunctionController {
         return plainResult;
     }
 
+    /**
+     * 函数模拟测试
+     *
+     * @param runFunction 函数入参值
+     * @return result
+     */
     @PostMapping("run")
     @ApiOperation("函数模拟测试")
     public PlainResult<Object> run(@Valid @RequestBody RunFunction runFunction) {

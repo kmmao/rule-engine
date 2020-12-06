@@ -17,10 +17,11 @@ package com.engine.core.value;
 
 import com.engine.core.Configuration;
 import com.engine.core.Input;
-import com.engine.core.EngineVariable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -48,8 +49,10 @@ public class Constant implements Value {
      */
     private DataType dataType;
 
-    public Constant(Object value, DataType dataType) {
-        this.value = value;
+    public Constant(@Nullable Object value, @NonNull DataType dataType) {
+        Objects.requireNonNull(dataType);
+        // 初始化值
+        this.value = this.dataConversion(value, dataType);
         this.dataType = dataType;
     }
 
@@ -97,7 +100,7 @@ public class Constant implements Value {
 
     @Override
     public DataType getDataType() {
-        return dataType;
+        return this.dataType;
     }
 
     @Override
@@ -107,6 +110,6 @@ public class Constant implements Value {
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
-        return dataConversion(value, dataType);
+        return this.getValue();
     }
 }

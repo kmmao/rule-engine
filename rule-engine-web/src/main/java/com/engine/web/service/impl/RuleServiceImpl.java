@@ -105,7 +105,7 @@ public class RuleServiceImpl implements RuleService {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
         Workspace workspace = this.workspaceService.currentWorkspace();
-        return PageUtils.page(ruleEngineRuleManager, page, () -> {
+        return PageUtils.page(this.ruleEngineRuleManager, page, () -> {
             QueryWrapper<RuleEngineRule> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineRule::getWorkspaceId, workspace.getId());
             PageUtils.defaultOrder(orders, wrapper);
@@ -126,7 +126,7 @@ public class RuleServiceImpl implements RuleService {
             listRuleResponse.setId(m.getId());
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setIsPublish(engine.isExistsRule(m.getWorkspaceCode(), m.getCode()));
+            listRuleResponse.setIsPublish(this.engine.isExistsRule(m.getWorkspaceCode(), m.getCode()));
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateTime(m.getCreateTime());

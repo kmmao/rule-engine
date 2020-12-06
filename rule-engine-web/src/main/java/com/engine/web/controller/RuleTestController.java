@@ -30,6 +30,12 @@ public class RuleTestController {
     @Resource
     private RuleTestService ruleTestService;
 
+    /**
+     * 规则模拟运行
+     *
+     * @param executeRuleRequest 规则参数信息
+     * @return result
+     */
     @PostMapping("run")
     @ApiOperation("模拟运行")
     public BaseResult fun(@RequestBody @Valid ExecuteRuleRequest executeRuleRequest) {

@@ -68,6 +68,11 @@ public class UserController {
         return plainResult;
     }
 
+    /**
+     * 获取登录人信息
+     *
+     * @return user
+     */
     @PostMapping("getUserInfo")
     @ApiOperation("获取登录人信息")
     public PlainResult<UserResponse> getUserInfo() {

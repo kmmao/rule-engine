@@ -17,6 +17,7 @@
     <modules>
         <module>rule-engine-core</module>
         <module>rule-engine-web</module>
+        <module>rule-engine-client</module>
     </modules>
 
     <name>rule-com.engine</name>

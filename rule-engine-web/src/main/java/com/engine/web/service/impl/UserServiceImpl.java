@@ -61,6 +61,12 @@ public class UserServiceImpl implements UserService {
      */
     private static final String FORGOT_EMAIL_CODE_PRE = "rule_engine_boot_user_forgot_email_code_pre";
 
+    /**
+     * 用户登录
+     *
+     * @param loginRequest 登录信息
+     * @return true表示登录成功
+     */
     @Override
     public boolean login(LoginRequest loginRequest) {
         RuleEngineUser ruleEngineUser = ruleEngineUserManager.lambdaQuery()
@@ -103,6 +109,12 @@ public class UserServiceImpl implements UserService {
         bucket.set(userData, JWTUtils.keepTime, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * 用户注册
+     *
+     * @param registerRequest 注册信息
+     * @return true表示注册成功
+     */
     @Override
     public Boolean register(RegisterRequest registerRequest) {
         checkVerifyCode(registerRequest.getEmail(), registerRequest.getCode(), REGISTER_EMAIL_CODE_PRE);
@@ -212,6 +224,11 @@ public class UserServiceImpl implements UserService {
                 .update(ruleEngineUser);
     }
 
+    /**
+     * 获取登录人信息
+     *
+     * @return user
+     */
     @Override
     public UserResponse getUserInfo() {
         UserData userData = AuthInterceptor.USER.get();

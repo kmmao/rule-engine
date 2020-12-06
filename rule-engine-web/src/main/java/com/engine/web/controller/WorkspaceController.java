@@ -32,6 +32,11 @@ public class WorkspaceController {
     @Resource
     private WorkspaceService workspaceService;
 
+    /**
+     * 用户有权限的工作空间列表
+     *
+     * @return list
+     */
     @PostMapping("list")
     @ApiOperation("用户有权限的工作空间列表")
     public BaseResult list() {
@@ -40,6 +45,12 @@ public class WorkspaceController {
         return plainResult;
     }
 
+    /**
+     * 切换工作空间
+     *
+     * @param idRequest 工作空间id
+     * @return true
+     */
     @PostMapping("change")
     @ApiOperation("切换工作空间")
     public BaseResult change(@RequestBody @Valid IdRequest idRequest) {
@@ -48,6 +59,11 @@ public class WorkspaceController {
         return plainResult;
     }
 
+    /**
+     * 获取当前工作空间
+     *
+     * @return Workspace
+     */
     @PostMapping("currentWorkspace")
     @ApiOperation("当前工作空间")
     public BaseResult currentWorkspace() {

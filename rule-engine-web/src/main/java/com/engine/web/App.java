@@ -55,7 +55,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class,
         SecurityAutoConfiguration.class
-})
+},
+        scanBasePackages = "com.engine")
 @MapperScan({"com.engine.web.store.mapper"})
 @EnableTransactionManagement
 @Import({LogicSqlInjector.class, RestTemplate.class, PaginationInterceptor.class})
