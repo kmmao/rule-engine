@@ -2,6 +2,7 @@ package com.engine.client;
 
 
 import javax.annotation.Resource;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -15,6 +16,8 @@ public class RuleEngineClient {
 
     @Resource
     private RuleEngineProperties ruleEngineProperties;
+    @Resource
+    private RestTemplate restTemplate;
 
     public RuleEngineClient() {
 
