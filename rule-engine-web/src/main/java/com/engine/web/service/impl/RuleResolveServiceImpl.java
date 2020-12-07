@@ -121,6 +121,9 @@ public class RuleResolveServiceImpl implements RuleResolveService {
                 .list()
                 .stream().collect(Collectors.groupingBy(RuleEngineConditionGroupCondition::getConditionGroupId));
         Set<Integer> conditionIds = conditionGroupConditionMaps.values().stream().flatMap(Collection::stream).map(RuleEngineConditionGroupCondition::getConditionId).collect(Collectors.toSet());
+        if(CollUtil.isEmpty(conditionIds)){
+            return new ConditionSet();
+        }
         List<RuleEngineCondition> ruleEngineConditions = ruleEngineConditionManager.lambdaQuery().in(RuleEngineCondition::getId, conditionIds).list();
         Map<Integer, RuleEngineCondition> conditionMap = ruleEngineConditions.stream().collect(Collectors.toMap(RuleEngineCondition::getId, Function.identity()));
         ConditionSet conditionSet = new ConditionSet();
