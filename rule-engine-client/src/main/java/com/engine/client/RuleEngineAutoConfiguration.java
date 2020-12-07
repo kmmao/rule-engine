@@ -13,9 +13,14 @@ import org.springframework.web.client.RestTemplate;
 public class RuleEngineAutoConfiguration {
 
     @Bean
-	  @ConditionalOnMissingBean
+    @ConditionalOnMissingBean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
+	
+    @Bean
+    public RuleEngineClient ruleEngineClient() {
+	return new RuleEngineClient();
+    }
+	
 }
