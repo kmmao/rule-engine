@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @EnableConfigurationProperties(RuleEngineProperties.class)
-@Import({RuleEngineClient.class})
+@Import({RuleEngineAutoConfiguration.class})
 public @interface EnableRuleEngine {
 }
