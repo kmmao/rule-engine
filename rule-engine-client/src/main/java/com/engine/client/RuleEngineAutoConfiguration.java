@@ -1,5 +1,7 @@
 package com.engine.client;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -17,10 +19,10 @@ public class RuleEngineAutoConfiguration {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-	
+
     @Bean
     public RuleEngineClient ruleEngineClient() {
-	return new RuleEngineClient();
+        return new RuleEngineClient();
     }
-	
+
 }
