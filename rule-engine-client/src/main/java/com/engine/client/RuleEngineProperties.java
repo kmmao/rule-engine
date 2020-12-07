@@ -22,6 +22,10 @@ public class RuleEngineProperties {
      * 规则引擎调用地址
      */
     private String url;
+    /**
+     * 工作空间code
+     */
+    private String workspaceCode;
 
     private String accessKeyId;
 
