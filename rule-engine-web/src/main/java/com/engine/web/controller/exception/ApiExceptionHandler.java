@@ -59,25 +59,38 @@ public class ApiExceptionHandler {
         result.setMessage(ErrorCodeEnum.BOOT500.getMsg());
         result.setCode(ErrorCodeEnum.BOOT500.getCode());
         //发送异常邮件
-        exceptionMessage.send(e, ErrorLevelEnum.SERIOUS);
+        this.exceptionMessage.send(e, ErrorLevelEnum.SERIOUS);
         return result;
     }
 
+
+    /**
+     * 规则引擎异常
+     *
+     * @param e e
+     * @return BaseResult
+     */
     @ExceptionHandler(value = EngineException.class)
     public BaseResult engineException(EngineException e) {
         BaseResult result = BaseResult.err();
         log.warn("EngineException", e);
         result.setMessage(e.getMessage());
-        result.setCode(8900);
+        result.setCode(ErrorCodeEnum.RULE8900.getCode());
         return result;
     }
 
+    /**
+     * 规则函数异常
+     *
+     * @param e e
+     * @return BaseResult
+     */
     @ExceptionHandler(value = FunctionException.class)
     public BaseResult functionException(FunctionException e) {
         BaseResult result = BaseResult.err();
         log.warn("FunctionException", e);
         result.setMessage(e.getMessage());
-        result.setCode(8910);
+        result.setCode(ErrorCodeEnum.RULE8910.getCode());
         return result;
     }
 

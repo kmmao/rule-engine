@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.engine.web.annotation.ReSubmitLock;
 import com.engine.web.enums.ErrorCodeEnum;
 import com.engine.web.interceptor.AuthInterceptor;
-import com.engine.web.store.entity.RuleEngineUser;
 import com.engine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

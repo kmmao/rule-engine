@@ -43,6 +43,12 @@ public class ElementServiceImpl implements ElementService {
     @Resource
     private WorkspaceService workspaceService;
 
+    /**
+     * 添加元素
+     *
+     * @param addConditionRequest 元素信息
+     * @return true
+     */
     @Override
     public Boolean add(AddElementRequest addConditionRequest) {
         if (this.elementCodeIsExists(addConditionRequest.getCode())) {
@@ -75,6 +81,12 @@ public class ElementServiceImpl implements ElementService {
         return count != null && count >= 1;
     }
 
+    /**
+     * 元素列表
+     *
+     * @param pageRequest param
+     * @return ListElementResponse
+     */
     @Override
     public PageResult<ListElementResponse> list(PageRequest<ListElementRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
@@ -109,6 +121,12 @@ public class ElementServiceImpl implements ElementService {
         });
     }
 
+    /**
+     * 根据id查询元素
+     *
+     * @param id 元素id
+     * @return GetElementResponse
+     */
     @Override
     public GetElementResponse get(Integer id) {
         Workspace workspace = this.workspaceService.currentWorkspace();
@@ -120,6 +138,12 @@ public class ElementServiceImpl implements ElementService {
         return elementResponse;
     }
 
+    /**
+     * 根据元素id更新元素
+     *
+     * @param updateElementRequest 元素信息
+     * @return true
+     */
     @Override
     public Boolean update(UpdateElementRequest updateElementRequest) {
         Workspace workspace = this.workspaceService.currentWorkspace();
@@ -135,6 +159,12 @@ public class ElementServiceImpl implements ElementService {
         return this.ruleEngineElementManager.updateById(engineElement);
     }
 
+    /**
+     * 根据id删除元素
+     *
+     * @param id 元素id
+     * @return true
+     */
     @Override
     public Boolean delete(Integer id) {
         {

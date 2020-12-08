@@ -1,6 +1,5 @@
 package com.engine.web.enums;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -99,7 +98,10 @@ public enum ErrorCodeEnum {
     /**
      * BOOT 10011039 error code enum.
      */
-    BOOT10011039(10011039, "验证Token失败");
+    BOOT10011039(10011039, "验证Token失败"),
+
+    RULE8900(8900, "规则引擎异常"),
+    RULE8910(8910, "规则函数异常");
 
     @Getter
     private int code;

@@ -9,8 +9,8 @@ logging:
 server:
   port: 8010
   tomcat:
-    max-threads: 10 #最大线程执行数
-    max-connections: 100 #最大连接数
+    max-threads: 40 #最大线程执行数
+    max-connections: 400 #最大连接数
     uri-encoding: UTF-8
 spring:
   jackson:
@@ -25,9 +25,9 @@ spring:
       password:
       driver-class-name: com.mysql.jdbc.Driver
       # 初始化大小，最小，最大
-      initialSize: 2
-      minIdle: 3
-      maxActive: 10
+      initialSize: 20
+      minIdle: 30
+      maxActive: 100
       # 配置获取连接等待超时的时间
       maxWait: 10000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -47,6 +47,10 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       # 合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
+      # druid监控账号密码
+      stat-view-servlet:
+        login-username: admin
+        login-password: 123456
   #消息队列配置
   rabbitmq:
     host:
@@ -128,22 +132,13 @@ exception:
 #配置文件加密ENC()
 jasypt:
   encryptor:
-    password:
-
-#线程配置
-thread:
-  pool:
-    corePoolSize: 4
-    maxPoolSize: 20
-    queueCapacity: 200
-    keepAliveSeconds: 300
-    threadNamePrefix: TaskExecutorThread-
+    password: test
 
 #是否需要验证权限
 auth:
   enable: true
   jwt:
-    secretKey:
+    secretKey: rule
     #token失效时间(毫秒单位)
     keepTime: 1800000
 

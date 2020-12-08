@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.engine.client;
+package com.engine.client.exception;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
+import cn.hutool.core.text.StrFormatter;
+
+import javax.validation.ValidationException;
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author 丁乾文
- * @create 2020/12/6
+ * @author dingqianwen
+ * @date 2020/3/9
  * @since 1.0.0
  */
-public class RuleEngineAutoConfiguration {
+public class ValidException extends ValidationException {
 
-    @Bean
-    @ConditionalOnMissingBean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    private static final long serialVersionUID = 8796847479175079802L;
+
+    public ValidException(String message) {
+        super(message);
     }
 
-    @Bean
-    public RuleEngineClient ruleEngineClient() {
-        return new RuleEngineClient();
+    public ValidException(String message, Object... args) {
+        super(StrFormatter.format(message, args));
     }
-
 }

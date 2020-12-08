@@ -250,6 +250,12 @@ public class ConditionServiceImpl implements ConditionService {
         return configBean;
     }
 
+    /**
+     * 获取条件中的变量
+     *
+     * @param ruleEngineConditions 条件信息
+     * @return map
+     */
     @Override
     public Map<Integer, RuleEngineVariable> getConditionVariableMap(Collection<RuleEngineCondition> ruleEngineConditions) {
         // 获取条件中的所有的变量数据
@@ -269,6 +275,12 @@ public class ConditionServiceImpl implements ConditionService {
                         .stream().collect(Collectors.toMap(RuleEngineVariable::getId, Function.identity()))).orElse(new HashMap<>());
     }
 
+    /**
+     * 获取条件中的元素
+     *
+     * @param ruleEngineConditions 条件信息
+     * @return map
+     */
     @Override
     public Map<Integer, RuleEngineElement> getConditionElementMap(Collection<RuleEngineCondition> ruleEngineConditions) {
         Set<String> elementIds = new HashSet<>();

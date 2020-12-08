@@ -36,6 +36,7 @@ import java.nio.charset.Charset;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseUtils {
+
     /**
      * 页面响应json
      *
@@ -52,4 +53,5 @@ public class ResponseUtils {
             log.error("{1}", e);
         }
     }
+
 }

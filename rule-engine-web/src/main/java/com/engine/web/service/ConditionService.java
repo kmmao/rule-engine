@@ -3,14 +3,12 @@ package com.engine.web.service;
 
 import com.engine.web.store.entity.RuleEngineCondition;
 import com.engine.web.store.entity.RuleEngineElement;
-import com.engine.web.store.entity.RuleEngineRule;
 import com.engine.web.store.entity.RuleEngineVariable;
 import com.engine.web.vo.base.request.PageRequest;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.condition.*;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,8 +71,20 @@ public interface ConditionService {
      */
     PageResult<ListConditionResponse> list(PageRequest<ListConditionRequest> pageRequest);
 
+    /**
+     * 获取条件中的变量
+     *
+     * @param ruleEngineConditions 条件信息
+     * @return map
+     */
     Map<Integer, RuleEngineVariable> getConditionVariableMap(Collection<RuleEngineCondition> ruleEngineConditions);
 
+    /**
+     * 获取条件中的元素
+     *
+     * @param ruleEngineConditions 条件信息
+     * @return map
+     */
     Map<Integer, RuleEngineElement> getConditionElementMap(Collection<RuleEngineCondition> ruleEngineConditions);
 
     /**

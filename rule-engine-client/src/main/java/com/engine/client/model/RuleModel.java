@@ -13,31 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.engine.client;
+package com.engine.client.model;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
+import java.lang.annotation.*;
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author 丁乾文
- * @create 2020/12/6
+ * @author dingqianwen
+ * @date 2020/12/9
  * @since 1.0.0
  */
-public class RuleEngineAutoConfiguration {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface RuleModel {
 
-    @Bean
-    @ConditionalOnMissingBean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
-    public RuleEngineClient ruleEngineClient() {
-        return new RuleEngineClient();
-    }
+    /**
+     * 默认类名
+     *
+     * @return 规则code
+     */
+    String ruleCode() default "";
 
 }

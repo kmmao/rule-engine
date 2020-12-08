@@ -1,13 +1,16 @@
 package com.engine.web.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.engine.core.rule.Rule;
 import com.engine.web.service.RulePublishService;
 import com.engine.web.store.entity.RuleEngineRulePublish;
 import com.engine.web.store.manager.RuleEngineRulePublishManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,6 +21,7 @@ import java.util.List;
  * @date 2020/9/4
  * @since 1.0.0
  */
+@Slf4j
 @Service
 public class RulePublishServiceImpl implements RulePublishService {
 
@@ -51,11 +55,19 @@ public class RulePublishServiceImpl implements RulePublishService {
     public List<Rule> getAllPublishRule() {
         List<RuleEngineRulePublish> rulePublishList = this.ruleEngineRulePublishManager.lambdaQuery()
                 .list();
-        List<Rule> rules = new ArrayList<>();
+        if (CollUtil.isEmpty(rulePublishList)) {
+            return Collections.emptyList();
+        }
+        List<Rule> rules = new ArrayList<>(rulePublishList.size());
         for (RuleEngineRulePublish publish : rulePublishList) {
-            Rule rule = new Rule();
-            rule.fromJson(publish.getData());
-            rules.add(rule);
+            try {
+                log.info("parse rule for workspace code:{} rule code:{}", publish.getWorkspaceCode(), publish.getRuleCode());
+                Rule rule = new Rule();
+                rule.fromJson(publish.getData());
+                rules.add(rule);
+            } catch (Exception e) {
+                log.error("parse rule error ", e);
+            }
         }
         return rules;
     }

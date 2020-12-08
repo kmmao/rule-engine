@@ -65,9 +65,9 @@ public class EngineConfig {
     public Engine defaultEngine() {
         log.info("开始初始化规则引擎");
         DefaultEngine defaultEngine = new DefaultEngine();
-        defaultEngine.addMultipleRule(rulePublishService.getAllPublishRule());
-        defaultEngine.getEngineVariable().addMultipleVariable(variableResolveService.getAllVariable());
-        defaultEngine.setRuleListener(ruleEngineRuleListener);
+        defaultEngine.addMultipleRule(this.rulePublishService.getAllPublishRule());
+        defaultEngine.getEngineVariable().addMultipleVariable(this.variableResolveService.getAllVariable());
+        defaultEngine.setRuleListener(this.ruleEngineRuleListener);
         defaultEngine.setFunctionCache(new DefaultFunctionCache(1000));
         log.info("规则引擎初始化完毕");
         return defaultEngine;

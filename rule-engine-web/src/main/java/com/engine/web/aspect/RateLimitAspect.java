@@ -18,7 +18,6 @@ package com.engine.web.aspect;
 
 import com.engine.web.annotation.RateLimit;
 import com.engine.web.interceptor.AbstractTokenInterceptor;
-import com.engine.web.store.entity.RuleEngineUser;
 import com.engine.web.util.HttpServletUtils;
 import com.engine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +89,7 @@ public class RateLimitAspect {
                 throw new UnsupportedOperationException();
         }
         log.info("执行限流拦截器,限制类型:{},key:{}", rateLimit.type(), key);
-        executor(key, rateLimit);
+        this.executor(key, rateLimit);
         return joinPoint.proceed();
     }
 

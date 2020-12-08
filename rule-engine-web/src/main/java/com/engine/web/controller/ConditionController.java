@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2020 dingqianwen (761945125@qq.com)
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.engine.web.controller;
 
 
@@ -34,6 +49,12 @@ public class ConditionController {
     @Resource
     private ConditionService conditionService;
 
+    /**
+     * 添加条件
+     *
+     * @param addConditionRequest 条件信息
+     * @return true
+     */
     @PostMapping("add")
     @ApiOperation("添加条件")
     public PlainResult<Boolean> add(@RequestBody @Valid AddConditionRequest addConditionRequest) {
@@ -42,6 +63,12 @@ public class ConditionController {
         return plainResult;
     }
 
+    /**
+     * 根据id查询条件
+     *
+     * @param idRequest 条件id
+     * @return ConditionResponse
+     */
     @PostMapping("get")
     @ApiOperation("根据id查询条件")
     public PlainResult<ConditionResponse> getById(@RequestBody @Valid IdRequest idRequest) {
@@ -50,6 +77,12 @@ public class ConditionController {
         return plainResult;
     }
 
+    /**
+     * 根据id更新条件
+     *
+     * @param updateConditionRequest 条件信息
+     * @return true
+     */
     @PostMapping("update")
     @ApiOperation("根据id更新条件")
     public PlainResult<Boolean> update(@RequestBody @Valid UpdateConditionRequest updateConditionRequest) {
@@ -58,12 +91,24 @@ public class ConditionController {
         return plainResult;
     }
 
+    /**
+     * 条件列表
+     *
+     * @param pageRequest param
+     * @return ListConditionResponse
+     */
     @PostMapping("list")
     @ApiOperation("条件列表")
     public PageResult<ListConditionResponse> list(@RequestBody PageRequest<ListConditionRequest> pageRequest) {
         return conditionService.list(pageRequest);
     }
 
+    /**
+     * 删除条件
+     *
+     * @param idRequest 条件id
+     * @return true：删除成功
+     */
     @RoleAuth
     @PostMapping("delete")
     @ApiOperation("根据id删除条件")

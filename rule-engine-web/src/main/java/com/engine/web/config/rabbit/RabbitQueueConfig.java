@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RabbitQueueConfig {
+
     /**
      * 用于日志的队列
      */

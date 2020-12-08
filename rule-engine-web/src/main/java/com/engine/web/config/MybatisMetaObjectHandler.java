@@ -33,16 +33,21 @@ import java.util.Date;
 @Component
 public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
+    private static final String DELETED = "deleted";
+    private static final String CREATE_TIME = "createTime";
+    private static final String UPDATE_TIME = "updateTime";
+
     @Override
     public void insertFill(MetaObject metaObject) {
-        setFieldValByName("deleted", DeletedEnum.ENABLE.getStatus(), metaObject);
-        setFieldValByName("createTime", new Date(), metaObject);
-        setFieldValByName("updateTime", new Date(), metaObject);
+        setFieldValByName(DELETED, DeletedEnum.ENABLE.getStatus(), metaObject);
+        Date currentDate = new Date();
+        setFieldValByName(CREATE_TIME, currentDate, metaObject);
+        setFieldValByName(UPDATE_TIME, currentDate, metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        setFieldValByName("updateTime", new Date(), metaObject);
+        setFieldValByName(UPDATE_TIME, new Date(), metaObject);
     }
 
 }

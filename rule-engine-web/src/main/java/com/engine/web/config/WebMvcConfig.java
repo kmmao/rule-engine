@@ -47,7 +47,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * 静态资源不拦截
      */
     private static final List<String> STATIC_RESOURCE = Arrays.asList(
-            "/swagger-ui.html/**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/druid/**", "/csrf/**", "/error/**", "/doc.html/**");
+            // swagger
+            "/swagger-ui.html/**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/csrf/**", "/doc.html/**",
+            // druid
+            "/druid/**",
+            "/error/**");
 
     /**
      * @param registry 注册拦截器
@@ -57,7 +61,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(mdcLogInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(STATIC_RESOURCE);
         registry.addInterceptor(authInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(STATIC_RESOURCE);;
+                .excludePathPatterns(STATIC_RESOURCE);
+        ;
     }
 
 }
