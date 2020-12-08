@@ -54,7 +54,7 @@ public class SymbolController {
      * @return >,<,=..
      */
     @PostMapping("getByType")
-    @ApiOperation("变量列表")
+    @ApiOperation("获取规则引擎运算符")
     public PlainResult<List<SymbolResponse>> getByType(@RequestBody @Valid Param<String> param) {
         PlainResult<List<SymbolResponse>> listPlainResult = new PlainResult<>();
         listPlainResult.setData(symbolService.getByType(param.getParam()));
