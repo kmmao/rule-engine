@@ -1,6 +1,5 @@
 package com.engine.web.service.impl;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 import cn.hutool.core.collection.CollUtil;
@@ -8,7 +7,6 @@ import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.engine.core.FunctionExecutor;
 import com.engine.core.exception.ValidException;
 import com.engine.core.value.Constant;
 import com.engine.core.value.DataType;
@@ -101,7 +99,7 @@ public class FunctionServiceImpl implements FunctionService {
     /**
      * 查询函数详情
      *
-     * @param idRequest 函数id
+     * @param id 函数id
      * @return 函数信息
      */
     @Override
@@ -167,8 +165,8 @@ public class FunctionServiceImpl implements FunctionService {
     private Map<String, Object> getParamValue(List<ParamValue> paramValue) {
         Map<String, Object> paramMap = new HashMap<>(paramValue.size());
         for (ParamValue value : paramValue) {
-            Constant constant = new Constant();
-            paramMap.put(value.getCode(), constant.dataConversion(value.getValue(), DataType.getByValue(value.getValueType())));
+            Constant constant = new Constant(value.getValue(), DataType.getByValue(value.getValueType()));
+            paramMap.put(value.getCode(), constant.getValue());
         }
         return paramMap;
     }

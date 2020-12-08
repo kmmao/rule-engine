@@ -17,7 +17,8 @@ package com.engine.core.value;
 
 import com.engine.core.Configuration;
 import com.engine.core.Input;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -27,14 +28,16 @@ import lombok.Data;
  * @date 2020/3/2
  * @since 1.0.0
  */
-@Data
+@ToString
 public class Variable implements Value {
 
+    @Getter
     private Integer variableId;
 
     /**
      * 变量名称
      */
+    @Getter
     private String variableName;
 
     /**
@@ -42,6 +45,8 @@ public class Variable implements Value {
      */
     private DataType dataType;
 
+    Variable() {
+    }
 
     public Variable(Integer variableId, String variableName, DataType dataType) {
         this.variableId = variableId;
@@ -54,7 +59,7 @@ public class Variable implements Value {
         Value value = configuration.getEngineVariable().getVariable(this.getVariableId());
         if (value instanceof Constant) {
             Constant constantVal = (Constant) value;
-            return constantVal.getValue(input, configuration);
+            return constantVal.getValue();
         }
         Function functionValue = (Function) value;
         return functionValue.getValue(input, configuration);
@@ -68,6 +73,11 @@ public class Variable implements Value {
     @Override
     public DataType getDataType() {
         return this.dataType;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
 }

@@ -40,6 +40,8 @@ public class ConditionGroup {
 
     private Integer id;
 
+    private String name;
+
     private Integer orderNo;
 
     private List<Condition> conditions = new ArrayList<>();

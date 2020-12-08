@@ -20,6 +20,7 @@ import com.engine.core.value.DataType;
 import com.engine.core.condition.compare.BooleanCompare;
 import com.engine.core.condition.compare.CollectionCompare;
 import com.engine.core.condition.compare.StringCompare;
+import org.springframework.lang.NonNull;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -30,8 +31,13 @@ import com.engine.core.condition.compare.StringCompare;
  * @since 1.0.0
  */
 public class ConditionCompareFactory {
-
-    public static Compare getCompare(DataType dataType) {
+    /**
+     * 根据dataType获取对应的条件比较器
+     *
+     * @param dataType 数据类型
+     * @return Compare
+     */
+    public static Compare getCompare(@NonNull DataType dataType) {
         switch (dataType) {
             case NUMBER:
                 return NumberCompare.getInstance();

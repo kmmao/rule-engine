@@ -61,10 +61,10 @@ public class ConditionSet {
             log.info("条件组为空，没有条件，返回True");
             return true;
         }
-        for (int i = 0; i < conditionGroups.size(); i++) {
+        for (int i = 0; i < this.conditionGroups.size(); i++) {
             log.info("开始验证条件组:{}", i);
             //条件组是或者关系，有一个为true,直接返回
-            if (conditionGroups.get(i).compare(input, configuration)) {
+            if (this.conditionGroups.get(i).compare(input, configuration)) {
                 log.info("条件组:{}成立", i);
                 return true;
             } else {

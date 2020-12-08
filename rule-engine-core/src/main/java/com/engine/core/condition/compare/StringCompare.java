@@ -67,7 +67,4 @@ public class StringCompare implements Compare {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(StringCompare.getInstance().compare("1", Operator.EQ, "2"));
-    }
 }

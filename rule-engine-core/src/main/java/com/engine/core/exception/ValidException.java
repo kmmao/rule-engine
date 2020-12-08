@@ -27,6 +27,8 @@ import cn.hutool.core.text.StrFormatter;
  */
 public class ValidException extends EngineException {
 
+    private static final long serialVersionUID = 8796847479175079802L;
+
     public ValidException(String message) {
         super(message);
     }

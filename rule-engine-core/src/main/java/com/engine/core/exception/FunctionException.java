@@ -27,6 +27,8 @@ import cn.hutool.core.text.StrFormatter;
  */
 public class FunctionException extends RuntimeException {
 
+    private static final long serialVersionUID = -1978785164691301128L;
+
     public FunctionException(String message) {
         super(message);
     }

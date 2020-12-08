@@ -27,6 +27,8 @@ import cn.hutool.core.text.StrFormatter;
  */
 public class ValueException extends EngineException {
 
+    private static final long serialVersionUID = 5309314039165180458L;
+
     public ValueException(String message) {
         super(message);
     }
@@ -34,4 +36,5 @@ public class ValueException extends EngineException {
     public ValueException(String message, Object... args) {
         super(StrFormatter.format(message, args));
     }
+
 }

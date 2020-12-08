@@ -46,14 +46,14 @@ public class EngineVariable implements Closeable {
     /**
      * 从引擎中删除一个变量
      *
-     * @param id 变量名称
+     * @param id 变量id
      */
     public void removeVariable(Integer id) {
         this.variableMap.remove(id);
     }
 
     /**
-     * 根据名称从规则引擎中获取一个变量
+     * 根据id从规则引擎中获取一个变量
      *
      * @param id 变量名称
      * @return 变量值
@@ -69,7 +69,7 @@ public class EngineVariable implements Closeable {
     /**
      * 往规则引擎中添加一个变量
      *
-     * @param id    变量名称
+     * @param id    变量id
      * @param value 变量值
      */
     public void addVariable(Integer id, Value value) {

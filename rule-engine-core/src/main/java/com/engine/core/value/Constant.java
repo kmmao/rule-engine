@@ -17,9 +17,8 @@ package com.engine.core.value;
 
 import com.engine.core.Configuration;
 import com.engine.core.Input;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -34,14 +33,14 @@ import java.util.Objects;
  * @date 2020/3/2
  * @since 1.0.0
  */
-@NoArgsConstructor
-@Data
+@ToString
 public class Constant implements Value {
+
 
     /**
      * 常量值
      */
-    @Setter
+    @Getter
     private Object value;
 
     /**
@@ -49,11 +48,17 @@ public class Constant implements Value {
      */
     private DataType dataType;
 
+    /**
+     * 反序列化json使用
+     */
+    Constant() {
+
+    }
+
     public Constant(@Nullable Object value, @NonNull DataType dataType) {
         Objects.requireNonNull(dataType);
-        // 初始化值 发布规则解析json fastjson存在bug 暂时不支持 等待修复
-        //this.value = this.dataConversion(value, dataType);
-        this.value = value;
+        // 初始化值
+        this.value = this.dataConversion(value, dataType);
         this.dataType = dataType;
     }
 
@@ -111,6 +116,6 @@ public class Constant implements Value {
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
-        return this.dataConversion(this.getValue(), this.getDataType());
+        return this.getValue();
     }
 }

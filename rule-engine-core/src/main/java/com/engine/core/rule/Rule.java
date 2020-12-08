@@ -15,13 +15,12 @@
  */
 package com.engine.core.rule;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.engine.core.Configuration;
 import com.engine.core.Input;
 import com.engine.core.value.Value;
 import com.engine.core.condition.ConditionSet;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.lang.NonNull;
@@ -62,7 +61,9 @@ public class Rule implements RuleParse {
      * 工作空间
      */
     private Integer workspaceId;
-
+    /**
+     * 工作空间code
+     */
     private String workspaceCode;
 
     /**
@@ -137,16 +138,18 @@ public class Rule implements RuleParse {
         }
     }
 
+    @SneakyThrows
     @Override
     public void fromJson(@NonNull String jsonString) {
-        Rule rule = JSON.parseObject(jsonString, Rule.class, PARSER_CONFIG);
+        Rule rule = OBJECT_MAPPER.readValue(jsonString, Rule.class);
         BeanUtils.copyProperties(rule, this);
     }
 
+    @SneakyThrows
     @Override
     @NonNull
     public String toJson() {
-        return JSON.toJSONString(this, SerializerFeature.WriteClassName);
+        return OBJECT_MAPPER.writeValueAsString(this);
     }
 
 }

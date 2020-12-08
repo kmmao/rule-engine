@@ -57,4 +57,5 @@ public class DefaultOutPut implements OutPut {
     public DataType getDataType() {
         return this.dataType;
     }
+
 }

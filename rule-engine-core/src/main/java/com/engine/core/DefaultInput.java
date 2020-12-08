@@ -53,7 +53,7 @@ public class DefaultInput implements Input {
      */
     @Override
     public Object remove(String key) {
-        return inputParam.remove(key);
+        return this.inputParam.remove(key);
     }
 
     /**
@@ -64,7 +64,7 @@ public class DefaultInput implements Input {
      */
     @Override
     public Object get(String key) {
-        return inputParam.get(key);
+        return this.inputParam.get(key);
     }
 
     /**
@@ -72,7 +72,7 @@ public class DefaultInput implements Input {
      */
     @Override
     public void clear() {
-        inputParam.clear();
+        this.inputParam.clear();
     }
 
 }

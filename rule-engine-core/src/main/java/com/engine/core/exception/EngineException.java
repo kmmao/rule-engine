@@ -27,6 +27,8 @@ import cn.hutool.core.text.StrFormatter;
  */
 public class EngineException extends RuntimeException {
 
+    private static final long serialVersionUID = -3830935567722595556L;
+
     public EngineException(String message) {
         super(message);
     }

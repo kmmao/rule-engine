@@ -17,9 +17,8 @@ package com.engine.core.value;
 
 import com.engine.core.Configuration;
 import com.engine.core.Input;
-import com.engine.core.EngineVariable;
-import lombok.Data;
-import lombok.Setter;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -29,19 +28,23 @@ import lombok.Setter;
  * @date 2020/3/2
  * @since 1.0.0
  */
-@Data
+@ToString
 public class Element implements Value {
 
+    @Getter
     private Integer elementId;
-
+    @Getter
     private String elementName;
-
+    @Getter
     private String elementCode;
 
     /**
      * 值类型
      */
     private DataType dataType;
+
+    Element() {
+    }
 
     public Element(Integer elementId, String elementName, String elementCode, DataType dataType) {
         this.elementId = elementId;
@@ -52,7 +55,7 @@ public class Element implements Value {
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
-        Object value = input.get(elementCode);
+        Object value = input.get(this.getElementCode());
         return dataConversion(value, getDataType());
     }
 
@@ -63,7 +66,7 @@ public class Element implements Value {
 
     @Override
     public DataType getDataType() {
-        return dataType;
+        return this.dataType;
     }
 
     @Override

@@ -64,17 +64,18 @@ public enum DataType {
         }
     }
 
-    private static Map<String, DataType> map;
-
-    static {
-        map = new HashMap<>(4);
-        DataType[] values = DataType.values();
-        for (DataType value : values) {
-            map.put(value.getValue(), value);
-        }
-    }
-
     public static DataType getByValue(String value) {
-        return map.get(value);
+        switch (value) {
+            case "STRING":
+                return STRING;
+            case "BOOLEAN":
+                return BOOLEAN;
+            case "NUMBER":
+                return NUMBER;
+            case "COLLECTION":
+                return COLLECTION;
+            default:
+                throw new IllegalStateException("Unexpected value: " + value);
+        }
     }
 }

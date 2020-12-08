@@ -19,7 +19,6 @@ import com.engine.core.cache.DefaultFunctionCache;
 import com.engine.core.cache.FunctionCache;
 import com.engine.core.rule.DefaultRuleListener;
 import com.engine.core.rule.RuleListener;
-import lombok.Data;
 import org.springframework.lang.NonNull;
 
 /**
@@ -30,25 +29,49 @@ import org.springframework.lang.NonNull;
  * @date 2020/8/14
  * @since 1.0.0
  */
-@Data
 public class Configuration {
 
     /**
      * 规则执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
      */
-    @NonNull
     private RuleListener ruleListener = new DefaultRuleListener();
 
     /**
      * 规则函数缓存实现类
      */
-    @NonNull
     private FunctionCache functionCache = new DefaultFunctionCache();
 
     /**
      * 规则引擎变量
      */
-    @NonNull
     private EngineVariable engineVariable = new EngineVariable();
+
+
+    @NonNull
+    public RuleListener getRuleListener() {
+        return ruleListener;
+    }
+
+    public void setRuleListener(@NonNull RuleListener ruleListener) {
+        this.ruleListener = ruleListener;
+    }
+
+    @NonNull
+    public FunctionCache getFunctionCache() {
+        return functionCache;
+    }
+
+    public void setFunctionCache(@NonNull FunctionCache functionCache) {
+        this.functionCache = functionCache;
+    }
+
+    @NonNull
+    public EngineVariable getEngineVariable() {
+        return engineVariable;
+    }
+
+    public void setEngineVariable(@NonNull EngineVariable engineVariable) {
+        this.engineVariable = engineVariable;
+    }
 
 }

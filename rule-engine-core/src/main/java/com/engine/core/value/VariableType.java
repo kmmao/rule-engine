@@ -41,18 +41,19 @@ public enum VariableType {
     private Integer type;
 
 
-    private static Map<Integer, VariableType> map;
-
-    static {
-        map = new HashMap<>(4);
-        VariableType[] values = VariableType.values();
-        for (VariableType value : values) {
-            map.put(value.getType(), value);
-        }
-    }
-
     public static VariableType getByType(Integer type) {
-        return map.get(type);
+        switch (type) {
+            case 0:
+                return ELEMENT;
+            case 1:
+                return VARIABLE;
+            case 2:
+                return CONSTANT;
+            case 3:
+                return FUNCTION;
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
+        }
     }
 
 }

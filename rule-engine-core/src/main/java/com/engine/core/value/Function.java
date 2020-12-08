@@ -24,8 +24,8 @@ import com.engine.core.cache.KeyGenerator;
 import com.engine.core.exception.FunctionException;
 import com.engine.core.Input;
 import com.engine.core.FunctionExecutor;
-import lombok.Data;
-import lombok.Setter;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
@@ -44,51 +44,64 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Slf4j
-@Data
+@ToString
 public class Function implements Value {
 
+    @Getter
     private Integer id;
-
+    /**
+     * 函数名称
+     */
+    @Getter
     private String name;
-
 
     private DataType dataType;
 
     /**
      * 需要执行的函数
      */
+    @Getter
     private Object abstractFunction;
 
     /**
      * 函数执行主方法
      */
+    @Getter
     private Method executor;
     /**
      * 函数失败策略方法
      */
+    @Getter
     private Method failureStrategy;
 
     /**
      * 函数缓存key生成
      */
+    @Getter
     private KeyGenerator keyGenerator;
     /**
      * 是否启用缓存
      */
+    @Getter
     private Boolean enableCache = false;
 
     /**
      * 缓存的生存时间，单位：ms
      */
+    @Getter
     private long liveOutTime;
 
     /**
      * 函数执行器
      */
+    @Getter
     private FunctionExecutor functionExecutor = new FunctionExecutor();
 
-    @Setter
+    @Getter
     private Map<String, Value> param;
+
+    Function() {
+    }
 
     public Function(Integer id, String name, Object abstractFunction, DataType dataType, Map<String, Value> param) {
         this.id = id;

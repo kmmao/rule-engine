@@ -15,7 +15,10 @@
  */
 package com.engine.core.rule;
 
-import com.alibaba.fastjson.parser.ParserConfig;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -27,9 +30,16 @@ import com.alibaba.fastjson.parser.ParserConfig;
  */
 public interface RuleParse {
 
-    ParserConfig PARSER_CONFIG = new ParserConfig() {
+    /**
+     * fastjson存在bug 替换fastjson
+     */
+    ObjectMapper OBJECT_MAPPER = new ObjectMapper() {
+
+        private static final long serialVersionUID = -5640476057715217573L;
+
         {
-            this.setAutoTypeSupport(true);
+            this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            this.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, DefaultTyping.EVERYTHING, JsonTypeInfo.As.WRAPPER_OBJECT);
         }
     };
 
