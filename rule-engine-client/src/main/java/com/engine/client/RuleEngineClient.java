@@ -45,12 +45,28 @@ public class RuleEngineClient {
 
     }
 
-    public OutPut exe(String ruleCode, Map<String, Object> input) {
-        // TODO: 2020/12/6 ...
-        return null;
+    /**
+     * 调用规则引擎中的规则
+     *
+     * @param ruleCode 规则code
+     * @param input 规则参数
+     * @return 规则结果
+     */
+    public OutPut exe(@NonNull String ruleCode, @NonNull Map<String, Object> input) {
+        Objects.requireNonNull(ruleCode);
+        Objects.requireNonNull(input);
+        Map<String, Object> param = new HashMap<>(5);
+        param.put("ruleCode", ruleCode);
+        param.put("workspaceCode", this.ruleEngineProperties.getWorkspaceCode());
+        param.put("accessKeyId", this.ruleEngineProperties.getAccessKeyId());
+        param.put("accessKeySecret", this.ruleEngineProperties.getAccessKeySecret());
+        param.put("param", input);
+        return this.restTemplate.postForObject(this.ruleEngineProperties.getUrl(), param, OutPut.class);
     }
 
     /**
+     * 根据规则模型解析调用引擎中的规则
+     *
      * @param model 规则调用模型
      * @return 规则结果
      * @see RuleModel
@@ -60,8 +76,21 @@ public class RuleEngineClient {
         if (model.getClass().isAnnotationPresent(RuleModel.class)) {
             throw new ValidException("{}找不到RuleModel注解", model.getClass());
         }
+        String ruleCode = null;
+        Map<String, Object> input = new HashMap<>();
         // TODO: 2020/12/9
-        return null;
+        return this.exe(ruleCode, input);
+    }
+    
+    /**
+     * 引擎中是否存在此规则
+     *
+     * @param ruleCode 规则code
+     * @return true 存在
+     */
+    public boolean isExists(String ruleCode) {
+        // TODO: 2020/12/9
+        return true;
     }
 
 }
