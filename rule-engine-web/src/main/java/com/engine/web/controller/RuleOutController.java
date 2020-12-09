@@ -17,11 +17,8 @@ package com.engine.web.controller;
 
 
 import com.engine.web.annotation.NoAuth;
-import com.engine.web.annotation.RateLimit;
-import com.engine.web.enums.RateLimitEnum;
 import com.engine.web.service.RuleOutService;
 import com.engine.web.vo.base.response.BaseResult;
-import com.engine.web.annotation.SystemLog;
 import com.engine.web.vo.base.response.PlainResult;
 import com.engine.web.vo.rule.BatchExecuteRuleRequest;
 import com.engine.web.vo.rule.ExecuteRuleRequest;
@@ -59,8 +56,6 @@ public class RuleOutController {
      * @return 规则执行结果
      */
     @NoAuth
-    @SystemLog
-    @RateLimit(limit = 60, type = RateLimitEnum.URL_IP)
     @PostMapping("execute")
     @ApiOperation("执行单个规则，获取执行结果")
     public BaseResult executeRule(@RequestBody @Valid ExecuteRuleRequest executeRuleRequest) {
@@ -76,8 +71,6 @@ public class RuleOutController {
      * @return 规则执行结果
      */
     @NoAuth
-    @SystemLog
-    @RateLimit(limit = 6, type = RateLimitEnum.URL_IP)
     @PostMapping("batchExecute")
     @ApiOperation("批量执行多个规则，获取执行结果")
     public BaseResult batchExecuteRule(@RequestBody @Valid BatchExecuteRuleRequest batchExecuteRuleRequest) {
