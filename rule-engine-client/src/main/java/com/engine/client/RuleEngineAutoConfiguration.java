@@ -15,7 +15,7 @@
  */
 package com.engine.client;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
