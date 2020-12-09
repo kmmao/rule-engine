@@ -1,9 +1,6 @@
 logging:
   config: classpath:logback-spring.xml
   path: logs
-  file:
-    #日志文档保留天数
-    max-history: 1
   level.root: info
 
 server:
@@ -119,7 +116,6 @@ mybatis-plus:
     #驼峰转下划线
     map-underscore-to-camel-case: true
     cache-enabled: false
-    log-impl: com.engine.web.config.SqlOutConfig
 
 #出现异常是否发送邮件提醒
 exception:
