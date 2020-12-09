@@ -9,8 +9,8 @@ logging:
 server:
   port: 8010
   tomcat:
-    max-threads: 40 #最大线程执行数
-    max-connections: 400 #最大连接数
+    max-threads: 400 #最大线程执行数
+    max-connections: 200 #最大连接数
     uri-encoding: UTF-8
 spring:
   jackson:
@@ -25,9 +25,9 @@ spring:
       password:
       driver-class-name: com.mysql.jdbc.Driver
       # 初始化大小，最小，最大
-      initialSize: 20
-      minIdle: 30
-      maxActive: 100
+      initialSize: 100
+      minIdle: 300
+      maxActive: 1000
       # 配置获取连接等待超时的时间
       maxWait: 10000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -84,6 +84,7 @@ spring:
       pool:
         max-active: 2000
         min-idle: 30
+        max-idle: 100
     timeout: 10000
 
   # 线程池配置

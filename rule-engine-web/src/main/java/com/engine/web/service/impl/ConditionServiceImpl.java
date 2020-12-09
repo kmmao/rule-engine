@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.engine.core.exception.ValidException;
+import com.engine.core.rule.Rule;
 import com.engine.core.value.VariableType;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.exception.ApiException;
@@ -399,6 +400,18 @@ public class ConditionServiceImpl implements ConditionService {
             throw new ValidException("有规则在引用此条件，无法删除");
         }
         return this.ruleEngineConditionManager.removeById(id);
+    }
+
+    /**
+     * 根据id获取条件中的元素
+     *
+     * @param id 条件id
+     * @return list
+     */
+    @Override
+    public List<Rule.Parameter> getParameter(Integer id) {
+
+        return null;
     }
 
 }

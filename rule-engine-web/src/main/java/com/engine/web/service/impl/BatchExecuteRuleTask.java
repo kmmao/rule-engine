@@ -37,7 +37,7 @@ public class BatchExecuteRuleTask implements Runnable {
 
     @Override
     public void run() {
-        for (BatchExecuteRuleRequest.ExecuteInfo executeInfo : infoList) {
+        for (BatchExecuteRuleRequest.ExecuteInfo executeInfo : this.infoList) {
             Input input = new DefaultInput();
             Map<String, Object> params = executeInfo.getParam();
             for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -48,7 +48,7 @@ public class BatchExecuteRuleTask implements Runnable {
             ruleResponse.setSymbol(executeInfo.getSymbol());
             try {
                 OutPut outPut = engine.execute(input, executeInfo.getWorkspaceCode(), executeInfo.getRuleCode());
-                ruleResponse.setResult(outPut);
+                ruleResponse.setOutPut(outPut);
             } catch (Exception e) {
                 log.error("执行规则异常", e);
                 ruleResponse.setMessage(e.getMessage());

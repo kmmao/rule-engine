@@ -1,6 +1,5 @@
 package com.engine.web.vo.rule;
 
-import com.engine.web.vo.base.response.ResultState;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
@@ -35,6 +34,6 @@ public class BatchExecuteRuleResponse {
     /**
      * 规则执行结果
      */
-    private Object result;
+    private Object outPut;
 
 }

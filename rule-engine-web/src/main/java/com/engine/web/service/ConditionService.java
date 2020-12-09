@@ -1,6 +1,7 @@
 package com.engine.web.service;
 
 
+import com.engine.core.rule.Rule;
 import com.engine.web.store.entity.RuleEngineCondition;
 import com.engine.web.store.entity.RuleEngineElement;
 import com.engine.web.store.entity.RuleEngineVariable;
@@ -9,6 +10,7 @@ import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.condition.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -103,5 +105,11 @@ public interface ConditionService {
      */
     Boolean delete(Integer id);
 
-
+    /**
+     * 根据id获取条件中的元素
+     *
+     * @param id 条件id
+     * @return list
+     */
+    List<Rule.Parameter> getParameter(Integer id);
 }

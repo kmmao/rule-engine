@@ -75,7 +75,7 @@ public class RuleOutServiceImpl implements RuleOutService {
             int toIndex = Math.min(fromIndex + threadSegNumber, executeInfos.size());
             List<BatchExecuteRuleRequest.ExecuteInfo> infoList = executeInfos.subList(fromIndex, toIndex);
             BatchExecuteRuleTask batchExecuteRuleTask = new BatchExecuteRuleTask(countDownLatch, outPuts, engine, infoList);
-            threadPoolTaskExecutor.execute(batchExecuteRuleTask);
+            this.threadPoolTaskExecutor.execute(batchExecuteRuleTask);
         }
         // 等待线程处理完毕
         try {

@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.engine.client.model;
+package com.engine.client;
 
+import com.engine.client.model.ElementField;
+import com.engine.client.model.RuleModel;
 import lombok.Data;
 
 /**
@@ -26,11 +28,11 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-@RuleModel
-public class RuleModelTest {
+@RuleModel(ruleCode = "phoneRuletest")
+public class RuleMode {
 
-    private String name;
+    @ElementField(code = "phone")
+    private String phone;
 
-    private String age;
 
 }

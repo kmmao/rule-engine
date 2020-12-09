@@ -16,6 +16,7 @@
 package com.engine.web.controller;
 
 
+import com.engine.core.rule.Rule;
 import com.engine.web.annotation.RoleAuth;
 import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.vo.condition.*;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -115,6 +117,20 @@ public class ConditionController {
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(conditionService.delete(idRequest.getId()));
+        return plainResult;
+    }
+
+    /**
+     * 根据id获取条件中的元素
+     *
+     * @param idRequest 条件id
+     * @return list
+     */
+    @PostMapping("getParameter")
+    @ApiOperation("根据id获取条件中的元素")
+    public PlainResult<List<Rule.Parameter>> getParameter(@RequestBody @Valid IdRequest idRequest) {
+        PlainResult<List<Rule.Parameter>> plainResult = new PlainResult<>();
+        plainResult.setData(this.conditionService.getParameter(idRequest.getId()));
         return plainResult;
     }
 }

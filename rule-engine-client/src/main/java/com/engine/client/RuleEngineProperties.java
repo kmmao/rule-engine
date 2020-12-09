@@ -26,8 +26,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @create 2020/12/6
  * @since 1.0.0
  */
-
-@Data
 @ConfigurationProperties(
         prefix = "rule.engine"
 )
@@ -36,7 +34,7 @@ public class RuleEngineProperties {
     /**
      * 规则引擎调用地址
      */
-    private String url = "http://ruleserver.cn/ruleEngine/execute";
+    private String serverUrl = "http://ruleserver.cn";
     /**
      * 工作空间code
      */
@@ -46,4 +44,48 @@ public class RuleEngineProperties {
 
     private String accessKeySecret;
 
+
+    public String getExecuteRuleUrl() {
+        return this.getServerUrl().concat("/ruleEngine/execute");
+    }
+
+    public String getBatchExecuteRuleUrl() {
+        return this.getServerUrl().concat("/ruleEngine/batchExecute");
+    }
+
+    public String getIsExistsRuleUrl() {
+        return this.getServerUrl().concat("/ruleEngine/isExists");
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    public String getWorkspaceCode() {
+        return workspaceCode;
+    }
+
+    public void setWorkspaceCode(String workspaceCode) {
+        this.workspaceCode = workspaceCode;
+    }
+
+    public String getAccessKeyId() {
+        return accessKeyId;
+    }
+
+    public void setAccessKeyId(String accessKeyId) {
+        this.accessKeyId = accessKeyId;
+    }
+
+    public String getAccessKeySecret() {
+        return accessKeySecret;
+    }
+
+    public void setAccessKeySecret(String accessKeySecret) {
+        this.accessKeySecret = accessKeySecret;
+    }
 }
