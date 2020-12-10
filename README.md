@@ -41,7 +41,15 @@ Content-Type: application/json
 ```
 
 现在我们让此使用方式更加简单易用！
-调用规则方项目pom.xml文件引入client端的依赖，然后编写如下代码进行测试：  
+调用规则方项目pom.xml文件引入以下依赖
+```pom
+    <dependency>
+        <groupId>cn.ruleengine</groupId>
+        <artifactId>rule-engine-client</artifactId>
+        <version>1.4</version>
+    </dependency>
+```
+然后编写如下代码进行测试：  
 ```java
 @EnableRuleEngine
 @RunWith(SpringRunner.class)
