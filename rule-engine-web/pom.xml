@@ -47,6 +47,11 @@
     <dependencies>
         <dependency>
             <groupId>cn.ruleengine</groupId>
+            <artifactId>rule-engine-client</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.ruleengine</groupId>
             <artifactId>rule-engine-core</artifactId>
             <version>1.2-SNAPSHOT</version>
         </dependency>
