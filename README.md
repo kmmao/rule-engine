@@ -25,11 +25,65 @@
     - Maven 3.3
     - Swagger  
 
+### 规则如何调用
+规则通过在 http://ruleengine.cn 配置完成后，就可以调用接口来执行引擎中的规则了  
+```http
+POST http://ruleserver.cn/ruleEngine/execute
+Content-Type: application/json
+
+{
+      "ruleCode": "phoneRuletest",
+      "workspaceCode": "default",
+      "param": {
+            "phone": "13400000000"
+      }
+}
+```
+
+现在我们让此使用方式更加简单易用！
+调用规则方项目pom.xml文件引入client端的依赖，然后编写如下代码进行测试：  
+```java
+@EnableRuleEngine
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class RuleTest {
+
+    @Resource
+    private RuleEngineClient ruleEngineClient;
+
+    @Test
+    public void test() {
+        // 构建规则请求参数
+        PhoneTestRule phoneTestRule = new PhoneTestRule();
+        phoneTestRule.setPhone("134000000000");
+        // 调用执行引擎中的规则
+        OutPut outPut = this.ruleEngineClient.execute(phoneTestRule);
+        System.out.println(outPut);
+    }
+
+}
+
+@Data
+@RuleModel(ruleCode = "phoneRuletest")
+public class PhoneTestRule {
+
+    /**
+     * ElementField可选，默认code为属性name
+     */
+    @ElementField(code = "phone")
+    private String phone;
+
+}
+```
+现在你就已经学会了如何使用，更多使用方式敬请期待我们将文档补全！
+
+
 ### 下一步进展
 1、规则权限（开发中）  
 2、规则监控（待开发）  
 3、评分卡（待开发）  
 4、决策树（待开发）   
+5、决策表（待开发）   
 
 目前忙于工作，功能待完善，欢迎有兴趣伙伴加入我们！
  
