@@ -47,7 +47,7 @@ public class FunctionServiceImpl implements FunctionService {
     @Resource
     private ApplicationContext applicationContext;
 
-    private static final String FUNCTION_PACKAGE = "com.engine.web.function";
+    private static final String FUNCTION_PACKAGE = "cn.ruleengine.web.function";
 
     /**
      * 函数列表

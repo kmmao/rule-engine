@@ -23,7 +23,7 @@ public class GeneratorMybatisPlus {
 
     @Test
     public void executor() {
-        String packageName = "com.engine.web.store";
+        String packageName = "cn.ruleengine.web.store";
         String dbUrl = "";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig

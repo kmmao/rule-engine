@@ -45,7 +45,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.engine.web.controller")).build();
+                .apis(RequestHandlerSelectors.basePackage("cn.ruleengine.web.controller")).build();
     }
 
     /**

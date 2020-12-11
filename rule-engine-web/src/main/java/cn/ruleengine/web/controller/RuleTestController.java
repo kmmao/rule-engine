@@ -18,8 +18,8 @@ package cn.ruleengine.web.controller;
 import cn.ruleengine.web.service.RuleTestService;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
-import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
 
+import cn.ruleengine.web.vo.rule.RunTestRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,14 +49,14 @@ public class RuleTestController {
     /**
      * 规则模拟运行
      *
-     * @param executeRuleRequest 规则参数信息
+     * @param runTestRequest 规则参数信息
      * @return result
      */
     @PostMapping("run")
     @ApiOperation("模拟运行")
-    public BaseResult fun(@RequestBody @Valid ExecuteRuleRequest executeRuleRequest) {
+    public BaseResult fun(@RequestBody @Valid RunTestRequest runTestRequest) {
         PlainResult<Object> plainResult = new PlainResult<>();
-        plainResult.setData(ruleTestService.run(executeRuleRequest));
+        plainResult.setData(ruleTestService.run(runTestRequest));
         return plainResult;
     }
 

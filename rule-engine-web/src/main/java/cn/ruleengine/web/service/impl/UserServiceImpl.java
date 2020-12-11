@@ -1,6 +1,5 @@
 package cn.ruleengine.web.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.ruleengine.web.enums.HtmlTemplatesEnum;
 import cn.ruleengine.web.enums.VerifyCodeType;
 import cn.ruleengine.web.service.RoleService;
@@ -9,13 +8,13 @@ import cn.ruleengine.web.store.entity.RuleEngineRole;
 import cn.ruleengine.web.store.entity.RuleEngineUser;
 import cn.ruleengine.web.store.manager.RuleEngineUserManager;
 import cn.ruleengine.web.util.*;
+import cn.ruleengine.web.util.conver.BasicConversion;
 import cn.ruleengine.web.vo.user.*;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,8 +92,7 @@ public class UserServiceImpl implements UserService {
      * @param ruleEngineUser 用户信息
      */
     private void refreshUserData(String token, RuleEngineUser ruleEngineUser) {
-        UserData userData = new UserData();
-        BeanUtils.copyProperties(ruleEngineUser, userData);
+        UserData userData = BasicConversion.INSTANCE.conver(ruleEngineUser);
         // 重新拉取用户角色信息
         List<RuleEngineRole> bootRoles = this.roleService.listRoleByUserId(ruleEngineUser.getId());
         userData.setRoles(bootRoles.stream().map(m -> {
@@ -232,9 +230,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserInfo() {
         UserData userData = AuthInterceptor.USER.get();
-        UserResponse userResponse = new UserResponse();
-        BeanUtil.copyProperties(userData, userResponse);
-        return userResponse;
+        return BasicConversion.INSTANCE.conver(userData);
     }
 
     /**

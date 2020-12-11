@@ -41,9 +41,7 @@ public class RulePublishServiceImpl implements RulePublishService {
                 .eq(RuleEngineRulePublish::getRuleCode, ruleCode)
                 .eq(RuleEngineRulePublish::getWorkspaceCode, workspaceCode)
                 .one();
-        Rule rule = new Rule();
-        rule.fromJson(rulePublish.getData());
-        return rule;
+        return  Rule.buildRule(rulePublish.getData());
     }
 
     /**
@@ -62,8 +60,7 @@ public class RulePublishServiceImpl implements RulePublishService {
         for (RuleEngineRulePublish publish : rulePublishList) {
             try {
                 log.info("parse rule for workspace code:{} rule code:{}", publish.getWorkspaceCode(), publish.getRuleCode());
-                Rule rule = new Rule();
-                rule.fromJson(publish.getData());
+                Rule rule = Rule.buildRule(publish.getData());
                 rules.add(rule);
             } catch (Exception e) {
                 log.error("parse rule error ", e);

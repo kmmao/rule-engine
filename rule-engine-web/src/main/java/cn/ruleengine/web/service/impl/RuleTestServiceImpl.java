@@ -3,10 +3,10 @@ package cn.ruleengine.web.service.impl;
 import cn.ruleengine.core.*;
 import cn.ruleengine.web.service.RuleResolveService;
 import cn.ruleengine.web.service.RuleTestService;
-import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleListener;
+import cn.ruleengine.web.vo.rule.RunTestRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -30,17 +30,23 @@ public class RuleTestServiceImpl implements RuleTestService {
     @Resource
     private Engine engine;
 
+    /**
+     * 规则模拟运行
+     *
+     * @param runTestRequest 规则参数信息
+     * @return result
+     */
     @Override
-    public Object run(ExecuteRuleRequest executeRule) {
-        log.info("模拟运行规则：{}", executeRule.getRuleCode());
+    public Object run(RunTestRequest runTestRequest) {
+        log.info("模拟运行规则：{}", runTestRequest.getRuleCode());
         Input input = new DefaultInput();
-        Map<String, Object> params = executeRule.getParam();
+        Map<String, Object> params = runTestRequest.getParam();
         for (Map.Entry<String, Object> param : params.entrySet()) {
             input.put(param.getKey(), param.getValue());
         }
         log.info("初始化规则引擎");
         DefaultEngine engine = new DefaultEngine();
-        Rule rule = ruleResolveService.getRuleByCode(executeRule.getRuleCode());
+        Rule rule = ruleResolveService.getRuleByCode(runTestRequest.getRuleCode());
         engine.addRule(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.engine.getEngineVariable());
@@ -64,7 +70,7 @@ public class RuleTestServiceImpl implements RuleTestService {
             }
 
         });
-        return engine.execute(input, executeRule.getWorkspaceCode(), executeRule.getRuleCode());
+        return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getRuleCode());
     }
 
 }

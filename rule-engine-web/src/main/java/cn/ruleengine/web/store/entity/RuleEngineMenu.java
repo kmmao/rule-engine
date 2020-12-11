@@ -1,9 +1,8 @@
 package cn.ruleengine.web.store.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -41,7 +40,7 @@ public class RuleEngineMenu implements Serializable {
     /**
      * 1导航栏菜单,2侧边栏菜单
      */
-    private Boolean type;
+    private Integer type;
 
     private String icon;
 
@@ -54,11 +53,14 @@ public class RuleEngineMenu implements Serializable {
      */
     private String menuPath;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     @TableLogic
+    @TableField(fill = FieldFill.INSERT)
     private Boolean deleted;
 
 

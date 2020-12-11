@@ -1,11 +1,11 @@
 package cn.ruleengine.web.service.impl;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.service.MenuService;
 import cn.ruleengine.web.store.mapper.RuleEngineMenuMapper;
+import cn.ruleengine.web.util.conver.BasicConversion;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import org.springframework.stereotype.Service;
@@ -37,12 +37,8 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public List<ListMenuResponse> listMenuByUserId(Integer userId) {
-        return ruleEngineMenuMapper.listMenuByUserId(userId).stream()
-                .map(m -> {
-                    ListMenuResponse listMenuResponse = new ListMenuResponse();
-                    BeanUtil.copyProperties(m, listMenuResponse);
-                    return listMenuResponse;
-                }).collect(Collectors.toList());
+        return this.ruleEngineMenuMapper.listMenuByUserId(userId).stream()
+                .map(BasicConversion.INSTANCE::conver).collect(Collectors.toList());
     }
 
     /**
@@ -54,7 +50,7 @@ public class MenuServiceImpl implements MenuService {
     public List<ListMenuResponse> menuTree() {
         Integer id = AuthInterceptor.USER.get().getId();
         List<ListMenuResponse> rootMenu = this.listMenuByUserId(id);
-        if(CollUtil.isEmpty(rootMenu)){
+        if (CollUtil.isEmpty(rootMenu)) {
             return null;
         }
         // 最后的结果

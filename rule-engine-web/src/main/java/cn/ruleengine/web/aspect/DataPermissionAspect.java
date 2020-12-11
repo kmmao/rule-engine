@@ -20,6 +20,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.mapstruct.Mapper;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -40,6 +41,7 @@ import java.lang.reflect.Method;
  * @create 2020/11/22
  * @since 1.0.0
  */
+@Mapper
 @Component
 @Aspect
 public class DataPermissionAspect {

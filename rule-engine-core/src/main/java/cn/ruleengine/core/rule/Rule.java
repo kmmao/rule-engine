@@ -22,7 +22,6 @@ import cn.ruleengine.core.condition.ConditionSet;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -138,12 +137,31 @@ public class Rule implements RuleParse {
         }
     }
 
+    /**
+     * 根据rule json字符串构建一个规则
+     *
+     * @param jsonString rule json字符串
+     * @return rule
+     */
+    @SneakyThrows
+    public static Rule buildRule(@NonNull String jsonString) {
+        return OBJECT_MAPPER.readValue(jsonString, Rule.class);
+    }
+
     @SneakyThrows
     @Override
     public void fromJson(@NonNull String jsonString) {
-        Rule rule = OBJECT_MAPPER.readValue(jsonString, Rule.class);
-        // 后续使用mapstruct代替 暂时没有时间测试mapstruct后的效果，暂时先不替换
-        BeanUtils.copyProperties(rule, this);
+        Rule rule = Rule.buildRule(jsonString);
+        this.setId(rule.getId());
+        this.setCode(rule.getCode());
+        this.setName(rule.getName());
+        this.setDescription(rule.getDescription());
+        this.setWorkspaceId(rule.getWorkspaceId());
+        this.setWorkspaceCode(rule.getWorkspaceCode());
+        this.setConditionSet(rule.getConditionSet());
+        this.setActionValue(rule.getActionValue());
+        this.setDefaultActionValue(rule.getDefaultActionValue());
+        this.setAbnormalAlarm(rule.getAbnormalAlarm());
     }
 
     @SneakyThrows

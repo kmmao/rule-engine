@@ -12,6 +12,7 @@ import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
 import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.util.conver.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
@@ -29,7 +30,6 @@ import cn.ruleengine.web.vo.rule.DefaultAction;
 import cn.ruleengine.web.vo.rule.Action;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.alibaba.fastjson.JSON;
@@ -318,9 +318,7 @@ public class RuleServiceImpl implements RuleService {
         if (ruleEngineRule == null) {
             return null;
         }
-        RuleDefinition ruleDefinition = new RuleDefinition();
-        BeanUtil.copyProperties(ruleEngineRule, ruleDefinition);
-        return ruleDefinition;
+        return BasicConversion.INSTANCE.conver(ruleEngineRule);
     }
 
     /**
@@ -465,9 +463,8 @@ public class RuleServiceImpl implements RuleService {
         ConfigBean.Value action = getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
         ruleResponse.setAction(action);
         // 默认结果
-        DefaultAction defaultAction = new DefaultAction();
-        BeanUtil.copyProperties(getAction(ruleEngineRule.getDefaultActionValue(), ruleEngineRule.getDefaultActionType(), ruleEngineRule.getDefaultActionValueType())
-                , defaultAction);
+        ConfigBean.Value defaultValue = getAction(ruleEngineRule.getDefaultActionValue(), ruleEngineRule.getDefaultActionType(), ruleEngineRule.getDefaultActionValueType());
+        DefaultAction defaultAction = BasicConversion.INSTANCE.conver(defaultValue);
         defaultAction.setEnableDefaultAction(ruleEngineRule.getEnableDefaultAction());
         ruleResponse.setDefaultAction(defaultAction);
         ruleResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineRule.getAbnormalAlarm(), Rule.AbnormalAlarm.class));
@@ -491,8 +488,7 @@ public class RuleServiceImpl implements RuleService {
             throw new ValidException("找不到发布的规则:{}", id);
         }
         String data = engineRulePublish.getData();
-        Rule rule = new Rule();
-        rule.fromJson(data);
+        Rule rule = Rule.buildRule(data);
         return this.getRuleResponseProcess(rule);
     }
 
@@ -555,12 +551,13 @@ public class RuleServiceImpl implements RuleService {
         ruleResponse.setConditionGroup(groupArrayList);
         Value actionValue = rule.getActionValue();
         ruleResponse.setAction(this.getConfigValue(actionValue));
-        DefaultAction defaultAction = new DefaultAction();
+        DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
-            defaultAction.setEnableDefaultAction(EnableEnum.ENABLE.getStatus());
             ConfigBean.Value value = this.getConfigValue(rule.getDefaultActionValue());
-            BeanUtil.copyProperties(value, defaultAction);
+            defaultAction = BasicConversion.INSTANCE.conver(value);
+            defaultAction.setEnableDefaultAction(EnableEnum.ENABLE.getStatus());
         } else {
+            defaultAction = new DefaultAction();
             defaultAction.setEnableDefaultAction(EnableEnum.DISABLE.getStatus());
         }
         ruleResponse.setDefaultAction(defaultAction);

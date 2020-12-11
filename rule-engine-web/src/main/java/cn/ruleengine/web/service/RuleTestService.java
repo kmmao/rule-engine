@@ -1,6 +1,6 @@
 package cn.ruleengine.web.service;
 
-import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
+import cn.ruleengine.web.vo.rule.RunTestRequest;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -11,5 +11,13 @@ import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
  * @since 1.0.0
  */
 public interface RuleTestService {
-    Object run(ExecuteRuleRequest executeRuleRequest);
+
+    /**
+     * 规则模拟运行
+     *
+     * @param runTestRequest 规则参数信息
+     * @return result
+     */
+    Object run(RunTestRequest runTestRequest);
+
 }

@@ -1,6 +1,5 @@
 package cn.ruleengine.web.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.service.ElementService;
@@ -13,6 +12,7 @@ import cn.ruleengine.web.store.manager.RuleEngineElementManager;
 import cn.ruleengine.web.store.manager.RuleEngineFunctionValueManager;
 import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.util.conver.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
@@ -136,12 +136,10 @@ public class ElementServiceImpl implements ElementService {
     @Override
     public GetElementResponse get(Integer id) {
         Workspace workspace = this.workspaceService.currentWorkspace();
-        RuleEngineElement engineElement = ruleEngineElementManager.lambdaQuery()
+        RuleEngineElement engineElement = this.ruleEngineElementManager.lambdaQuery()
                 .eq(RuleEngineElement::getId, id)
                 .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).one();
-        GetElementResponse elementResponse = new GetElementResponse();
-        BeanUtil.copyProperties(engineElement, elementResponse);
-        return elementResponse;
+        return BasicConversion.INSTANCE.conver(engineElement);
     }
 
     /**

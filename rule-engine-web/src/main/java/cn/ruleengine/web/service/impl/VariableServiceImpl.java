@@ -8,13 +8,13 @@ import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.store.mapper.RuleEngineVariableMapper;
 import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.util.conver.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.variable.*;
 import cn.ruleengine.web.service.WorkspaceService;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.core.exception.ValidException;
@@ -193,8 +193,7 @@ public class VariableServiceImpl implements VariableService {
         if (ruleEngineVariable == null) {
             return null;
         }
-        GetVariableResponse variableResponse = new GetVariableResponse();
-        BeanUtil.copyProperties(ruleEngineVariable, variableResponse);
+        GetVariableResponse variableResponse = BasicConversion.INSTANCE.conver(ruleEngineVariable);
         if (ruleEngineVariable.getType().equals(VariableType.CONSTANT.getType())) {
             return variableResponse;
         } else if (ruleEngineVariable.getType().equals(VariableType.FUNCTION.getType())) {

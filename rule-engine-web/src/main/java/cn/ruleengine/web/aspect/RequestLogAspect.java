@@ -48,7 +48,7 @@ public class RequestLogAspect {
      * @return 被代理类方法执行结果
      * @throws Throwable .
      */
-    @Around("execution(* com.engine.web.controller..*.*(..))&&!execution(* com.engine.web.controller.exception.*.*(..))")
+    @Around("execution(* cn.ruleengine.web.controller..*.*(..))&&!execution(* cn.ruleengine.web.controller.exception.*.*(..))")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         StringBuilder sb = new StringBuilder("\n");
         long start = System.currentTimeMillis();

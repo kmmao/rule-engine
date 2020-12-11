@@ -157,7 +157,7 @@
     <logger name="druid.sql" level="info"/>
     <logger name="springfox.documentation" level="info"/>
     <logger name="org.springframework.boot.autoconfigure.logging" level="info"/>
-    <logger name="com.engine" level="debug"/>
+    <logger name="cn.ruleengine" level="debug"/>
     <!--root节点是必选节点，用来指定最基础的日志输出级别，只有一个level属性-->
     <root>
         <appender-ref ref="MAIN"/>
