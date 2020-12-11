@@ -2,10 +2,10 @@ package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleRequest;
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleResponse;
-import com.engine.core.DefaultInput;
-import com.engine.core.Engine;
-import com.engine.core.Input;
-import com.engine.core.OutPut;
+import cn.ruleengine.core.DefaultInput;
+import cn.ruleengine.core.Engine;
+import cn.ruleengine.core.Input;
+import cn.ruleengine.core.OutPut;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

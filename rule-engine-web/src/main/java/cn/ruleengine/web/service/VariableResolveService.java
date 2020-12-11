@@ -2,8 +2,8 @@ package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.web.vo.common.DataCacheMap;
-import com.engine.core.value.Function;
-import com.engine.core.value.Value;
+import cn.ruleengine.core.value.Function;
+import cn.ruleengine.core.value.Value;
 
 import java.util.Map;
 

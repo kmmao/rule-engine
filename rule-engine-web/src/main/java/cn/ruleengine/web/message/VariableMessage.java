@@ -16,8 +16,8 @@
 package cn.ruleengine.web.message;
 
 import cn.ruleengine.web.vo.variable.VariableMessageVo;
-import com.engine.core.DefaultEngine;
-import com.engine.core.EngineVariable;
+import cn.ruleengine.core.DefaultEngine;
+import cn.ruleengine.core.EngineVariable;
 import cn.ruleengine.web.service.VariableResolveService;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import lombok.extern.slf4j.Slf4j;

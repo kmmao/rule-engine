@@ -1,7 +1,7 @@
 package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.store.entity.RuleEngineRule;
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.rule.Rule;
 
 /**
  * 〈一句话功能简述〉<br>

@@ -3,7 +3,7 @@ package cn.ruleengine.web.store.mapper;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineRule;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.engine.core.annotation.Param;
+import cn.ruleengine.core.annotation.Param;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@ import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.engine.core.exception.ValidException;
+import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.store.entity.RuleEngineWorkspace;

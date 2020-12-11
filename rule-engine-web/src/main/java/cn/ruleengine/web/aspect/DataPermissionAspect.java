@@ -15,7 +15,6 @@
  */
 package cn.ruleengine.web.aspect;
 
-import com.engine.core.exception.ValidException;
 import cn.ruleengine.web.annotation.DataPermission;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -29,6 +28,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ValidationException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
@@ -68,7 +68,7 @@ public class DataPermissionAspect {
         //获取方法参数名
         String[] params = this.discoverer.getParameterNames(method);
         if (params == null || params.length == 0) {
-            throw new ValidException("没有获取到任何参数");
+            throw new ValidationException("没有获取到任何参数");
         }
         //将参数纳入Spring管理
         EvaluationContext context = new StandardEvaluationContext();

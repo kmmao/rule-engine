@@ -1,6 +1,6 @@
 package cn.ruleengine.web.vo.rule;
 
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import lombok.Data;

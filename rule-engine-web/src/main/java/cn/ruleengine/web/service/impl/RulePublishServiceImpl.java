@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.web.service.RulePublishService;
 import cn.ruleengine.web.store.entity.RuleEngineRulePublish;
 import cn.ruleengine.web.store.manager.RuleEngineRulePublishManager;
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.rule.Rule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

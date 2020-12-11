@@ -10,7 +10,7 @@ import cn.ruleengine.web.store.entity.RuleEngineUser;
 import cn.ruleengine.web.store.manager.RuleEngineUserManager;
 import cn.ruleengine.web.util.*;
 import cn.ruleengine.web.vo.user.*;
-import com.engine.core.exception.ValidException;
+import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import org.redisson.api.RBucket;

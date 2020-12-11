@@ -17,7 +17,7 @@ package cn.ruleengine.web.message;
 
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.vo.rule.RuleMessageVo;
-import com.engine.core.DefaultEngine;
+import cn.ruleengine.core.DefaultEngine;
 import cn.ruleengine.web.service.RulePublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;

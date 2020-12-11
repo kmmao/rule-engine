@@ -1,14 +1,17 @@
 package cn.ruleengine.web.service.impl;
 
 
+import cn.ruleengine.core.value.Element;
+import cn.ruleengine.core.value.Function;
+import cn.ruleengine.core.value.Value;
+import cn.ruleengine.core.value.Variable;
 import cn.ruleengine.web.vo.rule.RuleCountInfo;
-import com.engine.core.Engine;
-import com.engine.core.condition.Condition;
-import com.engine.core.condition.ConditionGroup;
-import com.engine.core.condition.ConditionSet;
-import com.engine.core.exception.ValidException;
-import com.engine.core.rule.Rule;
-import com.engine.core.value.*;
+import cn.ruleengine.core.Engine;
+import cn.ruleengine.core.condition.Condition;
+import cn.ruleengine.core.condition.ConditionGroup;
+import cn.ruleengine.core.condition.ConditionSet;
+import cn.ruleengine.core.exception.ValidException;
+import cn.ruleengine.core.rule.Rule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

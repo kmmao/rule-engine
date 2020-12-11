@@ -1,6 +1,6 @@
 package cn.ruleengine.web.service;
 
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.rule.Rule;
 
 import java.util.List;
 

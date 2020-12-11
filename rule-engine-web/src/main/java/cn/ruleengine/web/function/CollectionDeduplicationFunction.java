@@ -1,8 +1,8 @@
 package cn.ruleengine.web.function;
 
 import cn.hutool.core.collection.CollUtil;
-import com.engine.core.annotation.Executor;
-import com.engine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Executor;
+import cn.ruleengine.core.annotation.Function;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;

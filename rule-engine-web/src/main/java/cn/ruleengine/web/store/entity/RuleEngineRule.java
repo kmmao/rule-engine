@@ -1,7 +1,7 @@
 package cn.ruleengine.web.store.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.rule.Rule;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

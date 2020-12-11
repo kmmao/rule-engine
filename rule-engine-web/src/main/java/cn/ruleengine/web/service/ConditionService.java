@@ -7,7 +7,7 @@ import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.condition.*;
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.rule.Rule;
 
 import java.util.Collection;
 import java.util.Map;

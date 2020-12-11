@@ -13,11 +13,11 @@ import cn.ruleengine.web.store.manager.RuleEngineConditionGroupManager;
 import cn.ruleengine.web.store.manager.RuleEngineConditionManager;
 import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import com.alibaba.fastjson.JSONObject;
-import com.engine.core.condition.Condition;
-import com.engine.core.condition.ConditionGroup;
-import com.engine.core.condition.ConditionSet;
-import com.engine.core.condition.Operator;
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.condition.Condition;
+import cn.ruleengine.core.condition.ConditionGroup;
+import cn.ruleengine.core.condition.ConditionSet;
+import cn.ruleengine.core.condition.Operator;
+import cn.ruleengine.core.rule.Rule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

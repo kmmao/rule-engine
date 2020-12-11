@@ -1,6 +1,7 @@
 package cn.ruleengine.web.service.impl;
 
 
+import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.enums.RuleStatus;
@@ -19,12 +20,11 @@ import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import cn.ruleengine.web.vo.condition.ConditionResponse;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.rule.*;
-import com.engine.core.condition.ConditionGroup;
-import com.engine.core.value.*;
+import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.WorkspaceService;
 
-import com.engine.core.condition.Condition;
+import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.web.vo.rule.DefaultAction;
 import cn.ruleengine.web.vo.rule.Action;
 
@@ -34,9 +34,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.engine.core.Engine;
-import com.engine.core.exception.ValidException;
-import com.engine.core.rule.Rule;
+import cn.ruleengine.core.Engine;
+import cn.ruleengine.core.exception.ValidException;
+import cn.ruleengine.core.rule.Rule;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.web.vo.user.UserData;

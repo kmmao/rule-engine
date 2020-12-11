@@ -5,7 +5,7 @@ import cn.ruleengine.web.BaseTest;
 import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
-import com.engine.core.value.VariableType;
+import cn.ruleengine.core.value.VariableType;
 import org.junit.Test;
 
 import javax.annotation.Resource;

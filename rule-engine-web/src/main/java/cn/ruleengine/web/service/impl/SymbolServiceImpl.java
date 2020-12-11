@@ -2,8 +2,8 @@ package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.web.service.SymbolService;
 import cn.ruleengine.web.vo.symbol.SymbolResponse;
-import com.engine.core.condition.Operator;
-import com.engine.core.value.DataType;
+import cn.ruleengine.core.condition.Operator;
+import cn.ruleengine.core.value.DataType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
