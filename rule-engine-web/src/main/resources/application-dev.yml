@@ -95,7 +95,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.engine.web.store.entity
+  typeAliasesPackage: cn.ruleengine.web.store.entity
   global-config:
     # 数据库相关配置
     db-config:

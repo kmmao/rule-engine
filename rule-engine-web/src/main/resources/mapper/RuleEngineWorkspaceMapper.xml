@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.engine.web.store.mapper.RuleEngineWorkspaceMapper">
+<mapper namespace="cn.ruleengine.web.store.mapper.RuleEngineWorkspaceMapper">
 
-    <select id="listWorkspaceByUserId" resultType="com.engine.web.vo.workspace.Workspace">
+    <select id="listWorkspaceByUserId" resultType="cn.ruleengine.web.vo.workspace.Workspace">
         select rew.id,rew.code,rew.name from rule_engine_user_workspace reuw,rule_engine_workspace rew
         where reuw.user_id=#{userId}
             and reuw.workspace_id=rew.id
