@@ -1,5 +1,6 @@
 package com.engine.web.controller.exception;
 
+import com.engine.core.exception.ConditionException;
 import com.engine.core.exception.EngineException;
 import com.engine.core.exception.FunctionException;
 import com.engine.web.enums.ErrorLevelEnum;
@@ -76,6 +77,21 @@ public class ApiExceptionHandler {
         log.warn("EngineException", e);
         result.setMessage(e.getMessage());
         result.setCode(ErrorCodeEnum.RULE8900.getCode());
+        return result;
+    }
+
+    /**
+     * 条件配置异常
+     *
+     * @param e e
+     * @return BaseResult
+     */
+    @ExceptionHandler(value = ConditionException.class)
+    public BaseResult conditionException(ConditionException e) {
+        BaseResult result = BaseResult.err();
+        log.warn("ConditionException", e);
+        result.setMessage(e.getMessage());
+        result.setCode(ErrorCodeEnum.RULE8920.getCode());
         return result;
     }
 
@@ -260,6 +276,12 @@ public class ApiExceptionHandler {
         return result;
     }
 
+    /**
+     * 未登录
+     *
+     * @param e e
+     * @return BaseResult
+     */
     @ExceptionHandler(value = NoLoginException.class)
     public BaseResult noLoginException(NoLoginException e) {
         log.warn("NoLoginException", e);

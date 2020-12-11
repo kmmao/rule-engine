@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -128,9 +129,24 @@ public class ConditionController {
      */
     @PostMapping("getParameter")
     @ApiOperation("根据id获取条件中的元素")
-    public PlainResult<List<Rule.Parameter>> getParameter(@RequestBody @Valid IdRequest idRequest) {
-        PlainResult<List<Rule.Parameter>> plainResult = new PlainResult<>();
+    public PlainResult<Set<Rule.Parameter>> getParameter(@RequestBody @Valid IdRequest idRequest) {
+        PlainResult<Set<Rule.Parameter>> plainResult = new PlainResult<>();
         plainResult.setData(this.conditionService.getParameter(idRequest.getId()));
         return plainResult;
     }
+
+    /**
+     * 测试运行条件
+     *
+     * @param executeCondition 参数
+     * @return true/false
+     */
+    @PostMapping("run")
+    @ApiOperation("测试运行条件")
+    public PlainResult<Boolean> run(@RequestBody @Valid ExecuteConditionRequest executeCondition) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(this.conditionService.run(executeCondition));
+        return plainResult;
+    }
+
 }

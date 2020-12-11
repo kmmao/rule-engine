@@ -12,6 +12,7 @@ import com.engine.web.vo.condition.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -111,5 +112,14 @@ public interface ConditionService {
      * @param id 条件id
      * @return list
      */
-    List<Rule.Parameter> getParameter(Integer id);
+    Set<Rule.Parameter> getParameter(Integer id);
+
+    /**
+     * 测试运行条件
+     *
+     * @param executeCondition 参数
+     * @return true/false
+     */
+    Boolean run(ExecuteConditionRequest executeCondition);
+
 }

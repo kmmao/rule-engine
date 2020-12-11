@@ -1,5 +1,7 @@
 package com.engine.web.service.impl;
 
+import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +12,7 @@ import com.engine.web.store.entity.RuleEngineWorkspace;
 import com.engine.web.store.manager.RuleEngineWorkspaceManager;
 import com.engine.web.store.mapper.RuleEngineWorkspaceMapper;
 import com.engine.web.vo.user.UserData;
+import com.engine.web.vo.workspace.AccessKey;
 import com.engine.web.vo.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
@@ -17,9 +20,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private RedissonClient redissonClient;
     @Resource
     private RuleEngineWorkspaceMapper ruleEngineWorkspaceMapper;
+
+    /**
+     * 内存缓存
+     */
+    private LRUCache<String, AccessKey> accessKeyCache = CacheUtil.newLRUCache(100);
 
     /**
      * 用户有权限的工作空间
@@ -126,4 +132,29 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         bucket.set(workspace);
         return true;
     }
+
+    /**
+     * 当前工作空间AccessKey
+     *
+     * @return accessKey
+     */
+    @Override
+    public AccessKey accessKey(String code) {
+        AccessKey accessKey = this.accessKeyCache.get(code);
+        if (accessKey != null) {
+            return accessKey;
+        }
+        RuleEngineWorkspace engineWorkspace = this.ruleEngineWorkspaceManager.lambdaQuery()
+                .eq(RuleEngineWorkspace::getCode, code).one();
+        if (engineWorkspace == null) {
+            throw new ValidException("找不到此工作空间：" + code);
+        }
+        accessKey = new AccessKey();
+        accessKey.setId(engineWorkspace.getId());
+        accessKey.setAccessKeyId(engineWorkspace.getAccessKeyId());
+        accessKey.setAccessKeySecret(engineWorkspace.getAccessKeySecret());
+        this.accessKeyCache.put(code, accessKey, 1000 * 60 * 60);
+        return accessKey;
+    }
+
 }

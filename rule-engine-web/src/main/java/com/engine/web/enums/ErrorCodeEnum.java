@@ -101,7 +101,8 @@ public enum ErrorCodeEnum {
     BOOT10011039(10011039, "验证Token失败"),
 
     RULE8900(8900, "规则引擎异常"),
-    RULE8910(8910, "规则函数异常");
+    RULE8910(8910, "规则函数异常"),
+    RULE8920(8920, "条件配置异常");
 
     @Getter
     private int code;

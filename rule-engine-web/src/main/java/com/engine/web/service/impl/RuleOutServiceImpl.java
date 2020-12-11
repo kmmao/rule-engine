@@ -4,18 +4,20 @@ import cn.hutool.core.thread.ThreadUtil;
 import com.engine.core.DefaultInput;
 import com.engine.core.Engine;
 import com.engine.core.Input;
-import com.engine.core.OutPut;
 import com.engine.core.exception.EngineException;
+import com.engine.core.exception.ValidException;
 import com.engine.web.service.RuleOutService;
+import com.engine.web.service.WorkspaceService;
 import com.engine.web.vo.rule.BatchExecuteRuleRequest;
 import com.engine.web.vo.rule.BatchExecuteRuleResponse;
 import com.engine.web.vo.rule.ExecuteRuleRequest;
+import com.engine.web.vo.workspace.AccessKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -36,9 +38,10 @@ public class RuleOutServiceImpl implements RuleOutService {
 
     @Resource
     private Engine engine;
-
     @Resource
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Resource
+    private WorkspaceService workspaceService;
 
     /**
      * 执行单个规则，获取执行结果
@@ -48,12 +51,14 @@ public class RuleOutServiceImpl implements RuleOutService {
      */
     @Override
     public Object executeRule(ExecuteRuleRequest executeRule) {
-        Input input = new DefaultInput();
-        Map<String, Object> params = executeRule.getParam();
-        for (Map.Entry<String, Object> param : params.entrySet()) {
-            input.put(param.getKey(), param.getValue());
+        String workspaceCode = executeRule.getWorkspaceCode();
+        AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
+        if (!accessKey.equals(executeRule.getAccessKeyId(), executeRule.getAccessKeySecret())) {
+            throw new ValidException("AccessKey Verification failed");
         }
-        return engine.execute(input, executeRule.getWorkspaceCode(), executeRule.getRuleCode());
+        Input input = new DefaultInput();
+        input.putAll(executeRule.getParam());
+        return this.engine.execute(input, workspaceCode, executeRule.getRuleCode());
     }
 
     /**
@@ -64,6 +69,11 @@ public class RuleOutServiceImpl implements RuleOutService {
      */
     @Override
     public Object batchExecuteRule(BatchExecuteRuleRequest batchExecuteRuleRequest) {
+        String workspaceCode = batchExecuteRuleRequest.getWorkspaceCode();
+        AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
+        if (!accessKey.equals(batchExecuteRuleRequest.getAccessKeyId(), batchExecuteRuleRequest.getAccessKeySecret())) {
+            throw new ValidException("AccessKey Verification failed");
+        }
         List<BatchExecuteRuleRequest.ExecuteInfo> executeInfos = batchExecuteRuleRequest.getExecuteInfos();
         Integer threadSegNumber = batchExecuteRuleRequest.getThreadSegNumber();
         log.info("批量执行规则数量：{},单个线程执行{}条规则", executeInfos.size(), threadSegNumber);
@@ -74,7 +84,7 @@ public class RuleOutServiceImpl implements RuleOutService {
         for (int fromIndex = 0; fromIndex < executeInfos.size(); fromIndex += threadSegNumber) {
             int toIndex = Math.min(fromIndex + threadSegNumber, executeInfos.size());
             List<BatchExecuteRuleRequest.ExecuteInfo> infoList = executeInfos.subList(fromIndex, toIndex);
-            BatchExecuteRuleTask batchExecuteRuleTask = new BatchExecuteRuleTask(countDownLatch, outPuts, engine, infoList);
+            BatchExecuteRuleTask batchExecuteRuleTask = new BatchExecuteRuleTask(workspaceCode, countDownLatch, outPuts, engine, infoList);
             this.threadPoolTaskExecutor.execute(batchExecuteRuleTask);
         }
         // 等待线程处理完毕

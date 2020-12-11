@@ -15,6 +15,8 @@
  */
 package com.engine.core;
 
+import java.util.Map;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -32,6 +34,13 @@ public interface Input {
      * @param value 参数值
      */
     void put(String key, Object value);
+
+    /**
+     * 添加多个输入参数
+     *
+     * @param inputParam 参数
+     */
+    void putAll(Map<String, Object> inputParam);
 
     /**
      * 移除参数名称对应的参数值

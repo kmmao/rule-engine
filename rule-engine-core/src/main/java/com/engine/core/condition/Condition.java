@@ -98,4 +98,5 @@ public class Condition {
             throw new ConditionException("条件:{}条件值与运算符不匹配", name);
         }
     }
+
 }

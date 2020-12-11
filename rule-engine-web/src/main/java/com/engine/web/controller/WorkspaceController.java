@@ -17,8 +17,10 @@ package com.engine.web.controller;
 
 import com.engine.web.service.WorkspaceService;
 import com.engine.web.vo.base.request.IdRequest;
+import com.engine.web.vo.base.request.Param;
 import com.engine.web.vo.base.response.BaseResult;
 import com.engine.web.vo.base.response.PlainResult;
+import com.engine.web.vo.workspace.AccessKey;
 import com.engine.web.vo.workspace.Workspace;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -86,4 +88,18 @@ public class WorkspaceController {
         plainResult.setData(workspaceService.currentWorkspace());
         return plainResult;
     }
+
+    /**
+     * 当前工作空间AccessKey
+     *
+     * @return accessKey
+     */
+    @PostMapping("accessKey")
+    @ApiOperation("查询工作空间AccessKey")
+    public BaseResult accessKey(@RequestBody @Valid Param<String> param) {
+        PlainResult<AccessKey> plainResult = new PlainResult<>();
+        plainResult.setData(this.workspaceService.accessKey(param.getParam()));
+        return plainResult;
+    }
+
 }

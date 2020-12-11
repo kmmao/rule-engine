@@ -1,5 +1,6 @@
 package com.engine.web.service;
 
+import com.engine.web.vo.workspace.AccessKey;
 import com.engine.web.vo.workspace.Workspace;
 
 import java.util.List;
@@ -37,4 +38,13 @@ public interface WorkspaceService {
      * @return true
      */
     Boolean change(Integer id);
+
+    /**
+     * 当前工作空间AccessKey
+     *
+     * @param code 工作空间code
+     * @return accessKey
+     */
+    AccessKey accessKey(String code);
+
 }

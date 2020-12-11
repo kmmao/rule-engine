@@ -19,7 +19,10 @@ public class ExecuteRuleRequest {
 
     @NotEmpty
     private String workspaceCode;
-
+    @NotEmpty
+    private String accessKeyId;
+    @NotEmpty
+    private String accessKeySecret;
     @NotEmpty
     private String ruleCode;
 

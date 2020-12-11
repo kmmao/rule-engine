@@ -144,6 +144,9 @@ public class FunctionServiceImpl implements FunctionService {
     @Override
     public Object run(RunFunction runFunction) {
         RuleEngineFunction engineFunction = this.ruleEngineFunctionManager.getById(runFunction.getId());
+        if (engineFunction == null) {
+            throw new ValidException("不存在函数：{}", runFunction.getId());
+        }
         String executor = engineFunction.getExecutor();
         if (applicationContext.containsBean(executor)) {
             Object abstractFunction = applicationContext.getBean(executor);

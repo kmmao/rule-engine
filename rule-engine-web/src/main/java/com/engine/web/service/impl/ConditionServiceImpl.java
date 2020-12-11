@@ -5,11 +5,18 @@ import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.engine.core.Configuration;
+import com.engine.core.DefaultInput;
+import com.engine.core.Engine;
+import com.engine.core.Input;
+import com.engine.core.condition.Condition;
+import com.engine.core.condition.Operator;
 import com.engine.core.exception.ValidException;
 import com.engine.core.rule.Rule;
-import com.engine.core.value.VariableType;
+import com.engine.core.value.*;
 import com.engine.web.enums.DeletedEnum;
 import com.engine.web.exception.ApiException;
+import com.engine.web.service.ValueResolve;
 import com.engine.web.service.WorkspaceService;
 import com.engine.web.store.entity.*;
 import com.engine.web.store.manager.*;
@@ -21,13 +28,14 @@ import com.engine.web.vo.base.response.PageResult;
 import com.engine.web.service.ConditionService;
 import com.engine.web.vo.base.response.Rows;
 import com.engine.web.vo.condition.*;
+import com.engine.web.vo.variable.ParamValue;
 import com.engine.web.vo.workspace.Workspace;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +46,7 @@ import java.util.stream.Collectors;
  * @date 2020/7/14
  * @since 1.0.0
  */
+@Slf4j
 @Transactional(rollbackFor = Exception.class)
 @Component
 public class ConditionServiceImpl implements ConditionService {
@@ -54,6 +63,10 @@ public class ConditionServiceImpl implements ConditionService {
     private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
     @Resource
     private WorkspaceService workspaceService;
+    @Resource
+    private ValueResolve valueResolve;
+    @Resource
+    private Engine engine;
 
 
     /**
@@ -273,7 +286,8 @@ public class ConditionServiceImpl implements ConditionService {
         }
         return Optional.of(variableIds).filter(CollUtil::isNotEmpty)
                 .map(m -> ruleEngineVariableManager.lambdaQuery().in(RuleEngineVariable::getId, m).list()
-                        .stream().collect(Collectors.toMap(RuleEngineVariable::getId, Function.identity()))).orElse(new HashMap<>());
+                        .stream().collect(Collectors.toMap(RuleEngineVariable::getId, v -> v)))
+                .orElse(new HashMap<>());
     }
 
     /**
@@ -297,7 +311,8 @@ public class ConditionServiceImpl implements ConditionService {
         }
         return Optional.of(elementIds).filter(CollUtil::isNotEmpty)
                 .map(m -> ruleEngineElementManager.lambdaQuery().in(RuleEngineElement::getId, m).list()
-                        .stream().collect(Collectors.toMap(RuleEngineElement::getId, Function.identity()))).orElse(new HashMap<>());
+                        .stream().collect(Collectors.toMap(RuleEngineElement::getId, v -> v)))
+                .orElse(new HashMap<>());
     }
 
     /**
@@ -409,9 +424,103 @@ public class ConditionServiceImpl implements ConditionService {
      * @return list
      */
     @Override
-    public List<Rule.Parameter> getParameter(Integer id) {
+    public Set<Rule.Parameter> getParameter(Integer id) {
+        Workspace workspace = this.workspaceService.currentWorkspace();
+        RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.lambdaQuery()
+                .eq(RuleEngineCondition::getId, id)
+                .eq(RuleEngineCondition::getWorkspaceId, workspace.getId())
+                .one();
+        if (ruleEngineCondition == null) {
+            throw new ValidException("规则条件找不到：{}", id);
+        }
+        Set<Integer> elementIds = new HashSet<>();
+        // 左边的
+        this.conditionAllElementId(elementIds, ruleEngineCondition.getLeftType(), ruleEngineCondition.getLeftValue());
+        // 右边的
+        this.conditionAllElementId(elementIds, ruleEngineCondition.getRightType(), ruleEngineCondition.getRightValue());
+        if (CollUtil.isEmpty(elementIds)) {
+            return Collections.emptySet();
+        }
+        List<RuleEngineElement> ruleEngineElements = this.ruleEngineElementManager.lambdaQuery().in(RuleEngineElement::getId, elementIds)
+                .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).list();
+        if (CollUtil.isEmpty(ruleEngineElements)) {
+            return Collections.emptySet();
+        }
+        Set<Rule.Parameter> parameters = new HashSet<>(ruleEngineElements.size());
+        for (RuleEngineElement ruleEngineElement : ruleEngineElements) {
+            Rule.Parameter parameter = new Rule.Parameter();
+            parameter.setName(ruleEngineElement.getName());
+            parameter.setCode(ruleEngineElement.getCode());
+            parameter.setValueType(ruleEngineElement.getValueType());
+            parameters.add(parameter);
+        }
+        return parameters;
+    }
 
-        return null;
+    /**
+     * 测试运行条件
+     *
+     * @param executeCondition 参数
+     * @return true/false
+     */
+    @Override
+    public Boolean run(ExecuteConditionRequest executeCondition) {
+        Integer conditionId = executeCondition.getId();
+        RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.getById(conditionId);
+        if (ruleEngineCondition == null) {
+            throw new ValidException("规则条件找不到：{}", conditionId);
+        }
+        List<ParamValue> paramValues = executeCondition.getParamValues();
+        Input input = new DefaultInput();
+        if (CollUtil.isNotEmpty(paramValues)) {
+            for (ParamValue paramValue : paramValues) {
+                input.put(paramValue.getCode(), paramValue.getValue());
+            }
+        }
+        Configuration configuration = new Configuration();
+        configuration.setEngineVariable(this.engine.getEngineVariable());
+        Condition condition = new Condition();
+        condition.setId(ruleEngineCondition.getId());
+        condition.setName(ruleEngineCondition.getName());
+        condition.setLeftValue(this.valueResolve.getValue(ruleEngineCondition.getLeftType(), ruleEngineCondition.getLeftValueType(), ruleEngineCondition.getLeftValue()));
+        condition.setOperator(Operator.getByName(ruleEngineCondition.getSymbol()));
+        condition.setRightValue(this.valueResolve.getValue(ruleEngineCondition.getRightType(), ruleEngineCondition.getRightValueType(), ruleEngineCondition.getRightValue()));
+        Condition.verify(condition);
+        return condition.compare(input, configuration);
+    }
+
+    /**
+     * 获取条件中所有的元素
+     *
+     * @param elementIds 元素id
+     * @param type       值类型
+     * @param value      value
+     */
+    private void conditionAllElementId(Set<Integer> elementIds, Integer type, String value) {
+        if (VariableType.VARIABLE.getType().equals(type)) {
+            Value val = this.engine.getEngineVariable().getVariable(Integer.valueOf(value));
+            if (val instanceof Function) {
+                Function function = (Function) val;
+                Map<String, Value> param = function.getParam();
+                Collection<Value> values = param.values();
+                for (Value v : values) {
+                    if (v instanceof Element) {
+                        elementIds.add(((Element) v).getElementId());
+                    } else if (v instanceof Variable) {
+                        try {
+                            String varId = ((Variable) v).getVariableId().toString();
+                            this.conditionAllElementId(elementIds, VariableType.VARIABLE.getType(), varId);
+                            // 后面改为最大引用链不超过20，否则报错
+                        } catch (StackOverflowError e) {
+                            log.error("堆栈溢出错误", e);
+                            throw new ValidException("请检查规则变量是否存在循环引用");
+                        }
+                    }
+                }
+            }
+        } else if (VariableType.ELEMENT.getType().equals(type)) {
+            elementIds.add(Integer.valueOf(value));
+        }
     }
 
 }

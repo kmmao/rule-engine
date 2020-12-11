@@ -142,6 +142,7 @@ public class Rule implements RuleParse {
     @Override
     public void fromJson(@NonNull String jsonString) {
         Rule rule = OBJECT_MAPPER.readValue(jsonString, Rule.class);
+        // 后续使用mapstruct代替 暂时没有时间测试mapstruct后的效果，暂时先不替换
         BeanUtils.copyProperties(rule, this);
     }
 

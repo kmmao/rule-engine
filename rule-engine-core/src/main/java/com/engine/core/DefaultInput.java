@@ -46,6 +46,16 @@ public class DefaultInput implements Input {
     }
 
     /**
+     * 添加多个输入参数
+     *
+     * @param inputParam 参数
+     */
+    @Override
+    public void putAll(Map<String, Object> inputParam) {
+        this.inputParam.putAll(inputParam);
+    }
+
+    /**
      * 移除参数名称对应的参数值
      *
      * @param key 参数名称

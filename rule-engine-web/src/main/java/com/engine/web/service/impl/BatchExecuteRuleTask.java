@@ -27,8 +27,10 @@ public class BatchExecuteRuleTask implements Runnable {
     private Engine engine;
     private List<BatchExecuteRuleResponse> outPuts;
     private CountDownLatch countDownLatch;
+    private String workspaceCode;
 
-    public BatchExecuteRuleTask(CountDownLatch countDownLatch, List<BatchExecuteRuleResponse> outPuts, Engine engine, List<BatchExecuteRuleRequest.ExecuteInfo> infoList) {
+    public BatchExecuteRuleTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteRuleResponse> outPuts, Engine engine, List<BatchExecuteRuleRequest.ExecuteInfo> infoList) {
+        this.workspaceCode = workspaceCode;
         this.countDownLatch = countDownLatch;
         this.outPuts = outPuts;
         this.engine = engine;
@@ -47,16 +49,16 @@ public class BatchExecuteRuleTask implements Runnable {
             BatchExecuteRuleResponse ruleResponse = new BatchExecuteRuleResponse();
             ruleResponse.setSymbol(executeInfo.getSymbol());
             try {
-                OutPut outPut = engine.execute(input, executeInfo.getWorkspaceCode(), executeInfo.getRuleCode());
+                OutPut outPut = this.engine.execute(input, this.workspaceCode, executeInfo.getRuleCode());
                 ruleResponse.setOutPut(outPut);
             } catch (Exception e) {
                 log.error("执行规则异常", e);
                 ruleResponse.setMessage(e.getMessage());
                 ruleResponse.setIsDone(false);
             }
-            outPuts.add(ruleResponse);
+            this.outPuts.add(ruleResponse);
         }
-        countDownLatch.countDown();
+        this.countDownLatch.countDown();
     }
 
 }

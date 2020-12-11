@@ -36,6 +36,10 @@ public class RuleEngineWorkspace implements Serializable {
 
     private String name;
 
+    private String accessKeyId;
+
+    private String accessKeySecret;
+
     private String description;
 
     private Date createTime;
