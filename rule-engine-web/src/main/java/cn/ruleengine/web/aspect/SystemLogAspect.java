@@ -19,6 +19,7 @@ import cn.hutool.http.Header;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import cn.ruleengine.web.enums.DeletedEnum;
+import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.store.entity.RuleEngineSystemLog;
 import cn.ruleengine.web.util.HttpServletUtils;
 import cn.ruleengine.web.util.IPUtils;
@@ -48,6 +49,7 @@ import java.util.Date;
 @Component
 @Aspect
 public class SystemLogAspect {
+
     @Resource
     private RabbitTemplate rabbitTemplate;
 
@@ -63,7 +65,7 @@ public class SystemLogAspect {
         //请求开始时间
         log.setCreateTime(new Date());
         //请求用户id
-        log.setUserId(null);
+        log.setUserId(AuthInterceptor.USER.get().getId());
         //请求ip地址
         log.setIp(IPUtils.getRequestIp());
         //浏览器
@@ -81,7 +83,7 @@ public class SystemLogAspect {
         //请求url
         log.setRequestUrl(request.getRequestURL().toString());
         // 过滤掉requestId:
-        log.setRequestId(MDC.get(MDCLogInterceptor.REQUEST_ID).substring(10));
+        log.setRequestId(MDCLogInterceptor.getRequestId());
         try {
             //执行被代理类方法
             Object proceed = joinPoint.proceed();

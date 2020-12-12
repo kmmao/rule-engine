@@ -15,9 +15,10 @@
  */
 package cn.ruleengine.web.message;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.ruleengine.web.enums.ErrorLevelEnum;
 import cn.ruleengine.web.enums.HtmlTemplatesEnum;
-import cn.ruleengine.web.util.DateUtils;
 import cn.ruleengine.web.util.EmailClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +73,9 @@ public class ExceptionMessage {
     @Async
     @SneakyThrows
     public void send(String title, Exception e, ErrorLevelEnum levelEnum, String... toUsers) {
+        log.warn("发送异常信息邮件，异常原因:{},异常类型:{}", e, levelEnum.getName());
         if (!enable) {
-            log.warn("系统准备发送异常消息,但是此功能被禁用,异常原因:{},异常类型:{}", e, levelEnum.getName());
+            log.warn("系统准备发送异常消息,但是此功能被禁用！");
             return;
         }
         String[] users = toUsers;
@@ -92,6 +94,10 @@ public class ExceptionMessage {
                     throw new IllegalStateException("Unexpected value: " + levelEnum);
             }
         }
+        if (ArrayUtil.isEmpty(users)) {
+            log.warn("没有找到任何发送目标");
+            return;
+        }
         String message;
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              PrintStream pout = new PrintStream(out);) {
@@ -100,7 +106,7 @@ public class ExceptionMessage {
         }
         Map<String, Object> params = new HashMap<>(3);
         params.put("type", e.getClass().getSimpleName());
-        params.put("time", DateUtils.getDateTime());
+        params.put("time", DateUtil.now());
         params.put("message", message);
         StringBuilder sb = new StringBuilder("\n");
         sb.append("┏━━━━━━━━警告邮件━━━━━━━━\n");
@@ -110,5 +116,6 @@ public class ExceptionMessage {
         log.warn("{}", sb);
         this.emailClient.sendSimpleMail(params, title, HtmlTemplatesEnum.EXCEPTION.getValue(), users);
     }
+
 
 }

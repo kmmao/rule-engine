@@ -18,6 +18,9 @@ import lombok.EqualsAndHashCode;
 @ApiModel("返回普通数据")
 public class PlainResult<T> extends BaseResult{
 
+    private static final long serialVersionUID = 8794822903345524683L;
+
     @ApiModelProperty("数据")
     private T data;
+
 }

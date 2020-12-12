@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 public final class Singleton<R> implements Supplier<R> {
 
     private boolean initialized = false;
+
     private volatile Supplier<R> instanceSupplier;
 
     public Singleton(final Supplier<R> original) {

@@ -93,12 +93,12 @@ public class EmailClient {
             }
             //处理发送邮箱异常消息
             if (message.contains("550")) {
-                throw new ValidationException(ErrorCodeEnum.BOOT10011032.getMsg());
+                throw new ValidationException(ErrorCodeEnum.RULE10011032.getMsg());
             }
             if (message.contains("501")) {
-                throw new ValidationException(ErrorCodeEnum.BOOT10011033.getMsg());
+                throw new ValidationException(ErrorCodeEnum.RULE10011033.getMsg());
             }
-            throw new ValidationException(ErrorCodeEnum.BOOT10011034.getMsg(), e);
+            throw new ValidationException(ErrorCodeEnum.RULE10011034.getMsg(), e);
         } catch (MessagingException | IOException | TemplateException e) {
             throw new RuntimeException(e);
         }

@@ -1,4 +1,4 @@
-package cn.ruleengine.web.util.conver;
+package cn.ruleengine.web.vo.conver;
 
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.vo.condition.ConfigBean;
@@ -89,4 +89,5 @@ public interface BasicConversion {
      * @return RuleEngineConditionGroupCondition
      */
     RuleEngineConditionGroupCondition conver(SaveOrUpdateConditionGroupCondition saveOrUpdateConditionGroup);
+
 }

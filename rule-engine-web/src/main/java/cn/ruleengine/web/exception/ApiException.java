@@ -15,6 +15,8 @@ import lombok.Getter;
  */
 public class ApiException extends RuntimeException {
 
+    private static final long serialVersionUID = 6405345374923437770L;
+
     @Getter
     private int code;
 
@@ -30,7 +32,7 @@ public class ApiException extends RuntimeException {
      */
     public ApiException(String message, Object... args) {
         super(StrFormatter.format(message, args));
-        code = ErrorCodeEnum.BOOT99990100.getCode();
+        code = ErrorCodeEnum.RULE99990100.getCode();
     }
 
     /**

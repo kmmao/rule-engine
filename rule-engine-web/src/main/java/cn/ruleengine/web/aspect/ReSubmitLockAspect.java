@@ -51,9 +51,11 @@ import java.util.stream.Stream;
 @Slf4j
 @Order(-9)
 public class ReSubmitLockAspect {
+
     @Resource
     private RedissonClient redissonClient;
-    private static final String RESUBMIT_LOCK_KEY_PRE = "boot_resubmit_lock_key_pre";
+
+    private static final String RESUBMIT_LOCK_KEY_PRE = "ruleengine_resubmit_lock_key_pre";
 
     @Around("@annotation(lock)")
     public Object around(ProceedingJoinPoint joinPoint, ReSubmitLock lock) throws Throwable {
@@ -80,7 +82,7 @@ public class ReSubmitLockAspect {
         RLock rLock = redissonClient.getLock(lockKey);
         if (!rLock.tryLock(0L, time, TimeUnit.MILLISECONDS)) {
             log.warn("{}方法锁已经存在，请勿重复操作！", method.getName());
-            throw new ValidationException(ErrorCodeEnum.BOOT10011038.getMsg());
+            throw new ValidationException(ErrorCodeEnum.RULE10011038.getMsg());
         }
         try {
             log.info("{}方法加锁成功，Lock Key:{}", method.getName(), lockKey);

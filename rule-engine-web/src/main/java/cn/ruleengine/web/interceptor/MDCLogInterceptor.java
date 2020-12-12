@@ -23,6 +23,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,7 +38,7 @@ import java.util.UUID;
 @Component
 public class MDCLogInterceptor extends HandlerInterceptorAdapter {
 
-    public final static String REQUEST_ID = "requestId";
+    private final static String REQUEST_ID = "requestId";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -50,4 +51,31 @@ public class MDCLogInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
         MDC.clear();
     }
+
+    /**
+     * 获取requestid
+     *
+     * @return requestid
+     * @see MDCLogInterceptor#getRequestId(boolean)
+     */
+    public static String getRequestId() {
+        return getRequestId(true);
+    }
+
+    /**
+     * 获取requestid
+     * <p>
+     * requestId:b9557a4c-c86b-4f90-8782-8a24674ad3a9
+     * false返回requestId:b9557a4c-c86b-4f90-8782-8a24674ad3a9
+     * true返回b9557a4c-c86b-4f90-8782-8a24674ad3a9
+     *
+     * @param removePrefix 是否删除前缀requestId
+     * @return requestid
+     */
+    public static String getRequestId(boolean removePrefix) {
+        return Optional.ofNullable(MDC.get(MDCLogInterceptor.REQUEST_ID))
+                .map(m -> removePrefix ? m.substring(10) : m)
+                .orElse(null);
+    }
+
 }

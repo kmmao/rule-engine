@@ -18,6 +18,8 @@ import lombok.*;
 @NoArgsConstructor
 public class PageResponse extends PageBase {
 
+    private static final long serialVersionUID = -7378163356547441491L;
+
     @ApiModelProperty("总记录数")
     private Long total;
 

@@ -22,6 +22,8 @@ import lombok.NoArgsConstructor;
 @ApiModel(value = "返回分页数据")
 public class PageResult<T> extends BaseResult {
 
+    private static final long serialVersionUID = -6689010616909835472L;
+
     @ApiModelProperty("数据")
     private Rows<T> data;
 

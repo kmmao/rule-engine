@@ -100,8 +100,8 @@ public class AliOSSClient {
             return url;
         } catch (Exception e) {
             log.error("{1}", e);
-            this.exceptionMessage.send(ErrorCodeEnum.BOOT10011036.getMsg(), e, ErrorLevelEnum.OTHER);
-            throw new ValidationException(ErrorCodeEnum.BOOT10011036.getMsg());
+            this.exceptionMessage.send(ErrorCodeEnum.RULE10011036.getMsg(), e, ErrorLevelEnum.OTHER);
+            throw new ValidationException(ErrorCodeEnum.RULE10011036.getMsg());
         } finally {
             IoUtil.close(is);
         }

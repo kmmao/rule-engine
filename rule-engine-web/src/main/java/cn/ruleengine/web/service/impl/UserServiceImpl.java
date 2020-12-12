@@ -8,7 +8,7 @@ import cn.ruleengine.web.store.entity.RuleEngineRole;
 import cn.ruleengine.web.store.entity.RuleEngineUser;
 import cn.ruleengine.web.store.manager.RuleEngineUserManager;
 import cn.ruleengine.web.util.*;
-import cn.ruleengine.web.util.conver.BasicConversion;
+import cn.ruleengine.web.vo.conver.BasicConversion;
 import cn.ruleengine.web.vo.user.*;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;

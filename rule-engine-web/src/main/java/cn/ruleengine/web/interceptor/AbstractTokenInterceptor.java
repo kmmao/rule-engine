@@ -71,7 +71,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         String token = request.getHeader(TOKEN);
         if (Validator.isEmpty(token)) {
             log.warn("Token为空");
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.BOOT10010004.getCode(), ErrorCodeEnum.BOOT10010004.getMsg()));
+            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE10010004.getCode(), ErrorCodeEnum.RULE10010004.getMsg()));
             return false;
         }
         try {
@@ -79,7 +79,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             JWTUtils.verifyToken(token);
         } catch (Exception e) {
             log.warn("Token验证不通过,Token:{}", token);
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.BOOT10011039.getCode(), ErrorCodeEnum.BOOT10011039.getMsg()));
+            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE10011039.getCode(), ErrorCodeEnum.RULE10011039.getMsg()));
             return false;
         }
         // 从redis获取到用户信息保存到本地
@@ -88,7 +88,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         UserData userData = bucket.get();
         if (userData == null) {
             log.warn("验证信息失效!");
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.BOOT99990402.getCode(), ErrorCodeEnum.BOOT99990402.getMsg()));
+            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE99990402.getCode(), ErrorCodeEnum.RULE99990402.getMsg()));
             return false;
         }
         //更新过期时间
@@ -99,7 +99,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         if (roleAuth != null && !auth(roleAuth.code(), roleAuth.transfer(), userData)) {
             //Token验证通过,但是用户无权限访问
             log.warn("无权限访问,User:{}", userData);
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.BOOT99990401.getCode(), ErrorCodeEnum.BOOT99990401.getMsg()));
+            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE99990401.getCode(), ErrorCodeEnum.RULE99990401.getMsg()));
             return false;
         }
         log.debug("权限验证通过,User:{}", userData);

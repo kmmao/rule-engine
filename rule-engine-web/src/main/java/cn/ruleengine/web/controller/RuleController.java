@@ -16,6 +16,7 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.RoleAuth;
+import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.service.RuleService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
@@ -111,6 +112,7 @@ public class RuleController {
      * @param idRequest 规则id
      * @return true
      */
+    @SystemLog
     @PostMapping("publish")
     @ApiOperation("发布规则")
     public BaseResult publish(@Validated @RequestBody IdRequest idRequest) {

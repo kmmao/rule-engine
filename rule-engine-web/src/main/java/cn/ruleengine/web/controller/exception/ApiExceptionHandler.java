@@ -4,6 +4,7 @@ import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.enums.ErrorLevelEnum;
 import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.NoLoginException;
+import cn.ruleengine.web.interceptor.MDCLogInterceptor;
 import cn.ruleengine.web.message.ExceptionMessage;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.core.exception.ConditionException;
@@ -57,8 +58,9 @@ public class ApiExceptionHandler {
     public BaseResult exception(Exception e) {
         BaseResult result = BaseResult.err();
         log.error("Exception", e);
-        result.setMessage(ErrorCodeEnum.BOOT500.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT500.getCode());
+        // 抛出的未知异常 加上RequestId
+        result.setMessage(ErrorCodeEnum.RULE500.getMsg().concat(MDCLogInterceptor.getRequestId()));
+        result.setCode(ErrorCodeEnum.RULE500.getCode());
         //发送异常邮件
         this.exceptionMessage.send(e, ErrorLevelEnum.SERIOUS);
         return result;
@@ -118,8 +120,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {NoHandlerFoundException.class})
     public BaseResult noHandlerFoundException() {
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT9999404.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT9999404.getCode());
+        result.setMessage(ErrorCodeEnum.RULE9999404.getMsg());
+        result.setCode(ErrorCodeEnum.RULE9999404.getCode());
         return result;
     }
 
@@ -131,8 +133,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public BaseResult httpRequestMethodNotSupportedException() {
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT9999405.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT9999405.getCode());
+        result.setMessage(ErrorCodeEnum.RULE9999405.getMsg());
+        result.setCode(ErrorCodeEnum.RULE9999405.getCode());
         return result;
     }
 
@@ -148,7 +150,7 @@ public class ApiExceptionHandler {
         log.warn("ValidationException", e);
         BaseResult result = BaseResult.err();
         result.setMessage(e.getMessage());
-        result.setCode(ErrorCodeEnum.BOOT99990100.getCode());
+        result.setCode(ErrorCodeEnum.RULE99990100.getCode());
         return result;
     }
 
@@ -177,8 +179,8 @@ public class ApiExceptionHandler {
     public BaseResult illegalArgumentException(IllegalArgumentException e) {
         log.warn("IllegalArgumentException", e);
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT99990100.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT99990100.getCode());
+        result.setMessage(ErrorCodeEnum.RULE99990100.getMsg());
+        result.setCode(ErrorCodeEnum.RULE99990100.getCode());
         return result;
     }
 
@@ -192,8 +194,8 @@ public class ApiExceptionHandler {
         log.warn("BindException", e);
         BaseResult result = BaseResult.err();
         FieldError error = e.getFieldError();
-        result.setMessage(Optional.ofNullable(error).map(FieldError::getDefaultMessage).orElse(ErrorCodeEnum.BOOT99990100.getMsg()));
-        result.setCode(ErrorCodeEnum.BOOT99990100.getCode());
+        result.setMessage(Optional.ofNullable(error).map(FieldError::getDefaultMessage).orElse(ErrorCodeEnum.RULE99990100.getMsg()));
+        result.setCode(ErrorCodeEnum.RULE99990100.getCode());
         return result;
     }
 
@@ -206,8 +208,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
     public BaseResult httpMediaTypeNotSupportedException() {
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT99990001.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT99990001.getCode());
+        result.setMessage(ErrorCodeEnum.RULE99990001.getMsg());
+        result.setCode(ErrorCodeEnum.RULE99990001.getCode());
         return result;
     }
 
@@ -222,8 +224,8 @@ public class ApiExceptionHandler {
         BaseResult result = BaseResult.err();
         BindingResult bindingResult = e.getBindingResult();
         FieldError error = bindingResult.getFieldError();
-        result.setMessage(Optional.ofNullable(error).map(DefaultMessageSourceResolvable::getDefaultMessage).orElse(ErrorCodeEnum.BOOT99990002.getMsg()));
-        result.setCode(ErrorCodeEnum.BOOT99990002.getCode());
+        result.setMessage(Optional.ofNullable(error).map(DefaultMessageSourceResolvable::getDefaultMessage).orElse(ErrorCodeEnum.RULE99990002.getMsg()));
+        result.setCode(ErrorCodeEnum.RULE99990002.getCode());
         return result;
     }
 
@@ -236,8 +238,8 @@ public class ApiExceptionHandler {
     public BaseResult httpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.warn("HttpMessageNotReadableException", e);
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT10010003.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT10010003.getCode());
+        result.setMessage(ErrorCodeEnum.RULE10010003.getMsg());
+        result.setCode(ErrorCodeEnum.RULE10010003.getCode());
         return result;
     }
 
@@ -254,7 +256,7 @@ public class ApiExceptionHandler {
         List<ConstraintViolation<?>> arrayList = new ArrayList<>(e.getConstraintViolations());
         ConstraintViolation<?> constraintViolation = arrayList.get(0);
         result.setMessage(constraintViolation.getMessage());
-        result.setCode(ErrorCodeEnum.BOOT99990100.getCode());
+        result.setCode(ErrorCodeEnum.RULE99990100.getCode());
         return result;
     }
 
@@ -271,8 +273,8 @@ public class ApiExceptionHandler {
     public BaseResult clientAbortException(ClientAbortException e) {
         log.warn("ClientAbortException", e);
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT500.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT500.getCode());
+        result.setMessage(ErrorCodeEnum.RULE500.getMsg());
+        result.setCode(ErrorCodeEnum.RULE500.getCode());
         return result;
     }
 
@@ -286,8 +288,8 @@ public class ApiExceptionHandler {
     public BaseResult noLoginException(NoLoginException e) {
         log.warn("NoLoginException", e);
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.BOOT4009.getMsg());
-        result.setCode(ErrorCodeEnum.BOOT4009.getCode());
+        result.setMessage(ErrorCodeEnum.RULE4009.getMsg());
+        result.setCode(ErrorCodeEnum.RULE4009.getCode());
         return result;
     }
 }

@@ -16,6 +16,7 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.NoAuth;
+import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.enums.RateLimitEnum;
 import cn.ruleengine.web.service.UserService;
 import cn.ruleengine.web.vo.base.response.BaseResult;
@@ -73,6 +74,7 @@ public class UserController {
      * @return true表示登录成功
      */
     @NoAuth
+    @SystemLog
     @RateLimit(limit = 3)
     @PostMapping("login")
     @ApiOperation("用户登录")

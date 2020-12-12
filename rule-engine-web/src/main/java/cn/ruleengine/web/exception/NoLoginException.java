@@ -10,6 +10,8 @@ package cn.ruleengine.web.exception;
  */
 public class NoLoginException extends RuntimeException {
 
+    private static final long serialVersionUID = -494678828864504957L;
+
     public NoLoginException() {
         super();
     }
