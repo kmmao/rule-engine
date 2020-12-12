@@ -34,6 +34,8 @@ Content-Type: application/json
 {
       "ruleCode": "phoneRuletest",
       "workspaceCode": "default",
+      "accessKeyId": "略", 
+      "accessKeySecret": "略",
       "param": {
             "phone": "13400000000"
       }
