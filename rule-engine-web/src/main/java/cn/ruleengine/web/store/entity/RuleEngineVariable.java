@@ -32,6 +32,10 @@ public class RuleEngineVariable implements Serializable {
 
     private Integer workspaceId;
 
+    private Integer createUserId;
+
+    private String createUserName;
+
     private Integer type;
 
     private String valueType;

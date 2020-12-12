@@ -32,5 +32,6 @@ public interface RuleEngineWorkspaceMapper extends BaseMapper<RuleEngineWorkspac
      * @param userId      用户id
      * @return count
      */
-    Integer countWorkspace(Integer workspaceId, Integer userId);
+    Integer countWorkspace(@Param("workspaceId") Integer workspaceId, @Param("userId") Integer userId);
+
 }

@@ -74,6 +74,19 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     /**
+     * 普通用户是否有这个工作空间权限
+     *
+     * @param workspaceId 工作空间id
+     * @param userId      用户id
+     * @return true有权限
+     */
+    @Override
+    public boolean hasWorkspacePermission(Integer workspaceId, Integer userId) {
+        Integer count = this.ruleEngineWorkspaceMapper.countWorkspace(workspaceId, userId);
+        return count != null && count > 0;
+    }
+
+    /**
      * 获取当前工作空间
      *
      * @return Workspace
@@ -119,8 +132,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         UserData userData = AuthInterceptor.USER.get();
         if (!userData.getIsAdmin()) {
             // 如果不是超级管理员，查看是否有此工作空间的工作空间权限
-            Integer count = this.ruleEngineWorkspaceMapper.countWorkspace(id, userData.getId());
-            if (count == null || count == 0) {
+            if (!this.hasWorkspacePermission(id, userData.getId())) {
                 throw new ValidException("你没有此工作空间权限");
             }
         }
@@ -140,6 +152,18 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public AccessKey accessKey(String code) {
+        return this.accessKey(code, false);
+    }
+
+    /**
+     * 当前工作空间AccessKey
+     *
+     * @param code              工作空间code
+     * @param isValidPermission 获取accessKey时是否校验是否有这个工作空间的权限
+     * @return AccessKey
+     */
+    @Override
+    public AccessKey accessKey(String code, boolean isValidPermission) {
         AccessKey accessKey = this.accessKeyCache.get(code);
         if (accessKey != null) {
             return accessKey;
@@ -148,6 +172,12 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .eq(RuleEngineWorkspace::getCode, code).one();
         if (engineWorkspace == null) {
             throw new ValidException("找不到此工作空间：" + code);
+        }
+        if (isValidPermission) {
+            UserData userData = AuthInterceptor.USER.get();
+            if (!hasWorkspacePermission(engineWorkspace.getId(), userData.getId())) {
+                throw new ValidException("你没有此工作空间权限");
+            }
         }
         accessKey = new AccessKey();
         accessKey.setId(engineWorkspace.getId());

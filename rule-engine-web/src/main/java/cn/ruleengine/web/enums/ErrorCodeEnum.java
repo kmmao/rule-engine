@@ -102,7 +102,8 @@ public enum ErrorCodeEnum {
 
     RULE8900(8900, "规则引擎异常"),
     RULE8910(8910, "规则函数异常"),
-    RULE8920(8920, "条件配置异常");
+    RULE8920(8920, "条件配置异常"),
+    RULE8930(8930, "无数据权限异常");
 
     @Getter
     private int code;

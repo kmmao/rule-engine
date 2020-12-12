@@ -24,6 +24,16 @@ public interface WorkspaceService {
      */
     List<Workspace> list();
 
+
+    /**
+     * 普通用户是否有这个工作空间权限
+     *
+     * @param workspaceId 工作空间id
+     * @param userId      用户id
+     * @return true有权限
+     */
+    boolean hasWorkspacePermission(Integer workspaceId, Integer userId);
+
     /**
      * 获取当前工作空间
      *
@@ -46,5 +56,15 @@ public interface WorkspaceService {
      * @return accessKey
      */
     AccessKey accessKey(String code);
+
+
+    /**
+     * 当前工作空间AccessKey
+     *
+     * @param code              工作空间code
+     * @param isValidPermission 获取accessKey时是否校验是否有这个工作空间的权限
+     * @return AccessKey
+     */
+    AccessKey accessKey(String code, boolean isValidPermission);
 
 }

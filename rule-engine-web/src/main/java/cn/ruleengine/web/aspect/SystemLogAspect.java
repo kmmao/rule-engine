@@ -23,6 +23,7 @@ import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.store.entity.RuleEngineSystemLog;
 import cn.ruleengine.web.util.HttpServletUtils;
 import cn.ruleengine.web.util.IPUtils;
+import cn.ruleengine.web.vo.user.UserData;
 import com.alibaba.fastjson.JSON;
 import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.config.rabbit.RabbitQueueConfig;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -65,7 +67,7 @@ public class SystemLogAspect {
         //请求开始时间
         log.setCreateTime(new Date());
         //请求用户id
-        log.setUserId(AuthInterceptor.USER.get().getId());
+        log.setUserId(Optional.ofNullable(AuthInterceptor.USER.get()).map(UserData::getId).orElse(null));
         //请求ip地址
         log.setIp(IPUtils.getRequestIp());
         //浏览器

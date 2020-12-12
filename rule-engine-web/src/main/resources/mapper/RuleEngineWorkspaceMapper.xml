@@ -12,7 +12,8 @@
 
     <select id="countWorkspace" resultType="java.lang.Integer">
            select COUNT(*) from rule_engine_user_workspace reuw
-                where reuw.user_id=#{userId}
+                where reuw.user_id = #{userId}
+                and reuw.workspace_id = #{workspaceId}
                  and reuw.deleted=0
     </select>
 </mapper>

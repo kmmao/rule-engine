@@ -46,7 +46,7 @@ public class RuleTestServiceImpl implements RuleTestService {
         }
         log.info("初始化规则引擎");
         DefaultEngine engine = new DefaultEngine();
-        Rule rule = ruleResolveService.getRuleByCode(runTestRequest.getRuleCode());
+        Rule rule = ruleResolveService.getRuleById(runTestRequest.getId());
         engine.addRule(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.engine.getEngineVariable());

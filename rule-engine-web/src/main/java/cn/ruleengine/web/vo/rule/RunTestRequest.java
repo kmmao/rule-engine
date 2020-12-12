@@ -3,6 +3,7 @@ package cn.ruleengine.web.vo.rule;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,11 @@ import java.util.Map;
 @Data
 public class RunTestRequest {
 
+    /**
+     * 规则id
+     */
+    @NotNull
+    private Integer id;
     @NotEmpty
     private String workspaceCode;
     @NotEmpty

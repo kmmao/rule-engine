@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.enums.DeletedEnum;
+import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
@@ -17,6 +18,7 @@ import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.element.*;
+import cn.ruleengine.web.vo.user.UserData;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.value.VariableType;
@@ -62,6 +64,9 @@ public class ElementServiceImpl implements ElementService {
         }
         Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineElement engineElement = new RuleEngineElement();
+        UserData userData = AuthInterceptor.USER.get();
+        engineElement.setCreateUserId(userData.getId());
+        engineElement.setCreateUserName(userData.getUsername());
         engineElement.setName(addConditionRequest.getName());
         engineElement.setCode(addConditionRequest.getCode());
         engineElement.setWorkspaceId(workspace.getId());
@@ -135,10 +140,9 @@ public class ElementServiceImpl implements ElementService {
      */
     @Override
     public GetElementResponse get(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineElement engineElement = this.ruleEngineElementManager.lambdaQuery()
                 .eq(RuleEngineElement::getId, id)
-                .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).one();
+                .one();
         return BasicConversion.INSTANCE.conver(engineElement);
     }
 
@@ -150,10 +154,9 @@ public class ElementServiceImpl implements ElementService {
      */
     @Override
     public Boolean update(UpdateElementRequest updateElementRequest) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineElement engineElement = this.ruleEngineElementManager.lambdaQuery()
                 .eq(RuleEngineElement::getId, updateElementRequest.getId())
-                .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).one();
+                .one();
         if (engineElement == null) {
             throw new ValidException("找不到更新的元素");
         }

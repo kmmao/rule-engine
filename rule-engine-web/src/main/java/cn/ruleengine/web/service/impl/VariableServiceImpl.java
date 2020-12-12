@@ -3,6 +3,7 @@ package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.enums.DeletedEnum;
+import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.VariableService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -12,6 +13,7 @@ import cn.ruleengine.web.vo.conver.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.variable.*;
 import cn.ruleengine.web.service.WorkspaceService;
 
@@ -75,6 +77,9 @@ public class VariableServiceImpl implements VariableService {
             throw new ValidException("变量名称：{}已经存在", addConditionRequest.getName());
         }
         RuleEngineVariable engineVariable = new RuleEngineVariable();
+        UserData userData = AuthInterceptor.USER.get();
+        engineVariable.setCreateUserId(userData.getId());
+        engineVariable.setCreateUserName(userData.getUsername());
         engineVariable.setName(addConditionRequest.getName());
         engineVariable.setDescription(addConditionRequest.getDescription());
         engineVariable.setValueType(addConditionRequest.getValueType());
@@ -185,10 +190,8 @@ public class VariableServiceImpl implements VariableService {
      */
     @Override
     public GetVariableResponse get(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.lambdaQuery()
                 .eq(RuleEngineVariable::getId, id)
-                .eq(RuleEngineVariable::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineVariable == null) {
             return null;
@@ -238,10 +241,8 @@ public class VariableServiceImpl implements VariableService {
      */
     @Override
     public Boolean update(UpdateVariableRequest updateVariableRequest) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.lambdaQuery()
                 .eq(RuleEngineVariable::getId, updateVariableRequest.getId())
-                .eq(RuleEngineVariable::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineVariable == null) {
             throw new ValidException("找不到更新的变量：{}", updateVariableRequest.getId());

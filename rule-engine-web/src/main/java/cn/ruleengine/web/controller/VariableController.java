@@ -16,7 +16,10 @@
 package cn.ruleengine.web.controller;
 
 
+import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.RoleAuth;
+import cn.ruleengine.web.enums.DataPermissionType;
+import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.service.VariableService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
@@ -70,6 +73,7 @@ public class VariableController {
      * @param idRequest 变量id
      * @return var
      */
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.VARIABLE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("get")
     @ApiOperation("根据id查询变量")
     public PlainResult<GetVariableResponse> get(@RequestBody @Valid IdRequest idRequest) {
@@ -84,6 +88,7 @@ public class VariableController {
      * @param updateVariableRequest param
      * @return true
      */
+    @DataPermission(id = "#updateVariableRequest.id", dataType = DataPermissionType.VARIABLE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("update")
     @ApiOperation("根据id更新变量")
     public PlainResult<Boolean> update(@RequestBody @Valid UpdateVariableRequest updateVariableRequest) {
@@ -110,7 +115,7 @@ public class VariableController {
      * @param idRequest 变量id
      * @return true
      */
-    @RoleAuth
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.VARIABLE, type = PermissionType.DELETE)
     @PostMapping("delete")
     @ApiOperation("根据id删除变量")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {

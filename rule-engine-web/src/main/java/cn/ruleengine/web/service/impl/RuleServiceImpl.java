@@ -155,10 +155,8 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean updateRule(UpdateRuleRequest updateRuleRequest) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
                 .eq(RuleEngineRule::getId, updateRuleRequest.getId())
-                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineRule == null) {
             throw new ValidException("不存在规则:{}", updateRuleRequest.getId());
@@ -274,11 +272,11 @@ public class RuleServiceImpl implements RuleService {
     public Integer saveOrUpdateRuleDefinition(RuleDefinition ruleDefinition) {
         // 创建规则
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
-        Workspace workspace = this.workspaceService.currentWorkspace();
         if (ruleDefinition.getId() == null) {
             if (this.ruleCodeIsExists(ruleDefinition.getCode())) {
                 throw new ValidException("规则Code：{}已经存在", ruleDefinition.getCode());
             }
+            Workspace workspace = this.workspaceService.currentWorkspace();
             UserData userData = AuthInterceptor.USER.get();
             ruleEngineRule.setCreateUserId(userData.getId());
             ruleEngineRule.setCreateUserName(userData.getUsername());
@@ -287,7 +285,6 @@ public class RuleServiceImpl implements RuleService {
         } else {
             Integer count = this.ruleEngineRuleManager.lambdaQuery()
                     .eq(RuleEngineRule::getId, ruleDefinition.getId())
-                    .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                     .count();
             if (count == null || count == 0) {
                 throw new ValidException("不存在规则:{}", ruleDefinition.getId());
@@ -310,10 +307,8 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public RuleDefinition getRuleDefinition(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
                 .eq(RuleEngineRule::getId, id)
-                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineRule == null) {
             return null;
@@ -355,10 +350,8 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean publish(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRule ruleEngineRule = ruleEngineRuleManager.lambdaQuery()
                 .eq(RuleEngineRule::getId, id)
-                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineRule == null) {
             throw new ValidException("不存在规则:{}", id);
@@ -401,10 +394,8 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public GetRuleResponse getRuleConfig(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
                 .eq(RuleEngineRule::getId, id)
-                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineRule == null) {
             return null;
@@ -479,10 +470,8 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public ViewRuleResponse getPublishRule(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
                 .eq(RuleEngineRulePublish::getRuleId, id)
-                .eq(RuleEngineRulePublish::getWorkspaceId, workspace.getId())
                 .one();
         if (engineRulePublish == null) {
             throw new ValidException("找不到发布的规则:{}", id);
@@ -500,10 +489,8 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public ViewRuleResponse getViewRule(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
                 .eq(RuleEngineRule::getId, id)
-                .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineRule == null) {
             throw new ValidException("找不到预览的规则数据:{}", id);

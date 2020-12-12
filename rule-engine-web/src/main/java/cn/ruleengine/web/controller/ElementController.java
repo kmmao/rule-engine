@@ -15,7 +15,10 @@
  */
 package cn.ruleengine.web.controller;
 
+import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.RoleAuth;
+import cn.ruleengine.web.enums.DataPermissionType;
+import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
@@ -81,6 +84,7 @@ public class ElementController {
      * @param idRequest 元素id
      * @return GetElementResponse
      */
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("get")
     @ApiOperation("根据id查询元素")
     public PlainResult<GetElementResponse> get(@RequestBody @Valid IdRequest idRequest) {
@@ -95,6 +99,7 @@ public class ElementController {
      * @param updateElementRequest 元素信息
      * @return true
      */
+    @DataPermission(id = "#updateElementRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("update")
     @ApiOperation("根据id更新元素")
     public PlainResult<Boolean> update(@RequestBody @Valid UpdateElementRequest updateElementRequest) {
@@ -109,7 +114,7 @@ public class ElementController {
      * @param idRequest 元素id
      * @return true
      */
-    @RoleAuth
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.DELETE)
     @PostMapping("delete")
     @ApiOperation("根据id删除元素")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {

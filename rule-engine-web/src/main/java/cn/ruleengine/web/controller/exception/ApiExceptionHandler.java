@@ -3,6 +3,7 @@ package cn.ruleengine.web.controller.exception;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.enums.ErrorLevelEnum;
 import cn.ruleengine.web.exception.ApiException;
+import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.NoLoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
 import cn.ruleengine.web.message.ExceptionMessage;
@@ -79,6 +80,21 @@ public class ApiExceptionHandler {
         log.warn("EngineException", e);
         result.setMessage(e.getMessage());
         result.setCode(ErrorCodeEnum.RULE8900.getCode());
+        return result;
+    }
+
+    /**
+     * 无数据权限
+     *
+     * @param e e
+     * @return BaseResult
+     */
+    @ExceptionHandler(value = DataPermissionException.class)
+    public BaseResult dataPermissionException(DataPermissionException e) {
+        BaseResult result = BaseResult.err();
+        log.warn("DataPermissionException", e);
+        result.setMessage(e.getMessage());
+        result.setCode(ErrorCodeEnum.RULE8930.getCode());
         return result;
     }
 

@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.enums.DeletedEnum;
+import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
@@ -21,6 +22,7 @@ import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.Rows;
 import cn.ruleengine.web.vo.condition.*;
+import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.variable.ParamValue;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -88,6 +90,9 @@ public class ConditionServiceImpl implements ConditionService {
         }
         Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineCondition condition = new RuleEngineCondition();
+        UserData userData = AuthInterceptor.USER.get();
+        condition.setCreateUserId(userData.getId());
+        condition.setCreateUserName(userData.getUsername());
         condition.setName(addConditionRequest.getName());
         condition.setDescription(addConditionRequest.getDescription());
         // 条件配置信息
@@ -121,10 +126,9 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public ConditionResponse getById(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineCondition condition = this.ruleEngineConditionManager.lambdaQuery()
                 .eq(RuleEngineCondition::getId, id)
-                .eq(RuleEngineCondition::getWorkspaceId, workspace.getId()).one();
+                .one();
         if (condition == null) {
             throw new ApiException("根据Id:{},没有查询到数据", id);
         }
@@ -360,10 +364,8 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean update(UpdateConditionRequest updateConditionRequest) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
         RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.lambdaQuery()
                 .eq(RuleEngineCondition::getId, updateConditionRequest.getId())
-                .eq(RuleEngineCondition::getWorkspaceId, workspace.getId())
                 .one();
         if (ruleEngineCondition == null) {
             throw new ValidException("规则条件找不到：{}", updateConditionRequest.getId());

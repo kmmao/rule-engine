@@ -16,6 +16,11 @@
 package cn.ruleengine.web.aspect;
 
 import cn.ruleengine.web.annotation.DataPermission;
+import cn.ruleengine.web.exception.DataPermissionException;
+import cn.ruleengine.web.interceptor.AuthInterceptor;
+import cn.ruleengine.web.service.DataPermissionService;
+import cn.ruleengine.web.vo.user.UserData;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,6 +33,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.validation.ValidationException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -40,9 +46,13 @@ import java.lang.reflect.Method;
  * @create 2020/11/22
  * @since 1.0.0
  */
+@Slf4j
 @Component
 @Aspect
 public class DataPermissionAspect {
+
+    @Resource
+    private DataPermissionService dataPermissionService;
 
     /**
      * 解析spel表达式
@@ -61,6 +71,11 @@ public class DataPermissionAspect {
      */
     @Around("@annotation(dataPermission)")
     public Object around(ProceedingJoinPoint joinPoint, DataPermission dataPermission) throws Throwable {
+        UserData userData = AuthInterceptor.USER.get();
+        log.debug("开始校验数据权限,用户Id:{},是否为管理员：{}，注解信息：{}", userData.getId(), userData.getIsAdmin(), dataPermission);
+        if (userData.getIsAdmin()) {
+            return joinPoint.proceed();
+        }
         //获取参数对象数组
         Object[] args = joinPoint.getArgs();
         //获取方法
@@ -70,16 +85,24 @@ public class DataPermissionAspect {
         if (params == null || params.length == 0) {
             throw new ValidationException("没有获取到任何参数");
         }
-        //将参数纳入Spring管理
+        // 将参数纳入Spring管理
         EvaluationContext context = new StandardEvaluationContext();
         for (int len = 0; len < params.length; len++) {
             context.setVariable(params[len], args[len]);
         }
         Expression expression = this.parser.parseExpression(dataPermission.id());
         Serializable id = expression.getValue(context, Serializable.class);
-        System.out.println("============>" + id);
-        // TODO: 2020/11/22  ...
-        return joinPoint.proceed();
+        // 不影响后续逻辑
+        if (id == null) {
+            log.info("校验数据权限，当前Id为null，跳过");
+            return joinPoint.proceed();
+        }
+        Boolean result = this.dataPermissionService.validDataPermission(id, dataPermission);
+        if (result) {
+            return joinPoint.proceed();
+        } else {
+            throw new DataPermissionException("你没有权限执行此操作");
+        }
     }
 
 }

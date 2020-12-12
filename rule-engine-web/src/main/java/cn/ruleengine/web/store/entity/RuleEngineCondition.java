@@ -32,6 +32,10 @@ public class RuleEngineCondition implements Serializable {
 
     private Integer workspaceId;
 
+    private Integer createUserId;
+
+    private String createUserName;
+
     /**
      * 0：元素，1:变量
      */

@@ -91,6 +91,8 @@ public class WorkspaceController {
 
     /**
      * 当前工作空间AccessKey
+     * <p>
+     * 记录一个bug 可以查询别人的工作空间accessKey
      *
      * @return accessKey
      */
@@ -98,7 +100,7 @@ public class WorkspaceController {
     @ApiOperation("查询工作空间AccessKey")
     public BaseResult accessKey(@RequestBody @Valid Param<String> param) {
         PlainResult<AccessKey> plainResult = new PlainResult<>();
-        plainResult.setData(this.workspaceService.accessKey(param.getParam()));
+        plainResult.setData(this.workspaceService.accessKey(param.getParam(), true));
         return plainResult;
     }
 
