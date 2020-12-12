@@ -2,6 +2,7 @@ package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleRequest;
 import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
+import cn.ruleengine.web.vo.rule.IsExistsRuleRequest;
 
 
 /**
@@ -29,5 +30,13 @@ public interface RuleOutService {
      * @return 规则执行结果
      */
     Object batchExecuteRule(BatchExecuteRuleRequest batchExecuteRuleRequest);
+
+    /**
+     * 引擎中是否存在这个规则
+     *
+     * @param isExistsRuleRequest 参数
+     * @return true存在
+     */
+    Boolean isExists(IsExistsRuleRequest isExistsRuleRequest);
 
 }

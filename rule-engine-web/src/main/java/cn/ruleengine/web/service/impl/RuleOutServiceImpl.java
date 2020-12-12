@@ -5,6 +5,7 @@ import cn.ruleengine.web.service.RuleOutService;
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleRequest;
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleResponse;
 import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
+import cn.ruleengine.web.vo.rule.IsExistsRuleRequest;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;
@@ -99,6 +100,22 @@ public class RuleOutServiceImpl implements RuleOutService {
             throw new EngineException("Execution failed, rule execution thread was interrupted", e);
         }
         return outPuts;
+    }
+
+    /**
+     * 引擎中是否存在这个规则
+     *
+     * @param isExistsRuleRequest 参数
+     * @return true存在
+     */
+    @Override
+    public Boolean isExists(IsExistsRuleRequest isExistsRuleRequest) {
+        String workspaceCode = isExistsRuleRequest.getWorkspaceCode();
+        AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
+        if (!accessKey.equals(isExistsRuleRequest.getAccessKeyId(), isExistsRuleRequest.getAccessKeySecret())) {
+            throw new ValidException("AccessKey Verification failed");
+        }
+        return this.engine.isExistsRule(isExistsRuleRequest.getWorkspaceCode(), isExistsRuleRequest.getRuleCode());
     }
 
 }

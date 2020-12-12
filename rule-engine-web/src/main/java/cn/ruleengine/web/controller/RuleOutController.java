@@ -22,6 +22,7 @@ import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleRequest;
 import cn.ruleengine.web.vo.rule.ExecuteRuleRequest;
+import cn.ruleengine.web.vo.rule.IsExistsRuleRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,4 +80,19 @@ public class RuleOutController {
         return plainResult;
     }
 
+    /**
+     * 引擎中是否存在这个规则
+     *
+     * @param isExistsRuleRequest 参数
+     * @return true存在
+     */
+    @NoAuth
+    @PostMapping("isExists")
+    @ApiOperation("引擎中是否存在这个规则")
+    public BaseResult isExists(@RequestBody @Valid IsExistsRuleRequest isExistsRuleRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(ruleOutService.isExists(isExistsRuleRequest));
+        return plainResult;
+    }
 }
+
