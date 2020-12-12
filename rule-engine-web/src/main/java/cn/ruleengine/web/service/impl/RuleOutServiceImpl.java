@@ -51,10 +51,12 @@ public class RuleOutServiceImpl implements RuleOutService {
     @Override
     public Object executeRule(ExecuteRuleRequest executeRule) {
         String workspaceCode = executeRule.getWorkspaceCode();
+        long currentTimeMillis = System.currentTimeMillis();
         AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
         if (!accessKey.equals(executeRule.getAccessKeyId(), executeRule.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
+        log.info("校验AccessKey耗时：{}", (System.currentTimeMillis() - currentTimeMillis));
         Input input = new DefaultInput();
         input.putAll(executeRule.getParam());
         return this.engine.execute(input, workspaceCode, executeRule.getRuleCode());
