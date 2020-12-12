@@ -19,6 +19,7 @@ import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.service.RuleService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
+import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
@@ -187,6 +188,20 @@ public class RuleController {
     public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(ruleService.delete(idRequest.getId()));
+        return plainResult;
+    }
+
+    /**
+     * 规则code是否存在
+     *
+     * @param param 规则code
+     * @return true存在
+     */
+    @PostMapping("codeIsExists")
+    @ApiOperation("规则code是否存在")
+    public PlainResult<Boolean> codeIsExists(@RequestBody @Valid Param<String> param) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(ruleService.ruleCodeIsExists(param.getParam()));
         return plainResult;
     }
 }

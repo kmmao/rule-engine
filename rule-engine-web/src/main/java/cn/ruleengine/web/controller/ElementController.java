@@ -19,6 +19,7 @@ import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
+import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.element.*;
@@ -114,6 +115,20 @@ public class ElementController {
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(elementService.delete(idRequest.getId()));
+        return plainResult;
+    }
+
+    /**
+     * 元素code是否存在
+     *
+     * @param param 元素code
+     * @return true存在
+     */
+    @PostMapping("codeIsExists")
+    @ApiOperation("元素code是否存在")
+    public PlainResult<Boolean> codeIsExists(@RequestBody @Valid Param<String> param) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(elementService.elementCodeIsExists(param.getParam()));
         return plainResult;
     }
 

@@ -108,6 +108,9 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
     }
 
     private RoleAuth getRoleAuth(Object handler) {
+        if (!(handler instanceof HandlerMethod)) {
+            return null;
+        }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Class<?> beanType = handlerMethod.getBeanType();
         Method method = handlerMethod.getMethod();

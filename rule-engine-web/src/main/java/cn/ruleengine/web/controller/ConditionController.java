@@ -20,6 +20,7 @@ import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
+import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.condition.*;
@@ -148,4 +149,17 @@ public class ConditionController {
         return plainResult;
     }
 
+    /**
+     * 条件名称是否存在
+     *
+     * @param param 条件名称
+     * @return true存在
+     */
+    @PostMapping("nameIsExists")
+    @ApiOperation("条件名称是否存在")
+    public PlainResult<Boolean> nameIsExists(@RequestBody @Valid Param<String> param) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(conditionService.conditionNameIsExists(param.getParam()));
+        return plainResult;
+    }
 }

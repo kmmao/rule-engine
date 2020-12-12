@@ -1,8 +1,10 @@
 package cn.ruleengine.web.vo.rule;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -18,9 +20,12 @@ public class RuleDefinition {
     private Integer id;
 
     @NotBlank
+    @Length(min = 1, max = 15, message = "规则名称长度在 1 到 15 个字符")
     private String name;
 
     @NotBlank
+    @Length(min = 1, max = 15, message = "规则Code长度在 1 到 15 个字符")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_&#\\-]*$", message = "规则Code只能字母开头，以及字母数字_&#-组成")
     private String code;
 
     private String description;
