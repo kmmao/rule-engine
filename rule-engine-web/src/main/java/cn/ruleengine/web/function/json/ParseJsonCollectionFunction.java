@@ -1,4 +1,4 @@
-package cn.ruleengine.web.function;
+package cn.ruleengine.web.function.json;
 
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
@@ -14,11 +14,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Function
-public class ParseJsonNumberFunction {
+public class ParseJsonCollectionFunction {
 
     @Executor
     public String executor() {
-        // TODO: 2020/12/13
+        // TODO: 2020/12/13 使用场景不多，暂不开发
         return null;
     }
 

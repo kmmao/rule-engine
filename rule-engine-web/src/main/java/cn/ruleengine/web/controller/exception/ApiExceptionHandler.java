@@ -123,7 +123,7 @@ public class ApiExceptionHandler {
     public BaseResult functionException(FunctionException e) {
         BaseResult result = BaseResult.err();
         log.warn("FunctionException", e);
-        result.setMessage(e.getMessage());
+        result.setMessage(Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse(e.getMessage()));
         result.setCode(ErrorCodeEnum.RULE8910.getCode());
         return result;
     }

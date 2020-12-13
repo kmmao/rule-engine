@@ -15,6 +15,8 @@ public class Function {
      * <p>
      * 优化点
      * 函数调用缓存调用链路待完成（待完成）
+     * <p>
+     * 函数返回值可以不确定，创建变量是指定 uncertain
      */
     public void init() {
 

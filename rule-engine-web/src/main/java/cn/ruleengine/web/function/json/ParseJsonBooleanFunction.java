@@ -1,4 +1,4 @@
-package cn.ruleengine.web.function;
+package cn.ruleengine.web.function.json;
 
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
- * 手机归属地
  *
  * @author 丁乾文
  * @create 2020/12/13
@@ -15,11 +14,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Function
-public class MobilePhoneAttributionFunction {
+public class ParseJsonBooleanFunction {
 
     @Executor
     public String executor() {
-        // TODO: 2020/12/13
+        // TODO: 2020/12/13 使用场景不多，暂不开发
         return null;
     }
 
