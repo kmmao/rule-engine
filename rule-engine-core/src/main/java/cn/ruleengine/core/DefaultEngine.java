@@ -126,15 +126,16 @@ public class DefaultEngine implements Engine, Closeable {
         if (rule == null) {
             throw new EngineException("no rule:{}", ruleCode);
         }
-        RuleListener listener = configuration.getRuleListener();
+        log.info("开始执行规则:{}", rule.getCode());
+        RuleListener listener = this.configuration.getRuleListener();
         listener.before(rule, input);
         try {
-            Value value = rule.execute(input, configuration);
+            Value value = rule.execute(input, this.configuration);
             DefaultOutPut outPut;
             if (value == null) {
                 outPut = new DefaultOutPut(null, null);
             } else {
-                outPut = new DefaultOutPut(value.getValue(input, configuration), value.getDataType());
+                outPut = new DefaultOutPut(value.getValue(input, this.configuration), value.getDataType());
             }
             listener.after(rule, input, outPut);
             return outPut;

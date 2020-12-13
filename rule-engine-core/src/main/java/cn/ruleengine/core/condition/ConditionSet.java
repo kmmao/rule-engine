@@ -37,7 +37,7 @@ import java.util.Objects;
  */
 @ToString
 @Slf4j
-public class ConditionSet {
+public class ConditionSet implements ConditionCompare{
 
     /**
      * 条件
@@ -57,22 +57,24 @@ public class ConditionSet {
      * @param configuration 引擎配置信息
      * @return 返回true时，所有条件全部成立
      */
+    @Override
     public boolean compare(Input input, Configuration configuration) {
         if (CollUtil.isEmpty(this.conditionGroups)) {
             log.info("条件组为空，没有条件，返回True");
             return true;
         }
-        for (int i = 0; i < this.conditionGroups.size(); i++) {
-            log.info("开始验证条件组:{}", i);
+        for (int index = 0; index < this.conditionGroups.size(); index++) {
+            log.info("开始验证条件组:{}", index);
             //条件组是或者关系，有一个为true,直接返回
-            if (this.conditionGroups.get(i).compare(input, configuration)) {
-                log.info("条件组:{}成立", i);
+            if (this.conditionGroups.get(index).compare(input, configuration)) {
+                log.info("条件组:{}成立", index);
                 return true;
             } else {
-                log.info("条件组:{}不成立", i);
+                log.info("条件组:{}不成立", index);
             }
         }
         log.info("所有条件不成立");
         return false;
     }
+
 }

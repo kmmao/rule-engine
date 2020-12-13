@@ -17,6 +17,8 @@ package cn.ruleengine.core.rule;
 
 import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.Input;
+import cn.ruleengine.core.condition.Condition;
+import cn.ruleengine.core.condition.Precondition;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.condition.ConditionSet;
 import lombok.Data;
@@ -64,7 +66,12 @@ public class Rule implements RuleParse {
      * 工作空间code
      */
     private String workspaceCode;
-
+    /**
+     * 前提条件
+     * <p>
+     * 如果前提条件不满足，则直接返回默认结果
+     */
+    private Precondition precondition = new Precondition();
     /**
      * 当条件全部满足时候返回此规则结果
      */
@@ -110,24 +117,33 @@ public class Rule implements RuleParse {
 
     }
 
+    /**
+     * 执行规则
+     *
+     * @param input         入参
+     * @param configuration 规则引擎配置
+     * @return 规则返回值
+     */
     @Nullable
     public Value execute(@NonNull Input input, @NonNull Configuration configuration) {
         long startTime = System.currentTimeMillis();
         try {
-            log.info("开始执行规则:{}", this.getCode());
-            ConditionSet conditionSet = this.getConditionSet();
-            //比较规则条件集
-            if (!conditionSet.compare(input, configuration)) {
-                Value defaultValue = this.getDefaultActionValue();
-                if (Objects.nonNull(defaultValue)) {
-                    log.info("条件不成立，存在默认结果，返回默认结果");
-                    return defaultValue;
+            log.info("开始计算前提条件");
+            if (this.precondition.compare(input, configuration)) {
+                log.info("前提条件成立,开始计算条件集");
+                // 比较规则条件集
+                if (this.conditionSet.compare(input, configuration)) {
+                    // 条件全部命中时候执行
+                    return this.getActionValue();
                 }
-                log.info("不存在默认结果，返回:null");
-                return null;
             }
-            //条件全部命中时候执行
-            return this.getActionValue();
+            Value defaultValue = this.getDefaultActionValue();
+            if (Objects.nonNull(defaultValue)) {
+                log.info("结果未命中，存在默认结果，返回默认结果");
+                return defaultValue;
+            }
+            log.info("结果未命中，不存在默认结果，返回:null");
+            return null;
         } finally {
             long cost = System.currentTimeMillis() - startTime;
             log.info("引擎计算耗时:{}ms", cost);

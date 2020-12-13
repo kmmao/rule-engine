@@ -31,6 +31,7 @@ import org.springframework.lang.NonNull;
  * @since 1.0.0
  */
 public class ConditionCompareFactory {
+
     /**
      * 根据dataType获取对应的条件比较器
      *
@@ -51,4 +52,5 @@ public class ConditionCompareFactory {
                 throw new IllegalStateException("Unexpected value: " + dataType);
         }
     }
+
 }

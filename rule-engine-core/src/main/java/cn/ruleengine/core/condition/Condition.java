@@ -22,6 +22,7 @@ import cn.ruleengine.core.exception.ConditionException;
 import cn.ruleengine.core.value.DataType;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +37,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Data
-public class Condition {
+public class Condition implements ConditionCompare {
 
     /**
      * 条件id
@@ -73,6 +74,7 @@ public class Condition {
      * @param configuration 引擎配置信息
      * @return 比较结果
      */
+    @Override
     public boolean compare(Input input, Configuration configuration) {
         log.debug("条件信息:{}", this);
         Compare compare = ConditionCompareFactory.getCompare(this.leftValue.getDataType());
@@ -87,7 +89,8 @@ public class Condition {
      *
      * @param condition 条件信息
      */
-    public static void verify(Condition condition) {
+    public static void verify(@NonNull Condition condition) {
+        Objects.requireNonNull(condition);
         Value leftValue = condition.getLeftValue();
         Operator operator = condition.getOperator();
         Value rightValue = condition.getRightValue();

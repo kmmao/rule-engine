@@ -36,7 +36,7 @@ import java.util.Objects;
  */
 @Data
 @Slf4j
-public class ConditionGroup {
+public class ConditionGroup implements ConditionCompare{
 
     private Integer id;
 
@@ -65,16 +65,17 @@ public class ConditionGroup {
      * @param configuration 引擎配置信息
      * @return 返回true时，所有条件全部成立
      */
+    @Override
     public boolean compare(Input input, Configuration configuration) {
         if (CollUtil.isEmpty(this.conditions)) {
             log.info("条件为空，直接返回结果");
             return true;
         }
         // 条件运算
-        for (Condition condition : conditions) {
+        for (Condition condition : this.conditions) {
             String conditionName = condition.getName();
             if (!condition.compare(input, configuration)) {
-                log.info("{}条件不成立", conditionName);
+                log.info("条件不成立：{}", conditionName);
                 return false;
             }
             log.info("{}条件成立", conditionName);
