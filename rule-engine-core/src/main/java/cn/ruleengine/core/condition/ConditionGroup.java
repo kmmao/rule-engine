@@ -61,6 +61,8 @@ public class ConditionGroup {
     /**
      * 条件集运算，组内条件为&关系，都为true时返回true，否则返回false
      *
+     * @param input         入参
+     * @param configuration 引擎配置信息
      * @return 返回true时，所有条件全部成立
      */
     public boolean compare(Input input, Configuration configuration) {
@@ -79,4 +81,5 @@ public class ConditionGroup {
         }
         return true;
     }
+
 }

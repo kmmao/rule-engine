@@ -37,6 +37,7 @@ import java.util.Objects;
 @Slf4j
 @Data
 public class Condition {
+
     /**
      * 条件id
      */
@@ -65,6 +66,13 @@ public class Condition {
      */
     private Value rightValue;
 
+    /**
+     * 条件比较
+     *
+     * @param input         入参
+     * @param configuration 引擎配置信息
+     * @return 比较结果
+     */
     public boolean compare(Input input, Configuration configuration) {
         log.debug("条件信息:{}", this);
         Compare compare = ConditionCompareFactory.getCompare(this.leftValue.getDataType());
@@ -74,6 +82,11 @@ public class Condition {
         return compare.compare(lValue, this.operator, rValue);
     }
 
+    /**
+     * 校验条件配置
+     *
+     * @param condition 条件信息
+     */
     public static void verify(Condition condition) {
         Value leftValue = condition.getLeftValue();
         Operator operator = condition.getOperator();

@@ -18,8 +18,6 @@ package cn.ruleengine.core.condition;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -59,18 +57,41 @@ public enum Operator {
     @Getter
     public String symbol;
 
-
-    private static Map<String, Operator> map;
-
-    static {
-        map = new HashMap<>(4);
-        Operator[] values = Operator.values();
-        for (Operator value : values) {
-            map.put(value.name(), value);
+    /**
+     * 根据枚举name 获取枚举对象
+     *
+     * @param name 枚举name
+     * @return Operator
+     */
+    public static Operator getByName(String name) {
+        switch (name) {
+            case "EQ":
+                return EQ;
+            case "NE":
+                return NE;
+            case "GT":
+                return GT;
+            case "LT":
+                return LT;
+            case "GE":
+                return GE;
+            case "LE":
+                return LE;
+            case "CONTAIN":
+                return CONTAIN;
+            case "NOT_CONTAIN":
+                return NOT_CONTAIN;
+            case "IN":
+                return IN;
+            case "NOT_IN":
+                return NOT_IN;
+            case "STARTS_WITH":
+                return STARTS_WITH;
+            case "ENDS_WITH":
+                return ENDS_WITH;
+            default:
+                throw new IllegalStateException("Unexpected value: " + name);
         }
     }
 
-    public static Operator getByName(String name) {
-        return map.get(name);
-    }
 }

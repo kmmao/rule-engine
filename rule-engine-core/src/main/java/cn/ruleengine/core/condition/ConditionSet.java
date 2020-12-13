@@ -53,6 +53,8 @@ public class ConditionSet {
     /**
      * 条件集运算，条件组与条件组为｜｜（或关系）
      *
+     * @param input         入参
+     * @param configuration 引擎配置信息
      * @return 返回true时，所有条件全部成立
      */
     public boolean compare(Input input, Configuration configuration) {

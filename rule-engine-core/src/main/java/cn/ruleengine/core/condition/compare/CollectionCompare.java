@@ -46,6 +46,14 @@ public class CollectionCompare implements Compare {
         return collectionCompare;
     }
 
+    /**
+     * collection类型条件比较
+     *
+     * @param leftValue  条件左值
+     * @param operator   比较符号
+     * @param rightValue 条件右值
+     * @return true条件成立
+     */
     @Override
     public boolean compare(Object leftValue, Operator operator, Object rightValue) {
         if (leftValue == null || rightValue == null) {

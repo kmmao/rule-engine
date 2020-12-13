@@ -24,10 +24,15 @@ package cn.ruleengine.core.condition;
  * @since 1.0.0
  */
 public interface Compare {
+
     /**
-     * 条件比较结果
+     * 条件比较
      *
+     * @param leftValue  条件左值
+     * @param operator   比较符号
+     * @param rightValue 条件右值
      * @return true条件成立
      */
     boolean compare(Object leftValue, Operator operator, Object rightValue);
+
 }
