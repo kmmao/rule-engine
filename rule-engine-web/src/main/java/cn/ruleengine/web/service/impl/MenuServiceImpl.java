@@ -5,7 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.service.MenuService;
 import cn.ruleengine.web.store.mapper.RuleEngineMenuMapper;
-import cn.ruleengine.web.vo.conver.BasicConversion;
+import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<ListMenuResponse> listMenuByUserId(Integer userId) {
         return this.ruleEngineMenuMapper.listMenuByUserId(userId).stream()
-                .map(BasicConversion.INSTANCE::conver).collect(Collectors.toList());
+                .map(BasicConversion.INSTANCE::convert).collect(Collectors.toList());
     }
 
     /**

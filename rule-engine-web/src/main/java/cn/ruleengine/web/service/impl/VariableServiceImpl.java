@@ -9,7 +9,7 @@ import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.store.mapper.RuleEngineVariableMapper;
 import cn.ruleengine.web.util.PageUtils;
-import cn.ruleengine.web.vo.conver.BasicConversion;
+import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
@@ -196,7 +196,7 @@ public class VariableServiceImpl implements VariableService {
         if (ruleEngineVariable == null) {
             return null;
         }
-        GetVariableResponse variableResponse = BasicConversion.INSTANCE.conver(ruleEngineVariable);
+        GetVariableResponse variableResponse = BasicConversion.INSTANCE.convert(ruleEngineVariable);
         if (ruleEngineVariable.getType().equals(VariableType.CONSTANT.getType())) {
             return variableResponse;
         } else if (ruleEngineVariable.getType().equals(VariableType.FUNCTION.getType())) {

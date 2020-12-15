@@ -12,7 +12,7 @@ import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
 import cn.ruleengine.web.util.PageUtils;
-import cn.ruleengine.web.vo.conver.BasicConversion;
+import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
@@ -32,6 +32,7 @@ import cn.ruleengine.web.vo.rule.Action;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.web.vo.workspace.AccessKey;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cn.ruleengine.core.Engine;
@@ -313,7 +314,7 @@ public class RuleServiceImpl implements RuleService {
         if (ruleEngineRule == null) {
             return null;
         }
-        return BasicConversion.INSTANCE.conver(ruleEngineRule);
+        return BasicConversion.INSTANCE.convert(ruleEngineRule);
     }
 
     /**
@@ -417,8 +418,10 @@ public class RuleServiceImpl implements RuleService {
                     .orderByAsc(RuleEngineConditionGroupCondition::getOrderNo)
                     .list();
             if (CollUtil.isNotEmpty(ruleEngineConditionGroupConditions)) {
-                Map<Integer, List<RuleEngineConditionGroupCondition>> conditionGroupConditionMaps = ruleEngineConditionGroupConditions.stream().collect(Collectors.groupingBy(RuleEngineConditionGroupCondition::getConditionGroupId));
-                Set<Integer> conditionIds = conditionGroupConditionMaps.values().stream().flatMap(Collection::stream).map(RuleEngineConditionGroupCondition::getConditionId).collect(Collectors.toSet());
+                Map<Integer, List<RuleEngineConditionGroupCondition>> conditionGroupConditionMaps = ruleEngineConditionGroupConditions.stream()
+                        .collect(Collectors.groupingBy(RuleEngineConditionGroupCondition::getConditionGroupId));
+                Set<Integer> conditionIds = conditionGroupConditionMaps.values().stream().flatMap(Collection::stream).map(RuleEngineConditionGroupCondition::getConditionId)
+                        .collect(Collectors.toSet());
                 List<RuleEngineCondition> ruleEngineConditions = this.ruleEngineConditionManager.lambdaQuery().in(RuleEngineCondition::getId, conditionIds).list();
                 if (CollUtil.isNotEmpty(ruleEngineConditions)) {
                     Map<Integer, RuleEngineCondition> conditionMap = ruleEngineConditions.stream().collect(Collectors.toMap(RuleEngineCondition::getId, Function.identity()));
@@ -432,18 +435,19 @@ public class RuleServiceImpl implements RuleService {
                         group.setName(engineConditionGroup.getName());
                         group.setOrderNo(engineConditionGroup.getOrderNo());
                         List<RuleEngineConditionGroupCondition> conditionGroupConditions = conditionGroupConditionMaps.get(engineConditionGroup.getId());
-                        if (CollUtil.isNotEmpty(conditionGroupConditions)) {
-                            List<ConditionGroupCondition> groupConditions = new ArrayList<>();
-                            for (RuleEngineConditionGroupCondition conditionGroupCondition : conditionGroupConditions) {
-                                ConditionGroupCondition conditionSet = new ConditionGroupCondition();
-                                conditionSet.setId(conditionGroupCondition.getId());
-                                conditionSet.setOrderNo(conditionGroupCondition.getOrderNo());
-                                RuleEngineCondition engineCondition = conditionMap.get(conditionGroupCondition.getConditionId());
-                                conditionSet.setCondition(this.conditionService.getConditionResponse(engineCondition, variableMap, elementMap));
-                                groupConditions.add(conditionSet);
-                            }
-                            group.setConditionGroupCondition(groupConditions);
+                        if (CollUtil.isEmpty(conditionGroupConditions)) {
+                            continue;
                         }
+                        List<ConditionGroupCondition> groupConditions = new ArrayList<>(conditionGroupConditions.size());
+                        for (RuleEngineConditionGroupCondition conditionGroupCondition : conditionGroupConditions) {
+                            ConditionGroupCondition conditionSet = new ConditionGroupCondition();
+                            conditionSet.setId(conditionGroupCondition.getId());
+                            conditionSet.setOrderNo(conditionGroupCondition.getOrderNo());
+                            RuleEngineCondition engineCondition = conditionMap.get(conditionGroupCondition.getConditionId());
+                            conditionSet.setCondition(this.conditionService.getConditionResponse(engineCondition, variableMap, elementMap));
+                            groupConditions.add(conditionSet);
+                        }
+                        group.setConditionGroupCondition(groupConditions);
                         conditionGroup.add(group);
                     }
                     ruleResponse.setConditionGroup(conditionGroup);
@@ -451,11 +455,11 @@ public class RuleServiceImpl implements RuleService {
             }
         }
         // 结果
-        ConfigBean.Value action = getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
+        Action action = getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
         ruleResponse.setAction(action);
         // 默认结果
-        ConfigBean.Value defaultValue = getAction(ruleEngineRule.getDefaultActionValue(), ruleEngineRule.getDefaultActionType(), ruleEngineRule.getDefaultActionValueType());
-        DefaultAction defaultAction = BasicConversion.INSTANCE.conver(defaultValue);
+        Action defaultValue = getAction(ruleEngineRule.getDefaultActionValue(), ruleEngineRule.getDefaultActionType(), ruleEngineRule.getDefaultActionValueType());
+        DefaultAction defaultAction = BasicConversion.INSTANCE.convert(defaultValue);
         defaultAction.setEnableDefaultAction(ruleEngineRule.getEnableDefaultAction());
         ruleResponse.setDefaultAction(defaultAction);
         ruleResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineRule.getAbnormalAlarm(), Rule.AbnormalAlarm.class));
@@ -478,7 +482,11 @@ public class RuleServiceImpl implements RuleService {
         }
         String data = engineRulePublish.getData();
         Rule rule = Rule.buildRule(data);
-        return this.getRuleResponseProcess(rule);
+        ViewRuleResponse ruleResponseProcess = this.getRuleResponseProcess(rule);
+        AccessKey accessKey = this.workspaceService.accessKey(ruleResponseProcess.getWorkspaceCode());
+        ruleResponseProcess.setAccessKeyId(accessKey.getAccessKeyId());
+        ruleResponseProcess.setAccessKeySecret(accessKey.getAccessKeySecret());
+        return ruleResponseProcess;
     }
 
     /**
@@ -537,11 +545,11 @@ public class RuleServiceImpl implements RuleService {
         }
         ruleResponse.setConditionGroup(groupArrayList);
         Value actionValue = rule.getActionValue();
-        ruleResponse.setAction(this.getConfigValue(actionValue));
+        ruleResponse.setAction(BasicConversion.INSTANCE.convert(this.getConfigValue(actionValue)));
         DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
             ConfigBean.Value value = this.getConfigValue(rule.getDefaultActionValue());
-            defaultAction = BasicConversion.INSTANCE.conver(value);
+            defaultAction = BasicConversion.INSTANCE.convert(value);
             defaultAction.setEnableDefaultAction(EnableEnum.ENABLE.getStatus());
         } else {
             defaultAction = new DefaultAction();
@@ -596,8 +604,8 @@ public class RuleServiceImpl implements RuleService {
      * @param valueType STRING/NUMBER...
      * @return Action
      */
-    public ConfigBean.Value getAction(String value, Integer type, String valueType) {
-        ConfigBean.Value action = new ConfigBean.Value();
+    public Action getAction(String value, Integer type, String valueType) {
+        Action action = new Action();
         if (Validator.isEmpty(type)) {
             return action;
         }

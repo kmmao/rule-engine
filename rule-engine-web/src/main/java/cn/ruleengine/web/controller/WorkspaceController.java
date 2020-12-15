@@ -15,6 +15,7 @@
  */
 package cn.ruleengine.web.controller;
 
+import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.BaseResult;
@@ -96,11 +97,12 @@ public class WorkspaceController {
      *
      * @return accessKey
      */
+    @RoleAuth
     @PostMapping("accessKey")
     @ApiOperation("查询工作空间AccessKey")
     public BaseResult accessKey(@RequestBody @Valid Param<String> param) {
         PlainResult<AccessKey> plainResult = new PlainResult<>();
-        plainResult.setData(null);
+        plainResult.setData(workspaceService.accessKey(param.getParam()));
         return plainResult;
     }
 

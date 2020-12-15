@@ -8,7 +8,7 @@ import cn.ruleengine.web.store.entity.RuleEngineRole;
 import cn.ruleengine.web.store.entity.RuleEngineUser;
 import cn.ruleengine.web.store.manager.RuleEngineUserManager;
 import cn.ruleengine.web.util.*;
-import cn.ruleengine.web.vo.conver.BasicConversion;
+import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.user.*;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
      * @param ruleEngineUser 用户信息
      */
     private void refreshUserData(String token, RuleEngineUser ruleEngineUser) {
-        UserData userData = BasicConversion.INSTANCE.conver(ruleEngineUser);
+        UserData userData = BasicConversion.INSTANCE.convert(ruleEngineUser);
         // 重新拉取用户角色信息
         List<RuleEngineRole> bootRoles = this.roleService.listRoleByUserId(ruleEngineUser.getId());
         userData.setRoles(bootRoles.stream().map(m -> {
@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserInfo() {
         UserData userData = AuthInterceptor.USER.get();
-        return BasicConversion.INSTANCE.conver(userData);
+        return BasicConversion.INSTANCE.convert(userData);
     }
 
     /**

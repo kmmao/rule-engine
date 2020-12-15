@@ -13,7 +13,7 @@ import cn.ruleengine.web.store.manager.RuleEngineElementManager;
 import cn.ruleengine.web.store.manager.RuleEngineFunctionValueManager;
 import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import cn.ruleengine.web.util.PageUtils;
-import cn.ruleengine.web.vo.conver.BasicConversion;
+import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
@@ -143,7 +143,7 @@ public class ElementServiceImpl implements ElementService {
         RuleEngineElement engineElement = this.ruleEngineElementManager.lambdaQuery()
                 .eq(RuleEngineElement::getId, id)
                 .one();
-        return BasicConversion.INSTANCE.conver(engineElement);
+        return BasicConversion.INSTANCE.convert(engineElement);
     }
 
     /**

@@ -1,10 +1,12 @@
-package cn.ruleengine.web.vo.conver;
+package cn.ruleengine.web.vo.convert;
 
+import cn.ruleengine.core.value.Value;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroupCondition;
 import cn.ruleengine.web.vo.element.GetElementResponse;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
+import cn.ruleengine.web.vo.rule.Action;
 import cn.ruleengine.web.vo.rule.DefaultAction;
 import cn.ruleengine.web.vo.rule.RuleDefinition;
 import cn.ruleengine.web.vo.user.UserData;
@@ -32,7 +34,7 @@ public interface BasicConversion {
      * @param ruleEngineMenu ruleEngineMenu
      * @return ListMenuResponse
      */
-    ListMenuResponse conver(RuleEngineMenu ruleEngineMenu);
+    ListMenuResponse convert(RuleEngineMenu ruleEngineMenu);
 
     /**
      * ruleEngineElement to GetElementResponse
@@ -40,7 +42,7 @@ public interface BasicConversion {
      * @param ruleEngineElement ruleEngineElement
      * @return GetElementResponse
      */
-    GetElementResponse conver(RuleEngineElement ruleEngineElement);
+    GetElementResponse convert(RuleEngineElement ruleEngineElement);
 
     /**
      * ruleEngineVariable to GetVariableResponse
@@ -48,7 +50,7 @@ public interface BasicConversion {
      * @param ruleEngineVariable ruleEngineVariable
      * @return GetVariableResponse
      */
-    GetVariableResponse conver(RuleEngineVariable ruleEngineVariable);
+    GetVariableResponse convert(RuleEngineVariable ruleEngineVariable);
 
     /**
      * ruleEngineRule to RuleDefinition
@@ -56,7 +58,7 @@ public interface BasicConversion {
      * @param ruleEngineRule ruleEngineRule
      * @return RuleDefinition
      */
-    RuleDefinition conver(RuleEngineRule ruleEngineRule);
+    RuleDefinition convert(RuleEngineRule ruleEngineRule);
 
     /**
      * value to DefaultAction
@@ -64,7 +66,7 @@ public interface BasicConversion {
      * @param value value
      * @return DefaultAction
      */
-    DefaultAction conver(ConfigBean.Value value);
+    DefaultAction convert(ConfigBean.Value value);
 
     /**
      * ruleEngineUser to UserData
@@ -72,7 +74,7 @@ public interface BasicConversion {
      * @param ruleEngineUser ruleEngineUser
      * @return UserData
      */
-    UserData conver(RuleEngineUser ruleEngineUser);
+    UserData convert(RuleEngineUser ruleEngineUser);
 
     /**
      * userData to UserResponse
@@ -80,7 +82,7 @@ public interface BasicConversion {
      * @param userData userData
      * @return UserResponse
      */
-    UserResponse conver(UserData userData);
+    UserResponse convert(UserData userData);
 
     /**
      * saveOrUpdateConditionGroup to  RuleEngineConditionGroupCondition
@@ -88,6 +90,22 @@ public interface BasicConversion {
      * @param saveOrUpdateConditionGroup saveOrUpdateConditionGroup
      * @return RuleEngineConditionGroupCondition
      */
-    RuleEngineConditionGroupCondition conver(SaveOrUpdateConditionGroupCondition saveOrUpdateConditionGroup);
+    RuleEngineConditionGroupCondition convert(SaveOrUpdateConditionGroupCondition saveOrUpdateConditionGroup);
+
+    /**
+     * Action to DefaultAction
+     *
+     * @param action action
+     * @return DefaultAction
+     */
+    DefaultAction convert(Action action);
+
+    /**
+     * Value  to Action
+     *
+     * @param value value
+     * @return Action
+     */
+    Action convert(Value value);
 
 }

@@ -150,7 +150,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * 当前工作空间AccessKey
      *
      * @param code              工作空间code
-     * @param isValidPermission 获取accessKey时是否校验是否有这个工作空间的权限
      * @return AccessKey
      */
     @Override

@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DefaultAction extends ConfigBean.Value {
+public class DefaultAction extends Action {
 
     /**
      * 0启用 1不启用

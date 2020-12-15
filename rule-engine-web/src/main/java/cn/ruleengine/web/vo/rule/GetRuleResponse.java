@@ -2,7 +2,6 @@ package cn.ruleengine.web.vo.rule;
 
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
-import cn.ruleengine.web.vo.condition.ConfigBean;
 import lombok.Data;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class GetRuleResponse {
 
     private List<ConditionGroupConfig> conditionGroup;
 
-    private ConfigBean.Value action;
+    private Action action;
 
     private DefaultAction defaultAction;
 
