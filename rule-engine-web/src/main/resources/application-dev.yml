@@ -7,7 +7,7 @@ server:
   port: 8010
   tomcat:
     max-threads: 400 #最大线程执行数
-    max-connections: 200 #最大连接数
+    max-connections: 4000 #最大连接数
     uri-encoding: UTF-8
 spring:
   jackson:
