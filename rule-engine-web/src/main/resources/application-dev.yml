@@ -90,6 +90,9 @@ spring:
       pool:
         core-size: 24
         max-size: 100
+  servlet:
+    multipart:
+      max-file-size: 4MB
 
 #mybatis-plus配置
 mybatis-plus:

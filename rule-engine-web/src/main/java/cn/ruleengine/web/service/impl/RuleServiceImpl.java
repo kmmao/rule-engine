@@ -230,7 +230,7 @@ public class RuleServiceImpl implements RuleService {
         if (engineRule == null) {
             return false;
         }
-        if (engine.isExistsRule(engineRule.getWorkspaceCode(), engineRule.getCode())) {
+        if (this.engine.isExistsRule(engineRule.getWorkspaceCode(), engineRule.getCode())) {
             RuleMessageVo ruleMessageVo = new RuleMessageVo();
             ruleMessageVo.setType(RuleMessageVo.Type.REMOVE);
             ruleMessageVo.setWorkspaceId(engineRule.getWorkspaceId());
