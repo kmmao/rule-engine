@@ -145,15 +145,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         return true;
     }
 
-    /**
-     * 当前工作空间AccessKey
-     *
-     * @return accessKey
-     */
-    @Override
-    public AccessKey accessKey(String code) {
-        return this.accessKey(code, false);
-    }
 
     /**
      * 当前工作空间AccessKey
@@ -163,7 +154,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @return AccessKey
      */
     @Override
-    public AccessKey accessKey(String code, boolean isValidPermission) {
+    public AccessKey accessKey(String code) {
         AccessKey accessKey = this.accessKeyCache.get(code);
         if (accessKey != null) {
             return accessKey;
@@ -172,12 +163,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .eq(RuleEngineWorkspace::getCode, code).one();
         if (engineWorkspace == null) {
             throw new ValidException("找不到此工作空间：" + code);
-        }
-        if (isValidPermission) {
-            UserData userData = AuthInterceptor.USER.get();
-            if (!hasWorkspacePermission(engineWorkspace.getId(), userData.getId())) {
-                throw new ValidException("你没有此工作空间权限");
-            }
         }
         accessKey = new AccessKey();
         accessKey.setId(engineWorkspace.getId());
