@@ -16,6 +16,7 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.NoAuth;
+import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.enums.RateLimitEnum;
 import cn.ruleengine.web.service.UserService;
@@ -58,6 +59,7 @@ public class UserController {
      * @param registerRequest 注册信息
      * @return true表示注册成功
      */
+    @ReSubmitLock
     @NoAuth
     @PostMapping("register")
     @ApiOperation("用户注册")

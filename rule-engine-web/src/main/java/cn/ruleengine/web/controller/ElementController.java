@@ -16,6 +16,7 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.DataPermission;
+import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.enums.DataPermissionType;
 import cn.ruleengine.web.enums.PermissionType;
@@ -58,6 +59,7 @@ public class ElementController {
      * @param addConditionRequest 元素信息
      * @return true
      */
+    @ReSubmitLock
     @PostMapping("add")
     @ApiOperation("添加元素")
     public PlainResult<Boolean> add(@RequestBody @Valid AddElementRequest addConditionRequest) {
@@ -99,6 +101,7 @@ public class ElementController {
      * @param updateElementRequest 元素信息
      * @return true
      */
+    @ReSubmitLock
     @DataPermission(id = "#updateElementRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("update")
     @ApiOperation("根据id更新元素")

@@ -16,6 +16,7 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.DataPermission;
+import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.enums.DataPermissionType;
@@ -73,6 +74,7 @@ public class RuleController {
      * @param ruleDefinition 规则定义信息
      * @return 规则id
      */
+    @ReSubmitLock
     @DataPermission(id = "#ruleDefinition.id", dataType = DataPermissionType.RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("saveOrUpdateRuleDefinition")
     @ApiOperation("保存或者更新规则定义信息")
@@ -103,6 +105,7 @@ public class RuleController {
      * @param releaseRequest 规则配置数据
      * @return true
      */
+    @ReSubmitLock
     @DataPermission(id = "#releaseRequest.id", dataType = DataPermissionType.RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
     @ApiOperation("生成代发布")
@@ -118,6 +121,7 @@ public class RuleController {
      * @param idRequest 规则id
      * @return true
      */
+    @ReSubmitLock
     @SystemLog
     @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("publish")
@@ -134,6 +138,7 @@ public class RuleController {
      * @param updateRuleRequest 规则配置数据
      * @return true执行成功
      */
+    @ReSubmitLock
     @DataPermission(id = "#updateRuleRequest.id", dataType = DataPermissionType.RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("updateRule")
     @ApiOperation("更新规则信息")
@@ -217,4 +222,5 @@ public class RuleController {
         plainResult.setData(ruleService.ruleCodeIsExists(param.getParam()));
         return plainResult;
     }
+
 }
