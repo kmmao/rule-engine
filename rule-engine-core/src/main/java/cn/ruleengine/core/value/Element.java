@@ -41,33 +41,29 @@ public class Element implements Value {
     /**
      * 值类型
      */
-    private DataType dataType;
+    private ValueType valueType;
 
     Element() {
     }
 
-    public Element(Integer elementId, String elementName, String elementCode, DataType dataType) {
+    public Element(Integer elementId, String elementName, String elementCode, ValueType valueType) {
         this.elementId = elementId;
         this.elementName = elementName;
         this.elementCode = elementCode;
-        this.dataType = dataType;
+        this.valueType = valueType;
     }
 
     @Override
     public Object getValue(Input input, Configuration configuration) {
         Object value = input.get(this.getElementCode());
-        return dataConversion(value, getDataType());
+        return dataConversion(value, this.getValueType());
     }
 
     @Override
-    public String getValueType() {
-        return this.getClass().getTypeName();
+    public ValueType getValueType() {
+        return this.valueType;
     }
 
-    @Override
-    public DataType getDataType() {
-        return this.dataType;
-    }
 
     @Override
     public boolean equals(Object other) {
@@ -78,7 +74,7 @@ public class Element implements Value {
             return false;
         }
         Element element = (Element) other;
-        if (this.getDataType() != element.getDataType()) {
+        if (this.getValueType() != element.getValueType()) {
             return false;
         }
         return element.getElementCode().equals(this.getElementCode());

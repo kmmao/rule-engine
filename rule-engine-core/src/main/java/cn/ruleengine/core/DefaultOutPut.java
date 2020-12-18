@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.core;
 
-import cn.ruleengine.core.value.DataType;
+import cn.ruleengine.core.value.ValueType;
 import org.springframework.lang.Nullable;
 
 
@@ -31,11 +31,11 @@ public class DefaultOutPut implements OutPut {
 
 
     private Object value;
-    private DataType dataType;
+    private ValueType valueType;
 
-    public DefaultOutPut(@Nullable Object value, @Nullable DataType dataType) {
+    public DefaultOutPut(@Nullable Object value, @Nullable ValueType valueType) {
         this.value = value;
-        this.dataType = dataType;
+        this.valueType = valueType;
     }
 
     /**
@@ -54,8 +54,8 @@ public class DefaultOutPut implements OutPut {
      * @return 数据类型
      */
     @Override
-    public DataType getDataType() {
-        return this.dataType;
+    public ValueType getValueType() {
+        return this.valueType;
     }
 
 }

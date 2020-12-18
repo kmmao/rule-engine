@@ -30,7 +30,7 @@ import java.util.*;
  * @since 1.0.0
  */
 @AllArgsConstructor
-public enum DataType {
+public enum ValueType {
     /**
      * 数据类型
      */
@@ -64,7 +64,7 @@ public enum DataType {
         }
     }
 
-    public static DataType getByValue(String value) {
+    public static ValueType getByValue(String value) {
         switch (value) {
             case "STRING":
                 return STRING;

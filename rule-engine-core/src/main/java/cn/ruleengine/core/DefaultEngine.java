@@ -135,7 +135,7 @@ public class DefaultEngine implements Engine, Closeable {
             if (value == null) {
                 outPut = new DefaultOutPut(null, null);
             } else {
-                outPut = new DefaultOutPut(value.getValue(input, this.configuration), value.getDataType());
+                outPut = new DefaultOutPut(value.getValue(input, this.configuration), value.getValueType());
             }
             listener.after(rule, input, outPut);
             return outPut;

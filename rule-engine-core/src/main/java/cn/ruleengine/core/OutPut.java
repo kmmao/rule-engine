@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.core;
 
-import cn.ruleengine.core.value.DataType;
+import cn.ruleengine.core.value.ValueType;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -39,6 +39,6 @@ public interface OutPut {
      *
      * @return 数据类型
      */
-    DataType getDataType();
+    ValueType getValueType();
 
 }

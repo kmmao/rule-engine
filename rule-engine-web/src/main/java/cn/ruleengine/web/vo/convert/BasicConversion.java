@@ -100,12 +100,13 @@ public interface BasicConversion {
      */
     DefaultAction convert(Action action);
 
+
     /**
-     * Value  to Action
+     * configValue to DefaultAction
      *
-     * @param value value
-     * @return Action
+     * @param configValue configValue
+     * @return DefaultAction
      */
-    Action convert(Value value);
+    Action convertAction(ConfigBean.Value configValue);
 
 }

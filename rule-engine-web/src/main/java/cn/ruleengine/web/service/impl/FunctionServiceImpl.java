@@ -4,6 +4,7 @@ import java.util.*;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.core.value.ValueType;
 import cn.ruleengine.web.service.FunctionService;
 import cn.ruleengine.web.store.entity.RuleEngineFunction;
 import cn.ruleengine.web.store.entity.RuleEngineFunctionParam;
@@ -21,7 +22,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.value.Constant;
-import cn.ruleengine.core.value.DataType;
 import cn.ruleengine.core.value.Function;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -168,7 +168,7 @@ public class FunctionServiceImpl implements FunctionService {
     private Map<String, Object> getParamValue(List<ParamValue> paramValue) {
         Map<String, Object> paramMap = new HashMap<>(paramValue.size());
         for (ParamValue value : paramValue) {
-            Constant constant = new Constant(value.getValue(), DataType.getByValue(value.getValueType()));
+            Constant constant = new Constant(value.getValue(), ValueType.getByValue(value.getValueType()));
             paramMap.put(value.getCode(), constant.getValue());
         }
         return paramMap;

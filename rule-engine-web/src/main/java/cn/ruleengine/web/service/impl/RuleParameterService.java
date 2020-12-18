@@ -89,7 +89,7 @@ public class RuleParameterService {
                         Rule.Parameter parameter = new Rule.Parameter();
                         parameter.setName(((Element) v).getElementName());
                         parameter.setCode(((Element) v).getElementCode());
-                        parameter.setValueType(v.getValueType());
+                        parameter.setValueType(v.getValueType().getValue());
                         parameters.add(parameter);
                     } else if (v instanceof Variable) {
                         try {
@@ -105,7 +105,7 @@ public class RuleParameterService {
             Rule.Parameter parameter = new Rule.Parameter();
             parameter.setName(((Element) value).getElementName());
             parameter.setCode(((Element) value).getElementCode());
-            parameter.setValueType(value.getValueType());
+            parameter.setValueType(value.getValueType().getValue());
             parameters.add(parameter);
         }
     }

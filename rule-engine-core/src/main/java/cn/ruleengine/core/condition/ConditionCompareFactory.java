@@ -17,9 +17,9 @@ package cn.ruleengine.core.condition;
 
 import cn.ruleengine.core.condition.compare.BooleanCompare;
 import cn.ruleengine.core.condition.compare.StringCompare;
-import cn.ruleengine.core.value.DataType;
 import cn.ruleengine.core.condition.compare.NumberCompare;
 import cn.ruleengine.core.condition.compare.CollectionCompare;
+import cn.ruleengine.core.value.ValueType;
 import org.springframework.lang.NonNull;
 
 /**
@@ -35,11 +35,11 @@ public class ConditionCompareFactory {
     /**
      * 根据dataType获取对应的条件比较器
      *
-     * @param dataType 数据类型
+     * @param valueType 数据类型
      * @return Compare
      */
-    public static Compare getCompare(@NonNull DataType dataType) {
-        switch (dataType) {
+    public static Compare getCompare(@NonNull ValueType valueType) {
+        switch (valueType) {
             case NUMBER:
                 return NumberCompare.getInstance();
             case BOOLEAN:
@@ -49,7 +49,7 @@ public class ConditionCompareFactory {
             case COLLECTION:
                 return CollectionCompare.getInstance();
             default:
-                throw new IllegalStateException("Unexpected value: " + dataType);
+                throw new IllegalStateException("Unexpected value: " + valueType);
         }
     }
 

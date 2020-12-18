@@ -46,7 +46,7 @@ public class Constant implements Value {
     /**
      * 值类型
      */
-    private DataType dataType;
+    private ValueType valueType;
 
     /**
      * 反序列化json使用
@@ -55,11 +55,11 @@ public class Constant implements Value {
 
     }
 
-    public Constant(@Nullable Object value, @NonNull DataType dataType) {
-        Objects.requireNonNull(dataType);
+    public Constant(@Nullable Object value, @NonNull ValueType valueType) {
+        Objects.requireNonNull(valueType);
         // 初始化值
-        this.value = this.dataConversion(value, dataType);
-        this.dataType = dataType;
+        this.value = this.dataConversion(value, valueType);
+        this.valueType = valueType;
     }
 
     @Override
@@ -71,12 +71,12 @@ public class Constant implements Value {
             return false;
         }
         Constant constant = (Constant) other;
-        if (this.getDataType() != constant.getDataType()) {
+        if (this.getValueType() != constant.getValueType()) {
             return false;
         }
-        Object curValue = dataConversion(this.value, getDataType());
-        Object constantValue = dataConversion(constant.getValue(), getDataType());
-        switch (constant.getDataType()) {
+        Object curValue = dataConversion(this.value, getValueType());
+        Object constantValue = dataConversion(constant.getValue(), this.getValueType());
+        switch (constant.getValueType()) {
             case NUMBER:
                 if (((Number) curValue).longValue() != ((Number) constantValue).longValue()) {
                     return false;
@@ -99,19 +99,15 @@ public class Constant implements Value {
                 }
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + constant.getDataType());
+                throw new IllegalStateException("Unexpected value: " + constant.getValueType());
         }
         return true;
     }
 
-    @Override
-    public DataType getDataType() {
-        return this.dataType;
-    }
 
     @Override
-    public String getValueType() {
-        return this.getClass().getTypeName();
+    public ValueType getValueType() {
+        return this.valueType;
     }
 
     @Override

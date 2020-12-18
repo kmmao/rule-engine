@@ -18,9 +18,9 @@ public interface SymbolService {
     /**
      * 规则引擎运算符
      *
-     * @param valueType 例如：CONTROLLER
+     * @param value 例如：CONTROLLER
      * @return >,<,=..
      */
-    List<SymbolResponse> getByType(String valueType);
+    List<SymbolResponse> getByType(String value);
 
 }

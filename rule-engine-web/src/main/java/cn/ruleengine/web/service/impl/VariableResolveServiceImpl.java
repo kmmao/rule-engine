@@ -2,9 +2,9 @@ package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 
-import cn.ruleengine.core.value.DataType;
 import cn.ruleengine.core.value.Function;
 import cn.ruleengine.core.value.Value;
+import cn.ruleengine.core.value.ValueType;
 import cn.ruleengine.core.value.VariableType;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.VariableResolveService;
@@ -84,9 +84,9 @@ public class VariableResolveServiceImpl implements VariableResolveService {
      */
     @Override
     public Value getVarById(Integer id) {
-        RuleEngineVariable ruleEngineVariable = ruleEngineVariableManager.getById(id);
+        RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.getById(id);
         if (Objects.equals(ruleEngineVariable.getType(), VariableType.CONSTANT.getType())) {
-            return valueResolve.getValue(VariableType.CONSTANT.getType(), ruleEngineVariable.getValueType(), ruleEngineVariable.getValue());
+            return this.valueResolve.getValue(VariableType.CONSTANT.getType(), ruleEngineVariable.getValueType(), ruleEngineVariable.getValue());
         }
         RuleEngineFunction engineFunction = ruleEngineFunctionManager.getById(ruleEngineVariable.getValue());
 
@@ -101,7 +101,7 @@ public class VariableResolveServiceImpl implements VariableResolveService {
             }
         }
         Object abstractFunction = applicationContext.getBean(engineFunction.getExecutor());
-        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, DataType.getByValue(engineFunction.getReturnValueType()), param);
+        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
 
     }
 
@@ -126,6 +126,6 @@ public class VariableResolveServiceImpl implements VariableResolveService {
             }
         }
         Object abstractFunction = this.applicationContext.getBean(engineFunction.getExecutor());
-        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, DataType.getByValue(engineFunction.getReturnValueType()), param);
+        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
     }
 }

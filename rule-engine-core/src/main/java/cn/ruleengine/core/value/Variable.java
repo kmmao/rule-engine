@@ -43,15 +43,15 @@ public class Variable implements Value {
     /**
      * 变量值类型
      */
-    private DataType dataType;
+    private ValueType valueType;
 
     Variable() {
     }
 
-    public Variable(Integer variableId, String variableName, DataType dataType) {
+    public Variable(Integer variableId, String variableName, ValueType valueType) {
         this.variableId = variableId;
         this.variableName = variableName;
-        this.dataType = dataType;
+        this.valueType = valueType;
     }
 
     @Override
@@ -66,14 +66,10 @@ public class Variable implements Value {
     }
 
     @Override
-    public String getValueType() {
-        return this.getClass().getTypeName();
+    public ValueType getValueType() {
+        return this.valueType;
     }
 
-    @Override
-    public DataType getDataType() {
-        return this.dataType;
-    }
 
     @Override
     public boolean equals(Object obj) {

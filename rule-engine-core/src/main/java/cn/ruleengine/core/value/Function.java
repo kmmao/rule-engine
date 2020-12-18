@@ -55,7 +55,7 @@ public class Function implements Value {
     @Getter
     private String name;
 
-    private DataType dataType;
+    private ValueType valueType;
 
     /**
      * 需要执行的函数
@@ -103,10 +103,10 @@ public class Function implements Value {
     Function() {
     }
 
-    public Function(Integer id, String name, Object abstractFunction, DataType dataType, Map<String, Value> param) {
+    public Function(Integer id, String name, Object abstractFunction, ValueType valueType, Map<String, Value> param) {
         this.id = id;
         this.name = name;
-        this.dataType = dataType;
+        this.valueType = valueType;
         this.param = param;
         this.abstractFunction = abstractFunction;
         // 预解析函数中的方法
@@ -169,7 +169,7 @@ public class Function implements Value {
             value = this.executor(paramMap);
         }
         return Optional.ofNullable(value).map(m -> {
-            if (!dataType.getClassType().isAssignableFrom(m.getClass())) {
+            if (!valueType.getClassType().isAssignableFrom(m.getClass())) {
                 throw new FunctionException("The return type of the function does not match the set type");
             }
             return m;
@@ -235,12 +235,8 @@ public class Function implements Value {
     }
 
     @Override
-    public String getValueType() {
-        return this.getClass().getTypeName();
+    public ValueType getValueType() {
+        return this.valueType;
     }
 
-    @Override
-    public DataType getDataType() {
-        return this.dataType;
-    }
 }

@@ -54,12 +54,12 @@ public class ValueResolveImpl implements ValueResolve {
         switch (variableTypeEnum) {
             case ELEMENT:
                 RuleEngineElement ruleEngineElement = cacheMap.getElementMap().get(Integer.valueOf(value));
-                return new Element(ruleEngineElement.getId(), ruleEngineElement.getName(), ruleEngineElement.getCode(), DataType.getByValue(valueType));
+                return new Element(ruleEngineElement.getId(), ruleEngineElement.getName(), ruleEngineElement.getCode(), ValueType.getByValue(valueType));
             case VARIABLE:
                 RuleEngineVariable engineVariable = cacheMap.getVariableMap().get(Integer.valueOf(value));
-                return new Variable(engineVariable.getId(), engineVariable.getName(), DataType.getByValue(valueType));
+                return new Variable(engineVariable.getId(), engineVariable.getName(), ValueType.getByValue(valueType));
             case CONSTANT:
-                return new Constant(value, DataType.getByValue(valueType));
+                return new Constant(value, ValueType.getByValue(valueType));
             default:
                 throw new IllegalStateException("Unexpected value: " + variableTypeEnum);
         }
@@ -79,12 +79,12 @@ public class ValueResolveImpl implements ValueResolve {
         switch (variableTypeEnum) {
             case ELEMENT:
                 RuleEngineElement ruleEngineElement = this.ruleEngineElementManager.getById(value);
-                return new Element(ruleEngineElement.getId(), ruleEngineElement.getName(), ruleEngineElement.getCode(), DataType.getByValue(valueType));
+                return new Element(ruleEngineElement.getId(), ruleEngineElement.getName(), ruleEngineElement.getCode(), ValueType.getByValue(valueType));
             case VARIABLE:
                 RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(value);
-                return new Variable(engineVariable.getId(), engineVariable.getName(), DataType.getByValue(valueType));
+                return new Variable(engineVariable.getId(), engineVariable.getName(), ValueType.getByValue(valueType));
             case CONSTANT:
-                return new Constant(value, DataType.getByValue(valueType));
+                return new Constant(value, ValueType.getByValue(valueType));
             default:
                 throw new IllegalStateException("Unexpected value: " + variableTypeEnum);
         }

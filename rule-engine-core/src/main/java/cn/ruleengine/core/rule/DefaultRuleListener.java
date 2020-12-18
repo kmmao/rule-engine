@@ -40,7 +40,7 @@ public class DefaultRuleListener implements RuleListener {
 
     @Override
     public void after(Rule rule, Input input, OutPut outPut) {
-        log.info("规则：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getDataType());
+        log.info("规则：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getValueType());
     }
 
 }

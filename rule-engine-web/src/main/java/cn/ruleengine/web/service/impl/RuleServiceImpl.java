@@ -545,7 +545,7 @@ public class RuleServiceImpl implements RuleService {
         }
         ruleResponse.setConditionGroup(groupArrayList);
         Value actionValue = rule.getActionValue();
-        ruleResponse.setAction(BasicConversion.INSTANCE.convert(this.getConfigValue(actionValue)));
+        ruleResponse.setAction(BasicConversion.INSTANCE.convertAction(this.getConfigValue(actionValue)));
         DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
             ConfigBean.Value value = this.getConfigValue(rule.getDefaultActionValue());
@@ -571,7 +571,7 @@ public class RuleServiceImpl implements RuleService {
      */
     public ConfigBean.Value getConfigValue(Value cValue) {
         ConfigBean.Value value = new ConfigBean.Value();
-        value.setValueType(cValue.getValueType());
+        value.setValueType(cValue.getValueType().getValue());
         if (cValue instanceof Constant) {
             value.setType(VariableType.CONSTANT.getType());
             Constant constant = (Constant) cValue;

@@ -41,38 +41,33 @@ public interface Value {
     /**
      * 获取value
      *
-     * @param input 上下文
+     * @param input         上下文
+     * @param configuration 规则配置信息
      * @return value
      */
     Object getValue(Input input, Configuration configuration);
 
-    /**
-     * 获取value的数据类型
-     *
-     * @return 数据类型
-     */
-    DataType getDataType();
 
     /**
      * value 的类型，元素，固定值，变量
      *
      * @return type
      */
-    String getValueType();
+    ValueType getValueType();
 
     /**
      * 数据转换
      *
-     * @param value    转换的数据
-     * @param dataType 数据类型
+     * @param value     转换的数据
+     * @param valueType 数据类型
      * @return 转换后的数据
      */
-    default Object dataConversion(Object value, DataType dataType) {
+    default Object dataConversion(Object value, ValueType valueType) {
         if (Objects.isNull(value)) {
             return null;
         }
         String valueStr = String.valueOf(value);
-        switch (dataType) {
+        switch (valueType) {
             case COLLECTION:
                 if (Validator.isEmpty(value)) {
                     return Collections.emptyList();
@@ -108,7 +103,7 @@ public interface Value {
                 }
                 throw new ValueException("{}只能是Boolean类型", value);
             default:
-                throw new ValueException("不支持的数据类型{}", dataType);
+                throw new ValueException("不支持的数据类型{}", valueType);
         }
 
     }

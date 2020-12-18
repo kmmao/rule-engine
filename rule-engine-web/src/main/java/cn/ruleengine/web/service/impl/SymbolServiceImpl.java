@@ -1,9 +1,9 @@
 package cn.ruleengine.web.service.impl;
 
+import cn.ruleengine.core.value.ValueType;
 import cn.ruleengine.web.service.SymbolService;
 import cn.ruleengine.web.vo.symbol.SymbolResponse;
 import cn.ruleengine.core.condition.Operator;
-import cn.ruleengine.core.value.DataType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,13 +23,13 @@ public class SymbolServiceImpl implements SymbolService {
     /**
      * 规则引擎运算符
      *
-     * @param valueType 例如：CONTROLLER
+     * @param value 例如：CONTROLLER
      * @return >,<,=..
      */
     @Override
-    public List<SymbolResponse> getByType(String valueType) {
-        DataType dataType = DataType.getByValue(valueType);
-        List<Operator> symbol = dataType.getSymbol();
+    public List<SymbolResponse> getByType(String value) {
+        ValueType valueType = ValueType.getByValue(value);
+        List<Operator> symbol = valueType.getSymbol();
         return symbol.stream().map(m -> {
             SymbolResponse symbolResponse = new SymbolResponse();
             symbolResponse.setName(m.name());
