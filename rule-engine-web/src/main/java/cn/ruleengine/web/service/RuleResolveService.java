@@ -30,5 +30,12 @@ public interface RuleResolveService {
      */
     Rule getRuleById(Integer id);
 
+    /**
+     * 处理引擎规则
+     *
+     * @param ruleEngineRule 规则引擎规则
+     * @return 规则
+     */
     Rule ruleProcess(RuleEngineRule ruleEngineRule);
+
 }

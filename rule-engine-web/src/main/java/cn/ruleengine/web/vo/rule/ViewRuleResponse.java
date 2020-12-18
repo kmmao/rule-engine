@@ -24,9 +24,4 @@ public class ViewRuleResponse extends GetRuleResponse {
      */
     private Set<Rule.Parameter> parameters;
 
-
-    private String accessKeyId;
-
-    private String accessKeySecret;
-
 }

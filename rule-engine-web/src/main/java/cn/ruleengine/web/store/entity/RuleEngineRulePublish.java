@@ -38,6 +38,11 @@ public class RuleEngineRulePublish implements Serializable {
 
     private String data;
 
+    /**
+     * see RuleStatus
+     */
+    private Integer status;
+
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

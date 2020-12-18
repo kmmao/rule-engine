@@ -230,6 +230,7 @@ public class RuleServiceImpl implements RuleService {
         if (engineRule == null) {
             return false;
         }
+        // 从引擎中移除规则
         if (this.engine.isExistsRule(engineRule.getWorkspaceCode(), engineRule.getCode())) {
             RuleMessageVo ruleMessageVo = new RuleMessageVo();
             ruleMessageVo.setType(RuleMessageVo.Type.REMOVE);
@@ -238,9 +239,11 @@ public class RuleServiceImpl implements RuleService {
             ruleMessageVo.setRuleCode(engineRule.getCode());
             this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
         }
+        // 删除规则发布记录
         this.ruleEngineRulePublishManager.lambdaUpdate().eq(RuleEngineRulePublish::getRuleId, id).remove();
         // 删除规则条件组信息
         this.removeConditionGroupByRuleId(id);
+        // 删除规则
         return this.ruleEngineRuleManager.removeById(id);
     }
 
@@ -339,8 +342,34 @@ public class RuleServiceImpl implements RuleService {
             }
         }
         releaseRequest.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
+        // 更新规则
         this.updateRule(releaseRequest);
+        // 生成待发布规则
+        this.generateRulesToBePublished(releaseRequest.getId());
         return true;
+    }
+
+    /**
+     * 生成待发布规则
+     *
+     * @param ruleId 规则id
+     */
+    private void generateRulesToBePublished(Integer ruleId) {
+        // 删除原有待发布规则
+        this.ruleEngineRulePublishManager.lambdaUpdate()
+                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRulePublish::getRuleId, ruleId)
+                .remove();
+        // 添加新的待发布数据
+        Rule rule = this.ruleResolveService.getRuleById(ruleId);
+        RuleEngineRulePublish rulePublish = new RuleEngineRulePublish();
+        rulePublish.setRuleId(rule.getId());
+        rulePublish.setRuleCode(rule.getCode());
+        rulePublish.setData(rule.toJson());
+        rulePublish.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
+        rulePublish.setWorkspaceId(rule.getWorkspaceId());
+        rulePublish.setWorkspaceCode(rule.getWorkspaceCode());
+        this.ruleEngineRulePublishManager.save(rulePublish);
     }
 
     /**
@@ -367,16 +396,15 @@ public class RuleServiceImpl implements RuleService {
                 .update();
         // 删除原有的已发布规则数据
         this.ruleEngineRulePublishManager.lambdaUpdate()
-                .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId()).remove();
-        // 添加新的发布数据
-        Rule rule = this.ruleResolveService.getRuleByCode(ruleEngineRule.getCode());
-        RuleEngineRulePublish rulePublish = new RuleEngineRulePublish();
-        rulePublish.setRuleId(rule.getId());
-        rulePublish.setRuleCode(ruleEngineRule.getCode());
-        rulePublish.setData(rule.toJson());
-        rulePublish.setWorkspaceId(ruleEngineRule.getWorkspaceId());
-        rulePublish.setWorkspaceCode(ruleEngineRule.getWorkspaceCode());
-        this.ruleEngineRulePublishManager.save(rulePublish);
+                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId())
+                .remove();
+        // 更新待发布为已发布
+        this.ruleEngineRulePublishManager.lambdaUpdate()
+                .set(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId())
+                .update();
         // 加载规则
         RuleMessageVo ruleMessageVo = new RuleMessageVo();
         ruleMessageVo.setType(RuleMessageVo.Type.LOAD);
@@ -475,6 +503,7 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public ViewRuleResponse getPublishRule(Integer id) {
         RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
+                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, id)
                 .one();
         if (engineRulePublish == null) {
@@ -482,11 +511,7 @@ public class RuleServiceImpl implements RuleService {
         }
         String data = engineRulePublish.getData();
         Rule rule = Rule.buildRule(data);
-        ViewRuleResponse ruleResponseProcess = this.getRuleResponseProcess(rule);
-        AccessKey accessKey = this.workspaceService.accessKey(ruleResponseProcess.getWorkspaceCode());
-        ruleResponseProcess.setAccessKeyId(accessKey.getAccessKeyId());
-        ruleResponseProcess.setAccessKeySecret(accessKey.getAccessKeySecret());
-        return ruleResponseProcess;
+        return this.getRuleResponseProcess(rule);
     }
 
     /**
@@ -497,13 +522,23 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public ViewRuleResponse getViewRule(Integer id) {
-        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
-                .eq(RuleEngineRule::getId, id)
-                .one();
+        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(id);
         if (ruleEngineRule == null) {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
-        Rule rule = this.ruleResolveService.ruleProcess(ruleEngineRule);
+        // 如果只有已发布
+        if (ruleEngineRule.getStatus().equals(RuleStatus.PUBLISHED.getStatus())) {
+            return this.getPublishRule(id);
+        }
+        RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
+                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRulePublish::getRuleId, id)
+                .one();
+        if (engineRulePublish == null) {
+            throw new ValidException("找不到预览的规则数据:{}", id);
+        }
+        String data = engineRulePublish.getData();
+        Rule rule = Rule.buildRule(data);
         return this.getRuleResponseProcess(rule);
     }
 
