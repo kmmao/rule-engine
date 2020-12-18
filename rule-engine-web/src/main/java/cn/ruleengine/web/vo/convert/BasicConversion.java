@@ -12,8 +12,11 @@ import cn.ruleengine.web.vo.rule.RuleDefinition;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.user.UserResponse;
 import cn.ruleengine.web.vo.variable.GetVariableResponse;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -108,5 +111,21 @@ public interface BasicConversion {
      * @return DefaultAction
      */
     Action convertAction(ConfigBean.Value configValue);
+
+    /**
+     * ruleEngineWorkspaces to ListWorkspaceResponse
+     *
+     * @param ruleEngineWorkspaces ruleEngineWorkspaces
+     * @return ListWorkspaceResponse
+     */
+    List<ListWorkspaceResponse> convert(List<RuleEngineWorkspace> ruleEngineWorkspaces);
+
+    /**
+     * ruleEngineWorkspace to ListWorkspaceResponse
+     *
+     * @param ruleEngineWorkspace ruleEngineWorkspace
+     * @return ListWorkspaceResponse
+     */
+    ListWorkspaceResponse convert(RuleEngineWorkspace ruleEngineWorkspace);
 
 }

@@ -1,6 +1,10 @@
 package cn.ruleengine.web.service;
 
+import cn.ruleengine.web.vo.base.request.PageRequest;
+import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.workspace.AccessKey;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
 import cn.ruleengine.web.vo.workspace.Workspace;
 
 import java.util.List;
@@ -20,9 +24,10 @@ public interface WorkspaceService {
     /**
      * 用户有权限的工作空间
      *
+     * @param pageRequest 模糊查询参数
      * @return list
      */
-    List<Workspace> list();
+    PageResult<ListWorkspaceResponse> list(PageRequest<ListWorkspaceRequest> pageRequest);
 
 
     /**

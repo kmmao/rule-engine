@@ -3,8 +3,20 @@ package cn.ruleengine.web.service.impl;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Validator;
+import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.vo.base.request.PageRequest;
+import cn.ruleengine.web.vo.base.response.PageBase;
+import cn.ruleengine.web.vo.base.response.PageResponse;
+import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.base.response.Rows;
+import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.AccessKey;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.ruleengine.core.exception.ValidException;
@@ -50,27 +62,38 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     /**
      * 用户有权限的工作空间
      *
+     * @param pageRequest 模糊查询参数
      * @return list
      */
     @Override
-    public List<Workspace> list() {
+    public PageResult<ListWorkspaceResponse> list(PageRequest<ListWorkspaceRequest> pageRequest) {
         UserData userData = AuthInterceptor.USER.get();
         Boolean isAdmin = userData.getIsAdmin();
+        ListWorkspaceRequest query = pageRequest.getQuery();
+        // 如果是管理员，有所有工作空间权限
         if (isAdmin) {
-            List<RuleEngineWorkspace> ruleEngineWorkspaces = this.ruleEngineWorkspaceManager.list();
-            if (CollUtil.isEmpty(ruleEngineWorkspaces)) {
-                return Collections.emptyList();
-            } else {
-                return ruleEngineWorkspaces.stream().map(m -> {
-                    Workspace workspace = new Workspace();
-                    workspace.setId(m.getId());
-                    workspace.setName(m.getName());
-                    return workspace;
-                }).collect(Collectors.toList());
-            }
+            return PageUtils.page(this.ruleEngineWorkspaceManager, pageRequest.getPage(), () -> {
+                QueryWrapper<RuleEngineWorkspace> queryWrapper = new QueryWrapper<>();
+                if (Validator.isNotEmpty(query.getCode())) {
+                    queryWrapper.lambda().like(RuleEngineWorkspace::getCode, query.getCode());
+                }
+                if (Validator.isNotEmpty(query.getName())) {
+                    queryWrapper.lambda().like(RuleEngineWorkspace::getName, query.getName());
+                }
+                PageUtils.defaultOrder(pageRequest.getOrders(), queryWrapper);
+                return queryWrapper;
+            }, BasicConversion.INSTANCE::convert);
         }
         Integer userId = userData.getId();
-        return this.ruleEngineWorkspaceMapper.listWorkspaceByUserId(userId);
+        PageBase page = pageRequest.getPage();
+        Integer total = this.ruleEngineWorkspaceMapper.totalWorkspace(userId, query, page);
+        if (total == null || total == 0) {
+            return new PageResult<>();
+        }
+        List<ListWorkspaceResponse> listWorkspaceResponses = BasicConversion.INSTANCE.convert(this.ruleEngineWorkspaceMapper.listWorkspace(userId, query, page));
+        PageResult<ListWorkspaceResponse> pageResult = new PageResult<>();
+        pageResult.setData(new Rows<>(listWorkspaceResponses, new PageResponse(page.getPageIndex(), page.getPageSize(), total)));
+        return pageResult;
     }
 
     /**
@@ -149,7 +172,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     /**
      * 当前工作空间AccessKey
      *
-     * @param code              工作空间code
+     * @param code 工作空间code
      * @return AccessKey
      */
     @Override

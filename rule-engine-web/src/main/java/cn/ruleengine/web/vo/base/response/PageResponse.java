@@ -15,7 +15,6 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-@NoArgsConstructor
 public class PageResponse extends PageBase {
 
     private static final long serialVersionUID = -7378163356547441491L;

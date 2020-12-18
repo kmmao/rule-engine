@@ -12,8 +12,20 @@ import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroup
  */
 public interface ConditionGroupConditionService {
 
+    /**
+     * 保存或者更新条件组
+     *
+     * @param saveOrUpdateConditionGroup 条件组条件信息
+     * @return int
+     */
     Integer saveOrUpdateConditionGroupCondition(SaveOrUpdateConditionGroupCondition saveOrUpdateConditionGroup);
 
+    /**
+     * 删除条件组
+     *
+     * @param id 条件组条件id
+     * @return true
+     */
     Boolean delete(Integer id);
 
 }

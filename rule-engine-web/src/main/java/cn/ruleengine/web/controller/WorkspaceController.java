@@ -17,11 +17,14 @@ package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.vo.base.request.IdRequest;
+import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.web.service.WorkspaceService;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
+import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,14 +56,13 @@ public class WorkspaceController {
     /**
      * 用户有权限的工作空间列表
      *
+     * @param pageRequest 模糊查询参数
      * @return list
      */
     @PostMapping("list")
     @ApiOperation("用户有权限的工作空间列表")
-    public BaseResult list() {
-        PlainResult<List<Workspace>> plainResult = new PlainResult<>();
-        plainResult.setData(workspaceService.list());
-        return plainResult;
+    public BaseResult list(@RequestBody PageRequest<ListWorkspaceRequest> pageRequest) {
+        return this.workspaceService.list(pageRequest);
     }
 
     /**

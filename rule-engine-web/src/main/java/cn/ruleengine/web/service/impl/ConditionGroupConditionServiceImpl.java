@@ -23,6 +23,12 @@ public class ConditionGroupConditionServiceImpl implements ConditionGroupConditi
     @Resource
     private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
 
+    /**
+     * 保存或者更新条件组条件
+     *
+     * @param saveOrUpdateConditionGroup 条件组条件信息
+     * @return int
+     */
     @Override
     public Integer saveOrUpdateConditionGroupCondition(SaveOrUpdateConditionGroupCondition saveOrUpdateConditionGroup) {
         RuleEngineConditionGroupCondition groupCondition = BasicConversion.INSTANCE.convert(saveOrUpdateConditionGroup);
@@ -30,6 +36,12 @@ public class ConditionGroupConditionServiceImpl implements ConditionGroupConditi
         return groupCondition.getId();
     }
 
+    /**
+     * 删除条件组条件
+     *
+     * @param id 条件组条件id
+     * @return true
+     */
     @Override
     public Boolean delete(Integer id) {
         return this.ruleEngineConditionGroupConditionManager.removeById(id);

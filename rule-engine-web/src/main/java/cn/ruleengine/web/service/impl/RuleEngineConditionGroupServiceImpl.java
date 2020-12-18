@@ -23,6 +23,12 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
     @Resource
     private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
 
+    /**
+     * 保存或者更新条件组
+     *
+     * @param saveOrUpdateConditionGroup 条件组信息
+     * @return int
+     */
     @Override
     public Integer saveOrUpdateConditionGroup(SaveOrUpdateConditionGroup saveOrUpdateConditionGroup) {
         RuleEngineConditionGroup engineConditionGroup = new RuleEngineConditionGroup();
@@ -34,6 +40,13 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
         return engineConditionGroup.getId();
     }
 
+
+    /**
+     * 删除条件组
+     *
+     * @param id 条件组id
+     * @return true
+     */
     @Override
     public Boolean delete(Integer id) {
         return this.ruleEngineConditionGroupManager.removeById(id);
