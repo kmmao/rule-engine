@@ -17,13 +17,16 @@ import java.util.Map;
 @Data
 public class ExecuteRuleRequest {
 
-    @NotEmpty
+    @NotEmpty(message = "工作空间编码不能为空")
     private String workspaceCode;
-    @NotEmpty
+
+    @NotEmpty(message = "工作空间AccessKeyId不能为空")
     private String accessKeyId;
-    @NotEmpty
+
+    @NotEmpty(message = "工作空间AccessKeySecret不能为空")
     private String accessKeySecret;
-    @NotEmpty
+
+    @NotEmpty(message = "规则编码不能为空")
     private String ruleCode;
 
     private Map<String, Object> param = new HashMap<>();

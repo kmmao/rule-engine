@@ -1,7 +1,6 @@
 package cn.ruleengine.web.vo.rule;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.*;
@@ -20,11 +19,13 @@ import java.util.Map;
 @Data
 public class BatchExecuteRuleRequest {
 
-    @NotEmpty
+    @NotEmpty(message = "工作空间编码不能为空")
     private String workspaceCode;
-    @NotEmpty
+
+    @NotEmpty(message = "工作空间AccessKeyId不能为空")
     private String accessKeyId;
-    @NotEmpty
+
+    @NotEmpty(message = "工作空间AccessKeySecret不能为空")
     private String accessKeySecret;
 
     /**
@@ -57,7 +58,7 @@ public class BatchExecuteRuleRequest {
         @Nullable
         private String symbol;
 
-        @NotEmpty
+        @NotEmpty(message = "规则编码不能为空")
         private String ruleCode;
 
         private Map<String, Object> param = new HashMap<>();
