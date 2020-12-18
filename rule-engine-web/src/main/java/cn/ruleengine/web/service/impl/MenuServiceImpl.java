@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,8 @@ public class MenuServiceImpl implements MenuService {
         if (CollUtil.isEmpty(rootMenu)) {
             return null;
         }
+        // 排序
+        rootMenu.sort(Comparator.comparing(ListMenuResponse::getSort));
         // 最后的结果
         List<ListMenuResponse> menuList = new ArrayList<>();
         // 先找到所有的一级菜单
