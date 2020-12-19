@@ -15,9 +15,11 @@
  */
 package cn.ruleengine.core.decisiontable;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.exception.DecisionException;
+import cn.ruleengine.core.decisiontable.strategey.Strategy;
+import cn.ruleengine.core.decisiontable.strategey.StrategyFactory;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +71,7 @@ public class DecisionTable {
      * <p>
      * 默认：返回命中的最高优先级所有结果
      */
-    private StrategyType strategy = StrategyType.HIGHEST_PRIORITY_ALL;
+    private StrategyType strategyType = StrategyType.HIGHEST_PRIORITY_ALL;
 
     /**
      * coll头
@@ -105,40 +107,24 @@ public class DecisionTable {
 
     @Nullable
     public List<Value> execute(@NonNull Input input, @NonNull Configuration configuration) {
-        // 先从高优先级规则执行
-        List<Value> actions = new ArrayList<>();
-        for (Map.Entry<Integer, List<Row>> tree : this.decisionTree.entrySet()) {
-            Integer priority = tree.getKey();
-            log.info("开始执行优先级规则：{}", priority);
-            List<Row> rows = tree.getValue();
-            // 一个row可以看做一个规则
-            for (Row row : rows) {
-                List<Coll> colls = row.getColls();
-                // 这里的检查应该在配置时就需要校验，防止数据错乱，造成数据结果计算错误
-                if (!Objects.equals(this.collHeads.size(), colls.size())) {
-                    throw new DecisionException("配置错误，左条件数量:{}，右值条件数量:{}", this.collHeads.size(), colls.size());
-                }
-                for (int i = 0; i < colls.size(); i++) {
-                    CollHead collHead = this.collHeads.get(i);
-                    Coll coll = colls.get(i);
-                    if (coll == null) {
-                        continue;
-                    }
-                    Object leftValue = collHead.getLeftValue(input, configuration);
-                    DecisionCondition decisionCondition = new DecisionCondition(leftValue, collHead.getLeftValue().getValueType(), collHead.getOperator(), coll.getRightValue());
-                    if (decisionCondition.compare(input, configuration)) {
-                        actions.add(row.getAction());
-                    }
-                }
-            }
-            // 如果此优先级找到了数据，则跳出
-            if (!actions.isEmpty()) {
-                log.info("优先级:{},存在命中结果", priority);
-                return actions;
-            }
+        // 获取执行策略执行决策表
+        Strategy strategy = StrategyFactory.getInstance(this.strategyType);
+        // 计算表头值，获取到表头比较器，与下面单元格比较
+        Map<Integer, CollHeadCompare> collHeadCompareMap = new LinkedHashMap<>();
+        for (int index = 0; index < this.collHeads.size(); index++) {
+            CollHead collHead = this.collHeads.get(index);
+            Object value = collHead.getLeftValue(input, configuration);
+            CollHeadCompare collHeadCompare = new CollHeadCompare();
+            collHeadCompare.setLeftValue(collHead.getLeftValue());
+            collHeadCompare.setOperator(collHead.getOperator());
+            collHeadCompare.setValue(value);
+            collHeadCompareMap.put(index, collHeadCompare);
         }
-        Value defaultValue = this.getDefaultActionValue();
-        if (Objects.nonNull(defaultValue)) {
+        List<Value> actions = strategy.compute(collHeadCompareMap, this.decisionTree);
+        if (CollUtil.isNotEmpty(actions)) {
+            return actions;
+        }
+        if (Objects.nonNull(this.defaultActionValue)) {
             log.info("结果未命中，存在默认结果，返回默认结果");
             return Collections.singletonList(this.defaultActionValue);
         }

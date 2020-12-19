@@ -29,7 +29,7 @@ public class DecisionTableTest {
      *     priority  41（eq）     action(default)
      *       4         41         41
      *       3         null       33333
-     *       3         41         31
+     *       3         sd         3sd
      *       4         null       4
      *
      * </pre>
@@ -57,7 +57,7 @@ public class DecisionTableTest {
             Row row = new Row();
             row.setPriority(3);
             row.addColl(new Coll(new Constant("sd", ValueType.STRING)));
-            row.setAction(new Constant("41", ValueType.STRING));
+            row.setAction(new Constant("3sd", ValueType.STRING));
             decisionTable.addRow(row);
         }
         {
@@ -68,7 +68,7 @@ public class DecisionTableTest {
             decisionTable.addRow(row);
         }
         DefaultInput input = new DefaultInput();
-        input.put("test", "41");
+        input.put("test", "sd");
         List<Value> actions = decisionTable.execute(input, new Configuration());
         System.out.println(actions);
     }

@@ -20,6 +20,7 @@ import cn.ruleengine.core.Input;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
 /**
@@ -31,14 +32,13 @@ import org.springframework.lang.NonNull;
  * @since 1.0.0
  */
 @Data
+@NoArgsConstructor
 public class CollHead {
 
     /**
      * 条件左值
      */
     private Value leftValue;
-
-    private Object lValue;
 
     /**
      * 运算符
@@ -51,10 +51,7 @@ public class CollHead {
     }
 
     public Object getLeftValue(@NonNull Input input, @NonNull Configuration configuration) {
-        if (this.lValue != null) {
-            return this.lValue;
-        }
-        return this.lValue = this.leftValue.getValue(input, configuration);
+        return this.leftValue.getValue(input, configuration);
     }
 
 }

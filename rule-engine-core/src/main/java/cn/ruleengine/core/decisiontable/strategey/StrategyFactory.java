@@ -15,13 +15,10 @@
  */
 package cn.ruleengine.core.decisiontable.strategey;
 
+import cn.ruleengine.core.decisiontable.StrategyType;
+import org.springframework.lang.NonNull;
 
-import cn.ruleengine.core.decisiontable.CollHeadCompare;
-import cn.ruleengine.core.decisiontable.Row;
-import cn.ruleengine.core.value.Value;
-
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -31,15 +28,26 @@ import java.util.Map;
  * @date 2020/12/19
  * @since 1.0.0
  */
-public interface Strategy {
+public class StrategyFactory {
 
     /**
-     * 先从高优先级规则执行，返回命中的最高优先级所有结果
+     * 获取执行策略执行器
      *
-     * @param collHeadCompareMap 表头比较器
-     * @param decisionTree       决策树
-     * @return 命中的结果值
+     * @param strategy 执行策略类型
+     * @return Strategy
      */
-    List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree);
+    public static Strategy getInstance(@NonNull StrategyType strategy) {
+        Objects.requireNonNull(strategy);
+        switch (strategy) {
+            case ALL_PRIORITY:
+                return AllPriorityStrategy.getInstance();
+            case HIGHEST_PRIORITY_SINGLE:
+                return HighestPrioritySingleStrategy.getInstance();
+            case HIGHEST_PRIORITY_ALL:
+                return HighestPriorityAllStrategy.getInstance();
+            default:
+                throw new IllegalStateException("Unexpected value: " + strategy);
+        }
+    }
 
 }

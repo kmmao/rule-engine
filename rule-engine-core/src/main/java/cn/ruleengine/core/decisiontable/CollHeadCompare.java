@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.core.decisiontable.strategey;
+package cn.ruleengine.core.decisiontable;
 
-
-import cn.ruleengine.core.decisiontable.CollHeadCompare;
-import cn.ruleengine.core.decisiontable.Row;
+import cn.ruleengine.core.condition.Compare;
+import cn.ruleengine.core.condition.ConditionCompareFactory;
 import cn.ruleengine.core.value.Value;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -31,15 +27,23 @@ import java.util.Map;
  * @date 2020/12/19
  * @since 1.0.0
  */
-public interface Strategy {
+public class CollHeadCompare extends CollHead {
 
-    /**
-     * 先从高优先级规则执行，返回命中的最高优先级所有结果
-     *
-     * @param collHeadCompareMap 表头比较器
-     * @param decisionTree       决策树
-     * @return 命中的结果值
-     */
-    List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree);
+    private Object lValue;
+
+    public void setValue(Object lValue) {
+        this.lValue = lValue;
+    }
+
+    public Object getValue() {
+        return lValue;
+    }
+
+    public boolean compare(Value rightValue) {
+        Value leftValue = super.getLeftValue();
+        Compare compare = ConditionCompareFactory.getCompare(leftValue.getValueType());
+        Object rValue = rightValue.getValue(null, null);
+        return compare.compare(lValue, super.getOperator(), rValue);
+    }
 
 }

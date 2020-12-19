@@ -15,7 +15,6 @@
  */
 package cn.ruleengine.core.decisiontable.strategey;
 
-
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
@@ -31,7 +30,13 @@ import java.util.Map;
  * @date 2020/12/19
  * @since 1.0.0
  */
-public interface Strategy {
+public class HighestPrioritySingleStrategy implements Strategy {
+
+    private static HighestPrioritySingleStrategy highestPrioritySingleStrategy = new HighestPrioritySingleStrategy();
+
+    public static HighestPrioritySingleStrategy getInstance() {
+        return highestPrioritySingleStrategy;
+    }
 
     /**
      * 先从高优先级规则执行，返回命中的最高优先级所有结果
@@ -40,6 +45,10 @@ public interface Strategy {
      * @param decisionTree       决策树
      * @return 命中的结果值
      */
-    List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree);
+    @Override
+    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree) {
+        // TODO: 2020/12/19
+        return null;
+    }
 
 }
