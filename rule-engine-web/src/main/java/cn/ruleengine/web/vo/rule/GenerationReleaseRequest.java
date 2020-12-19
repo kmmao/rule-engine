@@ -1,10 +1,12 @@
 package cn.ruleengine.web.vo.rule;
 
+import cn.ruleengine.core.rule.Rule;
+import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -14,12 +16,21 @@ import javax.validation.constraints.NotNull;
  * @date 2020/8/24
  * @since 1.0.0
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class GenerationReleaseRequest extends UpdateRuleRequest {
+public class GenerationReleaseRequest {
+
+    @NotNull
+    private Integer id;
+
+    private List<ConditionGroupConfig> conditionGroup;
 
     @NotNull
     @Valid
     private Action action;
+
+    private DefaultAction defaultAction;
+
+    private Rule.AbnormalAlarm abnormalAlarm = new Rule.AbnormalAlarm();
+
 
 }

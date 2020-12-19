@@ -23,8 +23,6 @@ public class UpdateRuleRequest {
     @NotNull
     private Integer id;
 
-    private Integer status = RuleStatus.EDIT.getStatus();
-
     private List<ConditionGroupConfig> conditionGroup;
 
     private Action action;

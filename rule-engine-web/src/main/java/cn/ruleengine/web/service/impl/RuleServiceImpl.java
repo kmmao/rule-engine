@@ -32,7 +32,6 @@ import cn.ruleengine.web.vo.rule.Action;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
-import cn.ruleengine.web.vo.workspace.AccessKey;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cn.ruleengine.core.Engine;
@@ -162,13 +161,20 @@ public class RuleServiceImpl implements RuleService {
         if (ruleEngineRule == null) {
             throw new ValidException("不存在规则:{}", updateRuleRequest.getId());
         }
+        // 如果之前是待发布，则删除原有待发布数据
+        if (Objects.equals(ruleEngineRule.getStatus(), RuleStatus.WAIT_PUBLISH.getStatus())) {
+            this.ruleEngineRulePublishManager.lambdaUpdate()
+                    .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineRulePublish::getRuleId, updateRuleRequest.getId())
+                    .remove();
+        }
         // 如果原来有条件信息，先删除原有信息
         this.removeConditionGroupByRuleId(updateRuleRequest.getId());
         // 保存条件信息
         this.saveConditionGroup(updateRuleRequest.getId(), updateRuleRequest.getConditionGroup());
         //  更新规则信息
         ruleEngineRule.setId(updateRuleRequest.getId());
-        ruleEngineRule.setStatus(updateRuleRequest.getStatus());
+        ruleEngineRule.setStatus(RuleStatus.EDIT.getStatus());
         // 保存结果
         Action action = updateRuleRequest.getAction();
         ruleEngineRule.setActionType(action.getType());
@@ -258,11 +264,12 @@ public class RuleServiceImpl implements RuleService {
                 .list();
         if (CollUtil.isNotEmpty(engineConditionGroups)) {
             List<Integer> engineConditionGroupIds = engineConditionGroups.stream().map(RuleEngineConditionGroup::getId).collect(Collectors.toList());
-            this.ruleEngineConditionGroupManager.removeByIds(engineConditionGroupIds);
-            // 删除条件组条件
-            this.ruleEngineConditionGroupConditionManager.lambdaUpdate()
-                    .in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds)
-                    .remove();
+            if (this.ruleEngineConditionGroupManager.removeByIds(engineConditionGroupIds)) {
+                // 删除条件组条件
+                this.ruleEngineConditionGroupConditionManager.lambdaUpdate()
+                        .in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds)
+                        .remove();
+            }
         }
     }
 
@@ -328,6 +335,14 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean generationRelease(GenerationReleaseRequest releaseRequest) {
+        // 更新规则
+        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
+                .eq(RuleEngineRule::getId, releaseRequest.getId())
+                .one();
+        if (ruleEngineRule == null) {
+            throw new ValidException("不存在规则:{}", releaseRequest.getId());
+        }
+        Integer originStatus = ruleEngineRule.getStatus();
         // 如果开启了默认结果
         DefaultAction defaultAction = releaseRequest.getDefaultAction();
         if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
@@ -341,27 +356,35 @@ public class RuleServiceImpl implements RuleService {
                 throw new ValidException("默认结果值不能为空");
             }
         }
-        releaseRequest.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
-        // 更新规则
-        this.updateRule(releaseRequest);
+        // 如果原来有条件信息，先删除原有信息
+        this.removeConditionGroupByRuleId(releaseRequest.getId());
+        // 保存条件信息
+        this.saveConditionGroup(releaseRequest.getId(), releaseRequest.getConditionGroup());
+        //  更新规则信息
+        ruleEngineRule.setId(releaseRequest.getId());
+        ruleEngineRule.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
+        // 保存结果
+        Action action = releaseRequest.getAction();
+        ruleEngineRule.setActionType(action.getType());
+        ruleEngineRule.setActionValueType(action.getValueType());
+        ruleEngineRule.setActionValue(action.getValue());
+        // 保存默认结果
+        ruleEngineRule.setEnableDefaultAction(defaultAction.getEnableDefaultAction());
+        ruleEngineRule.setDefaultActionValue(defaultAction.getValue());
+        ruleEngineRule.setDefaultActionValueType(defaultAction.getValueType());
+        ruleEngineRule.setDefaultActionType(defaultAction.getType());
+        ruleEngineRule.setAbnormalAlarm(JSONObject.toJSONString(releaseRequest.getAbnormalAlarm()));
+        this.ruleEngineRuleMapper.updateRuleById(ruleEngineRule);
         // 生成待发布规则
-        this.generateRulesToBePublished(releaseRequest.getId());
-        return true;
-    }
-
-    /**
-     * 生成待发布规则
-     *
-     * @param ruleId 规则id
-     */
-    private void generateRulesToBePublished(Integer ruleId) {
-        // 删除原有待发布规则
-        this.ruleEngineRulePublishManager.lambdaUpdate()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
-                .eq(RuleEngineRulePublish::getRuleId, ruleId)
-                .remove();
+        if (Objects.equals(originStatus, RuleStatus.WAIT_PUBLISH.getStatus())) {
+            // 删除原有待发布规则
+            this.ruleEngineRulePublishManager.lambdaUpdate()
+                    .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineRulePublish::getRuleId, releaseRequest.getId())
+                    .remove();
+        }
         // 添加新的待发布数据
-        Rule rule = this.ruleResolveService.getRuleById(ruleId);
+        Rule rule = this.ruleResolveService.ruleProcess(ruleEngineRule);
         RuleEngineRulePublish rulePublish = new RuleEngineRulePublish();
         rulePublish.setRuleId(rule.getId());
         rulePublish.setRuleCode(rule.getCode());
@@ -370,7 +393,9 @@ public class RuleServiceImpl implements RuleService {
         rulePublish.setWorkspaceId(rule.getWorkspaceId());
         rulePublish.setWorkspaceCode(rule.getWorkspaceCode());
         this.ruleEngineRulePublishManager.save(rulePublish);
+        return true;
     }
+
 
     /**
      * 规则发布
