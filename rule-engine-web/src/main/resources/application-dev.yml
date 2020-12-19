@@ -150,3 +150,10 @@ aliyun:
     accessKeySecret:
     bucketName:
     defaultFolder: ruleengine
+
+
+swagger:
+  basic:
+    enable: true
+    username: root
+    password: root

@@ -17,6 +17,7 @@ package cn.ruleengine.web;
 
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -61,6 +62,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableTransactionManagement
 @Import({LogicSqlInjector.class, RestTemplate.class, PaginationInterceptor.class})
 @EnableSwagger2
+@EnableSwaggerBootstrapUI
 public class App {
 
     /**
