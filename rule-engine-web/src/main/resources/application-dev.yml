@@ -4,12 +4,14 @@ logging:
   level.root: info
 
 server:
-  port: 8010
+  port: 80
   tomcat:
     max-threads: 400 #最大线程执行数
     max-connections: 4000 #最大连接数
     uri-encoding: UTF-8
 spring:
+  application:
+    name: rule-engine-web
   jackson:
     time-zone: Asia/Shanghai
     #date-format: yyyy-MM-dd HH:mm:ss
@@ -93,6 +95,32 @@ spring:
   servlet:
     multipart:
       max-file-size: 4MB
+
+  boot:
+    admin:
+      client:
+        url: http://localhost:8011
+        username: admin
+        password: admin
+        instance:
+          service-base-url: http://localhost:80
+          name: rule-engine-web
+          metadata:
+            user.name: admin
+            user.password: admin
+  security:
+    user:
+      name: admin
+      password: admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
 
 #mybatis-plus配置
 mybatis-plus:

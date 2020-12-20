@@ -1,0 +1,11 @@
+server:
+  port: 8011
+
+spring:
+  application:
+    name: rule-engine-monitor
+  security:
+    user:
+      name: admin
+      password: admin
+
