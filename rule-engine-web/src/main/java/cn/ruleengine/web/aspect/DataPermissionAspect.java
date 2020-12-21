@@ -25,6 +25,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -48,6 +50,7 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(value = "auth", havingValue = "${auth.enable}")
 @Aspect
 public class DataPermissionAspect {
 

@@ -53,7 +53,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableScheduling
 @EnableCaching(order = -2)
 @SpringBootApplication(exclude = {
-        DataSourceAutoConfiguration.class
+        DataSourceAutoConfiguration.class,
 },
         scanBasePackages = "cn.ruleengine")
 @MapperScan({"cn.ruleengine.web.store.mapper"})
