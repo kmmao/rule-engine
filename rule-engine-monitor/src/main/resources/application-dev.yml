@@ -14,3 +14,24 @@ spring:
       name: admin
       password: admin
 
+  #邮箱
+  mail:
+    host:
+    username:
+    password:
+    port: 465
+    protocol: smtp
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.ssl.enable: true
+  #邮件预警
+  boot:
+    admin:
+      notify:
+        mail:
+          to:
+          from:
+
+#配置文件加密ENC()
+jasypt:
+  encryptor:
+    password:
