@@ -18,6 +18,7 @@ package cn.ruleengine.core;
 
 import cn.ruleengine.core.cache.FunctionCache;
 import cn.ruleengine.core.exception.EngineException;
+import cn.ruleengine.core.monitor.RuleMonitorProxy;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleListener;
 import cn.ruleengine.core.value.Value;
@@ -174,6 +175,11 @@ public class DefaultEngine implements Engine, Closeable {
         String ruleCode = Objects.requireNonNull(rule.getCode());
         if (!this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>());
+        }
+        // 如果开启监控，返回一个被代理的规则对象
+        if (rule.isEnableMonitor()) {
+            RuleMonitorProxy ruleMonitorProxy = new RuleMonitorProxy();
+            rule = ruleMonitorProxy.getRuleProxy(rule);
         }
         this.workspaceMap.get(workspaceCode).put(ruleCode, rule);
     }

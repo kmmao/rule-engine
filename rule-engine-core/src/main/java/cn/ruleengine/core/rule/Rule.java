@@ -84,6 +84,10 @@ public class Rule implements RuleParse {
      * 规则默认值
      */
     private Value defaultActionValue;
+    /**
+     * 是否开启监控
+     */
+    private boolean enableMonitor = false;
 
     /**
      * 规则运行发生异常，邮件接收人
