@@ -102,6 +102,12 @@ spring:
         url: http://localhost:8011
         username: admin
         password: admin
+        instance:
+          service-base-url: http://localhost:${server.port}
+          name: rule-engine-web
+          metadata:
+            user.name: admin
+            user.password: admin
 
 management:
   endpoints:
