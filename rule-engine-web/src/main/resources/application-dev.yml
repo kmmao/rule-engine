@@ -100,18 +100,8 @@ spring:
     admin:
       client:
         url: http://localhost:8011
-        username: ${spring.security.user.name}
-        password: ${spring.security.user.password}
-        instance:
-          service-base-url: http://localhost:${server.port}
-          name: rule-engine-web
-          metadata:
-            user.name: ${spring.security.user.name}
-            user.password: ${spring.security.user.password}
-  security:
-    user:
-      name: admin
-      password: admin
+        username: admin
+        password: admin
 
 management:
   endpoints:
@@ -121,6 +111,10 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
+  # 发的服务器java.lang.ClassNotFoundException: org.springframework.data.redis.connection.ReactiveStreamCommands 本地正常，但是加了reids的这个依赖优惠出现别的错误，有能力解决掉麻烦告知下
+  health:
+    redis:
+      enabled: false
 
 #mybatis-plus配置
 mybatis-plus:
