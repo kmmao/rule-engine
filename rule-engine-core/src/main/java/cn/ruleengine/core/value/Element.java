@@ -34,8 +34,6 @@ public class Element implements Value {
     @Getter
     private Integer elementId;
     @Getter
-    private String elementName;
-    @Getter
     private String elementCode;
 
     /**
@@ -46,9 +44,8 @@ public class Element implements Value {
     Element() {
     }
 
-    public Element(Integer elementId, String elementName, String elementCode, ValueType valueType) {
+    public Element(Integer elementId, String elementCode, ValueType valueType) {
         this.elementId = elementId;
-        this.elementName = elementName;
         this.elementCode = elementCode;
         this.valueType = valueType;
     }

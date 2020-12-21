@@ -640,8 +640,9 @@ public class RuleServiceImpl implements RuleService {
         } else if (cValue instanceof Element) {
             value.setType(VariableType.ELEMENT.getType());
             Element element = (Element) cValue;
+            RuleEngineElement ruleEngineElement = this.ruleEngineElementManager.getById(element.getElementId());
             value.setValue(String.valueOf(element.getElementId()));
-            value.setValueName(element.getElementName());
+            value.setValueName(ruleEngineElement.getName());
         } else if (cValue instanceof Variable) {
             value.setType(VariableType.VARIABLE.getType());
             Variable variable = (Variable) cValue;

@@ -38,7 +38,7 @@ public class DecisionTableTest {
         DecisionTable decisionTable = new DecisionTable();
         // 默认值
         decisionTable.setDefaultActionValue(new Constant("default", ValueType.STRING));
-        decisionTable.addCollHead(new CollHead(new Element(0, "测试元素", "test", ValueType.STRING), Operator.EQ));
+        decisionTable.addCollHead(new CollHead(new Element(0, "test", ValueType.STRING), Operator.EQ));
         {
             Row row = new Row();
             row.setPriority(4);
