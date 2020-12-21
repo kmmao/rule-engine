@@ -18,9 +18,9 @@ package cn.ruleengine.core.decisiontable.strategey;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -30,6 +30,7 @@ import java.util.Map;
  * @date 2020/12/19
  * @since 1.0.0
  */
+@Slf4j
 public class AllPriorityStrategy implements Strategy {
 
     private static AllPriorityStrategy allPriorityStrategy = new AllPriorityStrategy();
@@ -47,8 +48,18 @@ public class AllPriorityStrategy implements Strategy {
      */
     @Override
     public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree) {
-        // TODO: 2020/12/19
-        return null;
+        List<Value> actions = new ArrayList<>();
+        for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
+            List<Row> rows = tree.getValue();
+            // 一个row可以看做一个规则
+            for (Row row : rows) {
+                Value action = this.getActionByRow(collHeadCompareMap, row);
+                Optional.ofNullable(action).ifPresent(p -> {
+                    actions.add(action);
+                });
+            }
+        }
+        return actions;
     }
 
 }

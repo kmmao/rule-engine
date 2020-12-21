@@ -16,10 +16,8 @@
 package cn.ruleengine.core.decisiontable.strategey;
 
 
-import cn.ruleengine.core.decisiontable.Coll;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
-import cn.ruleengine.core.exception.DecisionException;
 import cn.ruleengine.core.value.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,31 +52,16 @@ public class HighestPriorityAllStrategy implements Strategy {
     public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree) {
         List<Value> actions = new ArrayList<>();
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
-            Integer priority = tree.getKey();
-            log.info("开始执行优先级规则：{}", priority);
             List<Row> rows = tree.getValue();
             // 一个row可以看做一个规则
             for (Row row : rows) {
-                List<Coll> colls = row.getColls();
-                // 这里的检查应该在配置时就需要校验，防止数据错乱，造成数据结果计算错误
-                if (!Objects.equals(collHeadCompareMap.size(), colls.size())) {
-                    throw new DecisionException("配置错误，左条件数量:{}，右值条件数量:{}", collHeadCompareMap.size(), colls.size());
-                }
-                for (int i = 0; i < colls.size(); i++) {
-                    Coll coll = colls.get(i);
-                    if (coll == null) {
-                        continue;
-                    }
-                    // 获取到表头比较器，与下面单元格比较
-                    CollHeadCompare collHeadCompare = collHeadCompareMap.get(i);
-                    if (collHeadCompare.compare(coll.getRightValue())) {
-                        actions.add(row.getAction());
-                    }
-                }
+                Value action = this.getActionByRow(collHeadCompareMap, row);
+                Optional.ofNullable(action).ifPresent(p -> {
+                    actions.add(action);
+                });
             }
             // 如果此优先级找到了数据，则跳出
             if (!actions.isEmpty()) {
-                log.info("优先级:{},存在命中结果", priority);
                 return actions;
             }
         }

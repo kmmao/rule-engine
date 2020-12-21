@@ -28,6 +28,7 @@ public class DecisionTableTest {
      *       3         null       33333
      *       3         sd         3sd
      *       4         null       4
+     *       ...
      *
      * </pre>
      */
@@ -42,6 +43,13 @@ public class DecisionTableTest {
             row.setPriority(4);
             row.addColl(new Coll(new Constant("41", ValueType.STRING)));
             row.setAction(new Constant("41", ValueType.STRING));
+            decisionTable.addRow(row);
+        }
+        {
+            Row row = new Row();
+            row.setPriority(4);
+            row.addColl(new Coll(new Constant("sd", ValueType.STRING)));
+            row.setAction(new Constant("是4sd", ValueType.STRING));
             decisionTable.addRow(row);
         }
         {
