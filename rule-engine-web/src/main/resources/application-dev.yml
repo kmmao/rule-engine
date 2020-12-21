@@ -6,7 +6,7 @@ logging:
 server:
   port: 80
   tomcat:
-    max-threads: 400 #最大线程执行数
+    max-threads: 200 #最大线程执行数
     max-connections: 4000 #最大连接数
     uri-encoding: UTF-8
 spring:
@@ -103,11 +103,11 @@ spring:
         username: admin
         password: admin
         instance:
-          service-base-url: http://localhost:80
+          service-base-url: http://localhost:${server.port}
           name: rule-engine-web
           metadata:
-            user.name: admin
-            user.password: admin
+            user.name: ${spring.security.user.name}
+            user.password: ${spring.security.user.password}
   security:
     user:
       name: admin

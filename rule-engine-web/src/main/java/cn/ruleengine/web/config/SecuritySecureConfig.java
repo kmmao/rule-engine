@@ -17,7 +17,7 @@ public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //对actuator监控所用的访问全部需要认证
+        // 对actuator监控所用的访问全部需要认证
         http.formLogin().and().authorizeRequests().antMatchers( "/actuator/**")
                 .authenticated()
                 .anyRequest()
