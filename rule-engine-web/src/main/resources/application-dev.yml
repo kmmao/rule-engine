@@ -1,6 +1,6 @@
 logging:
   config: classpath:logback-spring.xml
-  path: logs
+  path: logs/rule-engine-web/log
   level.root: info
 
 server:
@@ -100,8 +100,8 @@ spring:
     admin:
       client:
         url: http://localhost:8011
-        username: admin
-        password: admin
+        username: ${spring.security.user.name}
+        password: ${spring.security.user.password}
         instance:
           service-base-url: http://localhost:${server.port}
           name: rule-engine-web
