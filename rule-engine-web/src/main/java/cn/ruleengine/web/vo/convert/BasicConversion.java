@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.convert;
 
-import cn.ruleengine.core.value.Value;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroupCondition;

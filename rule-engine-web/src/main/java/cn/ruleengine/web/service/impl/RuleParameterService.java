@@ -102,7 +102,8 @@ public class RuleParameterService {
                 Collection<Value> values = param.values();
                 for (Value v : values) {
                     if (v instanceof Element) {
-                        elementIds.add(Integer.valueOf(v.getValueType().getValue()));
+                        Element element = (Element) v;
+                        elementIds.add(element.getElementId());
                     } else if (v instanceof Variable) {
                         try {
                             this.getFromVariableElement(elementIds, v);
@@ -114,7 +115,8 @@ public class RuleParameterService {
                 }
             }
         } else if (value instanceof Element) {
-            elementIds.add(Integer.valueOf(value.getValueType().getValue()));
+            Element element = (Element) value;
+            elementIds.add(element.getElementId());
         }
     }
 
