@@ -3,10 +3,7 @@ package cn.ruleengine.core.decisiontable.cn.ruleengine.core;
 import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.condition.Operator;
-import cn.ruleengine.core.decisiontable.Coll;
-import cn.ruleengine.core.decisiontable.CollHead;
-import cn.ruleengine.core.decisiontable.DecisionTable;
-import cn.ruleengine.core.decisiontable.Row;
+import cn.ruleengine.core.decisiontable.*;
 import cn.ruleengine.core.value.Constant;
 import cn.ruleengine.core.value.Element;
 import cn.ruleengine.core.value.Value;
@@ -36,6 +33,7 @@ public class DecisionTableTest {
      */
     public static void main(String[] args) {
         DecisionTable decisionTable = new DecisionTable();
+        decisionTable.setStrategyType(StrategyType.HIGHEST_PRIORITY_SINGLE);
         // 默认值
         decisionTable.setDefaultActionValue(new Constant("default", ValueType.STRING));
         decisionTable.addCollHead(new CollHead(new Element(0, "test", ValueType.STRING), Operator.EQ));
@@ -58,6 +56,13 @@ public class DecisionTableTest {
             row.setPriority(3);
             row.addColl(new Coll(new Constant("sd", ValueType.STRING)));
             row.setAction(new Constant("3sd", ValueType.STRING));
+            decisionTable.addRow(row);
+        }
+        {
+            Row row = new Row();
+            row.setPriority(3);
+            row.addColl(new Coll(new Constant("sd", ValueType.STRING)));
+            row.setAction(new Constant("水电费水电费", ValueType.STRING));
             decisionTable.addRow(row);
         }
         {
