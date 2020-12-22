@@ -62,7 +62,7 @@ public class RulePublishServiceImpl implements RulePublishService {
         List<Rule> rules = new ArrayList<>(rulePublishList.size());
         for (RuleEngineRulePublish publish : rulePublishList) {
             try {
-                log.info("parse rule for workspace code:{} rule code:{}", publish.getWorkspaceCode(), publish.getRuleCode());
+                log.info("parse rule for workspace code: {} rule code: {}", publish.getWorkspaceCode(), publish.getRuleCode());
                 Rule rule = Rule.buildRule(publish.getData());
                 rules.add(rule);
             } catch (Exception e) {

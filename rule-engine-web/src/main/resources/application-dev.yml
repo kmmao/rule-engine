@@ -96,32 +96,6 @@ spring:
     multipart:
       max-file-size: 4MB
 
-  boot:
-    admin:
-      client:
-        url: http://localhost:8011
-        username: admin
-        password: admin
-        instance:
-          service-base-url: http://localhost:${server.port}
-          name: rule-engine-web
-          metadata:
-            user.name: admin
-            user.password: admin
-# 注意：如果部署在机房如果没有通过网关直接发布在外网，请在nginx中过滤掉有关actuator/**的请求，可选：不使用boot-admin功能，并关闭actuator相关。     
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS
-  # 发的服务器java.lang.ClassNotFoundException: org.springframework.data.redis.connection.ReactiveStreamCommands 本地正常，但是加了reids的这个依赖优惠出现别的错误，有能力解决掉麻烦告知下
-  health:
-    redis:
-      enabled: false
-
 #mybatis-plus配置
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
