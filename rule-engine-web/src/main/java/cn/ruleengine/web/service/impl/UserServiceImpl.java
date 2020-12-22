@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.impl;
 
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.HtmlTemplatesEnum;
 import cn.ruleengine.web.enums.VerifyCodeType;
 import cn.ruleengine.web.service.RoleService;
@@ -229,7 +230,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse getUserInfo() {
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         return BasicConversion.INSTANCE.convert(userData);
     }
 
@@ -264,7 +265,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Boolean updateUserInfo(UpdateUserInfoRequest userInfoRequest) {
-        if (!AuthInterceptor.USER.get().getId().equals(userInfoRequest.getId())) {
+        if (!Context.getCurrentUser().getId().equals(userInfoRequest.getId())) {
             throw new ValidException("无权限修改!");
         }
         RuleEngineUser ruleEngineUser = this.ruleEngineUserManager.getById(userInfoRequest.getId());

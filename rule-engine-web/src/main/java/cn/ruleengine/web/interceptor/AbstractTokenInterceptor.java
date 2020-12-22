@@ -83,7 +83,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             return false;
         }
         // 从redis获取到用户信息保存到本地
-        RBucket<UserData> bucket = redissonClient.getBucket(token);
+        RBucket<UserData> bucket = this.redissonClient.getBucket(token);
         // 获取redis中存的用户信息
         UserData userData = bucket.get();
         if (userData == null) {
@@ -94,9 +94,9 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         //更新过期时间
         bucket.expire(JWTUtils.keepTime, TimeUnit.MILLISECONDS);
         //校验类上获取方法上的注解值roleCode是否匹配
-        RoleAuth roleAuth = getRoleAuth(handler);
+        RoleAuth roleAuth = this.getRoleAuth(handler);
         //如果存在需要验证权限,并且权限没有验证通过时,提示无权限访问
-        if (roleAuth != null && !auth(roleAuth.code(), roleAuth.transfer(), userData)) {
+        if (roleAuth != null && !this.auth(roleAuth.code(), roleAuth.transfer(), userData)) {
             //Token验证通过,但是用户无权限访问
             log.warn("无权限访问,User:{}", userData);
             ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE99990401.getCode(), ErrorCodeEnum.RULE99990401.getMsg()));

@@ -16,8 +16,8 @@
 package cn.ruleengine.web.aspect;
 
 import cn.ruleengine.web.annotation.DataPermission;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.exception.DataPermissionException;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.DataPermissionService;
 import cn.ruleengine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -74,7 +73,7 @@ public class DataPermissionAspect {
      */
     @Around("@annotation(dataPermission)")
     public Object around(ProceedingJoinPoint joinPoint, DataPermission dataPermission) throws Throwable {
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         log.debug("开始校验数据权限,用户Id:{},是否为管理员：{}，注解信息：{}", userData.getId(), userData.getIsAdmin(), dataPermission);
         if (userData.getIsAdmin()) {
             return joinPoint.proceed();

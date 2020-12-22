@@ -48,4 +48,11 @@
         <include refid="listWorkspaceSelectCondition"/>
     </select>
 
+    <select id="getFirstWorkspace" resultType="cn.ruleengine.web.store.entity.RuleEngineWorkspace">
+        select rew.id,rew.code,rew.name,rew.create_time as createTime,rew.description,
+        rew.access_key_id as accessKeyId,rew.access_key_secret as accessKeySecret
+        from rule_engine_workspace rew
+        where rew.deleted=0 order by rew.create_time limit 1
+    </select>
+
 </mapper>

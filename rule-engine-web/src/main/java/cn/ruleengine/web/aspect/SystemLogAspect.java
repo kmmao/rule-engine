@@ -18,8 +18,8 @@ package cn.ruleengine.web.aspect;
 import cn.hutool.http.Header;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DeletedEnum;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.store.entity.RuleEngineSystemLog;
 import cn.ruleengine.web.util.HttpServletUtils;
 import cn.ruleengine.web.util.IPUtils;
@@ -67,7 +67,7 @@ public class SystemLogAspect {
         //请求开始时间
         log.setCreateTime(new Date());
         //请求用户id
-        log.setUserId(Optional.ofNullable(AuthInterceptor.USER.get()).map(UserData::getId).orElse(null));
+        log.setUserId(Optional.ofNullable(Context.getCurrentUser()).map(UserData::getId).orElse(null));
         //请求ip地址
         log.setIp(IPUtils.getRequestIp());
         //浏览器

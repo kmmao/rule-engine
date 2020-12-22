@@ -3,6 +3,7 @@ package cn.ruleengine.web.service.impl;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
@@ -15,10 +16,7 @@ import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.ruleengine.core.exception.ValidException;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.store.entity.RuleEngineWorkspace;
 import cn.ruleengine.web.store.manager.RuleEngineWorkspaceManager;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -65,7 +62,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public PageResult<ListWorkspaceResponse> list(PageRequest<ListWorkspaceRequest> pageRequest) {
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         Boolean isAdmin = userData.getIsAdmin();
         ListWorkspaceRequest query = pageRequest.getQuery();
         // 如果是管理员，有所有工作空间权限
@@ -114,28 +111,25 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public Workspace currentWorkspace() {
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + userData.getId());
         if (bucket.isExists()) {
             Workspace workspace = bucket.get();
             log.info("当前工作空间：" + workspace);
             return workspace;
         } else {
-            IPage<RuleEngineWorkspace> page = this.ruleEngineWorkspaceManager.page(new Page<>(1, 1));
-            List<RuleEngineWorkspace> records = page.getRecords();
-            log.info("Mysql获取工作空间：" + records);
-            Optional<RuleEngineWorkspace> first = records.stream().findFirst();
-            if (first.isPresent()) {
-                RuleEngineWorkspace ruleEngineWorkspace = first.get();
+            RuleEngineWorkspace ruleEngineWorkspace = this.ruleEngineWorkspaceMapper.getFirstWorkspace();
+            if (ruleEngineWorkspace != null) {
                 Workspace workspace = new Workspace();
                 workspace.setId(ruleEngineWorkspace.getId());
                 workspace.setName(ruleEngineWorkspace.getName());
                 workspace.setCode(ruleEngineWorkspace.getCode());
                 bucket.set(workspace);
                 return workspace;
+            } else {
+                throw new ValidException("没有可用工作空间");
             }
         }
-        throw new ValidException("没有可用工作空间");
     }
 
     /**
@@ -150,7 +144,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (engineWorkspace == null) {
             throw new ValidException("找不到此工作空间：" + id);
         }
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         if (!userData.getIsAdmin()) {
             // 如果不是超级管理员，查看是否有此工作空间的工作空间权限
             if (!this.hasWorkspacePermission(id, userData.getId())) {

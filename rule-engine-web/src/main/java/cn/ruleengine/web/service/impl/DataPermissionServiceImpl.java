@@ -1,10 +1,10 @@
 package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.web.annotation.DataPermission;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataPermissionType;
 import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.exception.DataPermissionException;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.DataPermissionService;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
@@ -56,7 +56,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
     public Boolean validDataPermission(Serializable id, DataPermission dataPermission) {
         DataPermissionType dataPermissionType = dataPermission.dataType();
         PermissionType type = dataPermission.type();
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         Integer userId = userData.getId();
         switch (dataPermissionType) {
             case ELEMENT:

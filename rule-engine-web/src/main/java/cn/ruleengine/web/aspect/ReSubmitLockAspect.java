@@ -15,10 +15,10 @@
  */
 package cn.ruleengine.web.aspect;
 
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import cn.ruleengine.web.annotation.ReSubmitLock;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -63,7 +63,7 @@ public class ReSubmitLockAspect {
         long time = lock.timeOut();
         //锁前缀加当前登录用户加被执行的类名加方法名
         String className = joinPoint.getTarget().getClass().getName();
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         //生成lock key
         StringBuilder builder = new StringBuilder();
         builder.append(RESUBMIT_LOCK_KEY_PRE)

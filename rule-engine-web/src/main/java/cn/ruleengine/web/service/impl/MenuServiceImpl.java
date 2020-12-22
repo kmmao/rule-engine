@@ -3,11 +3,11 @@ package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.service.MenuService;
 import cn.ruleengine.web.store.mapper.RuleEngineMenuMapper;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,7 +49,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public List<ListMenuResponse> menuTree() {
-        Integer id = AuthInterceptor.USER.get().getId();
+        Integer id = Context.getCurrentUser().getId();
         List<ListMenuResponse> rootMenu = this.listMenuByUserId(id);
         if (CollUtil.isEmpty(rootMenu)) {
             return null;

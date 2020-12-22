@@ -1,8 +1,8 @@
 package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DeletedEnum;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
@@ -22,7 +22,6 @@ import cn.ruleengine.web.vo.user.UserData;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.value.VariableType;
-import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +47,6 @@ public class ElementServiceImpl implements ElementService {
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
-    @Resource
-    private WorkspaceService workspaceService;
 
     /**
      * 添加元素
@@ -62,9 +59,9 @@ public class ElementServiceImpl implements ElementService {
         if (this.elementCodeIsExists(addConditionRequest.getCode())) {
             throw new ValidException("元素Code：{}已经存在", addConditionRequest.getCode());
         }
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         RuleEngineElement engineElement = new RuleEngineElement();
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         engineElement.setCreateUserId(userData.getId());
         engineElement.setCreateUserName(userData.getUsername());
         engineElement.setName(addConditionRequest.getName());
@@ -84,7 +81,7 @@ public class ElementServiceImpl implements ElementService {
      */
     @Override
     public Boolean elementCodeIsExists(String code) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         Integer count = this.ruleEngineElementManager.lambdaQuery()
                 .eq(RuleEngineElement::getWorkspaceId, workspace.getId())
                 .eq(RuleEngineElement::getCode, code)
@@ -102,7 +99,7 @@ public class ElementServiceImpl implements ElementService {
     public PageResult<ListElementResponse> list(PageRequest<ListElementRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         return PageUtils.page(ruleEngineElementManager, page, () -> {
             QueryWrapper<RuleEngineElement> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineElement::getWorkspaceId, workspace.getId());

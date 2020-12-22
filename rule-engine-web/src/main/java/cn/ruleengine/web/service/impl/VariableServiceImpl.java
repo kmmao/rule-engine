@@ -1,9 +1,9 @@
 package cn.ruleengine.web.service.impl;
 
 
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.enums.DeletedEnum;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.VariableService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -15,7 +15,6 @@ import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.variable.*;
-import cn.ruleengine.web.service.WorkspaceService;
 
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -62,8 +61,6 @@ public class VariableServiceImpl implements VariableService {
     private RuleEngineRuleManager ruleEngineRuleManager;
     @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
-    @Resource
-    private WorkspaceService workspaceService;
 
     /**
      * 添加变量
@@ -77,7 +74,7 @@ public class VariableServiceImpl implements VariableService {
             throw new ValidException("变量名称：{}已经存在", addConditionRequest.getName());
         }
         RuleEngineVariable engineVariable = new RuleEngineVariable();
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         engineVariable.setCreateUserId(userData.getId());
         engineVariable.setCreateUserName(userData.getUsername());
         engineVariable.setName(addConditionRequest.getName());
@@ -86,7 +83,7 @@ public class VariableServiceImpl implements VariableService {
         engineVariable.setValue(addConditionRequest.getValue());
         engineVariable.setType(addConditionRequest.getType());
         engineVariable.setDeleted(DeletedEnum.ENABLE.getStatus());
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         engineVariable.setWorkspaceId(workspace.getId());
         this.ruleEngineVariableManager.save(engineVariable);
         if (addConditionRequest.getType().equals(VariableType.FUNCTION.getType())) {
@@ -111,7 +108,7 @@ public class VariableServiceImpl implements VariableService {
      */
     @Override
     public Boolean varNameIsExists(String name) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         Integer count = this.ruleEngineVariableManager.lambdaQuery()
                 .eq(RuleEngineVariable::getWorkspaceId, workspace.getId())
                 .eq(RuleEngineVariable::getName, name).count();
@@ -154,7 +151,7 @@ public class VariableServiceImpl implements VariableService {
     public PageResult<ListVariableResponse> list(PageRequest<ListVariableRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         return PageUtils.page(ruleEngineVariableManager, page, () -> {
             QueryWrapper<RuleEngineVariable> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineVariable::getWorkspaceId, workspace.getId());

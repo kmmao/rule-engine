@@ -16,6 +16,7 @@
 package cn.ruleengine.web.aspect;
 
 
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.util.HttpServletUtils;
 import cn.ruleengine.web.annotation.RateLimit;
 import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;
@@ -76,7 +77,7 @@ public class RateLimitAspect {
                 key += HttpServletUtils.getRequest().getRequestURI();
                 break;
             case USER:
-                UserData userData = AbstractTokenInterceptor.USER.get();
+                UserData userData = Context.getCurrentUser();
                 if (userData == null) {
                     throw new RuntimeException("选择根据用户限流,但是并没有获取到用户登录信息!");
                 }

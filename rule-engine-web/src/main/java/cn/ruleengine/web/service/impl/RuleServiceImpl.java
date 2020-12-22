@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.impl;
 
 
 import cn.ruleengine.core.value.*;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.enums.RuleStatus;
@@ -22,8 +23,6 @@ import cn.ruleengine.web.vo.condition.ConditionResponse;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.rule.*;
 import cn.ruleengine.core.condition.ConditionGroup;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
-import cn.ruleengine.web.service.WorkspaceService;
 
 import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.web.vo.rule.DefaultAction;
@@ -88,8 +87,6 @@ public class RuleServiceImpl implements RuleService {
     private RuleEngineVariableManager ruleEngineVariableManager;
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
-    @Resource
-    private WorkspaceService workspaceService;
 
     /**
      * 规则列表
@@ -101,7 +98,7 @@ public class RuleServiceImpl implements RuleService {
     public PageResult<ListRuleResponse> list(PageRequest<ListRuleRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         return PageUtils.page(this.ruleEngineRuleManager, page, () -> {
             QueryWrapper<RuleEngineRule> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineRule::getWorkspaceId, workspace.getId());
@@ -139,7 +136,7 @@ public class RuleServiceImpl implements RuleService {
      */
     @Override
     public Boolean ruleCodeIsExists(String code) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         Integer count = this.ruleEngineRuleManager.lambdaQuery()
                 .eq(RuleEngineRule::getWorkspaceId, workspace.getId())
                 .eq(RuleEngineRule::getCode, code)
@@ -287,8 +284,8 @@ public class RuleServiceImpl implements RuleService {
             if (this.ruleCodeIsExists(ruleDefinition.getCode())) {
                 throw new ValidException("规则Code：{}已经存在", ruleDefinition.getCode());
             }
-            Workspace workspace = this.workspaceService.currentWorkspace();
-            UserData userData = AuthInterceptor.USER.get();
+            Workspace workspace = Context.getCurrentWorkspace();
+            UserData userData = Context.getCurrentUser();
             ruleEngineRule.setCreateUserId(userData.getId());
             ruleEngineRule.setCreateUserName(userData.getUsername());
             ruleEngineRule.setWorkspaceId(workspace.getId());

@@ -59,4 +59,10 @@ public interface RuleEngineWorkspaceMapper extends BaseMapper<RuleEngineWorkspac
      */
     Integer totalWorkspace(@Param("userId") Integer userId, @Param("query") ListWorkspaceRequest query, @Param("page") PageBase page);
 
+    /**
+     * 获取第一条数据
+     *
+     * @return RuleEngineWorkspace
+     */
+    RuleEngineWorkspace getFirstWorkspace();
 }

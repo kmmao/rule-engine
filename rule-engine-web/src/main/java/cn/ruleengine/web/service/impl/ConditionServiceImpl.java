@@ -3,8 +3,8 @@ package cn.ruleengine.web.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.value.*;
+import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DeletedEnum;
-import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
@@ -36,7 +36,6 @@ import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.web.exception.ApiException;
-import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -70,8 +69,6 @@ public class ConditionServiceImpl implements ConditionService {
     @Resource
     private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
     @Resource
-    private WorkspaceService workspaceService;
-    @Resource
     private ValueResolve valueResolve;
     @Resource
     private Engine engine;
@@ -88,9 +85,9 @@ public class ConditionServiceImpl implements ConditionService {
         if (this.conditionNameIsExists(addConditionRequest.getName())) {
             throw new ValidException("条件名称：{}已经存在", addConditionRequest.getName());
         }
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         RuleEngineCondition condition = new RuleEngineCondition();
-        UserData userData = AuthInterceptor.USER.get();
+        UserData userData = Context.getCurrentUser();
         condition.setCreateUserId(userData.getId());
         condition.setCreateUserName(userData.getUsername());
         condition.setName(addConditionRequest.getName());
@@ -110,7 +107,7 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Boolean conditionNameIsExists(String name) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         Integer count = this.ruleEngineConditionManager.lambdaQuery()
                 .eq(RuleEngineCondition::getWorkspaceId, workspace.getId())
                 .eq(RuleEngineCondition::getName, name)
@@ -227,7 +224,7 @@ public class ConditionServiceImpl implements ConditionService {
     public PageResult<ListConditionResponse> list(PageRequest<ListConditionRequest> pageRequest) {
         List<PageRequest.OrderBy> orders = pageRequest.getOrders();
         PageBase page = pageRequest.getPage();
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         QueryWrapper<RuleEngineCondition> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(RuleEngineCondition::getWorkspaceId, workspace.getId());
         // 查询的数据排序
@@ -433,7 +430,7 @@ public class ConditionServiceImpl implements ConditionService {
      */
     @Override
     public Set<Rule.Parameter> getParameter(Integer id) {
-        Workspace workspace = this.workspaceService.currentWorkspace();
+        Workspace workspace = Context.getCurrentWorkspace();
         RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.lambdaQuery()
                 .eq(RuleEngineCondition::getId, id)
                 .eq(RuleEngineCondition::getWorkspaceId, workspace.getId())
