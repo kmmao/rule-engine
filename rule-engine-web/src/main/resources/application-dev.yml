@@ -108,7 +108,7 @@ spring:
           metadata:
             user.name: admin
             user.password: admin
-
+# 注意：部署在机房如果没有通过网关直接发布在外网，请在ngxin中过滤掉有关actuator/**的请求，可选：不使用boot-admin功能，并关闭actuator相关。     
 management:
   endpoints:
     web:
