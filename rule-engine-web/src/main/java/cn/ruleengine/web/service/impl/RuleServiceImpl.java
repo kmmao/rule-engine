@@ -414,6 +414,10 @@ public class RuleServiceImpl implements RuleService {
         if (ruleEngineRule.getStatus().equals(RuleStatus.EDIT.getStatus())) {
             throw new ValidException("该规则不可执行:{}", id);
         }
+        // 如果已经是发布规则了
+        if (ruleEngineRule.getStatus().equals(RuleStatus.PUBLISHED.getStatus())) {
+            return true;
+        }
         // 修改为已发布
         this.ruleEngineRuleManager.lambdaUpdate()
                 .set(RuleEngineRule::getStatus, RuleStatus.PUBLISHED.getStatus())
