@@ -56,7 +56,7 @@ public class RateLimitAspect {
     /**
      * 限流key前缀,防止与其他redis key重复
      */
-    private static final String KEY_PRE = "boot_engine_rate_limit_redis_key_pre";
+    private static final String KEY_PRE = "boot_engine_rate_limit_redis_key_pre:";
 
     /**
      * 存在bug，待优化

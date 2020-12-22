@@ -17,6 +17,8 @@ package cn.ruleengine.client.param;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -26,7 +28,9 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class IsExistsParam {
+public class IsExistsParam implements Serializable {
+
+    private static final long serialVersionUID = 1239414801248732693L;
 
     private String ruleCode;
 

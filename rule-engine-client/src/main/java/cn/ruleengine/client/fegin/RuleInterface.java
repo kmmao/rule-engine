@@ -15,8 +15,10 @@
  */
 package cn.ruleengine.client.fegin;
 
+import cn.ruleengine.client.param.BatchParam;
 import cn.ruleengine.client.param.ExecuteParam;
 import cn.ruleengine.client.param.IsExistsParam;
+import cn.ruleengine.client.result.BatchExecuteRuleResult;
 import cn.ruleengine.client.result.BatchOutPut;
 import cn.ruleengine.client.result.ExecuteRuleResult;
 import cn.ruleengine.client.result.IsExistsResult;
@@ -59,10 +61,10 @@ public interface RuleInterface {
     /**
      * 批量执行规则
      *
-     * @param param 批量参数
+     * @param batchParam 批量参数
      * @return list
      */
     @RequestLine("POST /ruleEngine/batchExecute")
-    List<BatchOutPut> batchExecute(Map<String, Object> param);
+    BatchExecuteRuleResult batchExecute(BatchParam batchParam);
 
 }

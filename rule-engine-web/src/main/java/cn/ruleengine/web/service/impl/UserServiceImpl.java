@@ -55,11 +55,11 @@ public class UserServiceImpl implements UserService {
     /**
      * 注册时验证码存入redis的前缀
      */
-    private static final String REGISTER_EMAIL_CODE_PRE = "rule_engine_user_register_email_code_pre";
+    private static final String REGISTER_EMAIL_CODE_PRE = "rule_engine_user_register_email_code_pre:";
     /**
      * 忘记密码时验证码存入redis的前缀
      */
-    private static final String FORGOT_EMAIL_CODE_PRE = "rule_engine_boot_user_forgot_email_code_pre";
+    private static final String FORGOT_EMAIL_CODE_PRE = "rule_engine_boot_user_forgot_email_code_pre:";
 
     /**
      * 用户登录

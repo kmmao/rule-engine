@@ -31,6 +31,7 @@ import lombok.Data;
 @RuleModel(ruleCode = "phoneRuletest")
 public class RuleMode {
 
+
     @ElementField(code = "phone")
     private String phone;
 

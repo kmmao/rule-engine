@@ -31,6 +31,8 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ExecuteRuleResult extends Result {
 
+    private static final long serialVersionUID = 8901638362447611971L;
+
     /**
      * 返回数据
      */

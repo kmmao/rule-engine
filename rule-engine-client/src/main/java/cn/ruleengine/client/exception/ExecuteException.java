@@ -15,9 +15,6 @@
  */
 package cn.ruleengine.client.exception;
 
-import cn.hutool.core.text.StrFormatter;
-
-import javax.validation.ValidationException;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -27,7 +24,7 @@ import javax.validation.ValidationException;
  * @date 2020/3/9
  * @since 1.0.0
  */
-public class ExecuteException extends ValidationException {
+public class ExecuteException extends RuntimeException {
 
     private static final long serialVersionUID = 8796847479175079802L;
 
@@ -36,6 +33,6 @@ public class ExecuteException extends ValidationException {
     }
 
     public ExecuteException(String message, Object... args) {
-        super(StrFormatter.format(message, args));
+        super(String.format(message, args));
     }
 }

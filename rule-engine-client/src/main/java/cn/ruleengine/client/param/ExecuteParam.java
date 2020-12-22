@@ -17,6 +17,7 @@ package cn.ruleengine.client.param;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -28,7 +29,9 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Data
-public class ExecuteParam {
+public class ExecuteParam implements Serializable {
+
+    private static final long serialVersionUID = -723208519820366808L;
 
     private String ruleCode;
 

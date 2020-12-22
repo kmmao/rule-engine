@@ -19,6 +19,8 @@ package cn.ruleengine.client.result;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
+import java.io.Serializable;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -29,7 +31,9 @@ import org.springframework.lang.Nullable;
  * @since 1.0.0
  */
 @Data
-public class BatchOutPut {
+public class BatchOutPut implements Serializable {
+
+    private static final long serialVersionUID = -6098570767368919540L;
 
     /**
      * 规则执行状态，是否执行成功，或者遇到了异常

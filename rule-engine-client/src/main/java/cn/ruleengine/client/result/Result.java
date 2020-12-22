@@ -17,6 +17,7 @@ package cn.ruleengine.client.result;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -28,7 +29,9 @@ import java.util.Objects;
  * @since 1.0.0
  */
 @Data
-public class Result {
+public class Result implements Serializable {
+
+    private static final long serialVersionUID = -1686452425445993889L;
 
     private static final int SUCCESS_CODE = 200;
 

@@ -18,6 +18,8 @@ package cn.ruleengine.client.result;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -31,9 +33,11 @@ import lombok.EqualsAndHashCode;
 @Data
 public class BatchExecuteRuleResult extends Result {
 
+    private static final long serialVersionUID = -1373852891408281309L;
+
     /**
      * 返回数据
      */
-    private BatchOutPut data;
+    private List<BatchOutPut> data;
 
 }

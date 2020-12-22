@@ -18,6 +18,8 @@ package cn.ruleengine.client.result;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -28,25 +30,12 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class OutPut {
+public class OutPut implements Serializable {
+
+    private static final long serialVersionUID = 7567203804311496569L;
 
     private Object value;
-    private String dataType;
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
+    private String valueType;
 
 }

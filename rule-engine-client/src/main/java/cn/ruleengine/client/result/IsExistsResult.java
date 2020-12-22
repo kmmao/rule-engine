@@ -30,6 +30,8 @@ import lombok.EqualsAndHashCode;
 @Data
 public class IsExistsResult extends Result {
 
+    private static final long serialVersionUID = 589162862943453120L;
+
     private Boolean data;
 
 }
