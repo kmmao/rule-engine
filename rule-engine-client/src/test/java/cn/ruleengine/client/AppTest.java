@@ -28,6 +28,7 @@ public class AppTest {
     private RuleEngineClient ruleEngineClient = new RuleEngineClient() {
         {
             RuleEngineProperties ruleEngineProperties = new RuleEngineProperties();
+            ruleEngineProperties.setUrl("http://localhost");
             this.setRuleInterface(Feign.builder()
                     .encoder(new JacksonEncoder())
                     .decoder(new JacksonDecoder())

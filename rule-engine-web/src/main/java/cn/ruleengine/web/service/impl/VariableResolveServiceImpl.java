@@ -101,7 +101,7 @@ public class VariableResolveServiceImpl implements VariableResolveService {
             }
         }
         Object abstractFunction = applicationContext.getBean(engineFunction.getExecutor());
-        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
+        return new Function(engineFunction.getId(), abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
 
     }
 
@@ -126,6 +126,6 @@ public class VariableResolveServiceImpl implements VariableResolveService {
             }
         }
         Object abstractFunction = this.applicationContext.getBean(engineFunction.getExecutor());
-        return new Function(engineFunction.getId(), engineFunction.getName(), abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
+        return new Function(engineFunction.getId(), abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
     }
 }

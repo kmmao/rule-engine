@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.web.message;
+package cn.ruleengine.web.listener;
 
-import cn.ruleengine.web.vo.variable.VariableMessageVo;
 import cn.ruleengine.core.DefaultEngine;
 import cn.ruleengine.core.EngineVariable;
+import cn.ruleengine.web.listener.body.VariableMessageBody;
 import cn.ruleengine.web.service.VariableResolveService;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class VariableMessage {
+public class VariableMessageListener {
 
     @Resource
     private DefaultEngine defaultEngine;
@@ -52,11 +52,11 @@ public class VariableMessage {
             exchange = @Exchange(value = RabbitTopicConfig.VAR_EXCHANGE, type = ExchangeTypes.TOPIC),
             key = RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY)
     )
-    public void message(VariableMessageVo variableMessageVo) {
-        log.info("变量消息：{}", variableMessageVo);
+    public void message(VariableMessageBody variableMessageBody) {
+        log.info("变量消息：{}", variableMessageBody);
         EngineVariable engineVariable = defaultEngine.getEngineVariable();
-        Integer id = variableMessageVo.getId();
-        switch (variableMessageVo.getType()) {
+        Integer id = variableMessageBody.getId();
+        switch (variableMessageBody.getType()) {
             case REMOVE:
                 log.info("开始移除变量：{}", id);
                 engineVariable.removeVariable(id);
@@ -70,7 +70,8 @@ public class VariableMessage {
                 engineVariable.addVariable(id, variableResolveService.getVarById(id));
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + variableMessageVo.getType());
+                throw new IllegalStateException("Unexpected value: " + variableMessageBody.getType());
         }
     }
+
 }

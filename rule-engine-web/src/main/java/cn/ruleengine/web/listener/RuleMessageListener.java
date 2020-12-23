@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.web.message;
+package cn.ruleengine.web.listener;
 
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
-import cn.ruleengine.web.vo.rule.RuleMessageVo;
 import cn.ruleengine.core.DefaultEngine;
+import cn.ruleengine.web.listener.body.RuleMessageBody;
 import cn.ruleengine.web.service.RulePublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -37,7 +37,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class RuleMessage {
+public class RuleMessageListener {
 
     @Resource
     private DefaultEngine defaultEngine;
@@ -50,25 +50,25 @@ public class RuleMessage {
             exchange = @Exchange(value = RabbitTopicConfig.RULE_EXCHANGE, type = ExchangeTypes.TOPIC),
             key = RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY)
     )
-    public void message(RuleMessageVo ruleMessageVo) {
-        log.info("规则消息：{}", ruleMessageVo);
-        String workspaceCode = ruleMessageVo.getWorkspaceCode();
-        String ruleCode = ruleMessageVo.getRuleCode();
-        switch (ruleMessageVo.getType()) {
+    public void message(RuleMessageBody ruleMessageBody) {
+        log.info("规则消息：{}", ruleMessageBody);
+        String workspaceCode = ruleMessageBody.getWorkspaceCode();
+        String ruleCode = ruleMessageBody.getRuleCode();
+        switch (ruleMessageBody.getType()) {
             case UPDATE:
-                log.info("开始更新规则：{}", ruleMessageVo.getRuleCode());
+                log.info("开始更新规则：{}", ruleMessageBody.getRuleCode());
                 this.defaultEngine.addRule(rulePublishService.getPublishRule(workspaceCode, ruleCode));
                 break;
             case LOAD:
-                log.info("开始加载规则：{}", ruleMessageVo.getRuleCode());
+                log.info("开始加载规则：{}", ruleMessageBody.getRuleCode());
                 this.defaultEngine.addRule(rulePublishService.getPublishRule(workspaceCode, ruleCode));
                 break;
             case REMOVE:
-                log.info("开始移除规则：{}", ruleMessageVo.getRuleCode());
+                log.info("开始移除规则：{}", ruleMessageBody.getRuleCode());
                 this.defaultEngine.removeRule(workspaceCode, ruleCode);
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + ruleMessageVo.getType());
+                throw new IllegalStateException("Unexpected value: " + ruleMessageBody.getType());
         }
     }
 }

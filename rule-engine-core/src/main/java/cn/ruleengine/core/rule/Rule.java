@@ -17,7 +17,6 @@ package cn.ruleengine.core.rule;
 
 import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.Precondition;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.condition.ConditionSet;
@@ -40,7 +39,7 @@ import java.util.*;
  */
 @Slf4j
 @Data
-public class Rule implements RuleParse {
+public class Rule implements JsonParse {
 
     /**
      * 规则id
@@ -182,13 +181,8 @@ public class Rule implements RuleParse {
         this.setActionValue(rule.getActionValue());
         this.setDefaultActionValue(rule.getDefaultActionValue());
         this.setAbnormalAlarm(rule.getAbnormalAlarm());
+        this.setEnableMonitor(rule.isEnableMonitor());
     }
 
-    @SneakyThrows
-    @Override
-    @NonNull
-    public String toJson() {
-        return OBJECT_MAPPER.writeValueAsString(this);
-    }
 
 }

@@ -49,11 +49,6 @@ public class Function implements Value {
 
     @Getter
     private Integer id;
-    /**
-     * 函数名称
-     */
-    @Getter
-    private String name;
 
     private ValueType valueType;
 
@@ -103,9 +98,8 @@ public class Function implements Value {
     Function() {
     }
 
-    public Function(Integer id, String name, Object abstractFunction, ValueType valueType, Map<String, Value> param) {
+    public Function(Integer id, Object abstractFunction, ValueType valueType, Map<String, Value> param) {
         this.id = id;
-        this.name = name;
         this.valueType = valueType;
         this.param = param;
         this.abstractFunction = abstractFunction;
@@ -141,7 +135,7 @@ public class Function implements Value {
     }
 
     public Function(Object abstractFunction) {
-        this(null, null, abstractFunction, null, null);
+        this(null, abstractFunction, null, null);
     }
 
     @Override

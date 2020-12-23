@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.web.timer;
+package cn.ruleengine.web.listener;
 
+import cn.ruleengine.web.store.entity.RuleEngineSystemLog;
+import cn.ruleengine.web.store.manager.RuleEngineSystemLogManager;
+import cn.ruleengine.web.config.rabbit.RabbitQueueConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RBucket;
-import org.redisson.api.RedissonClient;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -27,27 +28,25 @@ import javax.annotation.Resource;
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2020/9/13
+ * @author 丁乾文
+ * @create 2019/11/1
  * @since 1.0.0
  */
 @Slf4j
 @Component
-public class RedisHeartbeatTimer {
-
-    private static final String HEARTBEAT = "rule_engine_heartbeat";
+public class SystemLogMessageListener {
 
     @Resource
-    private RedissonClient redissonClient;
+    private RuleEngineSystemLogManager ruleEngineSystemLogManager;
 
     /**
-     * 解决长时间未使用redis导致连接中断
+     * 接收日志消息
+     *
+     * @param ruleEngineSystemLog 日志内容
      */
-    @Scheduled(cron = "*/10 * * * * ?")
-    public void executor() {
-        log.debug("connection redis heartbeat");
-        RBucket<Boolean> bucket = redissonClient.getBucket(HEARTBEAT);
-        bucket.set(true);
+    @RabbitListener(queues = RabbitQueueConfig.SYSTEM_LOG_QUEUE)
+    public void execute(RuleEngineSystemLog ruleEngineSystemLog) {
+        log.info("接收到日志消息,准备存入数据库!");
+        this.ruleEngineSystemLogManager.save(ruleEngineSystemLog);
     }
-
 }

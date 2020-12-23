@@ -2,8 +2,9 @@ package cn.ruleengine.web.service.impl;
 
 
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.enums.DeletedEnum;
+import cn.ruleengine.web.listener.body.VariableMessageBody;
+import cn.ruleengine.web.listener.event.VariableEvent;
 import cn.ruleengine.web.service.VariableService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -21,8 +22,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.value.VariableType;
 import cn.ruleengine.web.vo.workspace.Workspace;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +53,6 @@ public class VariableServiceImpl implements VariableService {
     @Resource
     private RuleEngineVariableMapper ruleEngineVariableMapper;
     @Resource
-    private RabbitTemplate rabbitTemplate;
-    @Resource
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
     private ApplicationContext applicationContext;
@@ -61,6 +60,8 @@ public class VariableServiceImpl implements VariableService {
     private RuleEngineRuleManager ruleEngineRuleManager;
     @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     /**
      * 添加变量
@@ -93,10 +94,10 @@ public class VariableServiceImpl implements VariableService {
             this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable, paramValues);
         }
         // 通知加载变量
-        VariableMessageVo variableMessageVo = new VariableMessageVo();
-        variableMessageVo.setType(VariableMessageVo.Type.LOAD);
-        variableMessageVo.setId(engineVariable.getId());
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.VAR_EXCHANGE, RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY, variableMessageVo);
+        VariableMessageBody variableMessageBody = new VariableMessageBody();
+        variableMessageBody.setType(VariableMessageBody.Type.LOAD);
+        variableMessageBody.setId(engineVariable.getId());
+        this.eventPublisher.publishEvent(new VariableEvent(variableMessageBody));
         return true;
     }
 
@@ -269,10 +270,10 @@ public class VariableServiceImpl implements VariableService {
             this.saveFunctionParamValues(ruleEngineFunction.getId(), engineVariable, paramValues);
         }
         // 通知加载变量
-        VariableMessageVo variableMessageVo = new VariableMessageVo();
-        variableMessageVo.setType(VariableMessageVo.Type.UPDATE);
-        variableMessageVo.setId(engineVariable.getId());
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.VAR_EXCHANGE, RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY, variableMessageVo);
+        VariableMessageBody variableMessageBody = new VariableMessageBody();
+        variableMessageBody.setType(VariableMessageBody.Type.UPDATE);
+        variableMessageBody.setId(engineVariable.getId());
+        this.eventPublisher.publishEvent(new VariableEvent(variableMessageBody));
         return true;
     }
 
@@ -333,10 +334,10 @@ public class VariableServiceImpl implements VariableService {
                 throw new ValidException("有条件在引用此变量，无法删除");
             }
         }
-        VariableMessageVo variableMessageVo = new VariableMessageVo();
-        variableMessageVo.setType(VariableMessageVo.Type.REMOVE);
-        variableMessageVo.setId(id);
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.VAR_EXCHANGE, RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY, variableMessageVo);
+        VariableMessageBody variableMessageBody = new VariableMessageBody();
+        variableMessageBody.setType(VariableMessageBody.Type.REMOVE);
+        variableMessageBody.setId(id);
+        this.eventPublisher.publishEvent(new VariableEvent(variableMessageBody));
         // 删除变量函数值
         this.ruleEngineFunctionValueManager.lambdaUpdate()
                 .eq(RuleEngineFunctionValue::getVariableId, engineVariable.getId())

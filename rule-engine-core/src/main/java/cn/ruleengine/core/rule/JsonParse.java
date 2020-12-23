@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import lombok.SneakyThrows;
+import org.springframework.lang.NonNull;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -28,7 +30,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
  * @date 2020/8/4
  * @since 1.0.0
  */
-public interface RuleParse {
+public interface JsonParse {
 
     /**
      * fastjson存在bug 替换fastjson
@@ -48,13 +50,19 @@ public interface RuleParse {
      *
      * @param jsonString 规则json字符串
      */
-    void fromJson(String jsonString);
+    default void fromJson(String jsonString) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * 规则信息转为json
      *
      * @return 规则json字符串
      */
-    String toJson();
+    @SneakyThrows
+    @NonNull
+    default String toJson() {
+        return OBJECT_MAPPER.writeValueAsString(this);
+    }
 
 }

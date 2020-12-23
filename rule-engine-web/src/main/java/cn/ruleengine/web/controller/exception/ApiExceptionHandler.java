@@ -1,18 +1,15 @@
 package cn.ruleengine.web.controller.exception;
 
 import cn.ruleengine.web.enums.ErrorCodeEnum;
-import cn.ruleengine.web.enums.ErrorLevelEnum;
 import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.NoLoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
-import cn.ruleengine.web.message.ExceptionMessage;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.core.exception.ConditionException;
 import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.exception.FunctionException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -46,9 +42,6 @@ import java.util.Optional;
 public class ApiExceptionHandler {
 
 
-    @Resource
-    private ExceptionMessage exceptionMessage;
-
     /**
      * Exception级别未捕获异常发送邮箱警告
      *
@@ -62,8 +55,6 @@ public class ApiExceptionHandler {
         // 抛出的未知异常 加上RequestId
         result.setMessage(ErrorCodeEnum.RULE500.getMsg().concat(MDCLogInterceptor.getRequestId()));
         result.setCode(ErrorCodeEnum.RULE500.getCode());
-        //发送异常邮件
-        this.exceptionMessage.send(e, ErrorLevelEnum.SERIOUS);
         return result;
     }
 
@@ -276,23 +267,6 @@ public class ApiExceptionHandler {
         return result;
     }
 
-    /**
-     * org.apache.catalina.connector.ClientAbortException: java.io.IOException: Connection reset by peer at org.apache.catalina.connector.OutputBuffer.doFlush(OutputBuffer.java:298) at
-     * <p>
-     * ①：服务器的并发连接数超过了其承载量，服务器会将其中一些连接Down掉；
-     * ②：客户关掉了浏览器，而服务器还在给客户端发送数据；
-     * ③：浏览器端按了Stop
-     *
-     * @return BaseResult
-     */
-    @ExceptionHandler(value = ClientAbortException.class)
-    public BaseResult clientAbortException(ClientAbortException e) {
-        log.warn("ClientAbortException", e);
-        BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.RULE500.getMsg());
-        result.setCode(ErrorCodeEnum.RULE500.getCode());
-        return result;
-    }
 
     /**
      * 未登录

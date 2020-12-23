@@ -3,8 +3,6 @@ package cn.ruleengine.web.util;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
-import cn.ruleengine.web.enums.ErrorLevelEnum;
-import cn.ruleengine.web.message.ExceptionMessage;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.ObjectMetadata;
 import lombok.Data;
@@ -33,8 +31,6 @@ public class AliOSSClient {
 
     @Resource
     private Properties properties;
-    @Resource
-    private ExceptionMessage exceptionMessage;
     @Resource
     private OSSClient ossClient;
 
@@ -100,7 +96,6 @@ public class AliOSSClient {
             return url;
         } catch (Exception e) {
             log.error("{1}", e);
-            this.exceptionMessage.send(ErrorCodeEnum.RULE10011036.getMsg(), e, ErrorLevelEnum.OTHER);
             throw new ValidationException(ErrorCodeEnum.RULE10011036.getMsg());
         } finally {
             IoUtil.close(is);

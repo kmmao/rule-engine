@@ -16,15 +16,15 @@
 package cn.ruleengine.core.decisiontable.strategey;
 
 
+import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.decisiontable.Coll;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
-import cn.ruleengine.core.exception.DecisionException;
 import cn.ruleengine.core.value.Value;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -41,23 +41,21 @@ public interface Strategy {
      *
      * @param collHeadCompareMap 表头比较器
      * @param decisionTree       决策树
+     * @param configuration      规则引擎配置信息
      * @return 命中的结果值
      */
-    List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree);
+    List<Value> compute(@NonNull Map<Integer, CollHeadCompare> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Configuration configuration);
 
     /**
      * 获取row的执行结果
      *
      * @param collHeadCompareMap 表头比较器
      * @param row                一行规则
+     * @param configuration      规则引擎配置信息
      * @return action
      */
-    default Value getActionByRow(Map<Integer, CollHeadCompare> collHeadCompareMap, Row row) {
+    default Value getActionByRow(Map<Integer, CollHeadCompare> collHeadCompareMap, Row row, Configuration configuration) {
         List<Coll> colls = row.getColls();
-        // 这里的检查应该在配置时就需要校验，防止数据错乱，造成数据结果计算错误
-        if (!Objects.equals(collHeadCompareMap.size(), colls.size())) {
-            throw new DecisionException("配置错误，左条件数量:{}，右值条件数量:{}", collHeadCompareMap.size(), colls.size());
-        }
         // 校验此行单元格条件是否成立
         for (int i = 0; i < colls.size(); i++) {
             Coll coll = colls.get(i);
@@ -67,7 +65,9 @@ public interface Strategy {
             }
             // 获取到表头比较器，与下面单元格比较
             CollHeadCompare collHeadCompare = collHeadCompareMap.get(i);
-            if (!collHeadCompare.compare(coll.getRightValue())) {
+            // 右值可以有固定值变量，固定值，无元素 input=null
+            Object rValue = coll.getRightValue().getValue(null, configuration);
+            if (!collHeadCompare.compare(rValue)) {
                 // 单元格内条件只要有一个不成立，则比较失败
                 return null;
             }
@@ -75,4 +75,5 @@ public interface Strategy {
         // 所有条件成立，返回结果
         return row.getAction();
     }
+
 }

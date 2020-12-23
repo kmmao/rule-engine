@@ -35,12 +35,6 @@ public class Variable implements Value {
     private Integer variableId;
 
     /**
-     * 变量名称
-     */
-    @Getter
-    private String variableName;
-
-    /**
      * 变量值类型
      */
     private ValueType valueType;
@@ -48,9 +42,8 @@ public class Variable implements Value {
     Variable() {
     }
 
-    public Variable(Integer variableId, String variableName, ValueType valueType) {
+    public Variable(Integer variableId, ValueType valueType) {
         this.variableId = variableId;
-        this.variableName = variableName;
         this.valueType = valueType;
     }
 

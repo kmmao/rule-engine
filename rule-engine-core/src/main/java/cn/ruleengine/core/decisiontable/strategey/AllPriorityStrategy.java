@@ -15,6 +15,7 @@
  */
 package cn.ruleengine.core.decisiontable.strategey;
 
+import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
@@ -35,6 +36,9 @@ public class AllPriorityStrategy implements Strategy {
 
     private static AllPriorityStrategy allPriorityStrategy = new AllPriorityStrategy();
 
+    private AllPriorityStrategy() {
+    }
+
     public static AllPriorityStrategy getInstance() {
         return allPriorityStrategy;
     }
@@ -44,16 +48,17 @@ public class AllPriorityStrategy implements Strategy {
      *
      * @param collHeadCompareMap 表头比较器
      * @param decisionTree       决策树
+     * @param configuration      规则引擎配置信息
      * @return 命中的结果值
      */
     @Override
-    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree) {
+    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree, Configuration configuration) {
         List<Value> actions = new ArrayList<>();
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
             List<Row> rows = tree.getValue();
             // 一个row可以看做一个规则
             for (Row row : rows) {
-                Value action = this.getActionByRow(collHeadCompareMap, row);
+                Value action = this.getActionByRow(collHeadCompareMap, row, configuration);
                 Optional.ofNullable(action).ifPresent(p -> {
                     actions.add(action);
                 });

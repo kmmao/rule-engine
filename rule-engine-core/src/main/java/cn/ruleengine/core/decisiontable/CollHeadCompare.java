@@ -36,13 +36,18 @@ public class CollHeadCompare extends CollHead {
     }
 
     public Object getValue() {
-        return lValue;
+        return this.lValue;
     }
 
-    public boolean compare(Value rightValue) {
+    /**
+     * 表头比较器
+     *
+     * @param rValue 单元格数据
+     * @return true 条件成立
+     */
+    public boolean compare(Object rValue) {
         Value leftValue = super.getLeftValue();
         Compare compare = ConditionCompareFactory.getCompare(leftValue.getValueType());
-        Object rValue = rightValue.getValue(null, null);
         return compare.compare(lValue, super.getOperator(), rValue);
     }
 

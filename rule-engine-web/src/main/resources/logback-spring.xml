@@ -7,8 +7,8 @@
 <configuration scan="true" scanPeriod="10 seconds">
     <contextName>logback</contextName>
 
-    <!-- springProperty:从application.yml获取配置 -->
-    <property name="log.path" value="${LOG_PATH:-.}"/>
+    <!-- springProperty:从application.yml获取配置 默认log文件夹下 -->
+    <property name="log.path" value="${LOG_PATH:-logs/}"/>
 
     <!--0. 日志格式和颜色渲染 -->
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
@@ -153,11 +153,11 @@
     </appender>
 
     <!--<logger>用来设置某一个包或者具体的某一个类的日志打印级别-->
-    <logger name="org.mongodb.driver" level="info"/>
     <logger name="druid.sql" level="info"/>
     <logger name="springfox.documentation" level="info"/>
     <logger name="org.springframework.boot.autoconfigure.logging" level="info"/>
     <logger name="cn.ruleengine" level="debug"/>
+
     <!--root节点是必选节点，用来指定最基础的日志输出级别，只有一个level属性-->
     <root>
         <appender-ref ref="MAIN"/>

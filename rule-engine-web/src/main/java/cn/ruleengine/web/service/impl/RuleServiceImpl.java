@@ -3,9 +3,10 @@ package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.enums.RuleStatus;
+import cn.ruleengine.web.listener.body.RuleMessageBody;
+import cn.ruleengine.web.listener.event.RuleEvent;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.service.RuleResolveService;
 import cn.ruleengine.web.service.RuleService;
@@ -40,7 +41,7 @@ import cn.ruleengine.core.rule.Rule;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,8 +71,6 @@ public class RuleServiceImpl implements RuleService {
     @Resource
     private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
     @Resource
-    private RabbitTemplate rabbitTemplate;
-    @Resource
     private Engine engine;
     @Resource
     private ConditionService conditionService;
@@ -87,6 +86,8 @@ public class RuleServiceImpl implements RuleService {
     private RuleEngineVariableManager ruleEngineVariableManager;
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     /**
      * 规则列表
@@ -235,12 +236,12 @@ public class RuleServiceImpl implements RuleService {
         }
         // 从引擎中移除规则
         if (this.engine.isExistsRule(engineRule.getWorkspaceCode(), engineRule.getCode())) {
-            RuleMessageVo ruleMessageVo = new RuleMessageVo();
-            ruleMessageVo.setType(RuleMessageVo.Type.REMOVE);
-            ruleMessageVo.setWorkspaceId(engineRule.getWorkspaceId());
-            ruleMessageVo.setWorkspaceCode(engineRule.getWorkspaceCode());
-            ruleMessageVo.setRuleCode(engineRule.getCode());
-            this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
+            RuleMessageBody ruleMessageBody = new RuleMessageBody();
+            ruleMessageBody.setType(RuleMessageBody.Type.REMOVE);
+            ruleMessageBody.setWorkspaceId(engineRule.getWorkspaceId());
+            ruleMessageBody.setWorkspaceCode(engineRule.getWorkspaceCode());
+            ruleMessageBody.setRuleCode(engineRule.getCode());
+            this.eventPublisher.publishEvent(new RuleEvent(ruleMessageBody));
         }
         // 删除规则发布记录
         this.ruleEngineRulePublishManager.lambdaUpdate().eq(RuleEngineRulePublish::getRuleId, id).remove();
@@ -432,12 +433,12 @@ public class RuleServiceImpl implements RuleService {
                 .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId())
                 .update();
         // 加载规则
-        RuleMessageVo ruleMessageVo = new RuleMessageVo();
-        ruleMessageVo.setType(RuleMessageVo.Type.LOAD);
-        ruleMessageVo.setRuleCode(ruleEngineRule.getCode());
-        ruleMessageVo.setWorkspaceId(ruleEngineRule.getWorkspaceId());
-        ruleMessageVo.setWorkspaceCode(ruleEngineRule.getWorkspaceCode());
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
+        RuleMessageBody ruleMessageBody = new RuleMessageBody();
+        ruleMessageBody.setType(RuleMessageBody.Type.LOAD);
+        ruleMessageBody.setRuleCode(ruleEngineRule.getCode());
+        ruleMessageBody.setWorkspaceId(ruleEngineRule.getWorkspaceId());
+        ruleMessageBody.setWorkspaceCode(ruleEngineRule.getWorkspaceCode());
+        this.eventPublisher.publishEvent(new RuleEvent(ruleMessageBody));
         return true;
     }
 

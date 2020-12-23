@@ -18,8 +18,8 @@ package cn.ruleengine.web.config;
 
 import cn.ruleengine.web.BaseTest;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
-import cn.ruleengine.web.vo.rule.RuleMessageVo;
-import cn.ruleengine.web.vo.variable.VariableMessageVo;
+import cn.ruleengine.web.listener.body.RuleMessageBody;
+import cn.ruleengine.web.listener.body.VariableMessageBody;
 import org.junit.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
@@ -41,18 +41,18 @@ public class RabbitMqTest extends BaseTest {
     @Test
     public void reloadAll() {
         log.info("开始发送消息");
-        RuleMessageVo ruleMessageVo = new RuleMessageVo();
-        ruleMessageVo.setType(RuleMessageVo.Type.LOAD);
-        ruleMessageVo.setRuleCode("test");
-        ruleMessageVo.setWorkspaceCode("");
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageVo);
+        RuleMessageBody ruleMessageBody = new RuleMessageBody();
+        ruleMessageBody.setType(RuleMessageBody.Type.LOAD);
+        ruleMessageBody.setRuleCode("test");
+        ruleMessageBody.setWorkspaceCode("default");
+        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageBody);
     }
 
     @Test
     public void reloadVar() {
-        VariableMessageVo variableMessageVo = new VariableMessageVo();
-        variableMessageVo.setType(VariableMessageVo.Type.LOAD);
-        variableMessageVo.setId(1);
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.VAR_EXCHANGE, RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY, variableMessageVo);
+        VariableMessageBody variableMessageBody = new VariableMessageBody();
+        variableMessageBody.setType(VariableMessageBody.Type.LOAD);
+        variableMessageBody.setId(1);
+        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.VAR_EXCHANGE, RabbitTopicConfig.VAR_TOPIC_ROUTING_KEY, variableMessageBody);
     }
 }

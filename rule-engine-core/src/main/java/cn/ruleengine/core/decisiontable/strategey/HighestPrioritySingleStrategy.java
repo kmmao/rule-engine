@@ -15,6 +15,7 @@
  */
 package cn.ruleengine.core.decisiontable.strategey;
 
+import cn.ruleengine.core.Configuration;
 import cn.ruleengine.core.decisiontable.Coll;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
@@ -37,6 +38,9 @@ public class HighestPrioritySingleStrategy implements Strategy {
 
     private static HighestPrioritySingleStrategy highestPrioritySingleStrategy = new HighestPrioritySingleStrategy();
 
+    private HighestPrioritySingleStrategy() {
+    }
+
     public static HighestPrioritySingleStrategy getInstance() {
         return highestPrioritySingleStrategy;
     }
@@ -46,15 +50,16 @@ public class HighestPrioritySingleStrategy implements Strategy {
      *
      * @param collHeadCompareMap 表头比较器
      * @param decisionTree       决策树
+     * @param configuration      规则引擎配置信息
      * @return 命中的结果值
      */
     @Override
-    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree) {
+    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree, Configuration configuration) {
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
             List<Row> rows = tree.getValue();
             // 一个row可以看做一个规则
             for (Row row : rows) {
-                Value action = this.getActionByRow(collHeadCompareMap, row);
+                Value action = this.getActionByRow(collHeadCompareMap, row, configuration);
                 if (action != null) {
                     return Collections.singletonList(row.getAction());
                 }

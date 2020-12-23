@@ -15,7 +15,6 @@
  */
 package cn.ruleengine.web.config;
 
-import cn.ruleengine.web.enums.ErrorLevelEnum;
 import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import cn.ruleengine.core.DefaultEngine;
 import cn.ruleengine.core.Engine;
@@ -24,7 +23,6 @@ import cn.ruleengine.core.OutPut;
 import cn.ruleengine.core.cache.DefaultFunctionCache;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleListener;
-import cn.ruleengine.web.message.ExceptionMessage;
 import cn.ruleengine.web.service.RulePublishService;
 import cn.ruleengine.web.service.VariableResolveService;
 import lombok.extern.slf4j.Slf4j;
@@ -80,8 +78,6 @@ public class EngineConfig {
         @Resource
         private RedissonClient redissonClient;
         @Resource
-        private ExceptionMessage exceptionMessage;
-        @Resource
         private RuleEngineRuleManager ruleEngineRuleManager;
 
         @Override
@@ -96,7 +92,6 @@ public class EngineConfig {
             // 获取此规则异常报警邮件接收人
             Rule.AbnormalAlarm abnormalAlarm = rule.getAbnormalAlarm();
             if (abnormalAlarm.getEnable()) {
-                this.exceptionMessage.send(exception, ErrorLevelEnum.RUN_RULE, abnormalAlarm.getEmail());
             }
         }
 

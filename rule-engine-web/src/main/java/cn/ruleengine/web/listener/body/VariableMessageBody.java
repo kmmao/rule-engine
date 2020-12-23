@@ -1,6 +1,8 @@
-package cn.ruleengine.web.vo.variable;
+package cn.ruleengine.web.listener.body;
 
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -11,9 +13,11 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class VariableMessageVo {
+public class VariableMessageBody implements Serializable {
 
-    private VariableMessageVo.Type type;
+    private static final long serialVersionUID = 1L;
+
+    private VariableMessageBody.Type type;
 
     private Integer id;
 
