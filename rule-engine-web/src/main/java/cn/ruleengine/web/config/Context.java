@@ -38,11 +38,7 @@ public class Context implements ApplicationContextAware {
      * @return UserData
      */
     public static UserData getCurrentUser() {
-        UserData userData = AuthInterceptor.USER.get();
-        if (userData == null) {
-            log.warn("没有获取到用户信息，请检查${auth.enable}是否开启");
-        }
-        return userData;
+        return AuthInterceptor.USER.get();
     }
 
     /**
