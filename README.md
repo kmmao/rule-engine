@@ -48,7 +48,7 @@ Content-Type: application/json
     <dependency>
         <groupId>cn.ruleengine</groupId>
         <artifactId>rule-engine-client</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
     </dependency>
 ```
 然后编写如下代码进行测试：  
