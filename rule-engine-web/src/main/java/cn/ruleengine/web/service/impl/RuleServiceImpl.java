@@ -648,11 +648,10 @@ public class RuleServiceImpl implements RuleService {
             value.setType(VariableType.VARIABLE.getType());
             Variable variable = (Variable) cValue;
             value.setValue(String.valueOf(variable.getVariableId()));
-            value.setValueName(variable.getVariableName());
-            Value cVariable = this.engine.getEngineVariable().getVariable(variable.getVariableId());
-            if (cVariable instanceof Constant) {
-                Constant constant = (Constant) cVariable;
-                value.setVariableValue(String.valueOf(constant.getValue()));
+            RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(variable.getVariableId());
+            value.setValueName(engineVariable.getName());
+            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
+                value.setVariableValue(engineVariable.getValue());
             }
         }
         return value;
