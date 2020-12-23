@@ -58,17 +58,21 @@ public interface Strategy {
         if (!Objects.equals(collHeadCompareMap.size(), colls.size())) {
             throw new DecisionException("配置错误，左条件数量:{}，右值条件数量:{}", collHeadCompareMap.size(), colls.size());
         }
+        // 校验此行单元格条件是否成立
         for (int i = 0; i < colls.size(); i++) {
             Coll coll = colls.get(i);
             if (coll == null) {
+                // 单元格为空，无条件跳过
                 continue;
             }
             // 获取到表头比较器，与下面单元格比较
             CollHeadCompare collHeadCompare = collHeadCompareMap.get(i);
-            if (collHeadCompare.compare(coll.getRightValue())) {
-                return row.getAction();
+            if (!collHeadCompare.compare(coll.getRightValue())) {
+                // 单元格内条件只要有一个不成立，则比较失败
+                return null;
             }
         }
-        return null;
+        // 所有条件成立，返回结果
+        return row.getAction();
     }
 }
