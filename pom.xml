@@ -20,7 +20,7 @@
         <module>rule-engine-client</module>
     </modules>
 
-    <name>rule-com.engine</name>
+    <name>rule-engine</name>
 
     <description>业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑</description>
     <url>https://ruleengine.cn</url>
