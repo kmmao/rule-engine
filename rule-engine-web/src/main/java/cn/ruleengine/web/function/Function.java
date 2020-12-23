@@ -11,12 +11,12 @@ package cn.ruleengine.web.function;
 public class Function {
 
     /**
-     * 增加字符串字母转大写 小写 转拼音,集合排序 正序倒序 函数
+     * 增加字符串转拼音函数
      * <p>
      * 优化点
      * 函数调用缓存调用链路待完成（待完成）
      * <p>
-     * 函数返回值可以不确定，创建变量是指定 uncertain
+     * 函数返回值可以不确定，创建变量时指定 uncertain
      */
     public void init() {
 
