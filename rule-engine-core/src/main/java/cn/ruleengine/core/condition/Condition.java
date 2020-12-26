@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.core.condition;
 
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.exception.ConditionException;
@@ -75,7 +75,7 @@ public class Condition implements ConditionCompare {
      * @return 比较结果
      */
     @Override
-    public boolean compare(Input input, Configuration configuration) {
+    public boolean compare(Input input, RuleEngineConfiguration configuration) {
         log.debug("条件信息:{}", this);
         Compare compare = ConditionCompareFactory.getCompare(this.leftValue.getValueType());
         Object lValue = this.leftValue.getValue(input, configuration);

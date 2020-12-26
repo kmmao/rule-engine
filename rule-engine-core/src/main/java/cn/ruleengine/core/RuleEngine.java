@@ -16,20 +16,19 @@
 package cn.ruleengine.core;
 
 
-import cn.ruleengine.core.cache.FunctionCache;
 import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.monitor.RuleMonitorProxy;
 import cn.ruleengine.core.rule.Rule;
-import cn.ruleengine.core.rule.RuleListener;
+import cn.ruleengine.core.listener.RuleExecuteListener;
 import cn.ruleengine.core.value.Value;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
-import java.io.Closeable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,9 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2020/3/2
  * @since 1.0.0
  */
-@NoArgsConstructor
 @Slf4j
-public class DefaultEngine implements Engine, Closeable {
+public class RuleEngine implements Engine {
 
 
     /**
@@ -56,31 +54,26 @@ public class DefaultEngine implements Engine, Closeable {
      * 规则引擎运行所需的参数
      */
     @Setter
-    @Getter
-    private Configuration configuration = new Configuration();
+    private RuleEngineConfiguration configuration;
 
     /**
      * 可传入配置信息，包括规则监听器，规则变量...
      *
      * @param configuration 规则引擎运行所需配置参数
      */
-    public DefaultEngine(@NonNull Configuration configuration) {
+    public RuleEngine(@NonNull RuleEngineConfiguration configuration) {
         Objects.requireNonNull(configuration);
         this.configuration = configuration;
     }
 
+
     /**
-     * 获取规则引擎变量
+     * 从引擎中根据规则code查询一个规则
      *
-     * @return 规则引擎变量
+     * @param workspaceCode 工作空间code
+     * @param ruleCode      规则code
+     * @return Rule
      */
-    @Override
-    public EngineVariable getEngineVariable() {
-        return this.configuration.getEngineVariable();
-    }
-
-
-    @Override
     public Rule getRule(String workspaceCode, String ruleCode) {
         Objects.requireNonNull(workspaceCode);
         Objects.requireNonNull(ruleCode);
@@ -92,23 +85,13 @@ public class DefaultEngine implements Engine, Closeable {
     }
 
     /**
-     * 设置规则运行监听器
+     * 获取规则引擎运行所需的参数
      *
-     * @param ruleListener 规则监听器
+     * @return RuleEngineConfiguration
      */
-    public void setRuleListener(@NonNull RuleListener ruleListener) {
-        Objects.requireNonNull(ruleListener);
-        this.configuration.setRuleListener(ruleListener);
-    }
-
-    /**
-     * 设置函数缓存实现类
-     *
-     * @param functionCache 缓存实现类
-     */
-    public void setFunctionCache(@NonNull FunctionCache functionCache) {
-        Objects.requireNonNull(functionCache);
-        this.configuration.setFunctionCache(functionCache);
+    @Override
+    public RuleEngineConfiguration getConfiguration() {
+        return this.configuration;
     }
 
     /**
@@ -128,15 +111,15 @@ public class DefaultEngine implements Engine, Closeable {
             throw new EngineException("no rule:{}", ruleCode);
         }
         log.info("开始执行规则:{}", rule.getCode());
-        RuleListener listener = this.configuration.getRuleListener();
+        RuleExecuteListener listener = this.configuration.getRuleListener();
         listener.before(rule, input);
         try {
-            Value value = rule.execute(input, this.configuration);
+            Value action = rule.execute(input, this.configuration);
             DefaultOutPut outPut;
-            if (value == null) {
+            if (action == null) {
                 outPut = new DefaultOutPut(null, null);
             } else {
-                outPut = new DefaultOutPut(value.getValue(input, this.configuration), value.getValueType());
+                outPut = new DefaultOutPut(action.getValue(input, this.configuration), action.getValueType());
             }
             listener.after(rule, input, outPut);
             return outPut;
@@ -153,7 +136,7 @@ public class DefaultEngine implements Engine, Closeable {
      * @return true存在
      */
     @Override
-    public boolean isExistsRule(String workspaceCode, String ruleCode) {
+    public boolean isExists(String workspaceCode, String ruleCode) {
         if (workspaceCode == null || ruleCode == null) {
             return false;
         }
@@ -168,7 +151,6 @@ public class DefaultEngine implements Engine, Closeable {
      *
      * @param rule 规则配置信息
      */
-    @Override
     public synchronized void addRule(@NonNull Rule rule) {
         Objects.requireNonNull(rule);
         String workspaceCode = Objects.requireNonNull(rule.getWorkspaceCode());
@@ -189,7 +171,6 @@ public class DefaultEngine implements Engine, Closeable {
      *
      * @param rules 规则配置信息列表
      */
-    @Override
     public void addMultipleRule(@NonNull List<Rule> rules) {
         Objects.requireNonNull(rules);
         rules.forEach(this::addRule);
@@ -200,7 +181,6 @@ public class DefaultEngine implements Engine, Closeable {
      *
      * @param ruleCode 规则code
      */
-    @Override
     public void removeRule(String workspaceCode, @NonNull String ruleCode) {
         if (this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.get(workspaceCode).remove(ruleCode);
@@ -213,8 +193,7 @@ public class DefaultEngine implements Engine, Closeable {
     @Override
     public void close() {
         this.workspaceMap.clear();
-        this.configuration.getEngineVariable().close();
-        this.configuration.getFunctionCache().clear();
         log.info("The rules engine has been destroyed");
     }
+
 }

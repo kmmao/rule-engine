@@ -15,20 +15,21 @@
  */
 package cn.ruleengine.web.config;
 
+import cn.ruleengine.core.RuleEngineConfiguration;
+import cn.ruleengine.core.DecisionTableEngine;
+import cn.ruleengine.core.RuleEngine;
 import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
-import cn.ruleengine.core.DefaultEngine;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.OutPut;
 import cn.ruleengine.core.cache.DefaultFunctionCache;
 import cn.ruleengine.core.rule.Rule;
-import cn.ruleengine.core.rule.RuleListener;
+import cn.ruleengine.core.listener.RuleExecuteListener;
 import cn.ruleengine.web.service.RulePublishService;
 import cn.ruleengine.web.service.VariableResolveService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -54,26 +55,51 @@ public class EngineConfig {
     private RulePublishService rulePublishService;
 
     /**
-     * 默认的引擎
+     * 规则引擎配置
+     *
+     * @return RuleEngineConfiguration
+     */
+    @Bean(destroyMethod = "close")
+    public RuleEngineConfiguration ruleEngineConfiguration() {
+        RuleEngineConfiguration configuration = new RuleEngineConfiguration();
+        configuration.getEngineVariable().addMultipleVariable(this.variableResolveService.getAllVariable());
+        configuration.setRuleListener(this.ruleEngineRuleListener);
+        configuration.setFunctionCache(new DefaultFunctionCache(1000));
+        return configuration;
+    }
+
+    /**
+     * 规则引擎
      *
      * @return engine
      */
     @Primary
-    @Bean
-    public Engine defaultEngine() {
+    @Bean(destroyMethod = "close")
+    public Engine ruleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化规则引擎");
-        DefaultEngine defaultEngine = new DefaultEngine();
-        defaultEngine.addMultipleRule(this.rulePublishService.getAllPublishRule());
-        defaultEngine.getEngineVariable().addMultipleVariable(this.variableResolveService.getAllVariable());
-        defaultEngine.setRuleListener(this.ruleEngineRuleListener);
-        defaultEngine.setFunctionCache(new DefaultFunctionCache(1000));
+        RuleEngine ruleEngine = new RuleEngine(ruleEngineConfiguration);
+        ruleEngine.addMultipleRule(this.rulePublishService.getAllPublishRule());
         log.info("规则引擎初始化完毕");
-        return defaultEngine;
+        return ruleEngine;
+    }
+
+    /**
+     * 决策表引擎
+     *
+     * @return engine
+     */
+    @Bean(destroyMethod = "close")
+    public Engine decisionTableEngine(RuleEngineConfiguration ruleEngineConfiguration) {
+        log.info("开始初始化决策表引擎");
+        DecisionTableEngine ruleEngine = new DecisionTableEngine(ruleEngineConfiguration);
+        //ruleEngine.addMultipleDecisionTable(null);
+        log.info("决策表引擎初始化完毕");
+        return ruleEngine;
     }
 
     @Primary
-    @Configuration
-    public static class RuleEngineRuleListener implements RuleListener {
+    @Component
+    public static class RuleEngineRuleListener implements RuleExecuteListener {
 
         @Resource
         private RedissonClient redissonClient;

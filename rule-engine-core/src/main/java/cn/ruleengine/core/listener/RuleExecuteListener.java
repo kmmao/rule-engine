@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.core.rule;
+package cn.ruleengine.core.listener;
 
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.rule.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +29,9 @@ import org.slf4j.LoggerFactory;
  * @date 2020/8/3
  * @since 1.0.0
  */
-public interface RuleListener {
+public interface RuleExecuteListener {
 
-    Logger log = LoggerFactory.getLogger(RuleListener.class);
+    Logger log = LoggerFactory.getLogger(RuleExecuteListener.class);
 
     /**
      * 规则执行之前

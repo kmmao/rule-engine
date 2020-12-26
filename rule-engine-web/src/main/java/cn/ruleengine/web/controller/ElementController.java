@@ -77,7 +77,7 @@ public class ElementController {
     @PostMapping("list")
     @ApiOperation("元素列表")
     public PageResult<ListElementResponse> list(@RequestBody PageRequest<ListElementRequest> pageRequest) {
-        return elementService.list(pageRequest);
+        return this.elementService.list(pageRequest);
     }
 
     /**

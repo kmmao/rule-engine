@@ -2,6 +2,8 @@ package cn.ruleengine.web.vo.element;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -15,5 +17,5 @@ public class ListElementRequest {
     private String name;
     private String code;
 
-    private String valueType;
+    private List<String> valueType;
 }

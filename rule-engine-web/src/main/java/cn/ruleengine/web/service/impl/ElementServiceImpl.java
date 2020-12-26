@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DeletedEnum;
@@ -106,8 +107,8 @@ public class ElementServiceImpl implements ElementService {
             PageUtils.defaultOrder(orders, wrapper);
 
             ListElementRequest query = pageRequest.getQuery();
-            if (Validator.isNotEmpty(query.getValueType())) {
-                wrapper.lambda().eq(RuleEngineElement::getValueType, query.getValueType());
+            if (CollUtil.isNotEmpty(query.getValueType())) {
+                wrapper.lambda().in(RuleEngineElement::getValueType, query.getValueType());
             }
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineElement::getName, query.getName());

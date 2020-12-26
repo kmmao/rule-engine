@@ -16,12 +16,12 @@
 package cn.ruleengine.core.decisiontable;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.decisiontable.strategey.Strategy;
 import cn.ruleengine.core.decisiontable.strategey.StrategyFactory;
 import cn.ruleengine.core.exception.DecisionException;
-import cn.ruleengine.core.rule.JsonParse;
+import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -136,7 +136,7 @@ public class DecisionTable implements JsonParse {
      * @return 决策表执行结果
      */
     @Nullable
-    public List<Value> execute(@NonNull Input input, @NonNull Configuration configuration) {
+    public List<Value> execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         // 获取执行策略执行决策表
         Strategy strategy = StrategyFactory.getInstance(this.strategyType);
         // 计算表头值，获取到表头比较器，与下面单元格比较

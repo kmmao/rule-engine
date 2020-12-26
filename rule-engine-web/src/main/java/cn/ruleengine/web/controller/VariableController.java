@@ -109,7 +109,7 @@ public class VariableController {
     @PostMapping("list")
     @ApiOperation("变量列表")
     public PageResult<ListVariableResponse> list(@RequestBody PageRequest<ListVariableRequest> pageRequest) {
-        return variableService.list(pageRequest);
+        return this.variableService.list(pageRequest);
     }
 
     /**

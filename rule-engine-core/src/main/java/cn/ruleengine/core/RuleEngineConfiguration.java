@@ -16,10 +16,14 @@
 package cn.ruleengine.core;
 
 import cn.ruleengine.core.cache.DefaultFunctionCache;
-import cn.ruleengine.core.rule.DefaultRuleListener;
-import cn.ruleengine.core.rule.RuleListener;
+import cn.ruleengine.core.listener.DecisionTableExecuteListener;
+import cn.ruleengine.core.listener.DefaultDecisionTableExecuteListener;
+import cn.ruleengine.core.listener.DefaultRuleExecuteListener;
+import cn.ruleengine.core.listener.RuleExecuteListener;
 import cn.ruleengine.core.cache.FunctionCache;
 import org.springframework.lang.NonNull;
+
+import java.io.Closeable;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -29,12 +33,17 @@ import org.springframework.lang.NonNull;
  * @date 2020/8/14
  * @since 1.0.0
  */
-public class Configuration {
+public class RuleEngineConfiguration implements Closeable {
 
     /**
      * 规则执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
      */
-    private RuleListener ruleListener = new DefaultRuleListener();
+    private RuleExecuteListener ruleListener = new DefaultRuleExecuteListener();
+
+    /**
+     * 决策表执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
+     */
+    private DecisionTableExecuteListener decisionTableExecuteListener = new DefaultDecisionTableExecuteListener();
 
     /**
      * 规则函数缓存实现类
@@ -48,11 +57,11 @@ public class Configuration {
 
 
     @NonNull
-    public RuleListener getRuleListener() {
+    public RuleExecuteListener getRuleListener() {
         return ruleListener;
     }
 
-    public void setRuleListener(@NonNull RuleListener ruleListener) {
+    public void setRuleListener(@NonNull RuleExecuteListener ruleListener) {
         this.ruleListener = ruleListener;
     }
 
@@ -72,6 +81,21 @@ public class Configuration {
 
     public void setEngineVariable(@NonNull EngineVariable engineVariable) {
         this.engineVariable = engineVariable;
+    }
+
+    @NonNull
+    public DecisionTableExecuteListener getDecisionTableExecuteListener() {
+        return this.decisionTableExecuteListener;
+    }
+
+    public void setDecisionTableExecuteListener(@NonNull DecisionTableExecuteListener decisionTableExecuteListener) {
+        this.decisionTableExecuteListener = decisionTableExecuteListener;
+    }
+
+    @Override
+    public void close() {
+        this.engineVariable.close();
+        this.functionCache.clear();
     }
 
 }

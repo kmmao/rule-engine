@@ -2,6 +2,8 @@ package cn.ruleengine.web.vo.variable;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -13,5 +15,5 @@ import lombok.Data;
 @Data
 public class ListVariableRequest {
     private String name;
-    private String valueType;
+    private List<String> valueType;
 }

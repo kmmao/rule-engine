@@ -15,10 +15,11 @@
  */
 package cn.ruleengine.core;
 
-import cn.ruleengine.core.rule.Rule;
+
 import org.springframework.lang.NonNull;
 
-import java.util.List;
+import java.io.Closeable;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -28,63 +29,42 @@ import java.util.List;
  * @date 2020/2/29
  * @since 1.0.0
  */
-public interface Engine {
+public interface Engine extends Closeable {
+
+    /**
+     * 获取规则引擎运行所需的参数
+     *
+     * @return RuleEngineConfiguration
+     */
+    RuleEngineConfiguration getConfiguration();
 
     /**
      * 根据入参来执行引擎，并返回结果
      *
      * @param input         输入参数
      * @param workspaceCode 工作空间code
-     * @param ruleCode      规则Code
+     * @param code          规则/决策表Code
      * @return 规则引擎计算的结果
      */
-    OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String ruleCode);
+    OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String code);
 
-    /**
-     * 是否存在某规则
-     *
-     * @param workspaceCode 工作空间code
-     * @param ruleCode      规则code
-     * @return true存在
-     */
-    boolean isExistsRule(String workspaceCode, String ruleCode);
-
-    /**
-     * 添加一个规则
-     *
-     * @param rule 规则配置信息
-     */
-    void addRule(Rule rule);
-
-    /**
-     * 添加多个规则
-     *
-     * @param rules 多个规则配置信息
-     */
-    void addMultipleRule(List<Rule> rules);
-
-    /**
-     * 从规则引擎中删除一个规则
-     *
-     * @param workspaceCode 工作空间code
-     * @param ruleCode      规则code
-     */
-    void removeRule(String workspaceCode, @NonNull String ruleCode);
 
     /**
      * 获取规则引擎变量
      *
      * @return 规则引擎变量
      */
-    EngineVariable getEngineVariable();
+    default EngineVariable getEngineVariable() {
+        return this.getConfiguration().getEngineVariable();
+    }
 
     /**
-     * 获取规则引擎中的规则
+     * 是否存在某规则/决策表
      *
      * @param workspaceCode 工作空间code
-     * @param ruleCode      规则code
-     * @return rule
+     * @param code          规则/决策表code
+     * @return true存在
      */
-    Rule getRule(String workspaceCode, String ruleCode);
+    boolean isExists(String workspaceCode, String code);
 
 }

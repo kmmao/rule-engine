@@ -1,7 +1,7 @@
 package cn.ruleengine.core.condition;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class Precondition implements ConditionCompare{
      * @return 比较结果
      */
     @Override
-    public boolean compare(Input input, Configuration configuration) {
+    public boolean compare(Input input, RuleEngineConfiguration configuration) {
         if (CollUtil.isEmpty(this.precondition)) {
             return true;
         }

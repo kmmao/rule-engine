@@ -16,7 +16,7 @@
 package cn.ruleengine.web.listener;
 
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
-import cn.ruleengine.core.DefaultEngine;
+import cn.ruleengine.core.RuleEngine;
 import cn.ruleengine.web.listener.body.RuleMessageBody;
 import cn.ruleengine.web.service.RulePublishService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ import javax.annotation.Resource;
 public class RuleMessageListener {
 
     @Resource
-    private DefaultEngine defaultEngine;
+    private RuleEngine defaultEngine;
     @Resource
     private RulePublishService rulePublishService;
 

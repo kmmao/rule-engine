@@ -15,7 +15,8 @@
  */
 package cn.ruleengine.core.rule;
 
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.JsonParse;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.condition.Precondition;
 import cn.ruleengine.core.value.Value;
@@ -128,7 +129,7 @@ public class Rule implements JsonParse {
      * @return 规则返回值
      */
     @Nullable
-    public Value execute(@NonNull Input input, @NonNull Configuration configuration) {
+    public Value execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         long startTime = System.currentTimeMillis();
         try {
             log.info("开始计算前提条件");

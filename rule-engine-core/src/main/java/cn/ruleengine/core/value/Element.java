@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.core.value;
 
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import lombok.Getter;
 import lombok.ToString;
@@ -51,7 +51,7 @@ public class Element implements Value {
     }
 
     @Override
-    public Object getValue(Input input, Configuration configuration) {
+    public Object getValue(Input input, RuleEngineConfiguration configuration) {
         Object value = input.get(this.getElementCode());
         return dataConversion(value, this.getValueType());
     }

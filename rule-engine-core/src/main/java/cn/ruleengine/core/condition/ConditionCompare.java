@@ -1,6 +1,6 @@
 package cn.ruleengine.core.condition;
 
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 
 /**
@@ -20,6 +20,6 @@ public interface ConditionCompare {
      * @param configuration 引擎配置信息
      * @return 比较结果
      */
-    boolean compare(Input input, Configuration configuration);
+    boolean compare(Input input, RuleEngineConfiguration configuration);
 
 }

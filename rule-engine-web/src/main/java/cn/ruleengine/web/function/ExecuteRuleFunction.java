@@ -69,8 +69,8 @@ public class ExecuteRuleFunction {
         }
         String ruleCode = executeRule.getRuleCode();
         String workspaceCode = executeRule.getWorkspaceCode();
-        Engine engine = applicationContext.getBean(Engine.class);
-        if (!engine.isExistsRule(workspaceCode, ruleCode)) {
+        Engine engine = this.applicationContext.getBean(Engine.class);
+        if (!engine.isExists(workspaceCode, ruleCode)) {
             throw new FunctionException("规则在引擎中不存在：{}:{}", workspaceCode, ruleCode);
         }
         // 规则入参

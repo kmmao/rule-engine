@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.core.value;
 
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.FunctionExecutor;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.annotation.Executor;
@@ -139,7 +139,7 @@ public class Function implements Value {
     }
 
     @Override
-    public Object getValue(Input input, Configuration configuration) {
+    public Object getValue(Input input, RuleEngineConfiguration configuration) {
         //处理函数入参
         Map<String, Object> paramMap = new HashMap<>(this.param.size());
         for (Map.Entry<String, Value> entry : this.param.entrySet()) {

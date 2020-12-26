@@ -15,11 +15,9 @@
  */
 package cn.ruleengine.core.decisiontable.strategey;
 
-import cn.ruleengine.core.Configuration;
-import cn.ruleengine.core.decisiontable.Coll;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
-import cn.ruleengine.core.exception.DecisionException;
 import cn.ruleengine.core.value.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +52,7 @@ public class HighestPrioritySingleStrategy implements Strategy {
      * @return 命中的结果值
      */
     @Override
-    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree, Configuration configuration) {
+    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree, RuleEngineConfiguration configuration) {
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
             List<Row> rows = tree.getValue();
             // 一个row可以看做一个规则

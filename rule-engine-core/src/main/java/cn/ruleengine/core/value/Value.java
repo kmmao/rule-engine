@@ -17,7 +17,7 @@ package cn.ruleengine.core.value;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.NumberUtil;
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.exception.ValueException;
 import cn.ruleengine.core.condition.compare.BooleanCompare;
@@ -45,7 +45,7 @@ public interface Value {
      * @param configuration 规则配置信息
      * @return value
      */
-    Object getValue(Input input, Configuration configuration);
+    Object getValue(Input input, RuleEngineConfiguration configuration);
 
 
     /**

@@ -117,7 +117,7 @@ public class RuleOutServiceImpl implements RuleOutService {
         if (!accessKey.equals(isExistsRuleRequest.getAccessKeyId(), isExistsRuleRequest.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        return this.engine.isExistsRule(isExistsRuleRequest.getWorkspaceCode(), isExistsRuleRequest.getRuleCode());
+        return this.engine.isExists(isExistsRuleRequest.getWorkspaceCode(), isExistsRuleRequest.getRuleCode());
     }
 
 }

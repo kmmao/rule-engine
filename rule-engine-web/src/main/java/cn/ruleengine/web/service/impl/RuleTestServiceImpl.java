@@ -1,11 +1,13 @@
 package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.core.*;
+import cn.ruleengine.core.RuleEngine;
+import cn.ruleengine.core.Engine;
 import cn.ruleengine.web.service.RuleResolveService;
 import cn.ruleengine.web.service.RuleTestService;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.Rule;
-import cn.ruleengine.core.rule.RuleListener;
+import cn.ruleengine.core.listener.RuleExecuteListener;
 import cn.ruleengine.web.vo.rule.RunTestRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,13 +47,14 @@ public class RuleTestServiceImpl implements RuleTestService {
             input.put(param.getKey(), param.getValue());
         }
         log.info("初始化规则引擎");
-        DefaultEngine engine = new DefaultEngine();
+        RuleEngineConfiguration ruleEngineConfiguration = new RuleEngineConfiguration();
+        RuleEngine engine = new RuleEngine(ruleEngineConfiguration);
         Rule rule = ruleResolveService.getRuleById(runTestRequest.getId());
         engine.addRule(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.engine.getEngineVariable());
         // 配置监听器
-        engine.setRuleListener(new RuleListener() {
+        ruleEngineConfiguration.setRuleListener(new RuleExecuteListener() {
 
             @Override
             public void before(Rule rule, Input input) {

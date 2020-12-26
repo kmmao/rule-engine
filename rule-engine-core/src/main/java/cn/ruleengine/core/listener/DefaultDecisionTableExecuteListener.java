@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.core.rule;
+package cn.ruleengine.core.listener;
 
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.decisiontable.DecisionTable;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -26,21 +27,21 @@ import cn.ruleengine.core.OutPut;
  * @date 2020/8/16
  * @since 1.0.0
  */
-public class DefaultRuleListener implements RuleListener {
+public class DefaultDecisionTableExecuteListener implements DecisionTableExecuteListener {
 
     @Override
-    public void before(Rule rule, Input input) {
+    public void before(DecisionTable rule, Input input) {
 
     }
 
     @Override
-    public void onException(Rule rule, Input input, Exception exception) {
-        log.error("规则：{}执行异常：{}", rule.getCode(), exception);
+    public void onException(DecisionTable rule, Input input, Exception exception) {
+        log.error("决策表：{}执行异常：{}", rule.getCode(), exception);
     }
 
     @Override
-    public void after(Rule rule, Input input, OutPut outPut) {
-        log.info("规则：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getValueType());
+    public void after(DecisionTable rule, Input input, OutPut outPut) {
+        log.info("决策表：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getValueType());
     }
 
 }

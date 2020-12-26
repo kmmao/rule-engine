@@ -121,7 +121,7 @@ public class RuleServiceImpl implements RuleService {
             listRuleResponse.setId(m.getId());
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setIsPublish(this.engine.isExistsRule(m.getWorkspaceCode(), m.getCode()));
+            listRuleResponse.setIsPublish(this.engine.isExists(m.getWorkspaceCode(), m.getCode()));
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateTime(m.getCreateTime());
@@ -235,7 +235,7 @@ public class RuleServiceImpl implements RuleService {
             return false;
         }
         // 从引擎中移除规则
-        if (this.engine.isExistsRule(engineRule.getWorkspaceCode(), engineRule.getCode())) {
+        if (this.engine.isExists(engineRule.getWorkspaceCode(), engineRule.getCode())) {
             RuleMessageBody ruleMessageBody = new RuleMessageBody();
             ruleMessageBody.setType(RuleMessageBody.Type.REMOVE);
             ruleMessageBody.setWorkspaceId(engineRule.getWorkspaceId());

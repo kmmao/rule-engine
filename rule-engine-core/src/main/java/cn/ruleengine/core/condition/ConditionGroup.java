@@ -16,7 +16,7 @@
 package cn.ruleengine.core.condition;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class ConditionGroup implements ConditionCompare{
      * @return 返回true时，所有条件全部成立
      */
     @Override
-    public boolean compare(Input input, Configuration configuration) {
+    public boolean compare(Input input, RuleEngineConfiguration configuration) {
         if (CollUtil.isEmpty(this.conditions)) {
             log.info("条件为空，直接返回结果");
             return true;

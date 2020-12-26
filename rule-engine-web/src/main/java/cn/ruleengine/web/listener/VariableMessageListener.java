@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.web.listener;
 
-import cn.ruleengine.core.DefaultEngine;
+import cn.ruleengine.core.RuleEngine;
 import cn.ruleengine.core.EngineVariable;
 import cn.ruleengine.web.listener.body.VariableMessageBody;
 import cn.ruleengine.web.service.VariableResolveService;
@@ -43,7 +43,7 @@ import javax.annotation.Resource;
 public class VariableMessageListener {
 
     @Resource
-    private DefaultEngine defaultEngine;
+    private RuleEngine defaultEngine;
     @Resource
     private VariableResolveService variableResolveService;
 

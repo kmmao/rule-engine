@@ -13,45 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.core.decisiontable;
+package cn.ruleengine.core.listener;
 
-import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.condition.Operator;
-import cn.ruleengine.core.value.Value;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
+import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.rule.Rule;
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author dingqianwen
- * @date 2020/12/18
+ * @date 2020/8/16
  * @since 1.0.0
  */
-@Data
-@NoArgsConstructor
-public class CollHead {
+public class DefaultRuleExecuteListener implements RuleExecuteListener {
 
-    /**
-     * 条件左值
-     */
-    private Value leftValue;
+    @Override
+    public void before(Rule rule, Input input) {
 
-    /**
-     * 运算符
-     */
-    private Operator operator;
-
-    public CollHead(Value leftValue, Operator operator) {
-        this.leftValue = leftValue;
-        this.operator = operator;
     }
 
-    public Object getLeftValue(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
-        return this.leftValue.getValue(input, configuration);
+    @Override
+    public void onException(Rule rule, Input input, Exception exception) {
+        log.error("规则：{}执行异常：{}", rule.getCode(), exception);
+    }
+
+    @Override
+    public void after(Rule rule, Input input, OutPut outPut) {
+        log.info("规则：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getValueType());
     }
 
 }

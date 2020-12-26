@@ -1,6 +1,7 @@
 package cn.ruleengine.web.service.impl;
 
 
+import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.listener.body.VariableMessageBody;
@@ -159,8 +160,8 @@ public class VariableServiceImpl implements VariableService {
             PageUtils.defaultOrder(orders, wrapper);
 
             ListVariableRequest query = pageRequest.getQuery();
-            if (Validator.isNotEmpty(query.getValueType())) {
-                wrapper.lambda().eq(RuleEngineVariable::getValueType, query.getValueType());
+            if (CollUtil.isNotEmpty(query.getValueType())) {
+                wrapper.lambda().in(RuleEngineVariable::getValueType, query.getValueType());
             }
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineVariable::getName, query.getName());

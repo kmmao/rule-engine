@@ -27,7 +27,7 @@ import cn.ruleengine.web.vo.variable.ParamValue;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.Input;
@@ -482,7 +482,7 @@ public class ConditionServiceImpl implements ConditionService {
                 input.put(paramValue.getCode(), paramValue.getValue());
             }
         }
-        Configuration configuration = new Configuration();
+        RuleEngineConfiguration configuration = new RuleEngineConfiguration();
         configuration.setEngineVariable(this.engine.getEngineVariable());
         Condition condition = new Condition();
         condition.setId(ruleEngineCondition.getId());
