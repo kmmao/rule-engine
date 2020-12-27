@@ -70,7 +70,6 @@ public class ElementServiceImpl implements ElementService {
         engineElement.setWorkspaceId(workspace.getId());
         engineElement.setDescription(addConditionRequest.getDescription());
         engineElement.setValueType(addConditionRequest.getValueType());
-        engineElement.setDeleted(DeletedEnum.ENABLE.getStatus());
         return ruleEngineElementManager.save(engineElement);
     }
 

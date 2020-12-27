@@ -54,6 +54,7 @@ public class RuleEngineDecisionTable implements Serializable {
     private Date updateTime;
 
     @TableLogic
+    @TableField(fill = FieldFill.INSERT)
     private Integer deleted;
 
 

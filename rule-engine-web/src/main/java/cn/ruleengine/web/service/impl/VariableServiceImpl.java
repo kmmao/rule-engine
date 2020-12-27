@@ -84,7 +84,6 @@ public class VariableServiceImpl implements VariableService {
         engineVariable.setValueType(addConditionRequest.getValueType());
         engineVariable.setValue(addConditionRequest.getValue());
         engineVariable.setType(addConditionRequest.getType());
-        engineVariable.setDeleted(DeletedEnum.ENABLE.getStatus());
         Workspace workspace = Context.getCurrentWorkspace();
         engineVariable.setWorkspaceId(workspace.getId());
         this.ruleEngineVariableManager.save(engineVariable);

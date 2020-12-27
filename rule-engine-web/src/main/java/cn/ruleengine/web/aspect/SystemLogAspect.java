@@ -102,7 +102,6 @@ public class SystemLogAspect {
             //运行时间,就是执行用了多久执行完毕
             Long runningTime = endTime.getTime() - log.getCreateTime().getTime();
             log.setRunningTime(runningTime);
-            log.setDeleted(DeletedEnum.ENABLE.getStatus());
             log.setUpdateTime(endTime);
             //对日志持久化,日志使用@Async异步在高并发情况下仍然会出现问题,这里使用消息队列
             rabbitTemplate.convertAndSend(RabbitQueueConfig.SYSTEM_LOG_QUEUE, log);

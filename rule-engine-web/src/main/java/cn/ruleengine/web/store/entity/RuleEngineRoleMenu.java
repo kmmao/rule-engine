@@ -1,9 +1,8 @@
 package cn.ruleengine.web.store.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -41,6 +40,7 @@ public class RuleEngineRoleMenu implements Serializable {
     private Date updateTime;
 
     @TableLogic
+    @TableField(fill = FieldFill.INSERT)
     private Boolean deleted;
 
 

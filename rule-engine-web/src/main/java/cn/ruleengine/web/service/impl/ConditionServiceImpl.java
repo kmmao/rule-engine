@@ -95,7 +95,6 @@ public class ConditionServiceImpl implements ConditionService {
         // 条件配置信息
         this.configBeanCopyToCondition(condition, addConditionRequest.getConfig());
         condition.setWorkspaceId(workspace.getId());
-        condition.setDeleted(DeletedEnum.ENABLE.getStatus());
         return ruleEngineConditionManager.save(condition);
     }
 
