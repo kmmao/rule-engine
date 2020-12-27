@@ -64,7 +64,7 @@ public class RuleController {
     @PostMapping("list")
     @ApiOperation("规则列表")
     public PageResult<ListRuleResponse> list(@RequestBody PageRequest<ListRuleRequest> pageRequest) {
-        return ruleService.list(pageRequest);
+        return this.ruleService.list(pageRequest);
     }
 
     /**
