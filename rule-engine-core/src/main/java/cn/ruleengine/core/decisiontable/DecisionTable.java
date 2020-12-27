@@ -136,10 +136,31 @@ public class DecisionTable implements JsonParse {
      * @return 决策表执行结果
      */
     @Nullable
-    public List<Value> execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
+    public List<Object> execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         // 获取执行策略执行决策表
         Strategy strategy = StrategyFactory.getInstance(this.strategyType);
         // 计算表头值，获取到表头比较器，与下面单元格比较
+        Map<Integer, CollHeadCompare> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
+        List<Object> actions = strategy.compute(collHeadCompareMap, this.decisionTree, input, configuration);
+        if (CollUtil.isNotEmpty(actions)) {
+            return actions;
+        }
+        if (Objects.nonNull(this.defaultActionValue)) {
+            log.info("结果未命中，存在默认结果，返回默认结果");
+            return Collections.singletonList(this.defaultActionValue.getValue(input, configuration));
+        }
+        log.info("结果未命中，不存在默认结果，返回:null");
+        return null;
+    }
+
+    /**
+     * 计算表头值，获取到表头比较器，与下面单元格比较
+     *
+     * @param input         决策表输入参数
+     * @param configuration 引擎配置信息
+     * @return Map<Integer, CollHeadCompare>
+     */
+    private Map<Integer, CollHeadCompare> getCollHeadCompare(Input input, RuleEngineConfiguration configuration) {
         Map<Integer, CollHeadCompare> collHeadCompareMap = new LinkedHashMap<>();
         for (int index = 0; index < this.collHeads.size(); index++) {
             CollHead collHead = this.collHeads.get(index);
@@ -150,16 +171,7 @@ public class DecisionTable implements JsonParse {
             collHeadCompare.setValue(value);
             collHeadCompareMap.put(index, collHeadCompare);
         }
-        List<Value> actions = strategy.compute(collHeadCompareMap, this.decisionTree, configuration);
-        if (CollUtil.isNotEmpty(actions)) {
-            return actions;
-        }
-        if (Objects.nonNull(this.defaultActionValue)) {
-            log.info("结果未命中，存在默认结果，返回默认结果");
-            return Collections.singletonList(this.defaultActionValue);
-        }
-        log.info("结果未命中，不存在默认结果，返回:null");
-        return null;
+        return collHeadCompareMap;
     }
 
     @SneakyThrows

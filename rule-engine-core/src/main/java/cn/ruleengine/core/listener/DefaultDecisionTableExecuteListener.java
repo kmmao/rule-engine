@@ -41,7 +41,7 @@ public class DefaultDecisionTableExecuteListener implements DecisionTableExecute
 
     @Override
     public void after(DecisionTable rule, Input input, OutPut outPut) {
-        log.info("决策表：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getValueType());
+        log.info("决策表：{}执行完毕，返回结果值：{},类型：{}", rule.getCode(), outPut.getValue(), outPut.getClassType());
     }
 
 }

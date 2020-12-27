@@ -15,6 +15,7 @@
  */
 package cn.ruleengine.core;
 
+
 import cn.ruleengine.core.value.ValueType;
 
 /**
@@ -35,10 +36,17 @@ public interface OutPut {
     Object getValue();
 
     /**
-     * 规则输出值的数据类型，string，number，boolean，collection
+     * value 的数据类型，string，number，boolean，collection
      *
      * @return 数据类型
      */
     ValueType getValueType();
+
+    /**
+     * 规则输出值的classType
+     *
+     * @return 数据类型
+     */
+    String getClassType();
 
 }

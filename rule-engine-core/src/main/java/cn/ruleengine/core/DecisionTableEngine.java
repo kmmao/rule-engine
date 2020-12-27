@@ -15,13 +15,9 @@
  */
 package cn.ruleengine.core;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.listener.DecisionTableExecuteListener;
-import cn.ruleengine.core.value.Value;
-import cn.ruleengine.core.value.ValueType;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -30,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -113,14 +108,8 @@ public class DecisionTableEngine implements Engine {
         DecisionTableExecuteListener listener = this.configuration.getDecisionTableExecuteListener();
         listener.before(decisionTable, input);
         try {
-            List<Value> actions = decisionTable.execute(input, this.configuration);
-            DefaultOutPut outPut;
-            if (CollUtil.isEmpty(actions)) {
-                outPut = new DefaultOutPut(null, null);
-            } else {
-                List<Object> values = actions.stream().map(m -> m.getValue(input, this.configuration)).collect(Collectors.toList());
-                outPut = new DefaultOutPut(values, ValueType.COLLECTION);
-            }
+            List<Object> actions = decisionTable.execute(input, this.configuration);
+            DefaultOutPut outPut = new DefaultOutPut(actions);
             listener.after(decisionTable, input, outPut);
             return outPut;
         } catch (Exception exception) {

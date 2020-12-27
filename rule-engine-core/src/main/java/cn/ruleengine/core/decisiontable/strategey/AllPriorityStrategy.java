@@ -15,11 +15,13 @@
  */
 package cn.ruleengine.core.decisiontable.strategey;
 
+import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
 import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 
@@ -48,19 +50,19 @@ public class AllPriorityStrategy implements Strategy {
      *
      * @param collHeadCompareMap 表头比较器
      * @param decisionTree       决策树
+     * @param input              决策表输入参数
      * @param configuration      规则引擎配置信息
      * @return 命中的结果值
      */
     @Override
-    public List<Value> compute(Map<Integer, CollHeadCompare> collHeadCompareMap, Map<Integer, List<Row>> decisionTree, RuleEngineConfiguration configuration) {
-        List<Value> actions = new ArrayList<>();
+    public List<Object> compute(@NonNull Map<Integer, CollHeadCompare> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
+        List<Object> actions = new ArrayList<>();
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
-            List<Row> rows = tree.getValue();
             // 一个row可以看做一个规则
-            for (Row row : rows) {
+            for (Row row : tree.getValue()) {
                 Value action = this.getActionByRow(collHeadCompareMap, row, configuration);
                 Optional.ofNullable(action).ifPresent(p -> {
-                    actions.add(action);
+                    actions.add(action.getValue(input, configuration));
                 });
             }
         }

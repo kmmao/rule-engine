@@ -129,7 +129,7 @@ public class Rule implements JsonParse {
      * @return 规则返回值
      */
     @Nullable
-    public Value execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
+    public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         long startTime = System.currentTimeMillis();
         try {
             log.info("开始计算前提条件");
@@ -138,13 +138,13 @@ public class Rule implements JsonParse {
                 // 比较规则条件集
                 if (this.conditionSet.compare(input, configuration)) {
                     // 条件全部命中时候执行
-                    return this.getActionValue();
+                    return this.getActionValue().getValue(input, configuration);
                 }
             }
             Value defaultValue = this.getDefaultActionValue();
             if (Objects.nonNull(defaultValue)) {
                 log.info("结果未命中，存在默认结果，返回默认结果");
-                return defaultValue;
+                return defaultValue.getValue(input, configuration);
             }
             log.info("结果未命中，不存在默认结果，返回:null");
             return null;

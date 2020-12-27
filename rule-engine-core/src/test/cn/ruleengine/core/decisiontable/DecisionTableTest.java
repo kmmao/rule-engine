@@ -1,12 +1,12 @@
-package cn.ruleengine.core.decisiontable.cn.ruleengine.core;
+package cn.ruleengine.core.decisiontable;
 
-import cn.ruleengine.core.Configuration;
+import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.DefaultInput;
+import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.condition.Operator;
-import cn.ruleengine.core.decisiontable.*;
 import cn.ruleengine.core.value.Constant;
 import cn.ruleengine.core.value.Element;
-import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.value.ValueType;
 
 import java.util.List;
@@ -34,6 +34,8 @@ public class DecisionTableTest {
      */
     public static void main(String[] args) {
         DecisionTable decisionTable = new DecisionTable();
+        decisionTable.setCode("test");
+        decisionTable.setWorkspaceCode("test");
         decisionTable.setStrategyType(StrategyType.HIGHEST_PRIORITY_SINGLE);
         // 默认值
         decisionTable.setDefaultActionValue(new Constant("default", ValueType.STRING));
@@ -80,10 +82,16 @@ public class DecisionTableTest {
             row.setAction(new Constant("4", ValueType.STRING));
             decisionTable.addRow(row);
         }
+
+        DecisionTableEngine decisionTableEngine = new DecisionTableEngine(new RuleEngineConfiguration());
+        decisionTableEngine.addDecisionTable(decisionTable);
+
         DefaultInput input = new DefaultInput();
         input.put("test", "sd");
-        List<Value> actions = decisionTable.execute(input, new Configuration());
-        System.out.println(actions);
+        OutPut outPut = decisionTableEngine.execute(input, "test", "test");
+        System.out.println(outPut.getClassType());
+        System.out.println(outPut.getValueType());
+        System.out.println(outPut.getValue());
     }
 
 }

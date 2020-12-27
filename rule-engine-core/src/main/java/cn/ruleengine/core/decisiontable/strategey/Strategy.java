@@ -16,6 +16,7 @@
 package cn.ruleengine.core.decisiontable.strategey;
 
 
+import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.Coll;
 import cn.ruleengine.core.decisiontable.CollHeadCompare;
@@ -41,10 +42,11 @@ public interface Strategy {
      *
      * @param collHeadCompareMap 表头比较器
      * @param decisionTree       决策树
+     * @param input              决策表输入参数
      * @param configuration      规则引擎配置信息
      * @return 命中的结果值
      */
-    List<Value> compute(@NonNull Map<Integer, CollHeadCompare> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull RuleEngineConfiguration configuration);
+    List<Object> compute(@NonNull Map<Integer, CollHeadCompare> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration);
 
     /**
      * 获取row的执行结果

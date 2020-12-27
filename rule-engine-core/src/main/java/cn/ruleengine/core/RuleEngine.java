@@ -20,8 +20,6 @@ import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.monitor.RuleMonitorProxy;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.listener.RuleExecuteListener;
-import cn.ruleengine.core.value.Value;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -114,13 +112,8 @@ public class RuleEngine implements Engine {
         RuleExecuteListener listener = this.configuration.getRuleListener();
         listener.before(rule, input);
         try {
-            Value action = rule.execute(input, this.configuration);
-            DefaultOutPut outPut;
-            if (action == null) {
-                outPut = new DefaultOutPut(null, null);
-            } else {
-                outPut = new DefaultOutPut(action.getValue(input, this.configuration), action.getValueType());
-            }
+            Object action = rule.execute(input, this.configuration);
+            DefaultOutPut outPut = new DefaultOutPut(action);
             listener.after(rule, input, outPut);
             return outPut;
         } catch (Exception exception) {
