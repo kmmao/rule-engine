@@ -19,7 +19,6 @@ package cn.ruleengine.web.aspect;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.util.HttpServletUtils;
 import cn.ruleengine.web.annotation.RateLimit;
-import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;
 import cn.ruleengine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

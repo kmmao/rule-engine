@@ -12,10 +12,10 @@ import lombok.Getter;
  * @since 1.0.0
  */
 @AllArgsConstructor
-public enum RuleStatus {
+public enum DataStatus {
 
     /**
-     * 规则的各种状态
+     * 规则/决策表的各种状态
      */
     EDIT(0), WAIT_PUBLISH(1), PUBLISHED(2);
 

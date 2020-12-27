@@ -101,6 +101,8 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                     return true;
                 }
                 return this.permissionTypeProcess(userId, ruleEngineRule.getWorkspaceId(), type);
+            case DECISION_TABLE:
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + dataPermissionType);
         }

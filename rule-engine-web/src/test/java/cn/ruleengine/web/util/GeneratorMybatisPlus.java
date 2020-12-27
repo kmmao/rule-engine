@@ -33,7 +33,7 @@ public class GeneratorMybatisPlus {
                 .setPassword("")
                 .setDriverName("com.mysql.jdbc.Driver");
         generateByTables(false, dataSourceConfig, packageName,
-                "rule_engine_workspace");
+                "rule_engine_decision_table_publish");
 
     }
 

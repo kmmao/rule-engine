@@ -4,7 +4,7 @@ package cn.ruleengine.web.service.rule.impl;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.EnableEnum;
-import cn.ruleengine.web.enums.RuleStatus;
+import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.RuleMessageBody;
 import cn.ruleengine.web.listener.event.RuleEvent;
 import cn.ruleengine.web.service.ConditionService;
@@ -161,9 +161,9 @@ public class RuleServiceImpl implements RuleService {
             throw new ValidException("不存在规则:{}", updateRuleRequest.getId());
         }
         // 如果之前是待发布，则删除原有待发布数据
-        if (Objects.equals(ruleEngineRule.getStatus(), RuleStatus.WAIT_PUBLISH.getStatus())) {
+        if (Objects.equals(ruleEngineRule.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
             this.ruleEngineRulePublishManager.lambdaUpdate()
-                    .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
                     .eq(RuleEngineRulePublish::getRuleId, updateRuleRequest.getId())
                     .remove();
         }
@@ -173,7 +173,7 @@ public class RuleServiceImpl implements RuleService {
         this.saveConditionGroup(updateRuleRequest.getId(), updateRuleRequest.getConditionGroup());
         //  更新规则信息
         ruleEngineRule.setId(updateRuleRequest.getId());
-        ruleEngineRule.setStatus(RuleStatus.EDIT.getStatus());
+        ruleEngineRule.setStatus(DataStatus.EDIT.getStatus());
         // 保存结果
         Action action = updateRuleRequest.getAction();
         ruleEngineRule.setActionType(action.getType());
@@ -304,7 +304,7 @@ public class RuleServiceImpl implements RuleService {
         ruleEngineRule.setName(ruleDefinition.getName());
         ruleEngineRule.setCode(ruleDefinition.getCode());
         ruleEngineRule.setDescription(ruleDefinition.getDescription());
-        ruleEngineRule.setStatus(RuleStatus.EDIT.getStatus());
+        ruleEngineRule.setStatus(DataStatus.EDIT.getStatus());
         this.ruleEngineRuleManager.saveOrUpdate(ruleEngineRule);
         return ruleEngineRule.getId();
     }
@@ -361,7 +361,7 @@ public class RuleServiceImpl implements RuleService {
         this.saveConditionGroup(releaseRequest.getId(), releaseRequest.getConditionGroup());
         //  更新规则信息
         ruleEngineRule.setId(releaseRequest.getId());
-        ruleEngineRule.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
+        ruleEngineRule.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         // 保存结果
         Action action = releaseRequest.getAction();
         ruleEngineRule.setActionType(action.getType());
@@ -375,10 +375,10 @@ public class RuleServiceImpl implements RuleService {
         ruleEngineRule.setAbnormalAlarm(JSONObject.toJSONString(releaseRequest.getAbnormalAlarm()));
         this.ruleEngineRuleMapper.updateRuleById(ruleEngineRule);
         // 生成待发布规则
-        if (Objects.equals(originStatus, RuleStatus.WAIT_PUBLISH.getStatus())) {
+        if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
             // 删除原有待发布规则
             this.ruleEngineRulePublishManager.lambdaUpdate()
-                    .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
                     .eq(RuleEngineRulePublish::getRuleId, releaseRequest.getId())
                     .remove();
         }
@@ -388,7 +388,7 @@ public class RuleServiceImpl implements RuleService {
         rulePublish.setRuleId(rule.getId());
         rulePublish.setRuleCode(rule.getCode());
         rulePublish.setData(rule.toJson());
-        rulePublish.setStatus(RuleStatus.WAIT_PUBLISH.getStatus());
+        rulePublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         rulePublish.setWorkspaceId(rule.getWorkspaceId());
         rulePublish.setWorkspaceCode(rule.getWorkspaceCode());
         this.ruleEngineRulePublishManager.save(rulePublish);
@@ -410,27 +410,27 @@ public class RuleServiceImpl implements RuleService {
         if (ruleEngineRule == null) {
             throw new ValidException("不存在规则:{}", id);
         }
-        if (ruleEngineRule.getStatus().equals(RuleStatus.EDIT.getStatus())) {
+        if (ruleEngineRule.getStatus().equals(DataStatus.EDIT.getStatus())) {
             throw new ValidException("该规则不可执行:{}", id);
         }
         // 如果已经是发布规则了
-        if (ruleEngineRule.getStatus().equals(RuleStatus.PUBLISHED.getStatus())) {
+        if (ruleEngineRule.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
             return true;
         }
         // 修改为已发布
         this.ruleEngineRuleManager.lambdaUpdate()
-                .set(RuleEngineRule::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .set(RuleEngineRule::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRule::getId, ruleEngineRule.getId())
                 .update();
         // 删除原有的已发布规则数据
         this.ruleEngineRulePublishManager.lambdaUpdate()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId())
                 .remove();
         // 更新待发布为已发布
         this.ruleEngineRulePublishManager.lambdaUpdate()
-                .set(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                .set(RuleEngineRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, ruleEngineRule.getId())
                 .update();
         // 加载规则
@@ -531,7 +531,7 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public ViewRuleResponse getPublishRule(Integer id) {
         RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, id)
                 .one();
         if (engineRulePublish == null) {
@@ -555,11 +555,11 @@ public class RuleServiceImpl implements RuleService {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
         // 如果只有已发布
-        if (ruleEngineRule.getStatus().equals(RuleStatus.PUBLISHED.getStatus())) {
+        if (ruleEngineRule.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
             return this.getPublishRule(id);
         }
         RuleEngineRulePublish engineRulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
                 .eq(RuleEngineRulePublish::getRuleId, id)
                 .one();
         if (engineRulePublish == null) {

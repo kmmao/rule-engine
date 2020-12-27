@@ -1,7 +1,10 @@
 package cn.ruleengine.web.service.decisiontable.impl;
 
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
+import cn.ruleengine.web.store.manager.RuleEngineDecisionTableManager;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -13,4 +16,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DecisionTableServiceImpl implements DecisionTableService {
+
+    @Resource
+    private RuleEngineDecisionTableManager ruleEngineDecisionTableManager;
+
 }

@@ -1,7 +1,7 @@
 package cn.ruleengine.web.service.rule.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.ruleengine.web.enums.RuleStatus;
+import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.service.rule.RulePublishService;
 import cn.ruleengine.web.store.entity.RuleEngineRulePublish;
 import cn.ruleengine.web.store.manager.RuleEngineRulePublishManager;
@@ -39,7 +39,7 @@ public class RulePublishServiceImpl implements RulePublishService {
     @Override
     public Rule getPublishRule(String workspaceCode, String ruleCode) {
         RuleEngineRulePublish rulePublish = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRulePublish::getRuleCode, ruleCode)
                 .eq(RuleEngineRulePublish::getWorkspaceCode, workspaceCode)
                 .one();
@@ -54,7 +54,7 @@ public class RulePublishServiceImpl implements RulePublishService {
     @Override
     public List<Rule> getAllPublishRule() {
         List<RuleEngineRulePublish> rulePublishList = this.ruleEngineRulePublishManager.lambdaQuery()
-                .eq(RuleEngineRulePublish::getStatus, RuleStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .list();
         if (CollUtil.isEmpty(rulePublishList)) {
             return Collections.emptyList();
