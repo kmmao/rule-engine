@@ -215,7 +215,7 @@ public class RuleController {
      * @return true存在
      */
     @PostMapping("codeIsExists")
-    @ApiOperation("规则code是否存在")
+    @ApiOperation("规则Code是否存在")
     public PlainResult<Boolean> codeIsExists(@RequestBody @Valid Param<String> param) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(ruleService.ruleCodeIsExists(param.getParam()));

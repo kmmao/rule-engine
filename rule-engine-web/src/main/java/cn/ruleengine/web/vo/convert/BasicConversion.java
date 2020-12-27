@@ -3,6 +3,7 @@ package cn.ruleengine.web.vo.convert;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroupCondition;
+import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.element.GetElementResponse;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
 import cn.ruleengine.web.vo.rule.Action;
@@ -126,5 +127,13 @@ public interface BasicConversion {
      * @return ListWorkspaceResponse
      */
     ListWorkspaceResponse convert(RuleEngineWorkspace ruleEngineWorkspace);
+
+    /**
+     * RuleEngineDecisionTable to DecisionTableDefinition
+     *
+     * @param ruleEngineDecisionTable ruleEngineDecisionTable
+     * @return DecisionTableDefinition
+     */
+    DecisionTableDefinition convert(RuleEngineDecisionTable ruleEngineDecisionTable);
 
 }
