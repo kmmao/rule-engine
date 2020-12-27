@@ -1,7 +1,6 @@
 package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.vo.common.DataCacheMap;
-import cn.ruleengine.web.vo.rule.RuleCountInfo;
 import cn.ruleengine.core.value.Value;
 
 /**
@@ -42,10 +41,4 @@ public interface ValueResolve {
      */
     Value getValue(Integer type, String valueType, String value);
 
-    /**
-     * 获取规则/变量配置所需数据缓存
-     *
-     * @return CacheMap
-     */
-    DataCacheMap getCacheMap(RuleCountInfo ruleCountInfo);
 }

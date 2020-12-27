@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.web.controller;
+package cn.ruleengine.web.controller.rule;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
-import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.enums.DataPermissionType;
 import cn.ruleengine.web.enums.PermissionType;
-import cn.ruleengine.web.service.RuleService;
+import cn.ruleengine.web.service.rule.RuleService;
 import cn.ruleengine.web.vo.base.request.IdRequest;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.request.Param;

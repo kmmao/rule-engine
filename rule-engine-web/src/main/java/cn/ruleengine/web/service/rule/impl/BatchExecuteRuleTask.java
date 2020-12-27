@@ -1,4 +1,4 @@
-package cn.ruleengine.web.service.impl;
+package cn.ruleengine.web.service.rule.impl;
 
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleRequest;
 import cn.ruleengine.web.vo.rule.BatchExecuteRuleResponse;

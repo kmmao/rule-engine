@@ -1,4 +1,4 @@
-package cn.ruleengine.web.service;
+package cn.ruleengine.web.service.rule;
 
 import cn.ruleengine.web.store.entity.RuleEngineRule;
 import cn.ruleengine.core.rule.Rule;

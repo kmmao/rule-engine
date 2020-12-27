@@ -1,12 +1,10 @@
 package cn.ruleengine.web.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.vo.common.DataCacheMap;
-import cn.ruleengine.web.vo.rule.RuleCountInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +30,6 @@ public class ValueResolveImpl implements ValueResolve {
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
     private RuleEngineVariableManager ruleEngineVariableManager;
-    @Resource
-    private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private RuleEngineFunctionManager ruleEngineFunctionManager;
     @Resource
@@ -116,39 +112,4 @@ public class ValueResolveImpl implements ValueResolve {
     }
 
 
-    /**
-     * 获取规则/变量配置所需数据缓存
-     *
-     * @return CacheMap
-     */
-    @Override
-    public DataCacheMap getCacheMap(RuleCountInfo ruleCountInfo) {
-        DataCacheMap cacheMap = new DataCacheMap();
-        if (ruleCountInfo == null) {
-            return cacheMap;
-        }
-        if (CollUtil.isNotEmpty(ruleCountInfo.getElementIds())) {
-            List<RuleEngineElement> ruleEngineElements = ruleEngineElementManager.lambdaQuery()
-                    .in(RuleEngineElement::getId, ruleCountInfo.getElementIds())
-                    .list();
-            Map<Integer, RuleEngineElement> engineElementMap = ruleEngineElements.stream().collect(Collectors.toMap(RuleEngineElement::getId, Function.identity()));
-            cacheMap.setElementMap(engineElementMap);
-        }
-
-        if (CollUtil.isNotEmpty(ruleCountInfo.getVariableIds())) {
-            List<RuleEngineVariable> engineVariables = ruleEngineVariableManager.lambdaQuery()
-                    .in(RuleEngineVariable::getId, ruleCountInfo.getVariableIds())
-                    .list();
-            Map<Integer, RuleEngineVariable> engineVariableMap = engineVariables.stream().collect(Collectors.toMap(RuleEngineVariable::getId, Function.identity()));
-            cacheMap.setVariableMap(engineVariableMap);
-        }
-        if (CollUtil.isNotEmpty(ruleCountInfo.getConditionIds())) {
-            List<RuleEngineCondition> engineConditions = ruleEngineConditionManager.lambdaQuery()
-                    .in(RuleEngineCondition::getId, ruleCountInfo.getConditionIds())
-                    .list();
-            Map<Integer, RuleEngineCondition> conditionMap = engineConditions.stream().collect(Collectors.toMap(RuleEngineCondition::getId, Function.identity()));
-            cacheMap.setConditionMap(conditionMap);
-        }
-        return cacheMap;
-    }
 }

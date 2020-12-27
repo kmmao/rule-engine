@@ -1,4 +1,4 @@
-package cn.ruleengine.web.service;
+package cn.ruleengine.web.service.rule;
 
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageResult;

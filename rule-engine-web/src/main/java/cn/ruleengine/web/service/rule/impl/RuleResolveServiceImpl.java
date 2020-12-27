@@ -1,8 +1,8 @@
-package cn.ruleengine.web.service.impl;
+package cn.ruleengine.web.service.rule.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.web.enums.EnableEnum;
-import cn.ruleengine.web.service.RuleResolveService;
+import cn.ruleengine.web.service.rule.RuleResolveService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineConditionGroup;

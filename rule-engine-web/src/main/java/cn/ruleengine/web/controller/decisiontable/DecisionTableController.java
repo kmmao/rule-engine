@@ -1,8 +1,11 @@
-package cn.ruleengine.web.controller;
+package cn.ruleengine.web.controller.decisiontable;
 
+import cn.ruleengine.web.service.decisiontable.DecisionTableService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -16,5 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("ruleEngine/decisionTable")
 public class DecisionTableController {
+
+    @Resource
+    private DecisionTableService decisionTableService;
 
 }

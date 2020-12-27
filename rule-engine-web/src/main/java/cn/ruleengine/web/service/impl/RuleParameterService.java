@@ -8,7 +8,6 @@ import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.value.Variable;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.manager.RuleEngineElementManager;
-import cn.ruleengine.web.vo.rule.RuleCountInfo;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.ConditionGroup;
@@ -47,8 +46,6 @@ public class RuleParameterService {
      */
     public Set<Rule.Parameter> getParameters(Rule rule) {
         Set<Integer> elementIds = new HashSet<>();
-        RuleCountInfo countInfo = new RuleCountInfo();
-        countInfo.setRuleId(rule.getId());
         ConditionSet conditionSet = rule.getConditionSet();
         List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
         for (ConditionGroup conditionGroup : conditionGroups) {
