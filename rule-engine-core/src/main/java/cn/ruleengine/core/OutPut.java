@@ -36,7 +36,7 @@ public interface OutPut {
     Object getValue();
 
     /**
-     * value 的数据类型，string，number，boolean，collection
+     * value 的数据类型，STRING，NUMBER，BOOLEAN，COLLECTION
      *
      * @return 数据类型
      */
