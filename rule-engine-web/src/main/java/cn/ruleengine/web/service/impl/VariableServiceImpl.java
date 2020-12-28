@@ -317,19 +317,20 @@ public class VariableServiceImpl implements VariableService {
         }
         {
             Integer count = this.ruleEngineRuleManager.lambdaQuery()
-                    .and(a -> a.eq(RuleEngineRule::getActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getActionValue, id))
-                    .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getDefaultActionValue, id)).count();
+                    .and(a -> a.or(o -> o.eq(RuleEngineRule::getActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getActionValue, id))
+                            .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getDefaultActionValue, id)))
+                    .count();
             if (count != null && count > 0) {
                 throw new ValidException("有规则在引用此变量，无法删除");
             }
         }
         {
-            Integer count = ruleEngineConditionManager.lambdaQuery()
-                    .and(a ->
-                            a.eq(RuleEngineCondition::getLeftType, VariableType.VARIABLE.getType())
-                                    .eq(RuleEngineCondition::getLeftValue, id)
-                    ).or(o -> o.eq(RuleEngineCondition::getRightType, VariableType.VARIABLE.getType())
-                            .eq(RuleEngineCondition::getRightValue, id)).count();
+            Integer count = this.ruleEngineConditionManager.lambdaQuery()
+                    .and(a -> a.or(o -> o.eq(RuleEngineCondition::getLeftType, VariableType.VARIABLE.getType())
+                            .eq(RuleEngineCondition::getLeftValue, id))
+                            .or(o -> o.eq(RuleEngineCondition::getRightType, VariableType.VARIABLE.getType())
+                                    .eq(RuleEngineCondition::getRightValue, id)
+                            )).count();
             if (count != null && count > 0) {
                 throw new ValidException("有条件在引用此变量，无法删除");
             }

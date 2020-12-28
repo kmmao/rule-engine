@@ -181,19 +181,21 @@ public class ElementServiceImpl implements ElementService {
         }
         {
             Integer count = this.ruleEngineRuleManager.lambdaQuery()
-                    .and(a -> a.eq(RuleEngineRule::getActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getActionValue, id))
-                    .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getDefaultActionValue, id)).count();
+                    .and(a -> a.or(o -> o.eq(RuleEngineRule::getActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getActionValue, id))
+                            .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getDefaultActionValue, id))
+                    ).count();
             if (count != null && count > 0) {
                 throw new ValidException("有规则在引用此元素，无法删除");
             }
         }
         {
             Integer count = ruleEngineConditionManager.lambdaQuery()
-                    .and(a ->
-                            a.eq(RuleEngineCondition::getLeftType, VariableType.ELEMENT.getType())
-                                    .eq(RuleEngineCondition::getLeftValue, id)
-                    ).or(o -> o.eq(RuleEngineCondition::getRightType, VariableType.ELEMENT.getType())
-                            .eq(RuleEngineCondition::getRightValue, id)).count();
+                    .and(a -> a.or(o -> o.eq(RuleEngineCondition::getLeftType, VariableType.ELEMENT.getType())
+                            .eq(RuleEngineCondition::getLeftValue, id))
+
+                            .or(o -> o.eq(RuleEngineCondition::getRightType, VariableType.ELEMENT.getType())
+                                    .eq(RuleEngineCondition::getRightValue, id)
+                            )).count();
             if (count != null && count > 0) {
                 throw new ValidException("有条件在引用此元素，无法删除");
             }
