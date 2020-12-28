@@ -48,4 +48,12 @@ public interface DecisionTableService {
      */
     DecisionTableDefinition getDecisionTableDefinition(Integer id);
 
+    /**
+     * 删除决策表
+     *
+     * @param id 决策表id
+     * @return true
+     */
+    Boolean delete(Integer id);
+
 }

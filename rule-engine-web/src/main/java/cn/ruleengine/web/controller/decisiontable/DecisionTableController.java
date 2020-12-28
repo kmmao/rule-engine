@@ -97,4 +97,19 @@ public class DecisionTableController {
         return plainResult;
     }
 
+    /**
+     * 删除决策表
+     *
+     * @param idRequest 决策表id
+     * @return true
+     */
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.DELETE)
+    @PostMapping("delete")
+    @ApiOperation("删除决策表")
+    public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(this.decisionTableService.delete(idRequest.getId()));
+        return plainResult;
+    }
+
 }

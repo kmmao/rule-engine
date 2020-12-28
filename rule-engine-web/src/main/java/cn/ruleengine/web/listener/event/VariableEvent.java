@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationEvent;
  */
 public class VariableEvent extends ApplicationEvent {
 
+    private static final long serialVersionUID = 7277630131038817515L;
+
     @Getter
     private VariableMessageBody variableMessageBody;
 

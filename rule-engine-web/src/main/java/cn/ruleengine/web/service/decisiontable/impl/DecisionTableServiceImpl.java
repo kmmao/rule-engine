@@ -5,9 +5,15 @@ import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
+import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
+import cn.ruleengine.web.listener.body.RuleMessageBody;
+import cn.ruleengine.web.listener.event.DecisionTableEvent;
+import cn.ruleengine.web.listener.event.RuleEvent;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTable;
+import cn.ruleengine.web.store.entity.RuleEngineDecisionTablePublish;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTableManager;
+import cn.ruleengine.web.store.manager.RuleEngineDecisionTablePublishManager;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
@@ -19,7 +25,9 @@ import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,13 +40,18 @@ import java.util.List;
  * @create 2020/12/27
  * @since 1.0.0
  */
+@Transactional(rollbackFor = Exception.class)
 @Service
 public class DecisionTableServiceImpl implements DecisionTableService {
 
     @Resource
     private RuleEngineDecisionTableManager ruleEngineDecisionTableManager;
     @Resource
+    private RuleEngineDecisionTablePublishManager ruleEngineDecisionTablePublishManager;
+    @Resource
     private DecisionTableEngine decisionTableEngine;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     /**
      * 决策表列表
@@ -60,18 +73,18 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineDecisionTable::getName, query.getName());
             }
-            if (Validator.isNotEmpty(query.getCode())) {
-                wrapper.lambda().like(RuleEngineDecisionTable::getCode, query.getCode());
-            }
             if (Validator.isNotEmpty(query.getStatus())) {
                 wrapper.lambda().eq(RuleEngineDecisionTable::getStatus, query.getStatus());
+            }
+            if (Validator.isNotEmpty(query.getCode())) {
+                wrapper.lambda().like(RuleEngineDecisionTable::getCode, query.getCode());
             }
             return wrapper;
         }, m -> {
             ListDecisionTableResponse decisionTableResponse = new ListDecisionTableResponse();
             decisionTableResponse.setId(m.getId());
-            decisionTableResponse.setName(m.getName());
             decisionTableResponse.setCode(m.getCode());
+            decisionTableResponse.setName(m.getName());
             decisionTableResponse.setIsPublish(this.decisionTableEngine.isExists(m.getWorkspaceCode(), m.getCode()));
             decisionTableResponse.setCreateUserName(m.getCreateUserName());
             decisionTableResponse.setStatus(m.getStatus());
@@ -147,6 +160,31 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             return null;
         }
         return BasicConversion.INSTANCE.convert(ruleEngineDecisionTable);
+    }
+
+    /**
+     * 删除决策表
+     *
+     * @param id 决策表id
+     * @return true
+     */
+    @Override
+    public Boolean delete(Integer id) {
+        RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(id);
+        if (ruleEngineDecisionTable == null) {
+            return false;
+        }
+        // 从引擎中移除规则
+        if (this.decisionTableEngine.isExists(ruleEngineDecisionTable.getWorkspaceCode(), ruleEngineDecisionTable.getCode())) {
+            DecisionTableMessageBody decisionTableMessageBody = new DecisionTableMessageBody();
+            decisionTableMessageBody.setType(DecisionTableMessageBody.Type.REMOVE);
+            decisionTableMessageBody.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
+            decisionTableMessageBody.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
+            decisionTableMessageBody.setDecisionTableCode(ruleEngineDecisionTable.getCode());
+            this.eventPublisher.publishEvent(new DecisionTableEvent(decisionTableMessageBody));
+        }
+        this.ruleEngineDecisionTablePublishManager.lambdaUpdate().eq(RuleEngineDecisionTablePublish::getDecisionTableId, id).remove();
+        return this.ruleEngineDecisionTableManager.removeById(id);
     }
 
 }

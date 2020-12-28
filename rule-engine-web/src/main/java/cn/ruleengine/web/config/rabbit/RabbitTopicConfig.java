@@ -21,11 +21,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitTopicConfig {
 
-    public static final String RULE_TOPIC = "boot_engine_rule_topic";
+    private static final String RULE_TOPIC = "boot_engine_rule_topic";
     public static final String RULE_EXCHANGE = "boot_engine_rule_exchange";
     final public static String RULE_TOPIC_ROUTING_KEY = "boot_engine_rule_topic_routingKey";
 
-    public static final String VAR_TOPIC = "boot_engine_var_topic";
+    private static final String DECISION_TABLE_TOPIC = "boot_engine_decision_table_topic";
+    public static final String DECISION_TABLE_EXCHANGE = "boot_engine_decision_table_exchange";
+    final public static String DECISION_TABLE_TOPIC_ROUTING_KEY = "boot_engine_decision_table_topic_routingKey";
+
+    private static final String VAR_TOPIC = "boot_engine_var_topic";
     public static final String VAR_EXCHANGE = "boot_engine_var_exchange";
     final public static String VAR_TOPIC_ROUTING_KEY = "boot_engine_var_topic_routingKey";
 
@@ -34,16 +38,28 @@ public class RabbitTopicConfig {
     public TopicExchange ruleExchange() {
         return new TopicExchange(RULE_EXCHANGE);
     }
-
     @Bean
     public Queue ruleQueue() {
         return new Queue(RULE_TOPIC);
     }
-
     @Bean
     public Binding ruleBindingExchangeMessage(@Qualifier("ruleQueue") Queue ruleQueue,
                                               @Qualifier("ruleExchange") TopicExchange ruleExchange) {
         return BindingBuilder.bind(ruleQueue).to(ruleExchange).with(RULE_TOPIC_ROUTING_KEY);
+    }
+
+    @Bean
+    public TopicExchange decisionTableExchange() {
+        return new TopicExchange(DECISION_TABLE_EXCHANGE);
+    }
+    @Bean
+    public Queue decisionTableQueue() {
+        return new Queue(DECISION_TABLE_TOPIC);
+    }
+    @Bean
+    public Binding decisionTableBindingExchangeMessage(@Qualifier("decisionTableQueue") Queue decisionTableQueue,
+                                                       @Qualifier("decisionTableExchange") TopicExchange decisionTableExchange) {
+        return BindingBuilder.bind(decisionTableQueue).to(decisionTableExchange).with(DECISION_TABLE_TOPIC_ROUTING_KEY);
     }
 
 
@@ -51,12 +67,10 @@ public class RabbitTopicConfig {
     public TopicExchange varExchange() {
         return new TopicExchange(VAR_EXCHANGE);
     }
-
     @Bean
     public Queue varQueue() {
         return new Queue(VAR_TOPIC);
     }
-
     @Bean
     public Binding varBindingExchangeMessage(@Qualifier("varQueue") Queue varQueue,
                                              @Qualifier("varExchange") TopicExchange varExchange) {
