@@ -1,6 +1,6 @@
 package cn.ruleengine.client;
 
-import cn.ruleengine.client.fegin.RuleInterface;
+import cn.ruleengine.client.fegin.SimpleRuleInterface;
 import cn.ruleengine.client.result.BatchOutPut;
 import cn.ruleengine.client.result.OutPut;
 import feign.Feign;
@@ -11,7 +11,6 @@ import feign.jackson.JacksonEncoder;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -34,7 +33,7 @@ public class AppTest {
                     .decoder(new JacksonDecoder())
                     .options(new Request.Options(6000, 3500))
                     .retryer(new Retryer.Default(5000, 5000, 3))
-                    .target(RuleInterface.class, ruleEngineProperties.getUrl()));
+                    .target(SimpleRuleInterface.class, ruleEngineProperties.getUrl()));
             this.setRuleEngineProperties(ruleEngineProperties);
         }
     };

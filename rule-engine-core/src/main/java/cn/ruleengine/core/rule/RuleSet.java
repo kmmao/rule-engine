@@ -18,6 +18,8 @@ package cn.ruleengine.core.rule;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.RuleEngineConfiguration;
+import cn.ruleengine.core.rule.strategy.RuleSetStrategy;
+import cn.ruleengine.core.rule.strategy.RuleSetStrategyFactory;
 import lombok.Data;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -50,10 +52,18 @@ public class RuleSet implements JsonParse {
     /**
      * 默认匹配所有的规则结果
      */
-    private StrategyType strategyType = StrategyType.ALL_RULE;
+    private RuleSetStrategyType strategyType = RuleSetStrategyType.ALL_RULE;
+
+    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
+
+    /**
+     * 是否开启监控
+     */
+    private boolean enableMonitor = false;
 
     @Nullable
     public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
+        RuleSetStrategy ruleSetStrategy = RuleSetStrategyFactory.getInstance(this.strategyType);
         return null;
     }
 

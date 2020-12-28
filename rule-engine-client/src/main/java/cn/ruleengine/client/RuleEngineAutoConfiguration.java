@@ -15,7 +15,7 @@
  */
 package cn.ruleengine.client;
 
-import cn.ruleengine.client.fegin.RuleInterface;
+import cn.ruleengine.client.fegin.SimpleRuleInterface;
 import feign.Feign;
 import feign.Request;
 import feign.Retryer;
@@ -47,7 +47,7 @@ public class RuleEngineAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RuleInterface ruleInterface() {
+    public SimpleRuleInterface ruleInterface() {
         String url = this.ruleEngineProperties.getUrl();
         RuleEngineProperties.FeignConfig feignConfig = ruleEngineProperties.getFeignConfig();
         RuleEngineProperties.FeignConfig.Request request = feignConfig.getRequest();
@@ -57,7 +57,7 @@ public class RuleEngineAutoConfiguration {
                 .decoder(new JacksonDecoder())
                 .options(new Request.Options(request.getConnectTimeoutMillis(), request.getReadTimeoutMillis()))
                 .retryer(new Retryer.Default(retryer.getPeriod(), retryer.getMaxPeriod(), retryer.getMaxAttempts()))
-                .target(RuleInterface.class, url);
+                .target(SimpleRuleInterface.class, url);
     }
 
 }

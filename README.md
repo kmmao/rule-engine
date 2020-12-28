@@ -28,7 +28,7 @@
 ### 规则如何调用
 规则通过在 http://ruleengine.cn 配置完成后，就可以调用接口来执行引擎中的规则了  
 ```http
-POST http://ruleserver.cn/ruleEngine/execute
+POST http://ruleserver.cn/ruleEngine/simpleRule/execute
 Content-Type: application/json
 
 {

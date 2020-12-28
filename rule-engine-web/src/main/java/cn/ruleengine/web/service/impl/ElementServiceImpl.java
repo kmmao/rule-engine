@@ -5,14 +5,8 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.service.ElementService;
-import cn.ruleengine.web.store.entity.RuleEngineCondition;
-import cn.ruleengine.web.store.entity.RuleEngineElement;
-import cn.ruleengine.web.store.entity.RuleEngineFunctionValue;
-import cn.ruleengine.web.store.entity.RuleEngineRule;
-import cn.ruleengine.web.store.manager.RuleEngineConditionManager;
-import cn.ruleengine.web.store.manager.RuleEngineElementManager;
-import cn.ruleengine.web.store.manager.RuleEngineFunctionValueManager;
-import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
+import cn.ruleengine.web.store.entity.*;
+import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
@@ -48,6 +42,8 @@ public class ElementServiceImpl implements ElementService {
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private RuleEngineSimpleRuleManager ruleEngineSimpleRuleManager;
 
     /**
      * 添加元素
@@ -180,10 +176,13 @@ public class ElementServiceImpl implements ElementService {
             }
         }
         {
-            Integer count = this.ruleEngineRuleManager.lambdaQuery()
-                    .and(a -> a.or(o -> o.eq(RuleEngineRule::getActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getActionValue, id))
-                            .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getDefaultActionValue, id))
-                    ).count();
+            Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getActionValue, id).count();
+            if (count != null && count > 0) {
+                throw new ValidException("有规则在引用此元素，无法删除");
+            }
+        }
+        {
+            Integer count = this.ruleEngineSimpleRuleManager.lambdaQuery().eq(RuleEngineSimpleRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineSimpleRule::getDefaultActionValue, id).count();
             if (count != null && count > 0) {
                 throw new ValidException("有规则在引用此元素，无法删除");
             }

@@ -34,7 +34,7 @@ import java.util.*;
  * @since 1.0.0
  */
 @Slf4j
-public class HighestPrioritySingleStrategy implements Strategy {
+public class HighestPrioritySingleStrategy implements DecisionTableStrategy {
 
     private static HighestPrioritySingleStrategy highestPrioritySingleStrategy = new HighestPrioritySingleStrategy();
 

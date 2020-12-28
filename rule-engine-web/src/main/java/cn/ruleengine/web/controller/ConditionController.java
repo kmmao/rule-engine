@@ -16,9 +16,9 @@
 package cn.ruleengine.web.controller;
 
 
+import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
-import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.enums.DataPermissionType;
 import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.service.ConditionService;
@@ -28,7 +28,6 @@ import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.condition.*;
-import cn.ruleengine.core.rule.Rule;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -138,8 +137,8 @@ public class ConditionController {
     @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("getParameter")
     @ApiOperation("根据id获取条件中的元素")
-    public PlainResult<Set<Rule.Parameter>> getParameter(@RequestBody @Valid IdRequest idRequest) {
-        PlainResult<Set<Rule.Parameter>> plainResult = new PlainResult<>();
+    public PlainResult<Set<Parameter>> getParameter(@RequestBody @Valid IdRequest idRequest) {
+        PlainResult<Set<Parameter>> plainResult = new PlainResult<>();
         plainResult.setData(this.conditionService.getParameter(idRequest.getId()));
         return plainResult;
     }

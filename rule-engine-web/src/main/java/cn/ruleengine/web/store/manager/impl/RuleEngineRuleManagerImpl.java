@@ -1,9 +1,8 @@
 package cn.ruleengine.web.store.manager.impl;
 
-
 import cn.ruleengine.web.store.entity.RuleEngineRule;
-import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
+import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author dqw
- * @since 2020-07-15
+ * @since 2020-12-29
  */
 @Service
 public class RuleEngineRuleManagerImpl extends ServiceImpl<RuleEngineRuleMapper, RuleEngineRule> implements RuleEngineRuleManager {

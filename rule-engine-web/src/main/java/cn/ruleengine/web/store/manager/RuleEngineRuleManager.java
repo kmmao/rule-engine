@@ -1,6 +1,5 @@
 package cn.ruleengine.web.store.manager;
 
-
 import cn.ruleengine.web.store.entity.RuleEngineRule;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,7 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author dqw
- * @since 2020-07-15
+ * @since 2020-12-29
  */
 public interface RuleEngineRuleManager extends IService<RuleEngineRule> {
 

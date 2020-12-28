@@ -12,5 +12,5 @@ public enum DataPermissionType {
     /**
      * 数据类型
      */
-    ELEMENT, VARIABLE, FUNCTION, CONDITION, RULE, DECISION_TABLE;
+    ELEMENT, VARIABLE, FUNCTION, CONDITION, SIMPLE_RULE, DECISION_TABLE;
 }

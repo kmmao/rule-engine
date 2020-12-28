@@ -1,13 +1,13 @@
 package cn.ruleengine.web.service;
 
 
+import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.condition.*;
-import cn.ruleengine.core.rule.Rule;
 
 import java.util.Collection;
 import java.util.Map;
@@ -111,7 +111,7 @@ public interface ConditionService {
      * @param id 条件id
      * @return list
      */
-    Set<Rule.Parameter> getParameter(Integer id);
+    Set<Parameter> getParameter(Integer id);
 
     /**
      * 测试运行条件

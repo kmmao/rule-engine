@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import javax.annotation.Resource;
 
 import cn.ruleengine.client.exception.ValidException;
-import cn.ruleengine.client.fegin.RuleInterface;
+import cn.ruleengine.client.fegin.SimpleRuleInterface;
 import cn.ruleengine.client.model.RuleModel;
 import cn.ruleengine.client.param.BatchParam;
 import cn.ruleengine.client.param.ExecuteParam;
@@ -58,7 +58,7 @@ public class RuleEngineClient {
     @Resource
     private RuleEngineProperties ruleEngineProperties;
     @Resource
-    private RuleInterface ruleInterface;
+    private SimpleRuleInterface ruleInterface;
 
     public RuleEngineClient() {
 

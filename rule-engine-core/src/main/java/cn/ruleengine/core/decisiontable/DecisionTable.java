@@ -18,8 +18,8 @@ package cn.ruleengine.core.decisiontable;
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.decisiontable.strategey.Strategy;
-import cn.ruleengine.core.decisiontable.strategey.StrategyFactory;
+import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategy;
+import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategyFactory;
 import cn.ruleengine.core.exception.DecisionException;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.value.Value;
@@ -74,7 +74,7 @@ public class DecisionTable implements JsonParse {
      * <p>
      * 默认：返回命中的最高优先级所有结果
      */
-    private StrategyType strategyType = StrategyType.HIGHEST_PRIORITY_ALL;
+    private DecisionTableStrategyType strategyType = DecisionTableStrategyType.HIGHEST_PRIORITY_ALL;
 
     /**
      * coll头
@@ -138,7 +138,7 @@ public class DecisionTable implements JsonParse {
     @Nullable
     public List<Object> execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         // 获取执行策略执行决策表
-        Strategy strategy = StrategyFactory.getInstance(this.strategyType);
+        DecisionTableStrategy strategy = DecisionTableStrategyFactory.getInstance(this.strategyType);
         // 计算表头值，获取到表头比较器，与下面单元格比较
         Map<Integer, CollHeadCompare> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
         List<Object> actions = strategy.compute(collHeadCompareMap, this.decisionTree, input, configuration);

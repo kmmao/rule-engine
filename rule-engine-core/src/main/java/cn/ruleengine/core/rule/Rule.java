@@ -67,12 +67,6 @@ public class Rule implements JsonParse {
      */
     private String workspaceCode;
     /**
-     * 前提条件
-     * <p>
-     * 如果前提条件不满足，则直接返回默认结果
-     */
-    private Precondition precondition = new Precondition();
-    /**
      * 当条件全部满足时候返回此规则结果
      */
     private ConditionSet conditionSet = new ConditionSet();
@@ -80,46 +74,6 @@ public class Rule implements JsonParse {
      * 返回结果
      */
     private Value actionValue;
-    /**
-     * 规则默认值
-     */
-    private Value defaultActionValue;
-    /**
-     * 是否开启监控
-     */
-    private boolean enableMonitor = false;
-
-    /**
-     * 规则运行发生异常，邮件接收人
-     */
-    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
-
-    @Data
-    public static class AbnormalAlarm {
-        /**
-         * 是否启用
-         */
-        private Boolean enable = false;
-        /**
-         * 邮件接收人
-         */
-        private String[] email;
-
-        /**
-         * 规则执行超时阈值，默认3秒
-         */
-        private long timeOutThreshold = 3000;
-
-    }
-
-    @Data
-    public static class Parameter {
-
-        private String name;
-        private String code;
-        private String valueType;
-
-    }
 
     /**
      * 执行规则
@@ -130,31 +84,12 @@ public class Rule implements JsonParse {
      */
     @Nullable
     public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
-        long startTime = System.currentTimeMillis();
-        try {
-            log.info("开始计算前提条件");
-            if (this.precondition.compare(input, configuration)) {
-                log.info("前提条件成立,开始计算条件集");
-                // 比较规则条件集
-                if (this.conditionSet.compare(input, configuration)) {
-                    // 条件全部命中时候执行
-                    return this.getActionValue().getValue(input, configuration);
-                }
-            }
-            Value defaultValue = this.getDefaultActionValue();
-            if (Objects.nonNull(defaultValue)) {
-                log.info("结果未命中，存在默认结果，返回默认结果");
-                return defaultValue.getValue(input, configuration);
-            }
-            log.info("结果未命中，不存在默认结果，返回:null");
-            return null;
-        } finally {
-            long cost = System.currentTimeMillis() - startTime;
-            log.info("引擎计算耗时:{}ms", cost);
-            if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
-                log.warn("警告：规则执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
-            }
+        // 比较规则条件集
+        if (this.conditionSet.compare(input, configuration)) {
+            // 条件全部命中时候执行
+            return this.getActionValue().getValue(input, configuration);
         }
+        return null;
     }
 
     /**
@@ -180,9 +115,6 @@ public class Rule implements JsonParse {
         this.setWorkspaceCode(rule.getWorkspaceCode());
         this.setConditionSet(rule.getConditionSet());
         this.setActionValue(rule.getActionValue());
-        this.setDefaultActionValue(rule.getDefaultActionValue());
-        this.setAbnormalAlarm(rule.getAbnormalAlarm());
-        this.setEnableMonitor(rule.isEnableMonitor());
     }
 
 

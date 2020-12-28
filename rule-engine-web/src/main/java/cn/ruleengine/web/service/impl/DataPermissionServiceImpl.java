@@ -7,14 +7,8 @@ import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.service.DataPermissionService;
 import cn.ruleengine.web.service.WorkspaceService;
-import cn.ruleengine.web.store.entity.RuleEngineCondition;
-import cn.ruleengine.web.store.entity.RuleEngineElement;
-import cn.ruleengine.web.store.entity.RuleEngineRule;
-import cn.ruleengine.web.store.entity.RuleEngineVariable;
-import cn.ruleengine.web.store.manager.RuleEngineConditionManager;
-import cn.ruleengine.web.store.manager.RuleEngineElementManager;
-import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
-import cn.ruleengine.web.store.manager.RuleEngineVariableManager;
+import cn.ruleengine.web.store.entity.*;
+import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.vo.user.UserData;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +35,8 @@ public class DataPermissionServiceImpl implements DataPermissionService {
     private RuleEngineVariableManager ruleEngineVariableManager;
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private RuleEngineSimpleRuleManager ruleEngineSimpleRuleManager;
     @Resource
     private WorkspaceService workspaceService;
 
@@ -91,16 +87,16 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                     return true;
                 }
                 return this.permissionTypeProcess(userId, ruleEngineCondition.getWorkspaceId(), type);
-            case RULE:
-                RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(id);
+            case SIMPLE_RULE:
+                RuleEngineSimpleRule ruleEngineSimpleRule = this.ruleEngineSimpleRuleManager.getById(id);
                 // 不影响后续逻辑
-                if (ruleEngineRule == null) {
+                if (ruleEngineSimpleRule == null) {
                     return true;
                 }
-                if (Objects.equals(ruleEngineRule.getCreateUserId(), userId)) {
+                if (Objects.equals(ruleEngineSimpleRule.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineRule.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineSimpleRule.getWorkspaceId(), type);
             case DECISION_TABLE:
                 break;
             default:

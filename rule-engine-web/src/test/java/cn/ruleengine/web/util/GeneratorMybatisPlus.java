@@ -24,16 +24,16 @@ public class GeneratorMybatisPlus {
     @Test
     public void executor() {
         String packageName = "cn.ruleengine.web.store";
-        String dbUrl = "";
+        String dbUrl = "jdbc:mysql://cdb-5cdh3sv4.cd.tencentcdb.com:10076/boot_engine";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig
                 .setUrl(dbUrl)
-                .setUsername("")
+                .setUsername("root")
                 .setTypeConvert(new MySqlTypeConvert())
-                .setPassword("")
+                .setPassword("Dd137834")
                 .setDriverName("com.mysql.jdbc.Driver");
         generateByTables(false, dataSourceConfig, packageName,
-                "rule_engine_decision_table_publish");
+                "rule_engine_rule");
 
     }
 

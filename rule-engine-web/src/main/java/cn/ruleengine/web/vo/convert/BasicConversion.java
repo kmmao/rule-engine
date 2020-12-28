@@ -6,9 +6,9 @@ import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroup
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.element.GetElementResponse;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
-import cn.ruleengine.web.vo.rule.Action;
-import cn.ruleengine.web.vo.rule.DefaultAction;
-import cn.ruleengine.web.vo.rule.RuleDefinition;
+import cn.ruleengine.web.vo.simplerule.Action;
+import cn.ruleengine.web.vo.simplerule.DefaultAction;
+import cn.ruleengine.web.vo.simplerule.SimpleRuleDefinition;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.user.UserResponse;
 import cn.ruleengine.web.vo.variable.GetVariableResponse;
@@ -61,7 +61,7 @@ public interface BasicConversion {
      * @param ruleEngineRule ruleEngineRule
      * @return RuleDefinition
      */
-    RuleDefinition convert(RuleEngineRule ruleEngineRule);
+    SimpleRuleDefinition convert(RuleEngineRule ruleEngineRule);
 
     /**
      * value to DefaultAction

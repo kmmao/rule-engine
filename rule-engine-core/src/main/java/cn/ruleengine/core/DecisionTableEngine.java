@@ -17,7 +17,7 @@ package cn.ruleengine.core;
 
 import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.exception.EngineException;
-import cn.ruleengine.core.listener.DecisionTableExecuteListener;
+import cn.ruleengine.core.listener.ExecuteListener;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -105,7 +105,7 @@ public class DecisionTableEngine implements Engine {
             throw new EngineException("no decision table:{}", decisionTableCode);
         }
         log.info("开始执行决策表:{}", decisionTable.getCode());
-        DecisionTableExecuteListener listener = this.configuration.getDecisionTableExecuteListener();
+        ExecuteListener<DecisionTable> listener = this.configuration.getDecisionTableExecuteListener();
         listener.before(decisionTable, input);
         try {
             List<Object> actions = decisionTable.execute(input, this.configuration);

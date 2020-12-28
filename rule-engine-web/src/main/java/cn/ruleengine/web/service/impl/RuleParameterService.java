@@ -2,6 +2,8 @@ package cn.ruleengine.web.service.impl;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.rule.Parameter;
+import cn.ruleengine.core.rule.SimpleRule;
 import cn.ruleengine.core.value.Element;
 import cn.ruleengine.core.value.Function;
 import cn.ruleengine.core.value.Value;
@@ -13,7 +15,6 @@ import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
 import cn.ruleengine.core.exception.ValidException;
-import cn.ruleengine.core.rule.Rule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class RuleParameterService {
      * @param rule rule
      * @return RuleCountInfo
      */
-    public Set<Rule.Parameter> getParameters(Rule rule) {
+    public Set<Parameter> getParameters(SimpleRule rule) {
         Set<Integer> elementIds = new HashSet<>();
         ConditionSet conditionSet = rule.getConditionSet();
         List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
@@ -61,7 +62,7 @@ public class RuleParameterService {
         }
         List<RuleEngineElement> engineElementList = this.ruleEngineElementManager.lambdaQuery().in(RuleEngineElement::getId, elementIds).list();
         return engineElementList.stream().map(m -> {
-            Rule.Parameter parameter = new Rule.Parameter();
+            Parameter parameter = new Parameter();
             parameter.setName(m.getName());
             parameter.setCode(m.getCode());
             parameter.setValueType(m.getValueType());
@@ -75,7 +76,7 @@ public class RuleParameterService {
      * @param elementIds 元素id
      * @param rule       rule
      */
-    private void getFromTheResult(Set<Integer> elementIds, Rule rule) {
+    private void getFromTheResult(Set<Integer> elementIds, SimpleRule rule) {
         Value value = rule.getActionValue();
         this.getFromVariableElement(elementIds, value);
         Value defaultActionValue = rule.getDefaultActionValue();

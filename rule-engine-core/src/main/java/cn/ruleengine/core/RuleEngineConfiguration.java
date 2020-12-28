@@ -16,12 +16,12 @@
 package cn.ruleengine.core;
 
 import cn.ruleengine.core.cache.DefaultFunctionCache;
-import cn.ruleengine.core.listener.DecisionTableExecuteListener;
-import cn.ruleengine.core.listener.DefaultDecisionTableExecuteListener;
-import cn.ruleengine.core.listener.DefaultRuleExecuteListener;
-import cn.ruleengine.core.listener.RuleExecuteListener;
+import cn.ruleengine.core.decisiontable.DecisionTable;
+import cn.ruleengine.core.listener.DefaultExecuteListener;
+import cn.ruleengine.core.listener.ExecuteListener;
 import cn.ruleengine.core.cache.FunctionCache;
-import org.springframework.lang.NonNull;
+import cn.ruleengine.core.rule.SimpleRule;
+import lombok.Data;
 
 import java.io.Closeable;
 
@@ -33,17 +33,18 @@ import java.io.Closeable;
  * @date 2020/8/14
  * @since 1.0.0
  */
+@Data
 public class RuleEngineConfiguration implements Closeable {
 
     /**
      * 规则执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
      */
-    private RuleExecuteListener ruleListener = new DefaultRuleExecuteListener();
+    private ExecuteListener<SimpleRule> simpleRuleListener = new DefaultExecuteListener<>();
 
     /**
      * 决策表执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
      */
-    private DecisionTableExecuteListener decisionTableExecuteListener = new DefaultDecisionTableExecuteListener();
+    private ExecuteListener<DecisionTable> decisionTableExecuteListener = new DefaultExecuteListener<>();
 
     /**
      * 规则函数缓存实现类
@@ -55,42 +56,6 @@ public class RuleEngineConfiguration implements Closeable {
      */
     private EngineVariable engineVariable = new EngineVariable();
 
-
-    @NonNull
-    public RuleExecuteListener getRuleListener() {
-        return ruleListener;
-    }
-
-    public void setRuleListener(@NonNull RuleExecuteListener ruleListener) {
-        this.ruleListener = ruleListener;
-    }
-
-    @NonNull
-    public FunctionCache getFunctionCache() {
-        return functionCache;
-    }
-
-    public void setFunctionCache(@NonNull FunctionCache functionCache) {
-        this.functionCache = functionCache;
-    }
-
-    @NonNull
-    public EngineVariable getEngineVariable() {
-        return engineVariable;
-    }
-
-    public void setEngineVariable(@NonNull EngineVariable engineVariable) {
-        this.engineVariable = engineVariable;
-    }
-
-    @NonNull
-    public DecisionTableExecuteListener getDecisionTableExecuteListener() {
-        return this.decisionTableExecuteListener;
-    }
-
-    public void setDecisionTableExecuteListener(@NonNull DecisionTableExecuteListener decisionTableExecuteListener) {
-        this.decisionTableExecuteListener = decisionTableExecuteListener;
-    }
 
     @Override
     public void close() {

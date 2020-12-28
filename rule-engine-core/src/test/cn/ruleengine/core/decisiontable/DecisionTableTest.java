@@ -9,8 +9,6 @@ import cn.ruleengine.core.value.Constant;
 import cn.ruleengine.core.value.Element;
 import cn.ruleengine.core.value.ValueType;
 
-import java.util.List;
-
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -36,7 +34,7 @@ public class DecisionTableTest {
         DecisionTable decisionTable = new DecisionTable();
         decisionTable.setCode("test");
         decisionTable.setWorkspaceCode("test");
-        decisionTable.setStrategyType(StrategyType.HIGHEST_PRIORITY_SINGLE);
+        decisionTable.setStrategyType(DecisionTableStrategyType.HIGHEST_PRIORITY_SINGLE);
         // 默认值
         decisionTable.setDefaultActionValue(new Constant("default", ValueType.STRING));
         decisionTable.addCollHead(new CollHead(new Element(0, "test", ValueType.STRING), Operator.EQ));

@@ -5,7 +5,7 @@ import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
 import cn.ruleengine.web.listener.body.RuleMessageBody;
 import cn.ruleengine.web.listener.body.VariableMessageBody;
 import cn.ruleengine.web.listener.event.DecisionTableEvent;
-import cn.ruleengine.web.listener.event.RuleEvent;
+import cn.ruleengine.web.listener.event.SimpleRuleEvent;
 import cn.ruleengine.web.listener.event.VariableEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -32,14 +32,14 @@ public class EventPublisherListener {
     private RabbitTemplate rabbitTemplate;
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = RuleEvent.class)
-    public void ruleEvent(RuleEvent ruleEvent) {
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = SimpleRuleEvent.class)
+    public void simpleRuleEvent(SimpleRuleEvent ruleEvent) {
         RuleMessageBody ruleMessageBody = ruleEvent.getRuleMessageBody();
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageBody);
     }
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = RuleEvent.class)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = DecisionTableEvent.class)
     public void decisionTableEvent(DecisionTableEvent decisionTableEvent) {
         DecisionTableMessageBody decisionTableMessageBody = decisionTableEvent.getDecisionTableMessageBody();
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.DECISION_TABLE_EXCHANGE, RabbitTopicConfig.DECISION_TABLE_TOPIC_ROUTING_KEY, decisionTableMessageBody);

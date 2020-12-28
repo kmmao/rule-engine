@@ -2,9 +2,9 @@ package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
@@ -34,7 +34,6 @@ import cn.ruleengine.core.Input;
 import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.exception.ValidException;
-import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
@@ -428,7 +427,7 @@ public class ConditionServiceImpl implements ConditionService {
      * @return list
      */
     @Override
-    public Set<Rule.Parameter> getParameter(Integer id) {
+    public Set<Parameter> getParameter(Integer id) {
         Workspace workspace = Context.getCurrentWorkspace();
         RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.lambdaQuery()
                 .eq(RuleEngineCondition::getId, id)
@@ -450,9 +449,9 @@ public class ConditionServiceImpl implements ConditionService {
         if (CollUtil.isEmpty(ruleEngineElements)) {
             return Collections.emptySet();
         }
-        Set<Rule.Parameter> parameters = new HashSet<>(ruleEngineElements.size());
+        Set<Parameter> parameters = new HashSet<>(ruleEngineElements.size());
         for (RuleEngineElement ruleEngineElement : ruleEngineElements) {
-            Rule.Parameter parameter = new Rule.Parameter();
+            Parameter parameter = new Parameter();
             parameter.setName(ruleEngineElement.getName());
             parameter.setCode(ruleEngineElement.getCode());
             parameter.setValueType(ruleEngineElement.getValueType());

@@ -60,6 +60,8 @@ public class VariableServiceImpl implements VariableService {
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
     @Resource
+    private RuleEngineSimpleRuleManager ruleEngineSimpleRuleManager;
+    @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private ApplicationEventPublisher eventPublisher;
@@ -316,9 +318,14 @@ public class VariableServiceImpl implements VariableService {
             }
         }
         {
-            Integer count = this.ruleEngineRuleManager.lambdaQuery()
-                    .and(a -> a.or(o -> o.eq(RuleEngineRule::getActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getActionValue, id))
-                            .or(o -> o.eq(RuleEngineRule::getDefaultActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getDefaultActionValue, id)))
+            Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getActionValue, id)
+                    .count();
+            if (count != null && count > 0) {
+                throw new ValidException("有规则在引用此变量，无法删除");
+            }
+        }
+        {
+            Integer count = this.ruleEngineSimpleRuleManager.lambdaQuery().eq(RuleEngineSimpleRule::getDefaultActionType, VariableType.VARIABLE.getType()).eq(RuleEngineSimpleRule::getDefaultActionValue, id)
                     .count();
             if (count != null && count > 0) {
                 throw new ValidException("有规则在引用此变量，无法删除");
