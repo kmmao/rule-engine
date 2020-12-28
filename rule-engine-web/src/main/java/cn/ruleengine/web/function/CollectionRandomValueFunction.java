@@ -36,11 +36,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @Function
 public class CollectionRandomValueFunction {
 
-    private ThreadLocalRandom randomUtil = ThreadLocalRandom.current();
-
     @Executor
     public String executor(@Param(value = "list") List<String> list) {
-        int index = randomUtil.nextInt(list.size());
+        int index = ThreadLocalRandom.current().nextInt(list.size());
         return list.get(index);
     }
 
