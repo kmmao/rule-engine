@@ -15,14 +15,46 @@
  */
 package cn.ruleengine.core.rule;
 
+import cn.ruleengine.core.Input;
+import cn.ruleengine.core.JsonParse;
+import cn.ruleengine.core.RuleEngineConfiguration;
+import lombok.Data;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * 引入规则集，改进单规则弊端
  *
  * @author 丁乾文
  * @create 2020/12/27
  * @since 1.0.0
  */
-public class RuleSet {
+@Data
+public class RuleSet implements JsonParse {
+
+    /**
+     * 规则集
+     */
+    private List<Rule> rules = new ArrayList<>();
+
+    /**
+     * 默认规则
+     */
+    private Rule defaultRule;
+
+    /**
+     * 默认匹配所有的规则结果
+     */
+    private StrategyType strategyType = StrategyType.ALL_RULE;
+
+    @Nullable
+    public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
+        return null;
+    }
 
 }
