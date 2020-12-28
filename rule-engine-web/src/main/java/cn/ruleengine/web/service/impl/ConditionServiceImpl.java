@@ -379,7 +379,7 @@ public class ConditionServiceImpl implements ConditionService {
         // 条件配置信息
         configBeanCopyToCondition(condition, updateConditionRequest.getConfig());
         this.ruleEngineConditionManager.updateById(condition);
-        // 更新引用此规则的条件到待发布
+        // 更新引用此规则的条件到编辑中
         this.ruleEngineConditionMapper.updateRuleWaitPublish(conditionId);
         return true;
     }

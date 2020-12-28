@@ -5,7 +5,7 @@
 
     <update id="updateRuleWaitPublish">
         update rule_engine_simple_rule rule
-        set rule.status=1
+        set rule.status=0
         where rule.status = 2
           and rule.id in (select rri.id
                           from (select rer.id
