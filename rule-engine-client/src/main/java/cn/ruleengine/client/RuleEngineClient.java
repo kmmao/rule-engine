@@ -15,33 +15,16 @@
  */
 package cn.ruleengine.client;
 
-import java.util.HashMap;
 
-import cn.ruleengine.client.model.BatchSymbol;
-
-import java.util.ArrayList;
+import cn.ruleengine.client.fegin.DecisionTableInterface;
+import cn.ruleengine.client.fegin.GeneralRuleInterface;
 
 
 import javax.annotation.Resource;
 
-import cn.ruleengine.client.exception.ValidException;
-import cn.ruleengine.client.fegin.SimpleRuleInterface;
-import cn.ruleengine.client.model.RuleModel;
-import cn.ruleengine.client.param.BatchParam;
-import cn.ruleengine.client.param.ExecuteParam;
-import cn.ruleengine.client.param.IsExistsParam;
-import cn.ruleengine.client.result.*;
-import cn.ruleengine.client.exception.ExecuteException;
-import cn.ruleengine.client.model.ElementField;
+import cn.ruleengine.client.fegin.RuleSetInterface;
 import lombok.Data;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
-import org.springframework.util.StringUtils;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -58,201 +41,37 @@ public class RuleEngineClient {
     @Resource
     private RuleEngineProperties ruleEngineProperties;
     @Resource
-    private SimpleRuleInterface ruleInterface;
+    private DecisionTableInterface decisionTableInterface;
+    @Resource
+    private GeneralRuleInterface generalRuleInterface;
+    @Resource
+    private RuleSetInterface ruleSetInterface;
 
-    public RuleEngineClient() {
-
+    /**
+     * 决策表
+     *
+     * @return DecisionTable
+     */
+    public DecisionTable decisionTable() {
+        return new DecisionTable(this.ruleEngineProperties, this.decisionTableInterface);
     }
 
     /**
-     * 调用规则引擎中的规则
+     * 普通规则
      *
-     * @param ruleCode 规则code
-     * @param input    规则参数
-     * @return 规则结果
+     * @return GeneralRule
      */
-    public OutPut execute(@NonNull String ruleCode, @NonNull Map<String, Object> input) {
-        Objects.requireNonNull(ruleCode);
-        Objects.requireNonNull(input);
-        ExecuteParam executeParam = new ExecuteParam();
-        executeParam.setRuleCode(ruleCode);
-        executeParam.setWorkspaceCode(this.ruleEngineProperties.getWorkspaceCode());
-        executeParam.setAccessKeyId(this.ruleEngineProperties.getAccessKeyId());
-        executeParam.setAccessKeySecret(this.ruleEngineProperties.getAccessKeySecret());
-        executeParam.setParam(input);
-        log.info("rule execute param is " + executeParam);
-        ExecuteRuleResult result = this.ruleInterface.execute(executeParam);
-        log.info("rule execute result is " + result);
-        if (!result.isSuccess()) {
-            throw new ExecuteException(result.getMessage());
-        }
-        return result.getData();
+    public GeneralRule generalRule() {
+        return new GeneralRule(this.ruleEngineProperties, this.generalRuleInterface);
     }
 
     /**
-     * 根据规则模型解析调用引擎中的规则
+     * 规则集
      *
-     * @param model 规则调用模型
-     * @return 规则结果
-     * @see RuleModel
+     * @return RuleSet
      */
-    @SneakyThrows
-    public OutPut execute(@NonNull Object model) {
-        this.validRuleModel(model);
-        Map<String, Object> input = new HashMap<>();
-        Field[] fields = model.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            if (!Modifier.isPublic(field.getModifiers())) {
-                field.setAccessible(true);
-            }
-            Object value = field.get(model);
-            input.put(this.getElementCode(field), value);
-        }
-        return this.execute(this.getRuleCode(model), input);
-    }
-
-    /**
-     * 校验规则model
-     *
-     * @param model 规则model
-     */
-    private void validRuleModel(Object model) {
-        Objects.requireNonNull(model);
-        if (!model.getClass().isAnnotationPresent(RuleModel.class)) {
-            throw new ValidException("%s 找不到RuleModel注解", model.getClass());
-        }
-    }
-
-    /**
-     * 解析获取规则code
-     *
-     * @param model 规则model
-     * @return 规则code
-     */
-    @SneakyThrows
-    private String getRuleCode(Object model) {
-        RuleModel ruleModel = model.getClass().getAnnotation(RuleModel.class);
-        String ruleCode = ruleModel.ruleCode();
-        if (StringUtils.isEmpty(ruleCode)) {
-            ruleCode = model.getClass().getSimpleName();
-        }
-        return ruleCode;
-    }
-
-
-    /**
-     * 引擎中是否存在此规则
-     *
-     * @param ruleCode 规则code
-     * @return true 存在
-     */
-    public boolean isExists(String ruleCode) {
-        if (StringUtils.isEmpty(ruleCode)) {
-            return false;
-        }
-        IsExistsParam existsParam = new IsExistsParam();
-        existsParam.setRuleCode(ruleCode);
-        existsParam.setWorkspaceCode(this.ruleEngineProperties.getWorkspaceCode());
-        existsParam.setAccessKeyId(this.ruleEngineProperties.getAccessKeyId());
-        existsParam.setAccessKeySecret(this.ruleEngineProperties.getAccessKeySecret());
-        log.info("rule isExists param is " + existsParam);
-        IsExistsResult result = this.ruleInterface.isExists(existsParam);
-        log.info("rule isExists result is " + result);
-        if (!result.isSuccess()) {
-            throw new ExecuteException(result.getMessage());
-        }
-        return result.getData();
-    }
-
-    /**
-     * 批量执行规则
-     *
-     * @param models 规则执行信息，规则code以及规则入参
-     * @return BatchOutPut
-     * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
-     */
-    @SneakyThrows
-    public List<BatchOutPut> batchExecute(@NonNull List<Object> models) {
-        return this.batchExecute(100, -1L, models);
-    }
-
-    /**
-     * 批量执行规则
-     *
-     * @param threadSegNumber 指定一个线程处理多少规则
-     * @param timeout         执行超时时间，-1永不超时
-     * @param models          规则执行信息，规则code以及规则入参
-     * @return BatchOutPut
-     * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
-     */
-    @SneakyThrows
-    public List<BatchOutPut> batchExecute(@NonNull Integer threadSegNumber, @NonNull Long timeout, @NonNull List<Object> models) {
-        Objects.requireNonNull(threadSegNumber);
-        Objects.requireNonNull(timeout);
-        Objects.requireNonNull(models);
-        if (models.isEmpty()) {
-            return Collections.emptyList();
-        }
-        BatchParam batchParam = new BatchParam();
-        batchParam.setWorkspaceCode(this.ruleEngineProperties.getWorkspaceCode());
-        batchParam.setAccessKeyId(this.ruleEngineProperties.getAccessKeyId());
-        batchParam.setAccessKeySecret(this.ruleEngineProperties.getAccessKeySecret());
-        batchParam.setThreadSegNumber(threadSegNumber);
-        batchParam.setTimeout(timeout);
-        List<BatchParam.ExecuteInfo> executeInfos = new ArrayList<>(models.size());
-        for (Object model : models) {
-            this.validRuleModel(model);
-            Map<String, Object> param = new HashMap<>();
-            Field[] fields = model.getClass().getDeclaredFields();
-            StringBuilder symbol = null;
-            for (Field field : fields) {
-                if (!Modifier.isPublic(field.getModifiers())) {
-                    field.setAccessible(true);
-                }
-                Object value = field.get(model);
-                if (field.isAnnotationPresent(BatchSymbol.class)) {
-                    if (symbol == null) {
-                        symbol = new StringBuilder();
-                    }
-                    symbol.append(value).append(",");
-                }
-                param.put(this.getElementCode(field), value);
-            }
-            BatchParam.ExecuteInfo executeInfo = new BatchParam.ExecuteInfo();
-            if (symbol != null) {
-                symbol.deleteCharAt(symbol.length() - 1);
-                executeInfo.setSymbol(symbol.toString());
-            }
-            executeInfo.setRuleCode(this.getRuleCode(model));
-            executeInfo.setParam(param);
-            executeInfos.add(executeInfo);
-        }
-        batchParam.setExecuteInfos(executeInfos);
-        log.info("rule batchExecute param is " + batchParam);
-        BatchExecuteRuleResult result = this.ruleInterface.batchExecute(batchParam);
-        log.info("rule batchExecute result is " + result);
-        if (!result.isSuccess()) {
-            throw new ExecuteException(result.getMessage());
-        }
-        return result.getData();
-    }
-
-    /**
-     * 获取元素code
-     *
-     * @param field field
-     * @return 元素code
-     */
-    private String getElementCode(Field field) {
-        String elementCode = field.getName();
-        if (field.isAnnotationPresent(ElementField.class)) {
-            ElementField elementField = field.getAnnotation(ElementField.class);
-            String code = elementField.code();
-            if (!StringUtils.isEmpty(code)) {
-                elementCode = code;
-            }
-        }
-        return elementCode;
+    public RuleSet ruleSet() {
+        return new RuleSet(this.ruleEngineProperties, this.ruleSetInterface);
     }
 
 }

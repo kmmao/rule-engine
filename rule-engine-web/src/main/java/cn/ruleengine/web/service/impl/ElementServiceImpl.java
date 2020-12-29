@@ -43,7 +43,7 @@ public class ElementServiceImpl implements ElementService {
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
     @Resource
-    private RuleEngineSimpleRuleManager ruleEngineSimpleRuleManager;
+    private RuleEngineGeneralRuleManager ruleEngineGeneralRuleManager;
 
     /**
      * 添加元素
@@ -182,7 +182,7 @@ public class ElementServiceImpl implements ElementService {
             }
         }
         {
-            Integer count = this.ruleEngineSimpleRuleManager.lambdaQuery().eq(RuleEngineSimpleRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineSimpleRule::getDefaultActionValue, id).count();
+            Integer count = this.ruleEngineGeneralRuleManager.lambdaQuery().eq(RuleEngineGeneralRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineGeneralRule::getDefaultActionValue, id).count();
             if (count != null && count > 0) {
                 throw new ValidException("有规则在引用此元素，无法删除");
             }

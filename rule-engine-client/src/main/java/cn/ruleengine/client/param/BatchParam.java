@@ -66,7 +66,7 @@ public class BatchParam implements Serializable{
          */
         private String symbol;
 
-        private String ruleCode;
+        private String code;
 
         private Map<String, Object> param = new HashMap<>();
 

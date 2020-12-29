@@ -5,7 +5,7 @@
 
     <select id="countPublishRuleVar" resultType="java.lang.Integer">
          select count(*)
-            from rule_engine_simple_rule_publish r
+            from rule_engine_general_rule_publish r
             where r.deleted = 0 and  JSON_CONTAINS(r.data -> '$**.variableId', JSON_ARRAY(#{variableId}))
     </select>
 

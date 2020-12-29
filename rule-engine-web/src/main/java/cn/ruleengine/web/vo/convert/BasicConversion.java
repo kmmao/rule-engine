@@ -5,10 +5,10 @@ import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroupCondition;
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.element.GetElementResponse;
+import cn.ruleengine.web.vo.generalrule.GeneralRuleDefinition;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
-import cn.ruleengine.web.vo.simplerule.Action;
-import cn.ruleengine.web.vo.simplerule.DefaultAction;
-import cn.ruleengine.web.vo.simplerule.SimpleRuleDefinition;
+import cn.ruleengine.web.vo.generalrule.Action;
+import cn.ruleengine.web.vo.generalrule.DefaultAction;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.user.UserResponse;
 import cn.ruleengine.web.vo.variable.GetVariableResponse;
@@ -61,7 +61,7 @@ public interface BasicConversion {
      * @param ruleEngineRule ruleEngineRule
      * @return RuleDefinition
      */
-    SimpleRuleDefinition convert(RuleEngineRule ruleEngineRule);
+    GeneralRuleDefinition convert(RuleEngineRule ruleEngineRule);
 
     /**
      * value to DefaultAction

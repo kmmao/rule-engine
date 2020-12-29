@@ -2,8 +2,8 @@ package cn.ruleengine.web.service.impl;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.core.rule.Parameter;
-import cn.ruleengine.core.rule.SimpleRule;
 import cn.ruleengine.core.value.Element;
 import cn.ruleengine.core.value.Function;
 import cn.ruleengine.core.value.Value;
@@ -45,7 +45,7 @@ public class RuleParameterService {
      * @param rule rule
      * @return RuleCountInfo
      */
-    public Set<Parameter> getParameters(SimpleRule rule) {
+    public Set<Parameter> getParameters(GeneralRule rule) {
         Set<Integer> elementIds = new HashSet<>();
         ConditionSet conditionSet = rule.getConditionSet();
         List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
@@ -76,7 +76,7 @@ public class RuleParameterService {
      * @param elementIds 元素id
      * @param rule       rule
      */
-    private void getFromTheResult(Set<Integer> elementIds, SimpleRule rule) {
+    private void getFromTheResult(Set<Integer> elementIds, GeneralRule rule) {
         Value value = rule.getActionValue();
         this.getFromVariableElement(elementIds, value);
         Value defaultActionValue = rule.getDefaultActionValue();

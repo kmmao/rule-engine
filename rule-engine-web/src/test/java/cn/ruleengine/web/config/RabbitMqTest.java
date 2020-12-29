@@ -18,7 +18,7 @@ package cn.ruleengine.web.config;
 
 import cn.ruleengine.web.BaseTest;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
-import cn.ruleengine.web.listener.body.RuleMessageBody;
+import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
 import cn.ruleengine.web.listener.body.VariableMessageBody;
 import org.junit.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -41,8 +41,8 @@ public class RabbitMqTest extends BaseTest {
     @Test
     public void reloadAll() {
         log.info("开始发送消息");
-        RuleMessageBody ruleMessageBody = new RuleMessageBody();
-        ruleMessageBody.setType(RuleMessageBody.Type.LOAD);
+        GeneralRuleMessageBody ruleMessageBody = new GeneralRuleMessageBody();
+        ruleMessageBody.setType(GeneralRuleMessageBody.Type.LOAD);
         ruleMessageBody.setRuleCode("test");
         ruleMessageBody.setWorkspaceCode("default");
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageBody);

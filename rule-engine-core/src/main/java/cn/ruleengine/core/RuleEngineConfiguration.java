@@ -21,7 +21,7 @@ import cn.ruleengine.core.listener.DefaultExecuteListener;
 import cn.ruleengine.core.listener.ExecuteListener;
 import cn.ruleengine.core.cache.FunctionCache;
 import cn.ruleengine.core.rule.RuleSet;
-import cn.ruleengine.core.rule.SimpleRule;
+import cn.ruleengine.core.rule.GeneralRule;
 import lombok.Data;
 
 import java.io.Closeable;
@@ -40,7 +40,7 @@ public class RuleEngineConfiguration implements Closeable {
     /**
      * 规则执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
      */
-    private ExecuteListener<SimpleRule> simpleRuleListener = new DefaultExecuteListener<>();
+    private ExecuteListener<GeneralRule> generalRuleListener = new DefaultExecuteListener<>();
 
     private ExecuteListener<RuleSet> ruleSetListener = new DefaultExecuteListener<>();
 

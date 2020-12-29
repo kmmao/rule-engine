@@ -16,7 +16,7 @@
 package cn.ruleengine.client;
 
 import cn.ruleengine.client.model.ElementField;
-import cn.ruleengine.client.model.RuleModel;
+import cn.ruleengine.client.model.Model;
 import lombok.Data;
 
 /**
@@ -28,7 +28,7 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-@RuleModel(ruleCode = "phoneRuletest")
+@Model(code = "phoneRuletest")
 public class RuleMode {
 
 

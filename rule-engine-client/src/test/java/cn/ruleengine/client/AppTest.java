@@ -1,6 +1,6 @@
 package cn.ruleengine.client;
 
-import cn.ruleengine.client.fegin.SimpleRuleInterface;
+import cn.ruleengine.client.fegin.GeneralRuleInterface;
 import cn.ruleengine.client.result.BatchOutPut;
 import cn.ruleengine.client.result.OutPut;
 import feign.Feign;
@@ -27,13 +27,13 @@ public class AppTest {
     private RuleEngineClient ruleEngineClient = new RuleEngineClient() {
         {
             RuleEngineProperties ruleEngineProperties = new RuleEngineProperties();
-            ruleEngineProperties.setUrl("http://localhost");
-            this.setRuleInterface(Feign.builder()
+            //ruleEngineProperties.setUrl("http://localhost");
+            this.setGeneralRuleInterface(Feign.builder()
                     .encoder(new JacksonEncoder())
                     .decoder(new JacksonDecoder())
                     .options(new Request.Options(6000, 3500))
                     .retryer(new Retryer.Default(5000, 5000, 3))
-                    .target(SimpleRuleInterface.class, ruleEngineProperties.getUrl()));
+                    .target(GeneralRuleInterface.class, ruleEngineProperties.getUrl()));
             this.setRuleEngineProperties(ruleEngineProperties);
         }
     };
@@ -42,13 +42,15 @@ public class AppTest {
     public void single() {
         RuleMode ruleMode = new RuleMode();
         ruleMode.setPhone("1343493849384");
-        OutPut execute = this.ruleEngineClient.execute(ruleMode);
+        GeneralRule generalRule = this.ruleEngineClient.generalRule();
+        OutPut execute = generalRule.execute(ruleMode);
         System.out.println(execute);
     }
 
     @Test
     public void isExists() {
-        boolean exists = this.ruleEngineClient.isExists("phoneRuletest");
+        GeneralRule generalRule = this.ruleEngineClient.generalRule();
+        boolean exists = generalRule.isExists("phoneRuletest");
         System.out.println(exists);
     }
 
@@ -65,7 +67,8 @@ public class AppTest {
             ruleMode.setPhone("13434938493842");
             ruleModes.add(ruleMode);
         }
-        List<BatchOutPut> batchOutPuts = this.ruleEngineClient.batchExecute(100, -1L, ruleModes);
+        GeneralRule generalRule = this.ruleEngineClient.generalRule();
+        List<BatchOutPut> batchOutPuts = generalRule.batchExecute(100, -1L, ruleModes);
         batchOutPuts.forEach(System.out::println);
     }
 

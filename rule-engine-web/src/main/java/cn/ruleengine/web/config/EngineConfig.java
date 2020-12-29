@@ -19,7 +19,7 @@ import cn.ruleengine.core.*;
 import cn.ruleengine.web.service.decisiontable.DecisionTablePublishService;
 import cn.ruleengine.core.cache.DefaultFunctionCache;
 
-import cn.ruleengine.web.service.simplerule.SimpleRulePublishService;
+import cn.ruleengine.web.service.generalrule.GeneralRulePublishService;
 import cn.ruleengine.web.service.VariableResolveService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +44,7 @@ public class EngineConfig {
     @Resource
     private VariableResolveService variableResolveService;
     @Resource
-    private SimpleRulePublishService rulePublishService;
+    private GeneralRulePublishService rulePublishService;
     @Resource
     private DecisionTablePublishService decisionTablePublishService;
 
@@ -70,8 +70,8 @@ public class EngineConfig {
     @Bean(destroyMethod = "close")
     public Engine ruleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化规则引擎");
-        SimpleRuleEngine ruleEngine = new SimpleRuleEngine(ruleEngineConfiguration);
-        ruleEngine.addMultipleSimpleRule(this.rulePublishService.getAllPublishSimpleRule());
+        GeneralRuleEngine ruleEngine = new GeneralRuleEngine(ruleEngineConfiguration);
+        ruleEngine.addMultipleGeneralRule(this.rulePublishService.getAllPublishGeneralRule());
         log.info("规则引擎初始化完毕");
         return ruleEngine;
     }

@@ -33,7 +33,7 @@ public class ExecuteParam implements Serializable {
 
     private static final long serialVersionUID = -723208519820366808L;
 
-    private String ruleCode;
+    private String code;
 
     private String workspaceCode;
 

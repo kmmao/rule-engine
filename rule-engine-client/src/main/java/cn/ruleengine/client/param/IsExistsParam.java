@@ -32,7 +32,7 @@ public class IsExistsParam implements Serializable {
 
     private static final long serialVersionUID = 1239414801248732693L;
 
-    private String ruleCode;
+    private String code;
 
     private String workspaceCode;
 

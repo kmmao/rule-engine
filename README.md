@@ -28,11 +28,11 @@
 ### 规则如何调用
 规则通过在 http://ruleengine.cn 配置完成后，就可以调用接口来执行引擎中的规则了  
 ```http
-POST http://ruleserver.cn/ruleEngine/simpleRule/execute
+POST http://ruleserver.cn/ruleEngine/generalRule/execute
 Content-Type: application/json
 
 {
-      "ruleCode": "phoneRuletest",
+      "code": "phoneRuletest",
       "workspaceCode": "default",
       "accessKeyId": "略", 
       "accessKeySecret": "略",
@@ -67,14 +67,15 @@ public class RuleTest {
         PhoneTestRule phoneTestRule = new PhoneTestRule();
         phoneTestRule.setPhone("134000000000");
         // 调用执行引擎中的规则
-        OutPut outPut = this.ruleEngineClient.execute(phoneTestRule);
+        GeneralRule generalRule = this.ruleEngineClient.generalRule();
+        OutPut outPut = generalRule.execute(phoneTestRule);
         System.out.println(outPut);
     }
 
 }
 
 @Data
-@RuleModel(ruleCode = "phoneRuletest")
+@Model(code = "phoneRuletest")
 public class PhoneTestRule {
 
     /**

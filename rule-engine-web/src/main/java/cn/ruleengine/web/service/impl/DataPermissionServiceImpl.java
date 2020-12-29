@@ -36,7 +36,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
     @Resource
-    private RuleEngineSimpleRuleManager ruleEngineSimpleRuleManager;
+    private RuleEngineGeneralRuleManager ruleEngineGeneralRuleManager;
     @Resource
     private WorkspaceService workspaceService;
 
@@ -87,16 +87,16 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                     return true;
                 }
                 return this.permissionTypeProcess(userId, ruleEngineCondition.getWorkspaceId(), type);
-            case SIMPLE_RULE:
-                RuleEngineSimpleRule ruleEngineSimpleRule = this.ruleEngineSimpleRuleManager.getById(id);
+            case GENERAL_RULE:
+                RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(id);
                 // 不影响后续逻辑
-                if (ruleEngineSimpleRule == null) {
+                if (ruleEngineGeneralRule == null) {
                     return true;
                 }
-                if (Objects.equals(ruleEngineSimpleRule.getCreateUserId(), userId)) {
+                if (Objects.equals(ruleEngineGeneralRule.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineSimpleRule.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineGeneralRule.getWorkspaceId(), type);
             case DECISION_TABLE:
             case RULE_SET:
             case ELEMENT_GROUP:
