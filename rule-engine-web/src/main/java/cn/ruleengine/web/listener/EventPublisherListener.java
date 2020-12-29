@@ -31,10 +31,18 @@ public class EventPublisherListener {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
+    /**
+     * 事物结束后，发送mq消息通知需要加载或者移出的规则
+     * <p>
+     * 如果是单服务，可以把mq去掉GeneralRuleMessageListener类方法复制到此方法内
+     *
+     * @param generalRuleEvent 规则事件
+     * @see GeneralRuleMessageListener
+     */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = GeneralRuleEvent.class)
-    public void generalRuleEvent(GeneralRuleEvent ruleEvent) {
-        GeneralRuleMessageBody ruleMessageBody = ruleEvent.getRuleMessageBody();
+    public void generalRuleEvent(GeneralRuleEvent generalRuleEvent) {
+        GeneralRuleMessageBody ruleMessageBody = generalRuleEvent.getRuleMessageBody();
         this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleMessageBody);
     }
 

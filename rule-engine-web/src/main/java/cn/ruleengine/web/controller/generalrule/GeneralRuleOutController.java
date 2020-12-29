@@ -41,7 +41,7 @@ import javax.validation.Valid;
  * @date 2020/7/16
  * @since 1.0.0
  */
-@Api(tags = "调用规则控制器")
+@Api(tags = "调用普通规则控制器")
 @RestController
 @RequestMapping("ruleEngine/generalRule")
 public class GeneralRuleOutController {

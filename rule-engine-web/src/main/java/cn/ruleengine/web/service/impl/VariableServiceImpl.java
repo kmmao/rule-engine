@@ -3,7 +3,6 @@ package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.listener.body.VariableMessageBody;
 import cn.ruleengine.web.listener.event.VariableEvent;
 import cn.ruleengine.web.service.VariableService;

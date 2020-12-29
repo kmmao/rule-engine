@@ -69,10 +69,10 @@ public class EngineConfig {
     @Primary
     @Bean(destroyMethod = "close")
     public Engine ruleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
-        log.info("开始初始化规则引擎");
+        log.info("开始初始化普通规则引擎");
         GeneralRuleEngine ruleEngine = new GeneralRuleEngine(ruleEngineConfiguration);
         ruleEngine.addMultipleGeneralRule(this.rulePublishService.getAllPublishGeneralRule());
-        log.info("规则引擎初始化完毕");
+        log.info("普通规则引擎初始化完毕");
         return ruleEngine;
     }
 

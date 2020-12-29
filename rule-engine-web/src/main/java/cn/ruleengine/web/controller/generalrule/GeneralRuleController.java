@@ -47,7 +47,7 @@ import javax.validation.Valid;
  * @date 2020/8/24
  * @since 1.0.0
  */
-@Api(tags = "规则控制器")
+@Api(tags = "普通规则控制器")
 @RestController
 @RequestMapping("ruleEngine/generalRule")
 public class GeneralRuleController {
