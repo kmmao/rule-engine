@@ -49,7 +49,7 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "auth", havingValue = "${auth.enable}")
+@ConditionalOnProperty(prefix = "auth", name = "enable", havingValue = "true")
 @Aspect
 public class DataPermissionAspect {
 
