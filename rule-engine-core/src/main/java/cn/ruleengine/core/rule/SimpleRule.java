@@ -30,6 +30,15 @@ import java.util.Objects;
 public class SimpleRule extends Rule {
 
     /**
+     * 工作空间
+     */
+    private Integer workspaceId;
+    /**
+     * 工作空间code
+     */
+    private String workspaceCode;
+
+    /**
      * 前提条件
      * <p>
      * 如果前提条件不满足，则直接返回默认结果

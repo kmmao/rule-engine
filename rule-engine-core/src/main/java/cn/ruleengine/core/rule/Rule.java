@@ -18,7 +18,6 @@ package cn.ruleengine.core.rule;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.condition.Precondition;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.condition.ConditionSet;
 import lombok.Data;
@@ -26,8 +25,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-
-import java.util.*;
 
 
 /**
@@ -58,14 +55,6 @@ public class Rule implements JsonParse {
 
     private String description;
 
-    /**
-     * 工作空间
-     */
-    private Integer workspaceId;
-    /**
-     * 工作空间code
-     */
-    private String workspaceCode;
     /**
      * 当条件全部满足时候返回此规则结果
      */
@@ -111,8 +100,6 @@ public class Rule implements JsonParse {
         this.setCode(rule.getCode());
         this.setName(rule.getName());
         this.setDescription(rule.getDescription());
-        this.setWorkspaceId(rule.getWorkspaceId());
-        this.setWorkspaceCode(rule.getWorkspaceCode());
         this.setConditionSet(rule.getConditionSet());
         this.setActionValue(rule.getActionValue());
     }

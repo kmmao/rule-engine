@@ -9,7 +9,7 @@ package cn.ruleengine.core.monitor;
  * @create 2020/12/13
  * @since 1.0.0
  */
-public class RuleMonitor implements Monitor{
+public class SimpleRuleMonitor implements Monitor{
 
 
     @Override

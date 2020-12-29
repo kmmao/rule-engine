@@ -46,7 +46,7 @@ public class HighestPrioritySingleStrategy implements DecisionTableStrategy {
     }
 
     /**
-     * 先从高优先级规则执行，返回命中的最高优先级所有结果
+     * 先从高优先级规则执行，返回命中的最高优先级一个结果
      *
      * @param collHeadCompareMap 表头比较器
      * @param decisionTree       决策树

@@ -15,11 +15,8 @@
  */
 package cn.ruleengine.web.config;
 
-import cn.ruleengine.core.RuleEngineConfiguration;
-import cn.ruleengine.core.DecisionTableEngine;
-import cn.ruleengine.core.SimpleRuleEngine;
+import cn.ruleengine.core.*;
 import cn.ruleengine.web.service.decisiontable.DecisionTablePublishService;
-import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.cache.DefaultFunctionCache;
 
 import cn.ruleengine.web.service.simplerule.SimpleRulePublishService;
@@ -30,6 +27,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -92,5 +90,18 @@ public class EngineConfig {
         return ruleEngine;
     }
 
+    /**
+     * 规则集引擎
+     *
+     * @return engine
+     */
+    @Bean(destroyMethod = "close")
+    public Engine ruleSetEngine(RuleEngineConfiguration ruleEngineConfiguration) {
+        log.info("开始初始化规则集引擎");
+        RuleSetEngine ruleSetEngine = new RuleSetEngine(ruleEngineConfiguration);
+        ruleSetEngine.addMultipleRuleSet(new ArrayList<>());
+        log.info("规则集引擎初始化完毕");
+        return ruleSetEngine;
+    }
 
 }

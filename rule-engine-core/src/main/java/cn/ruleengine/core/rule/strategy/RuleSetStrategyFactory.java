@@ -13,20 +13,25 @@ import org.springframework.lang.NonNull;
  */
 public class RuleSetStrategyFactory {
 
+    /**
+     * 获取规则引擎执行策略
+     *
+     * @param strategy 策略类型
+     * @return RuleSetStrategy
+     */
     public static RuleSetStrategy getInstance(@NonNull RuleSetStrategyType strategy) {
         switch (strategy) {
             case ALL_RULE:
-                break;
+                return AllRuleStrategy.getInstance();
             case WHEN_A_RULE_IS_HIT:
-                break;
+                return WhenARuleIsHitStrategy.getInstance();
             case THE_FIRST_RULE:
-                break;
+                return TheFirstRuleStrategy.getInstance();
             case WHEN_A_RULE_EXECUTE_FAILS:
-                break;
+                return WhenARuleExecuteFailsStrategy.getInstance();
             default:
                 throw new IllegalStateException("Unexpected value: " + strategy);
         }
-        return null;
     }
 
 }

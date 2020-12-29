@@ -16,11 +16,14 @@
 package cn.ruleengine.core;
 
 
-import cn.ruleengine.core.rule.SimpleRule;
+import cn.ruleengine.core.exception.EngineException;
+import cn.ruleengine.core.listener.ExecuteListener;
+import cn.ruleengine.core.rule.RuleSet;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +45,7 @@ public class RuleSetEngine implements Engine {
     /**
      * 启动时加载的规则
      */
-    private Map<String, Map<String, SimpleRule>> workspaceMap = new ConcurrentHashMap<>();
+    private Map<String, Map<String, RuleSet>> workspaceMap = new ConcurrentHashMap<>();
 
     /**
      * 规则引擎运行所需的参数
@@ -66,9 +69,36 @@ public class RuleSetEngine implements Engine {
         return this.configuration;
     }
 
+    public RuleSet getRuleSet(String workspaceCode, String ruleCode) {
+        Objects.requireNonNull(workspaceCode);
+        Objects.requireNonNull(ruleCode);
+        Map<String, RuleSet> workspaceMap = this.workspaceMap.get(workspaceCode);
+        if (workspaceMap == null) {
+            throw new EngineException("Can't find this workspace：" + workspaceCode);
+        }
+        return workspaceMap.get(ruleCode);
+    }
+
     @Override
     public OutPut execute(Input input, String workspaceCode, String code) {
-        return null;
+        Objects.requireNonNull(input);
+        Objects.requireNonNull(workspaceCode);
+        Objects.requireNonNull(code);
+        RuleSet ruleSet = this.getRuleSet(workspaceCode, code);
+        if (ruleSet == null) {
+            throw new EngineException("no ruleSet:{}", code);
+        }
+        log.info("开始执行规则集:{}", ruleSet.getCode());
+        ExecuteListener<RuleSet> listener = this.configuration.getRuleSetListener();
+        listener.before(ruleSet, input);
+        try {
+            DefaultOutPut outPut = new DefaultOutPut(ruleSet.execute(input, this.configuration));
+            listener.after(ruleSet, input, outPut);
+            return outPut;
+        } catch (Exception exception) {
+            listener.onException(ruleSet, input, exception);
+            throw exception;
+        }
     }
 
     @Override
@@ -82,6 +112,25 @@ public class RuleSetEngine implements Engine {
         return this.workspaceMap.get(workspaceCode).containsKey(ruleCode);
     }
 
+
+    public synchronized void addRuleSet(RuleSet ruleSet) {
+        Objects.requireNonNull(ruleSet);
+        String workspaceCode = Objects.requireNonNull(ruleSet.getWorkspaceCode());
+        String ruleSetCode = Objects.requireNonNull(ruleSet.getCode());
+        if (!this.workspaceMap.containsKey(workspaceCode)) {
+            this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>());
+        }
+        if (ruleSet.isEnableMonitor()) {
+            // 代理这个规则集进行监控
+        }
+        this.workspaceMap.get(workspaceCode).put(ruleSetCode, ruleSet);
+    }
+
+    public void addMultipleRuleSet(List<RuleSet> ruleSets) {
+        Objects.requireNonNull(ruleSets);
+        ruleSets.forEach(this::addRuleSet);
+    }
+
     /**
      * 销毁规则引擎
      */
@@ -90,4 +139,5 @@ public class RuleSetEngine implements Engine {
         this.workspaceMap.clear();
         log.info("The rules engine has been destroyed");
     }
+
 }

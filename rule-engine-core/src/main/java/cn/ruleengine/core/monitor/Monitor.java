@@ -9,5 +9,10 @@ package cn.ruleengine.core.monitor;
  * @since 1.0.0
  */
 public interface Monitor {
+
+    /**
+     * 添加监控指标数据
+     */
     void addIndicator();
+
 }

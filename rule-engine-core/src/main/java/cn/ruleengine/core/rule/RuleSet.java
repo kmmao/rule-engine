@@ -15,17 +15,20 @@
  */
 package cn.ruleengine.core.rule;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.rule.strategy.RuleSetStrategy;
 import cn.ruleengine.core.rule.strategy.RuleSetStrategyFactory;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -36,8 +39,33 @@ import java.util.List;
  * @create 2020/12/27
  * @since 1.0.0
  */
+@Slf4j
 @Data
 public class RuleSet implements JsonParse {
+
+    /**
+     * 规则集id
+     */
+    private Integer id;
+
+    /**
+     * 规则集Code
+     */
+    private String code;
+    /**
+     * 规则集名称
+     */
+    private String name;
+
+    private String description;
+    /**
+     * 工作空间
+     */
+    private Integer workspaceId;
+    /**
+     * 工作空间code
+     */
+    private String workspaceCode;
 
     /**
      * 规则集
@@ -61,10 +89,34 @@ public class RuleSet implements JsonParse {
      */
     private boolean enableMonitor = false;
 
+    public void addRule(@NonNull Rule rule) {
+        Objects.requireNonNull(rule);
+        this.rules.add(rule);
+    }
+
     @Nullable
     public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
-        RuleSetStrategy ruleSetStrategy = RuleSetStrategyFactory.getInstance(this.strategyType);
-        return null;
+        long startTime = System.currentTimeMillis();
+        try {
+            RuleSetStrategy ruleSetStrategy = RuleSetStrategyFactory.getInstance(this.strategyType);
+            List<Object> actions = ruleSetStrategy.compute(rules, input, configuration);
+            if (CollUtil.isNotEmpty(actions)) {
+                return actions;
+            }
+            Rule defaultRule = this.getDefaultRule();
+            if (Objects.nonNull(defaultRule)) {
+                log.info("结果未命中，存在默认规则，返回默认规则结果");
+                return defaultRule.execute(input, configuration);
+            }
+            log.info("结果未命中，不存在默认规则，返回:null");
+            return null;
+        } finally {
+            long cost = System.currentTimeMillis() - startTime;
+            log.info("引擎计算耗时:{}ms", cost);
+            if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
+                log.warn("警告：规则集执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
+            }
+        }
     }
 
 }
