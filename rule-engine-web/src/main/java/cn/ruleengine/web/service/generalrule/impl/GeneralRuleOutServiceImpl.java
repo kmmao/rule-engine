@@ -59,7 +59,7 @@ public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
         log.info("校验AccessKey耗时：{}", (System.currentTimeMillis() - currentTimeMillis));
         Input input = new DefaultInput();
         input.putAll(executeRule.getParam());
-        return this.engine.execute(input, workspaceCode, executeRule.getRuleCode());
+        return this.engine.execute(input, workspaceCode, executeRule.getCode());
     }
 
     /**
@@ -117,7 +117,7 @@ public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
         if (!accessKey.equals(isExistsRuleRequest.getAccessKeyId(), isExistsRuleRequest.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        return this.engine.isExists(isExistsRuleRequest.getWorkspaceCode(), isExistsRuleRequest.getRuleCode());
+        return this.engine.isExists(isExistsRuleRequest.getWorkspaceCode(), isExistsRuleRequest.getCode());
     }
 
 }

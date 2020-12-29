@@ -49,7 +49,7 @@ public class BatchExecuteGeneralRuleTask implements Runnable {
             BatchExecuteRuleResponse ruleResponse = new BatchExecuteRuleResponse();
             ruleResponse.setSymbol(executeInfo.getSymbol());
             try {
-                OutPut outPut = this.engine.execute(input, this.workspaceCode, executeInfo.getRuleCode());
+                OutPut outPut = this.engine.execute(input, this.workspaceCode, executeInfo.getCode());
                 ruleResponse.setOutPut(outPut);
             } catch (Exception e) {
                 log.error("执行规则异常", e);
