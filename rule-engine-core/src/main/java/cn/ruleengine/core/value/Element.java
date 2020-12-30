@@ -53,7 +53,7 @@ public class Element implements Value {
     @Override
     public Object getValue(Input input, RuleEngineConfiguration configuration) {
         Object value = input.get(this.getElementCode());
-        return dataConversion(value, this.getValueType());
+        return this.dataConversion(value, this.getValueType());
     }
 
     @Override

@@ -48,7 +48,7 @@ Content-Type: application/json
     <dependency>
         <groupId>cn.ruleengine</groupId>
         <artifactId>rule-engine-client</artifactId>
-        <version>1.7</version>
+        <version>1.8</version>
     </dependency>
 ```
 SpringBoot项目application.yml配置文件配置如下：

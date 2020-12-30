@@ -15,10 +15,7 @@
  */
 package cn.ruleengine.core;
 
-import cn.ruleengine.core.value.ValueType;
 import org.springframework.lang.Nullable;
-
-import java.util.Collection;
 
 
 /**
@@ -34,7 +31,6 @@ public class DefaultOutPut implements OutPut {
 
     private Object value;
     private String classType;
-    private ValueType valueType;
 
     public DefaultOutPut(@Nullable Object value) {
         if (value == null) {
@@ -42,23 +38,6 @@ public class DefaultOutPut implements OutPut {
         }
         this.value = value;
         this.classType = value.getClass().getName();
-        // 获取到值的类型
-        Class<?> clazz;
-        if (value instanceof Collection) {
-            Collection collection = (Collection) value;
-            clazz = collection.iterator().next().getClass();
-        } else {
-            clazz = value.getClass();
-        }
-        if (String.class.isAssignableFrom(clazz)) {
-            this.valueType = ValueType.STRING;
-        } else if (Number.class.isAssignableFrom(clazz)) {
-            this.valueType = ValueType.NUMBER;
-        } else if (Collection.class.isAssignableFrom(clazz)) {
-            this.valueType = ValueType.COLLECTION;
-        } else if (Boolean.class.isAssignableFrom(clazz)) {
-            this.valueType = ValueType.BOOLEAN;
-        }
     }
 
     /**
@@ -69,16 +48,6 @@ public class DefaultOutPut implements OutPut {
     @Override
     public Object getValue() {
         return this.value;
-    }
-
-    /**
-     * value 的数据类型，STRING，NUMBER，BOOLEAN，COLLECTION
-     *
-     * @return 数据类型
-     */
-    @Override
-    public ValueType getValueType() {
-        return this.valueType;
     }
 
     /**

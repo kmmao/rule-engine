@@ -38,10 +38,6 @@ public class OutPut implements Serializable {
      * 输出的参数值
      */
     private Object value;
-    /**
-     * value 的数据类型，STRING，NUMBER，BOOLEAN，COLLECTION
-     */
-    private String valueType;
 
     /**
      * 规则输出值的classType

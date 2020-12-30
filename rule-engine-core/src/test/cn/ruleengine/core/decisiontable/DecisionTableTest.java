@@ -88,7 +88,6 @@ public class DecisionTableTest {
         input.put("test", "sd");
         OutPut outPut = decisionTableEngine.execute(input, "test", "test");
         System.out.println(outPut.getClassType());
-        System.out.println(outPut.getValueType());
         System.out.println(outPut.getValue());
     }
 
