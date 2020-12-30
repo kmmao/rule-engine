@@ -187,7 +187,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     }
 
     @Override
-    public Boolean updateRule(UpdateDecisionTableRequest updateDecisionTableRequest) {
+    public Boolean updateDecisionTable(UpdateDecisionTableRequest updateDecisionTableRequest) {
 
         return null;
     }

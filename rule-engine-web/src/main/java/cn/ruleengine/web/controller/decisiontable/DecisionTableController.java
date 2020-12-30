@@ -121,12 +121,12 @@ public class DecisionTableController {
      * @return true执行成功
      */
     @ReSubmitLock
-    @DataPermission(id = "#updateRuleRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("updateRule")
+    @DataPermission(id = "#updateDecisionTableRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("updateDecisionTable")
     @ApiOperation("更新决策表信息")
-    public BaseResult updateRule(@Valid @RequestBody UpdateDecisionTableRequest updateDecisionTableRequest) {
+    public BaseResult updateDecisionTable(@Valid @RequestBody UpdateDecisionTableRequest updateDecisionTableRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(this.decisionTableService.updateRule(updateDecisionTableRequest));
+        plainResult.setData(this.decisionTableService.updateDecisionTable(updateDecisionTableRequest));
         return plainResult;
     }
 

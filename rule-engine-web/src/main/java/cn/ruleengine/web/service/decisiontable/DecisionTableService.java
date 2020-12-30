@@ -63,5 +63,5 @@ public interface DecisionTableService {
      * @param updateDecisionTableRequest 决策表配置数据
      * @return true执行成功
      */
-    Boolean updateRule(UpdateDecisionTableRequest updateDecisionTableRequest);
+    Boolean updateDecisionTable(UpdateDecisionTableRequest updateDecisionTableRequest);
 }
