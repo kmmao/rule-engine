@@ -25,19 +25,19 @@ import cn.hutool.core.text.StrFormatter;
  * @date 2020/3/9
  * @since 1.0.0
  */
-public class DecisionException extends RuntimeException {
+public class DecisionTableException extends RuntimeException {
 
     private static final long serialVersionUID = -3830935567722595556L;
 
-    public DecisionException(String message) {
+    public DecisionTableException(String message) {
         super(message);
     }
 
-    public DecisionException(String message, Object... args) {
+    public DecisionTableException(String message, Object... args) {
         super(StrFormatter.format(message, args));
     }
 
-    public DecisionException(Throwable e) {
+    public DecisionTableException(Throwable e) {
         super(e);
     }
 

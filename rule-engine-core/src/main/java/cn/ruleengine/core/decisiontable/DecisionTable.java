@@ -20,7 +20,7 @@ import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategy;
 import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategyFactory;
-import cn.ruleengine.core.exception.DecisionException;
+import cn.ruleengine.core.exception.DecisionTableException;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
@@ -112,11 +112,11 @@ public class DecisionTable implements JsonParse {
      */
     public void addRow(Row row) {
         if (this.collHeads == null) {
-            throw new DecisionException("请先初始化决策表表头");
+            throw new DecisionTableException("请先初始化决策表表头");
         }
         // 防止数据错乱，造成数据结果计算错误 初始化决策表时校验
         if (!Objects.equals(row.getColls().size(), this.collHeads.size())) {
-            throw new DecisionException("配置错误，左条件数量:{}，右值条件数量:{}", this.collHeads.size(), row.getColls().size());
+            throw new DecisionTableException("配置错误，左条件数量:{}，右值条件数量:{}", this.collHeads.size(), row.getColls().size());
         }
         Integer priority = row.getPriority();
         if (this.decisionTree.containsKey(priority)) {

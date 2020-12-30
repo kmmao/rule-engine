@@ -33,7 +33,7 @@ public class AppTest {
                     .decoder(new JacksonDecoder())
                     .options(new Request.Options(6000, 3500))
                     .retryer(new Retryer.Default(5000, 5000, 3))
-                    .target(GeneralRuleInterface.class, ruleEngineProperties.getUrl()));
+                    .target(GeneralRuleInterface.class, ruleEngineProperties.getBaseUrl()));
             this.setRuleEngineProperties(ruleEngineProperties);
         }
     };

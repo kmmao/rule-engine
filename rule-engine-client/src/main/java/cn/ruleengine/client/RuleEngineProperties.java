@@ -35,7 +35,7 @@ public class RuleEngineProperties {
     /**
      * 规则引擎调用地址
      */
-    private String url = "http://ruleserver.cn";
+    private String baseUrl = "http://ruleserver.cn";
     /**
      * 工作空间code
      */

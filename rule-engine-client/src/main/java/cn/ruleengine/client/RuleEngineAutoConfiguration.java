@@ -25,6 +25,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 
 
@@ -48,11 +49,9 @@ public class RuleEngineAutoConfiguration {
         return new RuleEngineClient();
     }
 
-    @Primary
-    @Bean
-    @ConditionalOnMissingBean
-    public GeneralRuleInterface generalRuleInterface() {
-        String url = this.ruleEngineProperties.getUrl();
+
+    private <T> T baseInterface(Class<T> clazz) {
+        String baseUrl = this.ruleEngineProperties.getBaseUrl();
         RuleEngineProperties.FeignConfig feignConfig = ruleEngineProperties.getFeignConfig();
         RuleEngineProperties.FeignConfig.Request request = feignConfig.getRequest();
         RuleEngineProperties.FeignConfig.Retryer retryer = feignConfig.getRetryer();
@@ -61,37 +60,29 @@ public class RuleEngineAutoConfiguration {
                 .decoder(new JacksonDecoder())
                 .options(new Request.Options(request.getConnectTimeoutMillis(), request.getReadTimeoutMillis()))
                 .retryer(new Retryer.Default(retryer.getPeriod(), retryer.getMaxPeriod(), retryer.getMaxAttempts()))
-                .target(GeneralRuleInterface.class, url);
+                .target(clazz, baseUrl);
     }
 
+    @Primary
+    @Bean
+    @Lazy
+    @ConditionalOnMissingBean
+    public GeneralRuleInterface generalRuleInterface() {
+        return this.baseInterface(GeneralRuleInterface.class);
+    }
+
+    @Lazy
     @Bean
     @ConditionalOnMissingBean
     public DecisionTableInterface decisionTableInterface() {
-        String url = this.ruleEngineProperties.getUrl();
-        RuleEngineProperties.FeignConfig feignConfig = ruleEngineProperties.getFeignConfig();
-        RuleEngineProperties.FeignConfig.Request request = feignConfig.getRequest();
-        RuleEngineProperties.FeignConfig.Retryer retryer = feignConfig.getRetryer();
-        return Feign.builder()
-                .encoder(new JacksonEncoder())
-                .decoder(new JacksonDecoder())
-                .options(new Request.Options(request.getConnectTimeoutMillis(), request.getReadTimeoutMillis()))
-                .retryer(new Retryer.Default(retryer.getPeriod(), retryer.getMaxPeriod(), retryer.getMaxAttempts()))
-                .target(DecisionTableInterface.class, url);
+        return this.baseInterface(DecisionTableInterface.class);
     }
 
+    @Lazy
     @Bean
     @ConditionalOnMissingBean
     public RuleSetInterface ruleSetInterface() {
-        String url = this.ruleEngineProperties.getUrl();
-        RuleEngineProperties.FeignConfig feignConfig = ruleEngineProperties.getFeignConfig();
-        RuleEngineProperties.FeignConfig.Request request = feignConfig.getRequest();
-        RuleEngineProperties.FeignConfig.Retryer retryer = feignConfig.getRetryer();
-        return Feign.builder()
-                .encoder(new JacksonEncoder())
-                .decoder(new JacksonDecoder())
-                .options(new Request.Options(request.getConnectTimeoutMillis(), request.getReadTimeoutMillis()))
-                .retryer(new Retryer.Default(retryer.getPeriod(), retryer.getMaxPeriod(), retryer.getMaxAttempts()))
-                .target(RuleSetInterface.class, url);
+        return this.baseInterface(RuleSetInterface.class);
     }
 
 }
