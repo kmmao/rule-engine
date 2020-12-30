@@ -42,6 +42,9 @@ public class RuleEngineConfiguration implements Closeable {
      */
     private ExecuteListener<GeneralRule> generalRuleListener = new DefaultExecuteListener<>();
 
+    /**
+     * 规则集执行监听器,可以动态的在规则调用之前或之后对一些规则进行特殊处理
+     */
     private ExecuteListener<RuleSet> ruleSetListener = new DefaultExecuteListener<>();
 
     /**

@@ -14,6 +14,8 @@ import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.decisiontable.ListDecisionTableRequest;
 import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
+import cn.ruleengine.web.vo.decisiontable.UpdateDecisionTableRequest;
+import cn.ruleengine.web.vo.generalrule.UpdateGeneralRuleRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,6 +111,22 @@ public class DecisionTableController {
     public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(this.decisionTableService.delete(idRequest.getId()));
+        return plainResult;
+    }
+
+    /**
+     * 更新决策表信息
+     *
+     * @param updateDecisionTableRequest 决策表配置数据
+     * @return true执行成功
+     */
+    @ReSubmitLock
+    @DataPermission(id = "#updateRuleRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("updateRule")
+    @ApiOperation("更新决策表信息")
+    public BaseResult updateRule(@Valid @RequestBody UpdateDecisionTableRequest updateDecisionTableRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(this.decisionTableService.updateRule(updateDecisionTableRequest));
         return plainResult;
     }
 

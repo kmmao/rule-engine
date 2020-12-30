@@ -20,6 +20,7 @@ import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.decisiontable.ListDecisionTableRequest;
 import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
+import cn.ruleengine.web.vo.decisiontable.UpdateDecisionTableRequest;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -183,6 +184,12 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         }
         this.ruleEngineDecisionTablePublishManager.lambdaUpdate().eq(RuleEngineDecisionTablePublish::getDecisionTableId, id).remove();
         return this.ruleEngineDecisionTableManager.removeById(id);
+    }
+
+    @Override
+    public Boolean updateRule(UpdateDecisionTableRequest updateDecisionTableRequest) {
+
+        return null;
     }
 
 }

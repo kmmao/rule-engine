@@ -5,6 +5,7 @@ import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.decisiontable.ListDecisionTableRequest;
 import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
+import cn.ruleengine.web.vo.decisiontable.UpdateDecisionTableRequest;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -56,4 +57,11 @@ public interface DecisionTableService {
      */
     Boolean delete(Integer id);
 
+    /**
+     * 更新决策表信息
+     *
+     * @param updateDecisionTableRequest 决策表配置数据
+     * @return true执行成功
+     */
+    Boolean updateRule(UpdateDecisionTableRequest updateDecisionTableRequest);
 }
