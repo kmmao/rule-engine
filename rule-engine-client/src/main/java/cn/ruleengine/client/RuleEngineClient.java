@@ -23,7 +23,6 @@ import cn.ruleengine.client.fegin.GeneralRuleInterface;
 import javax.annotation.Resource;
 
 import cn.ruleengine.client.fegin.RuleSetInterface;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
  * @since 1.0.0
  */
 @Slf4j
-@Data
 public class RuleEngineClient {
 
     @Resource
@@ -46,6 +44,9 @@ public class RuleEngineClient {
     private GeneralRuleInterface generalRuleInterface;
     @Resource
     private RuleSetInterface ruleSetInterface;
+
+    public RuleEngineClient() {
+    }
 
     /**
      * 决策表
@@ -73,5 +74,35 @@ public class RuleEngineClient {
     public RuleSet ruleSet() {
         return new RuleSet(this.ruleEngineProperties, this.ruleSetInterface);
     }
+
+
+    public RuleEngineProperties getRuleEngineProperties() {
+        return this.ruleEngineProperties;
+    }
+
+    public DecisionTableInterface getDecisionTableInterface() {
+        return this.decisionTableInterface;
+    }
+
+    public GeneralRuleInterface getGeneralRuleInterface() {
+        return this.generalRuleInterface;
+    }
+
+    public RuleSetInterface getRuleSetInterface() {
+        return this.ruleSetInterface;
+    }
+
+    public void setDecisionTableInterface(DecisionTableInterface decisionTableInterface) {
+        this.decisionTableInterface = decisionTableInterface;
+    }
+
+    public void setGeneralRuleInterface(GeneralRuleInterface generalRuleInterface) {
+        this.generalRuleInterface = generalRuleInterface;
+    }
+
+    public void setRuleSetInterface(RuleSetInterface ruleSetInterface) {
+        this.ruleSetInterface = ruleSetInterface;
+    }
+
 
 }
