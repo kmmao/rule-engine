@@ -51,6 +51,23 @@ Content-Type: application/json
         <version>1.7</version>
     </dependency>
 ```
+SpringBoot项目application.yml配置文件配置如下：
+```yml
+rule.engine:
+  baseUrl: http://ruleserver.cn
+  workspaceCode: default
+  accessKeyId: root
+  accessKeySecret: 123456
+  # 可选配置
+  feignConfig:
+    request:
+      connectTimeoutMillis: 3000
+      readTimeoutMillis: 3500
+    retryer:
+      period: 2000
+      maxPeriod: 2000
+      maxAttempts: 3
+```
 然后编写如下代码进行测试：  
 ```java
 @EnableRuleEngine
