@@ -92,6 +92,10 @@ public class RuleEngineClient {
         return this.ruleSetInterface;
     }
 
+    public void setRuleEngineProperties(RuleEngineProperties ruleEngineProperties) {
+        this.ruleEngineProperties = ruleEngineProperties;
+    }
+
     public void setDecisionTableInterface(DecisionTableInterface decisionTableInterface) {
         this.decisionTableInterface = decisionTableInterface;
     }
