@@ -86,6 +86,32 @@ public class PhoneTestRule {
 
 }
 ```
+
+我们默认使用Feign请求，当然你也可以自定义，只需要在项目中配置如下代码：
+```java
+@Bean
+public GeneralRuleInterface generalRuleInterface() {
+    return new GeneralRuleInterface() {
+
+        @Override
+        public ExecuteResult execute(ExecuteParam executeParam) {
+            return restTemplate.postForObject("http://ruleserver.cn/ruleEngine/generalRule/execute", executeParam, ExecuteResult.class);
+        }
+
+        @Override
+        public IsExistsResult isExists(IsExistsParam existsParam) {
+            // TODO: 2020/12/30  
+            return null;
+        }
+
+        @Override
+        public BatchExecuteResult batchExecute(BatchParam batchParam) {
+            // TODO: 2020/12/30  
+            return null;
+        }
+    };
+}
+```
 现在你就已经学会了如何使用，更多使用方式敬请期待我们将文档补全！
 
 
