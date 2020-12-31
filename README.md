@@ -26,7 +26,11 @@
     - Swagger  
 
 ### 规则如何调用
-规则通过在 http://ruleengine.cn 配置完成后，就可以调用接口来执行引擎中的规则了  
+通过在 http://ruleengine.cn 配置规则，例如配置的规则如下：  
+
+![rule-config](https://boot-rule.oss-cn-beijing.aliyuncs.com/rule-config.png)
+
+配置完成后我们就可以调用接口来执行引擎中的规则了  
 ```http
 POST http://ruleserver.cn/ruleEngine/generalRule/execute
 Content-Type: application/json
