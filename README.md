@@ -34,7 +34,7 @@
 
 
 配置完成后我们就可以调用接口来执行引擎中的规则了  
-```http
+```
 POST http://ruleserver.cn/ruleEngine/generalRule/execute
 Content-Type: application/json
 
