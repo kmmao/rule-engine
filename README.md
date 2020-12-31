@@ -28,7 +28,10 @@
 ### 规则如何调用
 通过在 http://ruleengine.cn 配置规则，例如配置的规则如下：  
 
-![rule-config](https://boot-rule.oss-cn-beijing.aliyuncs.com/rule-config.png)
+| 规则配置信息展示 |
+|---|
+| ![rule-config](https://boot-rule.oss-cn-beijing.aliyuncs.com/rule-config.png)|
+
 
 配置完成后我们就可以调用接口来执行引擎中的规则了  
 ```http
@@ -141,7 +144,9 @@ public GeneralRuleInterface generalRuleInterface() {
  - 规则监控（待开发）  
  - 评分卡（待开发）  
  - 决策树（待开发）   
- - 决策表（待开发）   
+ - 决策表（开发中，页面待完成）   
+ - 规则集（开发中，页面待开发）
+ - 元素组（待开发）
 
 目前忙于工作，功能待完善，欢迎有兴趣伙伴加入我们！
  
