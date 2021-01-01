@@ -19,14 +19,11 @@ import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineGeneralRuleMapper;
 
 import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
-import cn.ruleengine.web.vo.condition.ConditionGroupCondition;
-import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
-import cn.ruleengine.web.vo.condition.ConditionResponse;
-import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.generalrule.*;
 import cn.ruleengine.core.condition.ConditionGroup;
 
@@ -626,7 +623,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleResponse.setAction(BasicConversion.INSTANCE.convertAction(this.getConfigValue(actionValue)));
         DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
-            ConfigBean.Value value = this.getConfigValue(rule.getDefaultActionValue());
+            ConfigValue value = this.getConfigValue(rule.getDefaultActionValue());
             defaultAction = BasicConversion.INSTANCE.convert(value);
             defaultAction.setEnableDefaultAction(EnableEnum.ENABLE.getStatus());
         } else {
@@ -647,8 +644,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
      * @param cValue Value
      * @return ConfigBean.Value
      */
-    public ConfigBean.Value getConfigValue(Value cValue) {
-        ConfigBean.Value value = new ConfigBean.Value();
+    public ConfigValue getConfigValue(Value cValue) {
+        ConfigValue value = new ConfigValue();
         value.setValueType(cValue.getValueType().getValue());
         if (cValue instanceof Constant) {
             value.setType(VariableType.CONSTANT.getType());

@@ -20,35 +20,12 @@ import javax.validation.constraints.NotNull;
 public class ConfigBean {
 
     @Valid
-    private Value leftValue;
+    private ConfigValue leftValue;
 
     @NotBlank
     private String symbol;
 
     @Valid
-    private Value rightValue;
-
-    @NoArgsConstructor
-    @Data
-    public static class Value {
-
-        @NotNull
-        private Integer type;
-
-        @NotBlank
-        private String value;
-
-        private String valueName;
-
-        /**
-         * 固定值变量 值
-         * value为变量的id
-         */
-        private String variableValue;
-
-        @NotBlank
-        private String valueType;
-
-    }
+    private ConfigValue rightValue;
 
 }

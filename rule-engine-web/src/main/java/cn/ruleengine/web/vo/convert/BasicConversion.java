@@ -2,6 +2,7 @@ package cn.ruleengine.web.vo.convert;
 
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.vo.condition.ConfigBean;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroupCondition;
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.element.GetElementResponse;
@@ -69,7 +70,7 @@ public interface BasicConversion {
      * @param value value
      * @return DefaultAction
      */
-    DefaultAction convert(ConfigBean.Value value);
+    DefaultAction convert(ConfigValue value);
 
     /**
      * ruleEngineUser to UserData
@@ -110,7 +111,7 @@ public interface BasicConversion {
      * @param configValue configValue
      * @return DefaultAction
      */
-    Action convertAction(ConfigBean.Value configValue);
+    Action convertAction(ConfigValue configValue);
 
     /**
      * ruleEngineWorkspaces to ListWorkspaceResponse

@@ -11,10 +11,8 @@ import cn.ruleengine.web.vo.base.request.Param;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
-import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
-import cn.ruleengine.web.vo.decisiontable.ListDecisionTableRequest;
-import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
-import cn.ruleengine.web.vo.decisiontable.UpdateDecisionTableRequest;
+import cn.ruleengine.web.vo.decisiontable.*;
+import cn.ruleengine.web.vo.generalrule.GetGeneralRuleResponse;
 import cn.ruleengine.web.vo.generalrule.UpdateGeneralRuleRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -127,6 +125,21 @@ public class DecisionTableController {
     public BaseResult updateDecisionTable(@Valid @RequestBody UpdateDecisionTableRequest updateDecisionTableRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(this.decisionTableService.updateDecisionTable(updateDecisionTableRequest));
+        return plainResult;
+    }
+
+    /**
+     * 获取决策表信息
+     *
+     * @param idRequest 决策表id
+     * @return 决策表信息
+     */
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("getDecisionTableConfig")
+    @ApiOperation("获取决策表配置信息")
+    public BaseResult getDecisionTableConfig(@Valid @RequestBody IdRequest idRequest) {
+        PlainResult<GetDecisionTableResponse> plainResult = new PlainResult<>();
+        plainResult.setData(decisionTableService.getDecisionTableConfig(idRequest.getId()));
         return plainResult;
     }
 

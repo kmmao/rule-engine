@@ -156,7 +156,7 @@ public class GeneralRuleController {
     @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("getRuleConfig")
     @ApiOperation("获取规则配置信息")
-    public BaseResult getRule(@Valid @RequestBody IdRequest idRequest) {
+    public BaseResult getRuleConfig(@Valid @RequestBody IdRequest idRequest) {
         PlainResult<GetGeneralRuleResponse> plainResult = new PlainResult<>();
         plainResult.setData(ruleService.getRuleConfig(idRequest.getId()));
         return plainResult;

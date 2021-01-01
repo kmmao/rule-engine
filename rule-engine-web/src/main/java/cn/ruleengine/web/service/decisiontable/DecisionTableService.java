@@ -2,10 +2,8 @@ package cn.ruleengine.web.service.decisiontable;
 
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageResult;
-import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
-import cn.ruleengine.web.vo.decisiontable.ListDecisionTableRequest;
-import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
-import cn.ruleengine.web.vo.decisiontable.UpdateDecisionTableRequest;
+import cn.ruleengine.web.vo.decisiontable.*;
+import cn.ruleengine.web.vo.generalrule.GetGeneralRuleResponse;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -64,4 +62,12 @@ public interface DecisionTableService {
      * @return true执行成功
      */
     Boolean updateDecisionTable(UpdateDecisionTableRequest updateDecisionTableRequest);
+
+    /**
+     * 获取决策表信息
+     *
+     * @param id 决策表id
+     * @return 决策表信息
+     */
+    GetDecisionTableResponse getDecisionTableConfig(Integer id);
 }

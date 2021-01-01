@@ -173,12 +173,12 @@ public class ConditionServiceImpl implements ConditionService {
     public ConfigBean getConfigBean(RuleEngineCondition engineCondition) {
         ConfigBean configBean = new ConfigBean();
 
-        ConfigBean.Value leftValue = getConfigBeanValue(engineCondition.getLeftType(), engineCondition.getLeftValue(), engineCondition.getLeftValueType());
+        ConfigValue leftValue = getConfigBeanValue(engineCondition.getLeftType(), engineCondition.getLeftValue(), engineCondition.getLeftValueType());
         configBean.setLeftValue(leftValue);
 
         configBean.setSymbol(engineCondition.getSymbol());
 
-        ConfigBean.Value rightValue = getConfigBeanValue(engineCondition.getRightType(), engineCondition.getRightValue(), engineCondition.getRightValueType());
+        ConfigValue rightValue = getConfigBeanValue(engineCondition.getRightType(), engineCondition.getRightValue(), engineCondition.getRightValueType());
         configBean.setRightValue(rightValue);
         return configBean;
     }
@@ -191,7 +191,7 @@ public class ConditionServiceImpl implements ConditionService {
      * @param valueType 值类型 STRING/NUMBER...
      * @return ConfigBean.Value
      */
-    public ConfigBean.Value getConfigBeanValue(Integer type, String value, String valueType) {
+    public ConfigValue getConfigBeanValue(Integer type, String value, String valueType) {
         String valueName = value;
         String variableValue = null;
         if (type.equals(VariableType.ELEMENT.getType())) {
@@ -203,7 +203,7 @@ public class ConditionServiceImpl implements ConditionService {
                 variableValue = engineVariable.getValue();
             }
         }
-        ConfigBean.Value configBeanValue = new ConfigBean.Value();
+        ConfigValue configBeanValue = new ConfigValue();
         configBeanValue.setType(type);
         configBeanValue.setValue(value);
         configBeanValue.setValueName(valueName);
@@ -259,12 +259,12 @@ public class ConditionServiceImpl implements ConditionService {
     public ConfigBean getConfigBean(RuleEngineCondition m, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
         ConfigBean configBean = new ConfigBean();
 
-        ConfigBean.Value leftValue = getConfigBeanValue(m.getLeftType(), m.getLeftValue(), m.getLeftValueType(), variableMap, elementMap);
+        ConfigValue leftValue = getConfigBeanValue(m.getLeftType(), m.getLeftValue(), m.getLeftValueType(), variableMap, elementMap);
         configBean.setLeftValue(leftValue);
 
         configBean.setSymbol(m.getSymbol());
 
-        ConfigBean.Value rightValue = getConfigBeanValue(m.getRightType(), m.getRightValue(), m.getRightValueType(), variableMap, elementMap);
+        ConfigValue rightValue = getConfigBeanValue(m.getRightType(), m.getRightValue(), m.getRightValueType(), variableMap, elementMap);
         configBean.setRightValue(rightValue);
         return configBean;
     }
@@ -328,9 +328,9 @@ public class ConditionServiceImpl implements ConditionService {
      * @param valueType   值类型 STRING/NUMBER...
      * @param variableMap 变量缓存
      * @param elementMap  元素缓存
-     * @return ConfigBean.Value
+     * @return ConfigValue
      */
-    public ConfigBean.Value getConfigBeanValue(Integer type, String value, String valueType, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
+    public ConfigValue getConfigBeanValue(Integer type, String value, String valueType, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
         String valueName = value;
         String variableValue = null;
         if (type.equals(VariableType.ELEMENT.getType())) {
@@ -342,7 +342,7 @@ public class ConditionServiceImpl implements ConditionService {
                 variableValue = engineVariable.getValue();
             }
         }
-        ConfigBean.Value configBeanValue = new ConfigBean.Value();
+        ConfigValue configBeanValue = new ConfigValue();
         configBeanValue.setType(type);
         configBeanValue.setValue(value);
         configBeanValue.setValueName(valueName);
@@ -391,13 +391,13 @@ public class ConditionServiceImpl implements ConditionService {
      * @param config    请求的条件配置数据
      */
     private void configBeanCopyToCondition(RuleEngineCondition condition, ConfigBean config) {
-        ConfigBean.Value leftValue = config.getLeftValue();
+        ConfigValue leftValue = config.getLeftValue();
         condition.setLeftValueType(leftValue.getValueType());
         condition.setLeftType(leftValue.getType());
         condition.setLeftValue(leftValue.getValue());
         String symbol = config.getSymbol();
         condition.setSymbol(symbol);
-        ConfigBean.Value rightValue = config.getRightValue();
+        ConfigValue rightValue = config.getRightValue();
         condition.setRightValueType(rightValue.getValueType());
         condition.setRightType(rightValue.getType());
         condition.setRightValue(rightValue.getValue());

@@ -3,6 +3,7 @@ package cn.ruleengine.web.service.decisiontable.impl;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.exception.ValidException;
+import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
@@ -17,12 +18,10 @@ import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.convert.BasicConversion;
-import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
-import cn.ruleengine.web.vo.decisiontable.ListDecisionTableRequest;
-import cn.ruleengine.web.vo.decisiontable.ListDecisionTableResponse;
-import cn.ruleengine.web.vo.decisiontable.UpdateDecisionTableRequest;
+import cn.ruleengine.web.vo.decisiontable.*;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -111,6 +111,13 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             ruleEngineDecisionTable.setCreateUserName(userData.getUsername());
             ruleEngineDecisionTable.setWorkspaceId(workspace.getId());
             ruleEngineDecisionTable.setWorkspaceCode(workspace.getCode());
+            // 初始化决策表
+            TableData tableData = new TableData();
+            tableData.getCollConditionHeads().add(new CollConditionHeads());
+            Rows rows = new Rows();
+            rows.getConditions().add(new CollCondition());
+            tableData.getRows().add(rows);
+            ruleEngineDecisionTable.setTableData(JSON.toJSONString(tableData));
         } else {
             Integer count = this.ruleEngineDecisionTableManager.lambdaQuery()
                     .eq(RuleEngineDecisionTable::getId, decisionTableDefinition.getId())
@@ -186,10 +193,53 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         return this.ruleEngineDecisionTableManager.removeById(id);
     }
 
+    /**
+     * 更新决策表信息
+     *
+     * @param updateDecisionTableRequest 决策表配置数据
+     * @return true执行成功
+     */
     @Override
     public Boolean updateDecisionTable(UpdateDecisionTableRequest updateDecisionTableRequest) {
+        Integer decisionTableId = updateDecisionTableRequest.getId();
+        RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(decisionTableId);
+        if (ruleEngineDecisionTable == null) {
+            throw new ValidException("不存在决策表:{}", decisionTableId);
+        }
+        if (Objects.equals(ruleEngineDecisionTable.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
+            this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                    .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineDecisionTablePublish::getDecisionTableId, decisionTableId)
+                    .remove();
+        }
+        ruleEngineDecisionTable.setAbnormalAlarm(JSON.toJSONString(updateDecisionTableRequest.getAbnormalAlarm()));
+        ruleEngineDecisionTable.setStatus(DataStatus.EDIT.getStatus());
+        ruleEngineDecisionTable.setTableData(JSON.toJSONString(updateDecisionTableRequest.getTableData()));
+        return this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
+    }
 
-        return null;
+    /**
+     * 获取决策表信息
+     *
+     * @param id 决策表id
+     * @return 决策表信息
+     */
+    @Override
+    public GetDecisionTableResponse getDecisionTableConfig(Integer id) {
+        RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(id);
+        if (ruleEngineDecisionTable == null) {
+            return null;
+        }
+        GetDecisionTableResponse decisionTableResponse = new GetDecisionTableResponse();
+        decisionTableResponse.setId(id);
+        decisionTableResponse.setName(ruleEngineDecisionTable.getName());
+        decisionTableResponse.setCode(ruleEngineDecisionTable.getCode());
+        decisionTableResponse.setDescription(ruleEngineDecisionTable.getDescription());
+        decisionTableResponse.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
+        decisionTableResponse.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
+        decisionTableResponse.setTableData(JSON.parseObject(ruleEngineDecisionTable.getTableData(), TableData.class));
+        decisionTableResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineDecisionTable.getAbnormalAlarm(), AbnormalAlarm.class));
+        return decisionTableResponse;
     }
 
 }
