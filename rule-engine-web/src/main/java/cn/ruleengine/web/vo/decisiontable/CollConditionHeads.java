@@ -25,6 +25,8 @@ public class CollConditionHeads {
 
     private String symbol;
 
+    private String explanation;
+
     private ConfigValue leftValue = new ConfigValue();
 
 }

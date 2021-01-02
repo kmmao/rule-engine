@@ -1,14 +1,12 @@
 package cn.ruleengine.web.vo.convert;
 
 import cn.ruleengine.web.store.entity.*;
-import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.condition.group.condition.SaveOrUpdateConditionGroupCondition;
 import cn.ruleengine.web.vo.decisiontable.DecisionTableDefinition;
 import cn.ruleengine.web.vo.element.GetElementResponse;
 import cn.ruleengine.web.vo.generalrule.GeneralRuleDefinition;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
-import cn.ruleengine.web.vo.generalrule.Action;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.user.UserResponse;
@@ -95,23 +93,6 @@ public interface BasicConversion {
      * @return RuleEngineConditionGroupCondition
      */
     RuleEngineConditionGroupCondition convert(SaveOrUpdateConditionGroupCondition saveOrUpdateConditionGroup);
-
-    /**
-     * Action to DefaultAction
-     *
-     * @param action action
-     * @return DefaultAction
-     */
-    DefaultAction convert(Action action);
-
-
-    /**
-     * configValue to DefaultAction
-     *
-     * @param configValue configValue
-     * @return DefaultAction
-     */
-    Action convertAction(ConfigValue configValue);
 
     /**
      * ruleEngineWorkspaces to ListWorkspaceResponse

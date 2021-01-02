@@ -2,6 +2,7 @@ package cn.ruleengine.web.vo.generalrule;
 
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public class UpdateGeneralRuleRequest {
 
     private List<ConditionGroupConfig> conditionGroup;
 
-    private Action action;
+    private ConfigValue action;
 
     private DefaultAction defaultAction;
 

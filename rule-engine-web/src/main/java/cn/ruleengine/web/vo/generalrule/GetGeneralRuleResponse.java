@@ -2,6 +2,7 @@ package cn.ruleengine.web.vo.generalrule;
 
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.Data;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class GetGeneralRuleResponse {
 
     private List<ConditionGroupConfig> conditionGroup;
 
-    private Action action;
+    private ConfigValue action;
 
     private DefaultAction defaultAction;
 

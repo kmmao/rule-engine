@@ -15,7 +15,18 @@ import java.util.List;
  */
 @Data
 public class TableData {
+
+    /**
+     * 条件头
+     */
     private List<CollConditionHeads> collConditionHeads = new ArrayList<>();
-    private List<Rows> rows = new ArrayList<>();
+    /**
+     * 结果头
+     */
     private CollResultHead collResultHead = new CollResultHead();
+    /**
+     * 规则行
+     */
+    private List<Rows> rows = new ArrayList<>();
+
 }

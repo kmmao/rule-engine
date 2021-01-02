@@ -16,6 +16,8 @@ import java.util.List;
 @Data
 public class Rows {
 
+    private Integer id;
+
     /**
      * 默认值为1
      */

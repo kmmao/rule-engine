@@ -1,5 +1,6 @@
 package cn.ruleengine.web.vo.generalrule;
 
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +14,19 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DefaultAction extends Action {
+public class DefaultAction extends ConfigValue {
+
+    public DefaultAction() {
+
+    }
+
+    public DefaultAction(ConfigValue configValue) {
+        this.setValue(configValue.getValue());
+        this.setType(configValue.getType());
+        this.setValueName(configValue.getValueName());
+        this.setVariableValue(configValue.getVariableValue());
+        this.setValueType(configValue.getValueType());
+    }
 
     /**
      * 0启用 1不启用

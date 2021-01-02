@@ -1,6 +1,6 @@
 package cn.ruleengine.web.vo.decisiontable;
 
-import cn.ruleengine.web.vo.condition.ConfigValue;
+import cn.ruleengine.web.vo.generalrule.DefaultAction;
 import lombok.Data;
 
 /**
@@ -13,7 +13,16 @@ import lombok.Data;
  */
 @Data
 public class CollResultHead {
+    /**
+     * 结果类型 固定值 变量
+     */
     private Integer type;
+    /**
+     * 值类型 STRING NUMBER...
+     */
     private String valueType;
-    private ConfigValue defaultAction = new ConfigValue();
+    /**
+     * 默认结果
+     */
+    private DefaultAction defaultAction = new DefaultAction();
 }

@@ -29,7 +29,6 @@ import cn.ruleengine.core.condition.ConditionGroup;
 
 import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
-import cn.ruleengine.web.vo.generalrule.Action;
 
 
 import cn.hutool.core.collection.CollUtil;
@@ -177,7 +176,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleEngineGeneralRule.setId(updateRuleRequest.getId());
         ruleEngineGeneralRule.setStatus(DataStatus.EDIT.getStatus());
         // 保存规则结果
-        Action action = updateRuleRequest.getAction();
+        ConfigValue action = updateRuleRequest.getAction();
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setId(ruleEngineGeneralRule.getRuleId());
         ruleEngineRule.setActionType(action.getType());
@@ -375,7 +374,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleEngineGeneralRule.setId(releaseRequest.getId());
         ruleEngineGeneralRule.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         // 保存结果
-        Action action = releaseRequest.getAction();
+        ConfigValue action = releaseRequest.getAction();
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setActionValue(action.getValue());
         ruleEngineRule.setId(ruleEngineGeneralRule.getRuleId());
@@ -523,11 +522,11 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         }
         // 结果
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(ruleEngineGeneralRule.getRuleId());
-        Action action = getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
+        ConfigValue action = this.getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
         ruleResponse.setAction(action);
         // 默认结果
-        Action defaultValue = getAction(ruleEngineGeneralRule.getDefaultActionValue(), ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType());
-        DefaultAction defaultAction = BasicConversion.INSTANCE.convert(defaultValue);
+        ConfigValue defaultValue = this.getAction(ruleEngineGeneralRule.getDefaultActionValue(), ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType());
+        DefaultAction defaultAction = new DefaultAction(defaultValue);
         defaultAction.setEnableDefaultAction(ruleEngineGeneralRule.getEnableDefaultAction());
         ruleResponse.setDefaultAction(defaultAction);
         ruleResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineGeneralRule.getAbnormalAlarm(), AbnormalAlarm.class));
@@ -619,12 +618,10 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             groupArrayList.add(group);
         }
         ruleResponse.setConditionGroup(groupArrayList);
-        Value actionValue = rule.getActionValue();
-        ruleResponse.setAction(BasicConversion.INSTANCE.convertAction(this.getConfigValue(actionValue)));
+        ruleResponse.setAction(this.getConfigValue(rule.getActionValue()));
         DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
-            ConfigValue value = this.getConfigValue(rule.getDefaultActionValue());
-            defaultAction = BasicConversion.INSTANCE.convert(value);
+            defaultAction = new DefaultAction(this.getConfigValue(rule.getDefaultActionValue()));
             defaultAction.setEnableDefaultAction(EnableEnum.ENABLE.getStatus());
         } else {
             defaultAction = new DefaultAction();
@@ -679,8 +676,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
      * @param valueType STRING/NUMBER...
      * @return Action
      */
-    public Action getAction(String value, Integer type, String valueType) {
-        Action action = new Action();
+    public ConfigValue getAction(String value, Integer type, String valueType) {
+        ConfigValue action = new ConfigValue();
         if (Validator.isEmpty(type)) {
             return action;
         }
