@@ -355,23 +355,12 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         Integer originStatus = ruleEngineGeneralRule.getStatus();
         // 如果开启了默认结果
         DefaultAction defaultAction = releaseRequest.getDefaultAction();
-        if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
-            if (Validator.isEmpty(defaultAction.getType())) {
-                throw new ValidException("默认结果类型不能为空");
-            }
-            if (Validator.isEmpty(defaultAction.getValueType())) {
-                throw new ValidException("默认结果值类型不能为空");
-            }
-            if (Validator.isEmpty(defaultAction.getValue())) {
-                throw new ValidException("默认结果值不能为空");
-            }
-        }
+        defaultAction.valid();
         // 如果原来有条件信息，先删除原有信息
         this.removeConditionGroupByRuleId(ruleEngineGeneralRule.getRuleId());
         // 保存条件信息
         this.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), releaseRequest.getConditionGroup());
         //  更新规则信息
-        ruleEngineGeneralRule.setId(releaseRequest.getId());
         ruleEngineGeneralRule.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         // 保存结果
         ConfigValue action = releaseRequest.getAction();

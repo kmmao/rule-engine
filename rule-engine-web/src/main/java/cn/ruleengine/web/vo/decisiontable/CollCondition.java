@@ -18,6 +18,7 @@ public class CollCondition {
     private String valueType;
     private String variableValue;
     private Integer type;
+    private Integer tempType;
     private Boolean visible;
 
 }

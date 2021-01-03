@@ -2,6 +2,7 @@ package cn.ruleengine.web.vo.decisiontable;
 
 import lombok.Data;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +20,13 @@ public class TableData {
     /**
      * 条件头
      */
+    @Valid
     private List<CollConditionHeads> collConditionHeads = new ArrayList<>();
+
     /**
      * 结果头
      */
+    @Valid
     private CollResultHead collResultHead = new CollResultHead();
     /**
      * 规则行

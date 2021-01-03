@@ -48,19 +48,6 @@ public class GeneralRuleResolveServiceImpl implements GeneralRuleResolveService 
 
 
     /**
-     * 根据规则code查询解析一个规则
-     *
-     * @param ruleCode 规则code
-     * @return rule
-     */
-    @Override
-    public GeneralRule getGeneralRuleByCode(String ruleCode) {
-        log.info("开始加载规则：{}", ruleCode);
-        RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.lambdaQuery().eq(RuleEngineGeneralRule::getCode, ruleCode).one();
-        return ruleProcess(ruleEngineGeneralRule);
-    }
-
-    /**
      * 根据规则id查询解析一个规则
      *
      * @param id 规则id

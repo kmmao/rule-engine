@@ -3,6 +3,9 @@ package cn.ruleengine.web.vo.decisiontable;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -13,16 +16,22 @@ import lombok.Data;
  */
 @Data
 public class CollResultHead {
+
+    private Integer tempType;
     /**
      * 结果类型 固定值 变量
      */
+    @NotNull
     private Integer type;
     /**
      * 值类型 STRING NUMBER...
      */
+    @NotNull
     private String valueType;
     /**
      * 默认结果
      */
+    @Valid
     private DefaultAction defaultAction = new DefaultAction();
+
 }

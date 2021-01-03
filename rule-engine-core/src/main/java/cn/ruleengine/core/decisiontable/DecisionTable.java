@@ -72,9 +72,9 @@ public class DecisionTable implements JsonParse {
     /**
      * 执行策略
      * <p>
-     * 默认：返回命中的最高优先级所有结果
+     * 默认：返回所有优先级所有结果
      */
-    private DecisionTableStrategyType strategyType = DecisionTableStrategyType.HIGHEST_PRIORITY_ALL;
+    private DecisionTableStrategyType strategyType = DecisionTableStrategyType.ALL_PRIORITY;
 
     /**
      * coll头

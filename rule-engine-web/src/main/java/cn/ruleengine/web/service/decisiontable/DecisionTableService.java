@@ -70,4 +70,12 @@ public interface DecisionTableService {
      * @return 决策表信息
      */
     GetDecisionTableResponse getDecisionTableConfig(Integer id);
+
+    /**
+     * 生成决策表代发布
+     *
+     * @param releaseRequest 配置数据
+     * @return true
+     */
+    Boolean generationRelease(GenerationReleaseRequest releaseRequest);
 }

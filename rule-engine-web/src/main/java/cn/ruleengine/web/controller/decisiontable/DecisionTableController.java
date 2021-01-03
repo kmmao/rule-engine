@@ -12,10 +12,9 @@ import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.decisiontable.*;
-import cn.ruleengine.web.vo.generalrule.GetGeneralRuleResponse;
-import cn.ruleengine.web.vo.generalrule.UpdateGeneralRuleRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -119,7 +118,7 @@ public class DecisionTableController {
      * @return true执行成功
      */
     @ReSubmitLock
-    @DataPermission(id = "#updateDecisionTableRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#updateDecisionTableRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("updateDecisionTable")
     @ApiOperation("更新决策表信息")
     public BaseResult updateDecisionTable(@Valid @RequestBody UpdateDecisionTableRequest updateDecisionTableRequest) {
@@ -134,7 +133,7 @@ public class DecisionTableController {
      * @param idRequest 决策表id
      * @return 决策表信息
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("getDecisionTableConfig")
     @ApiOperation("获取决策表配置信息")
     public BaseResult getDecisionTableConfig(@Valid @RequestBody IdRequest idRequest) {
@@ -142,5 +141,23 @@ public class DecisionTableController {
         plainResult.setData(decisionTableService.getDecisionTableConfig(idRequest.getId()));
         return plainResult;
     }
+
+
+    /**
+     * 生成决策表代发布
+     *
+     * @param releaseRequest 配置数据
+     * @return true
+     */
+    @ReSubmitLock
+    @DataPermission(id = "#releaseRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("generationRelease")
+    @ApiOperation("生成决策表代发布")
+    public BaseResult generationRelease(@Validated @RequestBody GenerationReleaseRequest releaseRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(decisionTableService.generationRelease(releaseRequest));
+        return plainResult;
+    }
+
 
 }

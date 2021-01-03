@@ -15,14 +15,6 @@ public interface GeneralRuleResolveService {
 
 
     /**
-     * 根据规则code查询解析一个规则
-     *
-     * @param ruleCode 规则code
-     * @return rule
-     */
-    GeneralRule getGeneralRuleByCode(String ruleCode);
-
-    /**
      * 根据规则id查询解析一个规则
      *
      * @param id 规则id

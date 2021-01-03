@@ -48,4 +48,17 @@ public enum DecisionTableStrategyType {
         this.value = value;
     }
 
+    public static DecisionTableStrategyType getByValue(Integer value) {
+        switch (value) {
+            case 1:
+                return ALL_PRIORITY;
+            case 2:
+                return HIGHEST_PRIORITY_SINGLE;
+            case 3:
+                return HIGHEST_PRIORITY_ALL;
+            default:
+                throw new IllegalStateException("Unexpected value: " + value);
+        }
+    }
+
 }

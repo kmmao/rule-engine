@@ -107,7 +107,7 @@ public class GeneralRuleController {
     @ReSubmitLock
     @DataPermission(id = "#releaseRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
-    @ApiOperation("生成代发布")
+    @ApiOperation("生成普通规则代发布")
     public BaseResult generationRelease(@Validated @RequestBody GenerationReleaseRequest releaseRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(ruleService.generationRelease(releaseRequest));

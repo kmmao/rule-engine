@@ -16,7 +16,6 @@
 package cn.ruleengine.core.decisiontable;
 
 
-import cn.ruleengine.core.value.Constant;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
 import org.springframework.lang.NonNull;
@@ -39,7 +38,7 @@ public class Coll {
      */
     private Value rightValue;
 
-    public Coll(@NonNull Constant rightValue) {
+    public Coll(@NonNull Value rightValue) {
         Objects.requireNonNull(rightValue);
         this.rightValue = rightValue;
     }

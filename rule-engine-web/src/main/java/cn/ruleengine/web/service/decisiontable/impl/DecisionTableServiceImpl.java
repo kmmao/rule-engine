@@ -2,15 +2,20 @@ package cn.ruleengine.web.service.decisiontable.impl;
 
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
+import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
+import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
 import cn.ruleengine.web.listener.event.DecisionTableEvent;
+import cn.ruleengine.web.service.decisiontable.DecisionTablePublishService;
+import cn.ruleengine.web.service.decisiontable.DecisionTableResolveService;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTable;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTablePublish;
+import cn.ruleengine.web.store.entity.RuleEngineGeneralRulePublish;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTableManager;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTablePublishManager;
 import cn.ruleengine.web.util.PageUtils;
@@ -19,6 +24,7 @@ import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.decisiontable.*;
+import cn.ruleengine.web.vo.generalrule.DefaultAction;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import com.alibaba.fastjson.JSON;
@@ -51,6 +57,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     private DecisionTableEngine decisionTableEngine;
     @Resource
     private ApplicationEventPublisher eventPublisher;
+    @Resource
+    private DecisionTableResolveService decisionTableResolveService;
 
     /**
      * 决策表列表
@@ -212,6 +220,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
                     .eq(RuleEngineDecisionTablePublish::getDecisionTableId, decisionTableId)
                     .remove();
         }
+        ruleEngineDecisionTable.setStrategyType(updateDecisionTableRequest.getStrategyType());
         ruleEngineDecisionTable.setAbnormalAlarm(JSON.toJSONString(updateDecisionTableRequest.getAbnormalAlarm()));
         ruleEngineDecisionTable.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(updateDecisionTableRequest.getTableData()));
@@ -240,6 +249,46 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableResponse.setTableData(JSON.parseObject(ruleEngineDecisionTable.getTableData(), TableData.class));
         decisionTableResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineDecisionTable.getAbnormalAlarm(), AbnormalAlarm.class));
         return decisionTableResponse;
+    }
+
+    /**
+     * 生成决策表代发布
+     *
+     * @param releaseRequest 配置数据
+     * @return true
+     */
+    @Override
+    public Boolean generationRelease(GenerationReleaseRequest releaseRequest) {
+        // 校验是否配置完善
+        DefaultAction defaultAction = releaseRequest.getTableData().getCollResultHead().getDefaultAction();
+        defaultAction.valid();
+        RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(releaseRequest.getId());
+        if (ruleEngineDecisionTable == null) {
+            throw new ValidException("不存在决策表:{}", releaseRequest.getId());
+        }
+        Integer originStatus = ruleEngineDecisionTable.getStatus();
+        if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
+            // 删除原有待发布规则
+            this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                    .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
+                    .remove();
+        }
+        ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
+        ruleEngineDecisionTable.setAbnormalAlarm(JSON.toJSONString(releaseRequest.getAbnormalAlarm()));
+        ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
+        ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
+        this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
+        RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = new RuleEngineDecisionTablePublish();
+        ruleEngineDecisionTablePublish.setDecisionTableId(ruleEngineDecisionTable.getId());
+        ruleEngineDecisionTablePublish.setDecisionTableCode(ruleEngineDecisionTable.getCode());
+        ruleEngineDecisionTablePublish.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
+        ruleEngineDecisionTablePublish.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
+        DecisionTable decisionTable = this.decisionTableResolveService.decisionTableProcess(ruleEngineDecisionTable);
+        ruleEngineDecisionTablePublish.setData(decisionTable.toJson());
+        ruleEngineDecisionTablePublish.setStatus(ruleEngineDecisionTable.getStatus());
+        this.ruleEngineDecisionTablePublishManager.save(ruleEngineDecisionTablePublish);
+        return true;
     }
 
 }

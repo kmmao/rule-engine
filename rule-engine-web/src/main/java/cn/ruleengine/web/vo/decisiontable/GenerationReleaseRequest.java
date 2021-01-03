@@ -3,6 +3,7 @@ package cn.ruleengine.web.vo.decisiontable;
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -10,25 +11,26 @@ import javax.validation.constraints.NotNull;
  * 〈〉
  *
  * @author 丁乾文
- * @create 2020/12/31
+ * @create 2021/1/3
  * @since 1.0.0
  */
 @Data
-public class UpdateDecisionTableRequest {
+public class GenerationReleaseRequest {
 
-    @NotNull
+    @NotNull(message = "决策表Id不能为空")
     private Integer id;
 
     /**
      * 决策表执行策略类型
      */
+    @NotNull(message = "决策表执行策略不能为空")
     private Integer strategyType = 1;
-
 
     /**
      * 决策表数据
      */
-    private Object tableData;
+    @Valid
+    private TableData tableData;
 
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 

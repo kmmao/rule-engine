@@ -39,6 +39,11 @@ public class RuleEngineDecisionTable implements Serializable {
 
     private String tableData;
 
+    /**
+     * 决策表执行策略类型
+     */
+    private Integer strategyType;
+
     private Integer createUserId;
 
     private String createUserName;

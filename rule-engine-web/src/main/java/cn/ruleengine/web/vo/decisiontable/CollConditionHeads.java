@@ -3,6 +3,7 @@ package cn.ruleengine.web.vo.decisiontable;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -16,17 +17,15 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CollConditionHeads {
 
-    private String uuid;
-
-    @NotBlank
+    @NotBlank(message = "决策表条件名称不能为空")
     private String name = "条件";
 
     private Boolean visible;
 
+    @NotBlank(message = "决策表条件运算符不能为空")
     private String symbol;
 
-    private String explanation;
-
+    @Valid
     private ConfigValue leftValue = new ConfigValue();
 
 }

@@ -52,8 +52,7 @@ public class ValueResolveImpl implements ValueResolve {
                 RuleEngineElement ruleEngineElement = cacheMap.getElementMap().get(Integer.valueOf(value));
                 return new Element(ruleEngineElement.getId(), ruleEngineElement.getCode(), ValueType.getByValue(valueType));
             case VARIABLE:
-                RuleEngineVariable engineVariable = cacheMap.getVariableMap().get(Integer.valueOf(value));
-                return new Variable(engineVariable.getId(), ValueType.getByValue(valueType));
+                return new Variable(Integer.valueOf(value), ValueType.getByValue(valueType));
             case CONSTANT:
                 return new Constant(value, ValueType.getByValue(valueType));
             default:
@@ -77,8 +76,7 @@ public class ValueResolveImpl implements ValueResolve {
                 RuleEngineElement ruleEngineElement = this.ruleEngineElementManager.getById(value);
                 return new Element(ruleEngineElement.getId(), ruleEngineElement.getCode(), ValueType.getByValue(valueType));
             case VARIABLE:
-                RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(value);
-                return new Variable(engineVariable.getId(), ValueType.getByValue(valueType));
+                return new Variable(Integer.valueOf(value), ValueType.getByValue(valueType));
             case CONSTANT:
                 return new Constant(value, ValueType.getByValue(valueType));
             default:
