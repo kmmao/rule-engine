@@ -2,12 +2,12 @@ package cn.ruleengine.web.service.generalrule.impl;
 
 import cn.ruleengine.core.*;
 import cn.ruleengine.core.GeneralRuleEngine;
-import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.rule.GeneralRule;
+import cn.ruleengine.web.service.RunTestService;
 import cn.ruleengine.web.service.generalrule.GeneralRuleResolveService;
-import cn.ruleengine.web.service.generalrule.GeneralRuleTestService;
 import cn.ruleengine.web.vo.generalrule.RunTestRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,14 +21,15 @@ import java.util.Map;
  * @date 2020/8/26
  * @since 1.0.0
  */
+@Primary
 @Slf4j
 @Service
-public class GeneralRuleTestServiceImpl implements GeneralRuleTestService {
+public class GeneralRuleRunTestServiceImpl implements RunTestService {
 
     @Resource
     private GeneralRuleResolveService ruleResolveService;
     @Resource
-    private Engine engine;
+    private RuleEngineConfiguration ruleEngineConfiguration;
 
     /**
      * 规则模拟运行
@@ -50,7 +51,7 @@ public class GeneralRuleTestServiceImpl implements GeneralRuleTestService {
         GeneralRule rule = this.ruleResolveService.getGeneralRuleById(runTestRequest.getId());
         engine.addGeneralRule(rule);
         // 加载变量
-        engine.getConfiguration().setEngineVariable(this.engine.getEngineVariable());
+        engine.getConfiguration().setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
         return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getRuleCode());
     }
 

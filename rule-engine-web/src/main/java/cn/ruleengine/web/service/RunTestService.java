@@ -1,4 +1,4 @@
-package cn.ruleengine.web.service.generalrule;
+package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.vo.generalrule.RunTestRequest;
 
@@ -10,7 +10,7 @@ import cn.ruleengine.web.vo.generalrule.RunTestRequest;
  * @date 2020/8/26
  * @since 1.0.0
  */
-public interface GeneralRuleTestService {
+public interface RunTestService {
 
     /**
      * 规则模拟运行

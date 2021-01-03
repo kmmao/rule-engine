@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.web.controller.generalrule;
+package cn.ruleengine.web.controller.decisiontable;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.enums.DataPermissionType;
@@ -21,10 +21,10 @@ import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.service.RunTestService;
 import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
-
 import cn.ruleengine.web.vo.generalrule.RunTestRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,21 +41,22 @@ import javax.validation.Valid;
  * @date 2020/8/24
  * @since 1.0.0
  */
-@Api(tags = "普通规则测试控制器")
+@Api(tags = "决策表测试控制器")
 @RestController
-@RequestMapping("ruleEngine/generalRuleTest")
-public class GeneralRuleTestController {
+@RequestMapping("ruleEngine/decisionTable")
+public class DecisionTableTestController {
 
     @Resource
+    @Qualifier(value = "decisionTableRunTestServiceImpl")
     private RunTestService runTestService;
 
     /**
-     * 规则模拟运行
+     * 决策表模拟运行
      *
-     * @param runTestRequest 规则参数信息
+     * @param runTestRequest 决策表参数信息
      * @return result
      */
-    @DataPermission(id = "#runTestRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#runTestRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("run")
     @ApiOperation("模拟运行")
     public BaseResult fun(@RequestBody @Valid RunTestRequest runTestRequest) {

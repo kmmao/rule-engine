@@ -61,8 +61,8 @@ public interface DecisionTableStrategy {
         // 校验此行单元格条件是否成立
         for (int i = 0; i < colls.size(); i++) {
             Coll coll = colls.get(i);
-            if (coll == null) {
-                // 单元格为空，无条件跳过
+            // 单元格为空，无条件跳过
+            if (coll == null || coll.getRightValue() == null) {
                 continue;
             }
             // 获取到表头比较器，与下面单元格比较
