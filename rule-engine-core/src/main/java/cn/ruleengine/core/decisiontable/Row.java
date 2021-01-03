@@ -34,6 +34,11 @@ import java.util.List;
 public class Row {
 
     /**
+     * 用来展示数据时排序
+     */
+    private Integer order;
+
+    /**
      * 决策表行优先级 越小越先执行
      */
     private Integer priority;

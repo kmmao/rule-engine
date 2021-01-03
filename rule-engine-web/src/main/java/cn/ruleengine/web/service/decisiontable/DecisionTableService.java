@@ -78,4 +78,12 @@ public interface DecisionTableService {
      * @return true
      */
     Boolean generationRelease(GenerationReleaseRequest releaseRequest);
+
+    /**
+     * 获取决策表展示信息
+     *
+     * @param id 决策表id
+     * @return ViewDecisionTableResponse
+     */
+    ViewDecisionTableResponse getViewDecisionTable(Integer id);
 }

@@ -35,6 +35,8 @@ import org.springframework.lang.NonNull;
 @NoArgsConstructor
 public class CollHead {
 
+    private String name;
+
     /**
      * 条件左值
      */

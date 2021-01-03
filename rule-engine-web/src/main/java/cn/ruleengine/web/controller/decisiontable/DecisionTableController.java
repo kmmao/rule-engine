@@ -12,6 +12,7 @@ import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.decisiontable.*;
+import cn.ruleengine.web.vo.generalrule.ViewGeneralRuleResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -159,5 +160,19 @@ public class DecisionTableController {
         return plainResult;
     }
 
+    /**
+     * 获取决策表展示信息
+     *
+     * @param idRequest 决策表id
+     * @return ViewDecisionTableResponse
+     */
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("getViewDecisionTable")
+    @ApiOperation("获取决策表展示信息")
+    public BaseResult getViewDecisionTable(@Valid @RequestBody IdRequest idRequest) {
+        PlainResult<ViewDecisionTableResponse> plainResult = new PlainResult<>();
+        plainResult.setData(decisionTableService.getViewDecisionTable(idRequest.getId()));
+        return plainResult;
+    }
 
 }

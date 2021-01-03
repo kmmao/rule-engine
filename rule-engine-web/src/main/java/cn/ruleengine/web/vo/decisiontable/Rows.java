@@ -1,7 +1,9 @@
 package cn.ruleengine.web.vo.decisiontable;
 
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.Data;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +18,14 @@ import java.util.List;
 @Data
 public class Rows {
 
-    private Integer id;
-
     /**
      * 默认值为1
      */
     private Integer priority = 1;
 
-    private List<CollCondition> conditions = new ArrayList<>();
+    private List<ConfigValue> conditions = new ArrayList<>();
 
-    private Result result = new Result();
+    @Valid
+    private ConfigValue result = new ConfigValue();
 
 }

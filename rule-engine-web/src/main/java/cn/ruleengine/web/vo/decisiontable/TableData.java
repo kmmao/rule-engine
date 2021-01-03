@@ -31,6 +31,7 @@ public class TableData {
     /**
      * 规则行
      */
+    @Valid
     private List<Rows> rows = new ArrayList<>();
 
 }

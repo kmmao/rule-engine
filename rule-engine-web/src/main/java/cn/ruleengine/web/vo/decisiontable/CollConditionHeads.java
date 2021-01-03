@@ -20,7 +20,7 @@ public class CollConditionHeads {
     @NotBlank(message = "决策表条件名称不能为空")
     private String name = "条件";
 
-    private Boolean visible;
+    private Boolean visible = false;
 
     @NotBlank(message = "决策表条件运算符不能为空")
     private String symbol;

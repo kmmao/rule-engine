@@ -90,7 +90,7 @@ public class GeneralRule extends Rule {
             return null;
         } finally {
             long cost = System.currentTimeMillis() - startTime;
-            log.info("引擎计算耗时:{}ms", cost);
+            log.info("普通规则计算耗时:{}ms", cost);
             if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
                 log.warn("警告：规则执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
             }

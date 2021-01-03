@@ -2,6 +2,8 @@ package cn.ruleengine.web.service.impl;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.decisiontable.CollHead;
+import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.core.value.Element;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RuleParameterService {
+public class ParameterService {
 
     @Resource
     private Engine engine;
@@ -40,23 +42,25 @@ public class RuleParameterService {
     private RuleEngineElementManager ruleEngineElementManager;
 
     /**
-     * 统计引用此规则的所有的元素变量
+     * 统计引用此决策表的所有的元素
      *
-     * @param rule rule
-     * @return RuleCountInfo
+     * @param decisionTable decisionTable
+     * @return Parameter
      */
-    public Set<Parameter> getParameters(GeneralRule rule) {
+    public Set<Parameter> getParameters(DecisionTable decisionTable) {
         Set<Integer> elementIds = new HashSet<>();
-        ConditionSet conditionSet = rule.getConditionSet();
-        List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
-        for (ConditionGroup conditionGroup : conditionGroups) {
-            List<Condition> conditions = conditionGroup.getConditions();
-            for (Condition condition : conditions) {
-                this.getFromVariableElement(elementIds, condition.getRightValue());
-                this.getFromVariableElement(elementIds, condition.getLeftValue());
-            }
+        List<CollHead> collHeads = decisionTable.getCollHeads();
+        for (CollHead collHead : collHeads) {
+            Value value = collHead.getLeftValue();
+            this.getFromVariableElement(elementIds, value);
         }
-        this.getFromTheResult(elementIds, rule);
+        if (decisionTable.getDefaultActionValue() != null) {
+            this.getFromVariableElement(elementIds, decisionTable.getDefaultActionValue());
+        }
+        return this.getParameters(elementIds);
+    }
+
+    private Set<Parameter> getParameters(Set<Integer> elementIds) {
         if (CollUtil.isEmpty(elementIds)) {
             return Collections.emptySet();
         }
@@ -71,22 +75,33 @@ public class RuleParameterService {
     }
 
     /**
-     * 统计规则结果中引用的元素变量
+     * 统计引用此规则的所有的元素
      *
-     * @param elementIds 元素id
-     * @param rule       rule
+     * @param rule rule
+     * @return Parameter
      */
-    private void getFromTheResult(Set<Integer> elementIds, GeneralRule rule) {
+    public Set<Parameter> getParameters(GeneralRule rule) {
+        Set<Integer> elementIds = new HashSet<>();
+        ConditionSet conditionSet = rule.getConditionSet();
+        List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
+        for (ConditionGroup conditionGroup : conditionGroups) {
+            List<Condition> conditions = conditionGroup.getConditions();
+            for (Condition condition : conditions) {
+                this.getFromVariableElement(elementIds, condition.getRightValue());
+                this.getFromVariableElement(elementIds, condition.getLeftValue());
+            }
+        }
         Value value = rule.getActionValue();
         this.getFromVariableElement(elementIds, value);
         Value defaultActionValue = rule.getDefaultActionValue();
         if (defaultActionValue != null) {
             this.getFromVariableElement(elementIds, defaultActionValue);
         }
+        return this.getParameters(elementIds);
     }
 
     /**
-     * 统计函数参数中引用的元素/变量信息
+     * 统计元素/变量中使用到的元素id
      *
      * @param elementIds 元素id
      * @param value      value

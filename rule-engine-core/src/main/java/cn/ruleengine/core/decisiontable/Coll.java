@@ -38,6 +38,10 @@ public class Coll {
      */
     private Value rightValue;
 
+    public Coll() {
+
+    }
+
     public Coll(@NonNull Value rightValue) {
         Objects.requireNonNull(rightValue);
         this.rightValue = rightValue;

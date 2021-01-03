@@ -22,6 +22,7 @@ import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategy;
 import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategyFactory;
 import cn.ruleengine.core.exception.DecisionTableException;
 import cn.ruleengine.core.JsonParse;
+import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -94,6 +95,11 @@ public class DecisionTable implements JsonParse {
     private Value defaultActionValue;
 
     /**
+     * 规则运行发生异常，邮件接收人
+     */
+    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
+
+    /**
      * 决策表列头
      *
      * @param collHead 列头
@@ -137,20 +143,29 @@ public class DecisionTable implements JsonParse {
      */
     @Nullable
     public List<Object> execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
-        // 获取执行策略执行决策表
-        DecisionTableStrategy strategy = DecisionTableStrategyFactory.getInstance(this.strategyType);
-        // 计算表头值，获取到表头比较器，与下面单元格比较
-        Map<Integer, CollHeadCompare> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
-        List<Object> actions = strategy.compute(collHeadCompareMap, this.decisionTree, input, configuration);
-        if (CollUtil.isNotEmpty(actions)) {
-            return actions;
+        long startTime = System.currentTimeMillis();
+        try {
+            // 获取执行策略执行决策表
+            DecisionTableStrategy strategy = DecisionTableStrategyFactory.getInstance(this.strategyType);
+            // 计算表头值，获取到表头比较器，与下面单元格比较
+            Map<Integer, CollHeadCompare> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
+            List<Object> actions = strategy.compute(collHeadCompareMap, this.decisionTree, input, configuration);
+            if (CollUtil.isNotEmpty(actions)) {
+                return actions;
+            }
+            if (Objects.nonNull(this.defaultActionValue)) {
+                log.info("结果未命中，存在默认结果，返回默认结果");
+                return Collections.singletonList(this.defaultActionValue.getValue(input, configuration));
+            }
+            log.info("结果未命中，不存在默认结果，返回:null");
+            return null;
+        } finally {
+            long cost = System.currentTimeMillis() - startTime;
+            log.info("决策表计算耗时:{}ms", cost);
+            if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
+                log.warn("警告：决策表执行超过最大阈值，请检查决策表配置，决策表Code:{}", this.getCode());
+            }
         }
-        if (Objects.nonNull(this.defaultActionValue)) {
-            log.info("结果未命中，存在默认结果，返回默认结果");
-            return Collections.singletonList(this.defaultActionValue.getValue(input, configuration));
-        }
-        log.info("结果未命中，不存在默认结果，返回:null");
-        return null;
     }
 
     /**

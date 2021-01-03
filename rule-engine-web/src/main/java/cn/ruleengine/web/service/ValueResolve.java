@@ -2,6 +2,7 @@ package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.vo.common.DataCacheMap;
 import cn.ruleengine.core.value.Value;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -40,5 +41,14 @@ public interface ValueResolve {
      * @return value
      */
     Value getValue(Integer type, String valueType, String value);
+
+
+    /**
+     * 解析值/变量/元素/固定值
+     *
+     * @param cValue Value
+     * @return ConfigBean.Value
+     */
+    ConfigValue getConfigValue(Value cValue);
 
 }

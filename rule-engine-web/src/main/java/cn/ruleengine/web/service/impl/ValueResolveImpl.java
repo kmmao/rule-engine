@@ -5,6 +5,7 @@ import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.vo.common.DataCacheMap;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -109,5 +110,39 @@ public class ValueResolveImpl implements ValueResolve {
         return cacheMap;
     }
 
+
+    /**
+     * 解析值/变量/元素/固定值
+     *
+     * @param cValue Value
+     * @return ConfigBean.Value
+     */
+    @Override
+    public ConfigValue getConfigValue(Value cValue) {
+        ConfigValue value = new ConfigValue();
+        value.setValueType(cValue.getValueType().getValue());
+        if (cValue instanceof Constant) {
+            value.setType(VariableType.CONSTANT.getType());
+            Constant constant = (Constant) cValue;
+            value.setValue(String.valueOf(constant.getValue()));
+            value.setValueName(String.valueOf(constant.getValue()));
+        } else if (cValue instanceof Element) {
+            value.setType(VariableType.ELEMENT.getType());
+            Element element = (Element) cValue;
+            RuleEngineElement ruleEngineElement = this.ruleEngineElementManager.getById(element.getElementId());
+            value.setValue(String.valueOf(element.getElementId()));
+            value.setValueName(ruleEngineElement.getName());
+        } else if (cValue instanceof Variable) {
+            value.setType(VariableType.VARIABLE.getType());
+            Variable variable = (Variable) cValue;
+            value.setValue(String.valueOf(variable.getVariableId()));
+            RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(variable.getVariableId());
+            value.setValueName(engineVariable.getName());
+            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
+                value.setVariableValue(engineVariable.getValue());
+            }
+        }
+        return value;
+    }
 
 }

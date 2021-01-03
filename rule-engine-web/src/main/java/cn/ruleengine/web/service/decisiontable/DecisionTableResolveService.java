@@ -2,7 +2,6 @@ package cn.ruleengine.web.service.decisiontable;
 
 import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTable;
-import cn.ruleengine.web.store.entity.RuleEngineGeneralRule;
 
 /**
  * 〈一句话功能简述〉<br>

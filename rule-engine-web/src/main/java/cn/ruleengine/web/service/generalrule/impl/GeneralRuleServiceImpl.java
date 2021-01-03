@@ -10,7 +10,8 @@ import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
 import cn.ruleengine.web.listener.event.GeneralRuleEvent;
 import cn.ruleengine.web.service.ConditionService;
-import cn.ruleengine.web.service.impl.RuleParameterService;
+import cn.ruleengine.web.service.ValueResolve;
+import cn.ruleengine.web.service.impl.ParameterService;
 import cn.ruleengine.web.service.generalrule.GeneralRuleResolveService;
 import cn.ruleengine.web.service.generalrule.GeneralRuleService;
 import cn.ruleengine.web.store.entity.*;
@@ -79,7 +80,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     @Resource
     private ConditionService conditionService;
     @Resource
-    private RuleParameterService ruleCountInfoService;
+    private ParameterService ruleCountInfoService;
     @Resource
     private RuleEngineGeneralRulePublishManager ruleEngineGeneralRulePublishManager;
     @Resource
@@ -92,6 +93,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
     private ApplicationEventPublisher eventPublisher;
+    @Resource
+    private ValueResolve valueResolve;
 
     /**
      * 规则列表
@@ -306,11 +309,19 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             this.ruleEngineRuleManager.save(ruleEngineRule);
             ruleEngineGeneralRule.setRuleId(ruleEngineRule.getId());
         } else {
-            Integer count = this.ruleEngineRuleManager.lambdaQuery()
-                    .eq(RuleEngineRule::getId, ruleDefinition.getId())
-                    .count();
-            if (count == null || count == 0) {
+            ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.lambdaQuery()
+                    .eq(RuleEngineGeneralRule::getId, ruleDefinition.getId())
+                    .one();
+            if (ruleEngineGeneralRule == null) {
                 throw new ValidException("不存在规则:{}", ruleDefinition.getId());
+            } else {
+                if (Objects.equals(ruleEngineGeneralRule.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
+                    // 删除原有待发布规则
+                    this.ruleEngineGeneralRulePublishManager.lambdaUpdate()
+                            .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                            .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, ruleEngineGeneralRule.getId())
+                            .remove();
+                }
             }
         }
         ruleEngineGeneralRule.setId(ruleDefinition.getId());
@@ -596,9 +607,9 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
                 ConditionResponse conditionResponse = new ConditionResponse();
                 conditionResponse.setName(condition.getName());
                 ConfigBean configBean = new ConfigBean();
-                configBean.setLeftValue(this.getConfigValue(condition.getLeftValue()));
+                configBean.setLeftValue(valueResolve.getConfigValue(condition.getLeftValue()));
                 configBean.setSymbol(condition.getOperator().getExplanation());
-                configBean.setRightValue(this.getConfigValue(condition.getRightValue()));
+                configBean.setRightValue(valueResolve.getConfigValue(condition.getRightValue()));
                 conditionResponse.setConfig(configBean);
                 conditionSet.setCondition(conditionResponse);
                 conditionGroupConditions.add(conditionSet);
@@ -607,10 +618,10 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             groupArrayList.add(group);
         }
         ruleResponse.setConditionGroup(groupArrayList);
-        ruleResponse.setAction(this.getConfigValue(rule.getActionValue()));
+        ruleResponse.setAction(valueResolve.getConfigValue(rule.getActionValue()));
         DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
-            defaultAction = new DefaultAction(this.getConfigValue(rule.getDefaultActionValue()));
+            defaultAction = new DefaultAction(this.valueResolve.getConfigValue(rule.getDefaultActionValue()));
             defaultAction.setEnableDefaultAction(EnableEnum.ENABLE.getStatus());
         } else {
             defaultAction = new DefaultAction();
@@ -623,39 +634,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         return ruleResponse;
     }
 
-
-    /**
-     * 解析值/变量/元素/固定值
-     *
-     * @param cValue Value
-     * @return ConfigBean.Value
-     */
-    public ConfigValue getConfigValue(Value cValue) {
-        ConfigValue value = new ConfigValue();
-        value.setValueType(cValue.getValueType().getValue());
-        if (cValue instanceof Constant) {
-            value.setType(VariableType.CONSTANT.getType());
-            Constant constant = (Constant) cValue;
-            value.setValue(String.valueOf(constant.getValue()));
-            value.setValueName(String.valueOf(constant.getValue()));
-        } else if (cValue instanceof Element) {
-            value.setType(VariableType.ELEMENT.getType());
-            Element element = (Element) cValue;
-            RuleEngineElement ruleEngineElement = this.ruleEngineElementManager.getById(element.getElementId());
-            value.setValue(String.valueOf(element.getElementId()));
-            value.setValueName(ruleEngineElement.getName());
-        } else if (cValue instanceof Variable) {
-            value.setType(VariableType.VARIABLE.getType());
-            Variable variable = (Variable) cValue;
-            value.setValue(String.valueOf(variable.getVariableId()));
-            RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(variable.getVariableId());
-            value.setValueName(engineVariable.getName());
-            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
-                value.setVariableValue(engineVariable.getValue());
-            }
-        }
-        return value;
-    }
 
     /**
      * 解析结果/默认结果

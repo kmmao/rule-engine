@@ -2,26 +2,30 @@ package cn.ruleengine.web.service.decisiontable.impl;
 
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
+import cn.ruleengine.core.decisiontable.Coll;
+import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.DecisionTable;
+import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.AbnormalAlarm;
+import cn.ruleengine.core.value.Value;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
-import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
 import cn.ruleengine.web.listener.event.DecisionTableEvent;
-import cn.ruleengine.web.service.decisiontable.DecisionTablePublishService;
+import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.decisiontable.DecisionTableResolveService;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
+import cn.ruleengine.web.service.impl.ParameterService;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTable;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTablePublish;
-import cn.ruleengine.web.store.entity.RuleEngineGeneralRulePublish;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTableManager;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTablePublishManager;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.decisiontable.*;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
@@ -34,8 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -59,6 +63,10 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     private ApplicationEventPublisher eventPublisher;
     @Resource
     private DecisionTableResolveService decisionTableResolveService;
+    @Resource
+    private ValueResolve valueResolve;
+    @Resource
+    private ParameterService parameterService;
 
     /**
      * 决策表列表
@@ -111,7 +119,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         RuleEngineDecisionTable ruleEngineDecisionTable = new RuleEngineDecisionTable();
         if (decisionTableDefinition.getId() == null) {
             if (this.decisionTableCodeIsExists(decisionTableDefinition.getCode())) {
-                throw new ValidException("规则Code：{}已经存在", decisionTableDefinition.getCode());
+                throw new ValidException("决策表Code：{}已经存在", decisionTableDefinition.getCode());
             }
             Workspace workspace = Context.getCurrentWorkspace();
             UserData userData = Context.getCurrentUser();
@@ -123,15 +131,23 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             TableData tableData = new TableData();
             tableData.getCollConditionHeads().add(new CollConditionHeads());
             Rows rows = new Rows();
-            rows.getConditions().add(new CollCondition());
+            rows.getConditions().add(new ConfigValue());
             tableData.getRows().add(rows);
             ruleEngineDecisionTable.setTableData(JSON.toJSONString(tableData));
         } else {
-            Integer count = this.ruleEngineDecisionTableManager.lambdaQuery()
+            ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.lambdaQuery()
                     .eq(RuleEngineDecisionTable::getId, decisionTableDefinition.getId())
-                    .count();
-            if (count == null || count == 0) {
-                throw new ValidException("不存在规则:{}", decisionTableDefinition.getId());
+                    .one();
+            if (ruleEngineDecisionTable == null) {
+                throw new ValidException("不存在决策表:{}", decisionTableDefinition.getId());
+            } else {
+                if (Objects.equals(ruleEngineDecisionTable.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
+                    // 删除原有待发布规则
+                    this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                            .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                            .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
+                            .remove();
+                }
             }
         }
         ruleEngineDecisionTable.setId(decisionTableDefinition.getId());
@@ -289,6 +305,90 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTablePublish.setStatus(ruleEngineDecisionTable.getStatus());
         this.ruleEngineDecisionTablePublishManager.save(ruleEngineDecisionTablePublish);
         return true;
+    }
+
+    /**
+     * 获取决策表展示信息
+     *
+     * @param id 决策表id
+     * @return ViewDecisionTableResponse
+     */
+    @Override
+    public ViewDecisionTableResponse getViewDecisionTable(Integer id) {
+        RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
+                .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineDecisionTablePublish::getDecisionTableId, id)
+                .one();
+        if (ruleEngineDecisionTablePublish == null) {
+            throw new ValidException("找不到预览的规则数据:{}", id);
+        }
+        String data = ruleEngineDecisionTablePublish.getData();
+        DecisionTable decisionTable = DecisionTable.buildDecisionTable(data);
+        return this.decisionTableResponseProcess(decisionTable);
+    }
+
+    /**
+     * 处理决策表预览数据
+     *
+     * @param decisionTable 决策表
+     * @return ViewDecisionTableResponse
+     */
+    private ViewDecisionTableResponse decisionTableResponseProcess(DecisionTable decisionTable) {
+        ViewDecisionTableResponse decisionTableResponse = new ViewDecisionTableResponse();
+        decisionTableResponse.setId(decisionTable.getId());
+        decisionTableResponse.setName(decisionTable.getName());
+        decisionTableResponse.setCode(decisionTable.getCode());
+        decisionTableResponse.setDescription(decisionTable.getDescription());
+        decisionTableResponse.setWorkspaceId(decisionTable.getWorkspaceId());
+        decisionTableResponse.setWorkspaceCode(decisionTable.getWorkspaceCode());
+        decisionTableResponse.setAbnormalAlarm(decisionTable.getAbnormalAlarm());
+        TableData tableData = new TableData();
+        List<CollHead> collHeads = decisionTable.getCollHeads();
+        List<CollConditionHeads> collConditionHeads = new ArrayList<>();
+        for (CollHead collHead : collHeads) {
+            CollConditionHeads conditionHeads = new CollConditionHeads();
+            conditionHeads.setName(collHead.getName());
+            conditionHeads.setSymbol(collHead.getOperator().name());
+            conditionHeads.setLeftValue(this.valueResolve.getConfigValue(collHead.getLeftValue()));
+            collConditionHeads.add(conditionHeads);
+        }
+        tableData.setCollConditionHeads(collConditionHeads);
+        Map<Integer, List<Row>> decisionTree = decisionTable.getDecisionTree();
+        List<Rows> rows = new ArrayList<>();
+        decisionTree.values().stream().flatMap(Collection::stream).sorted(Comparator.comparing(Row::getOrder)).forEach(f -> {
+            Rows row = new Rows();
+            row.setPriority(f.getPriority());
+            List<Coll> colls = f.getColls();
+            List<ConfigValue> conditions = new ArrayList<>();
+            for (Coll coll : colls) {
+                // 空的单元格
+                if (coll.getRightValue() == null) {
+                    conditions.add(new ConfigValue());
+                } else {
+                    ConfigValue configValue = this.valueResolve.getConfigValue(coll.getRightValue());
+                    conditions.add(configValue);
+                }
+            }
+            row.setConditions(conditions);
+            ConfigValue result = this.valueResolve.getConfigValue(f.getAction());
+            row.setResult(result);
+            rows.add(row);
+        });
+        tableData.setRows(rows);
+        CollResultHead collResultHead = new CollResultHead();
+        Value defaultActionValue = decisionTable.getDefaultActionValue();
+        DefaultAction defaultAction;
+        if (defaultActionValue != null) {
+            ConfigValue configValue = this.valueResolve.getConfigValue(defaultActionValue);
+            defaultAction = new DefaultAction(configValue);
+        } else {
+            defaultAction = new DefaultAction();
+        }
+        collResultHead.setDefaultAction(defaultAction);
+        tableData.setCollResultHead(collResultHead);
+        decisionTableResponse.setTableData(tableData);
+        decisionTableResponse.setParameters(this.parameterService.getParameters(decisionTable));
+        return decisionTableResponse;
     }
 
 }
