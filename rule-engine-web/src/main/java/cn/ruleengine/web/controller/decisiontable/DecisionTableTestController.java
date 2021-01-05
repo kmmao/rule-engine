@@ -43,7 +43,7 @@ import javax.validation.Valid;
  */
 @Api(tags = "决策表测试控制器")
 @RestController
-@RequestMapping("ruleEngine/decisionTable")
+@RequestMapping("ruleEngine/decisionTableTest")
 public class DecisionTableTestController {
 
     @Resource

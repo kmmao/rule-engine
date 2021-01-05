@@ -264,6 +264,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableResponse.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
         decisionTableResponse.setTableData(JSON.parseObject(ruleEngineDecisionTable.getTableData(), TableData.class));
         decisionTableResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineDecisionTable.getAbnormalAlarm(), AbnormalAlarm.class));
+        decisionTableResponse.setStrategyType(ruleEngineDecisionTable.getStrategyType());
         return decisionTableResponse;
     }
 
@@ -342,6 +343,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableResponse.setWorkspaceId(decisionTable.getWorkspaceId());
         decisionTableResponse.setWorkspaceCode(decisionTable.getWorkspaceCode());
         decisionTableResponse.setAbnormalAlarm(decisionTable.getAbnormalAlarm());
+        decisionTableResponse.setStrategyType(decisionTable.getStrategyType().getValue());
         TableData tableData = new TableData();
         List<CollHead> collHeads = decisionTable.getCollHeads();
         List<CollConditionHeads> collConditionHeads = new ArrayList<>();

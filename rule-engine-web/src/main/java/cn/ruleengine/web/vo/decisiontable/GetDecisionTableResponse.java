@@ -26,6 +26,8 @@ public class GetDecisionTableResponse {
 
     private String workspaceCode;
 
+    private Integer strategyType;
+
     /**
      * 决策表数据
      */

@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.decisiontable;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.rule.Parameter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +16,7 @@ import java.util.Set;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ViewDecisionTableResponse extends GetDecisionTableResponse{
+public class ViewDecisionTableResponse extends GetDecisionTableResponse {
 
     /**
      * 规则入参
