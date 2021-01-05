@@ -3,7 +3,6 @@ package cn.ruleengine.web.vo.decisiontable;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
 import lombok.Data;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -31,7 +30,6 @@ public class CollResultHead {
     /**
      * 默认结果
      */
-    @Valid
     private DefaultAction defaultAction = new DefaultAction();
 
 }

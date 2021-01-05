@@ -2,10 +2,7 @@ package cn.ruleengine.web.service.decisiontable.impl;
 
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
-import cn.ruleengine.core.decisiontable.Coll;
-import cn.ruleengine.core.decisiontable.CollHead;
-import cn.ruleengine.core.decisiontable.DecisionTable;
-import cn.ruleengine.core.decisiontable.Row;
+import cn.ruleengine.core.decisiontable.*;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.value.Value;
@@ -134,6 +131,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             rows.getConditions().add(new ConfigValue());
             tableData.getRows().add(rows);
             ruleEngineDecisionTable.setTableData(JSON.toJSONString(tableData));
+            // 默认执行策略
+            ruleEngineDecisionTable.setStrategyType(DecisionTableStrategyType.ALL_PRIORITY.getValue());
         } else {
             ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.lambdaQuery()
                     .eq(RuleEngineDecisionTable::getId, decisionTableDefinition.getId())
