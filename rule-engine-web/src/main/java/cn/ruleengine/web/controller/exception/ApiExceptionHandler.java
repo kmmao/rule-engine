@@ -1,5 +1,7 @@
 package cn.ruleengine.web.controller.exception;
 
+import cn.hutool.core.util.StrUtil;
+import cn.ruleengine.core.exception.ValueException;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.DataPermissionException;
@@ -9,12 +11,15 @@ import cn.ruleengine.web.vo.base.response.BaseResult;
 import cn.ruleengine.core.exception.ConditionException;
 import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.exception.FunctionException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +30,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -222,16 +228,27 @@ public class ApiExceptionHandler {
 
     /**
      * 方法参数无效
+     * {javax.validation.constraints.NotNull.message}
      *
      * @return BaseResult
      */
+    @SneakyThrows
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public BaseResult methodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.warn("MethodArgumentNotValidException", e);
         BaseResult result = BaseResult.err();
         BindingResult bindingResult = e.getBindingResult();
         FieldError error = bindingResult.getFieldError();
-        result.setMessage(Optional.ofNullable(error).map(DefaultMessageSourceResolvable::getDefaultMessage).orElse(ErrorCodeEnum.RULE99990002.getMsg()));
+        Field source = ObjectError.class.getDeclaredField("source");
+        source.setAccessible(true);
+        ConstraintViolation constraintViolation = (ConstraintViolation) source.get(e.getBindingResult().getFieldError());
+        String messageTemplate = constraintViolation.getMessageTemplate();
+        // 如果使用默认的{javax.validation.constraints.***.message}
+        if (messageTemplate.startsWith(StrUtil.DELIM_START) && messageTemplate.endsWith(StrUtil.DELIM_END)) {
+            result.setMessage(constraintViolation.getPropertyPath().toString() + constraintViolation.getMessage());
+        } else {
+            result.setMessage(constraintViolation.getMessage());
+        }
         result.setCode(ErrorCodeEnum.RULE99990002.getCode());
         return result;
     }
