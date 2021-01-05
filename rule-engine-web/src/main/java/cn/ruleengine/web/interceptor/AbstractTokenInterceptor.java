@@ -26,6 +26,7 @@ import cn.ruleengine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -51,6 +52,11 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
 
     @Resource
     private RedissonClient redissonClient;
+
+    @Value("${auth.redis.token.keyPrefix:token:}")
+    public String tokenKeyPrefix;
+    @Value("${auth.redis.token.keepTime:3600000}")
+    public Long redisTokenKeepTime;
 
     public static final String TOKEN = "token";
 
@@ -83,7 +89,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             return false;
         }
         // 从redis获取到用户信息保存到本地
-        RBucket<UserData> bucket = this.redissonClient.getBucket(token);
+        RBucket<UserData> bucket = this.redissonClient.getBucket(this.tokenKeyPrefix.concat(token));
         // 获取redis中存的用户信息
         UserData userData = bucket.get();
         if (userData == null) {
@@ -92,7 +98,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
             return false;
         }
         //更新过期时间
-        bucket.expire(JWTUtils.keepTime, TimeUnit.MILLISECONDS);
+        bucket.expire(this.redisTokenKeepTime, TimeUnit.MILLISECONDS);
         //校验类上获取方法上的注解值roleCode是否匹配
         RoleAuth roleAuth = this.getRoleAuth(handler);
         //如果存在需要验证权限,并且权限没有验证通过时,提示无权限访问
