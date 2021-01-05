@@ -237,8 +237,6 @@ public class ApiExceptionHandler {
     public BaseResult methodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.warn("MethodArgumentNotValidException", e);
         BaseResult result = BaseResult.err();
-        BindingResult bindingResult = e.getBindingResult();
-        FieldError error = bindingResult.getFieldError();
         Field source = ObjectError.class.getDeclaredField("source");
         source.setAccessible(true);
         ConstraintViolation constraintViolation = (ConstraintViolation) source.get(e.getBindingResult().getFieldError());
