@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.generalrule;
+package cn.ruleengine.web.vo.out;
 
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Data
-public class BatchExecuteRuleRequest {
+public class BatchExecuteRequest {
 
     @NotEmpty(message = "工作空间编码不能为空")
     private String workspaceCode;

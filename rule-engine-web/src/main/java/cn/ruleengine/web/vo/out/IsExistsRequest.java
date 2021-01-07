@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.generalrule;
+package cn.ruleengine.web.vo.out;
 
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
  * @since 1.0.0
  */
 @Data
-public class IsExistsGeneralRuleRequest {
+public class IsExistsRequest {
 
     @NotBlank
     private String code;

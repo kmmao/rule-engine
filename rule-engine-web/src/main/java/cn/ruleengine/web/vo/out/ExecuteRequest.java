@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.generalrule;
+package cn.ruleengine.web.vo.out;
 
 import lombok.Data;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Data
-public class ExecuteRuleRequest {
+public class ExecuteRequest {
 
     @NotEmpty(message = "工作空间编码不能为空")
     private String workspaceCode;

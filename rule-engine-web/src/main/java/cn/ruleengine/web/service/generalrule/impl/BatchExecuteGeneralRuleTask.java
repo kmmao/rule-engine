@@ -1,6 +1,6 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
-import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleRequest;
+import cn.ruleengine.web.vo.out.BatchExecuteRequest;
 import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleResponse;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;
@@ -23,13 +23,13 @@ import java.util.concurrent.CountDownLatch;
 @Slf4j
 public class BatchExecuteGeneralRuleTask implements Runnable {
 
-    private List<BatchExecuteRuleRequest.ExecuteInfo> infoList;
+    private List<BatchExecuteRequest.ExecuteInfo> infoList;
     private Engine engine;
     private List<BatchExecuteRuleResponse> outPuts;
     private CountDownLatch countDownLatch;
     private String workspaceCode;
 
-    public BatchExecuteGeneralRuleTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteRuleResponse> outPuts, Engine engine, List<BatchExecuteRuleRequest.ExecuteInfo> infoList) {
+    public BatchExecuteGeneralRuleTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteRuleResponse> outPuts, Engine engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
         this.workspaceCode = workspaceCode;
         this.countDownLatch = countDownLatch;
         this.outPuts = outPuts;
@@ -39,7 +39,7 @@ public class BatchExecuteGeneralRuleTask implements Runnable {
 
     @Override
     public void run() {
-        for (BatchExecuteRuleRequest.ExecuteInfo executeInfo : this.infoList) {
+        for (BatchExecuteRequest.ExecuteInfo executeInfo : this.infoList) {
             Input input = new DefaultInput();
             Map<String, Object> params = executeInfo.getParam();
             for (Map.Entry<String, Object> param : params.entrySet()) {

@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.FailureStrategy;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.FunctionCacheable;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -17,12 +18,15 @@ import javax.annotation.Resource;
  * 〈一句话功能简述〉<br>
  * 〈〉
  * 手机归属地
+ * <p>
+ * 缓存10天，手机归属地不会发生改变
  *
  * @author 丁乾文
  * @create 2020/12/13
  * @since 1.0.0
  */
 @Slf4j
+@FunctionCacheable(liveOutTime = 86400000 * 10)
 @Function
 public class MobilePhoneProvinceFunction {
 

@@ -1,11 +1,11 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
 import cn.hutool.core.thread.ThreadUtil;
-import cn.ruleengine.web.service.generalrule.GeneralRuleOutService;
-import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleRequest;
+import cn.ruleengine.web.service.RuleEngineOutService;
+import cn.ruleengine.web.vo.out.BatchExecuteRequest;
 import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleResponse;
-import cn.ruleengine.web.vo.generalrule.ExecuteRuleRequest;
-import cn.ruleengine.web.vo.generalrule.IsExistsGeneralRuleRequest;
+import cn.ruleengine.web.vo.out.ExecuteRequest;
+import cn.ruleengine.web.vo.out.IsExistsRequest;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;
@@ -14,6 +14,7 @@ import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.service.WorkspaceService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +32,10 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/8/22
  * @since 1.0.0
  */
+@Primary
 @Slf4j
 @Service
-public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
+public class GeneralRuleOutServiceImpl implements RuleEngineOutService {
 
     @Resource
     private Engine engine;
@@ -49,7 +51,8 @@ public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
      * @return 规则执行结果
      */
     @Override
-    public Object executeRule(ExecuteRuleRequest executeRule) {
+    public Object execute(ExecuteRequest executeRule) {
+        log.info("开始执行普通规则，入参：{}", executeRule);
         String workspaceCode = executeRule.getWorkspaceCode();
         long currentTimeMillis = System.currentTimeMillis();
         AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
@@ -65,18 +68,18 @@ public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
     /**
      * 批量执行多个规则(一次最多2000个)，获取执行结果
      *
-     * @param batchExecuteRuleRequest 执行规则入参
+     * @param batchExecuteRequest 执行规则入参
      * @return 规则执行结果
      */
     @Override
-    public Object batchExecuteRule(BatchExecuteRuleRequest batchExecuteRuleRequest) {
-        String workspaceCode = batchExecuteRuleRequest.getWorkspaceCode();
+    public Object batchExecute(BatchExecuteRequest batchExecuteRequest) {
+        String workspaceCode = batchExecuteRequest.getWorkspaceCode();
         AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
-        if (!accessKey.equals(batchExecuteRuleRequest.getAccessKeyId(), batchExecuteRuleRequest.getAccessKeySecret())) {
+        if (!accessKey.equals(batchExecuteRequest.getAccessKeyId(), batchExecuteRequest.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        List<BatchExecuteRuleRequest.ExecuteInfo> executeInfos = batchExecuteRuleRequest.getExecuteInfos();
-        Integer threadSegNumber = batchExecuteRuleRequest.getThreadSegNumber();
+        List<BatchExecuteRequest.ExecuteInfo> executeInfos = batchExecuteRequest.getExecuteInfos();
+        Integer threadSegNumber = batchExecuteRequest.getThreadSegNumber();
         log.info("批量执行规则数量：{},单个线程执行{}条规则", executeInfos.size(), threadSegNumber);
         List<BatchExecuteRuleResponse> outPuts = new CopyOnWriteArrayList<>();
         int countDownNumber = executeInfos.size() % threadSegNumber == 0 ? executeInfos.size() / threadSegNumber : (executeInfos.size() / threadSegNumber) + 1;
@@ -84,13 +87,13 @@ public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
         // 批量插入，执行一次批量
         for (int fromIndex = 0; fromIndex < executeInfos.size(); fromIndex += threadSegNumber) {
             int toIndex = Math.min(fromIndex + threadSegNumber, executeInfos.size());
-            List<BatchExecuteRuleRequest.ExecuteInfo> infoList = executeInfos.subList(fromIndex, toIndex);
+            List<BatchExecuteRequest.ExecuteInfo> infoList = executeInfos.subList(fromIndex, toIndex);
             BatchExecuteGeneralRuleTask batchExecuteRuleTask = new BatchExecuteGeneralRuleTask(workspaceCode, countDownLatch, outPuts, engine, infoList);
             this.threadPoolTaskExecutor.execute(batchExecuteRuleTask);
         }
         // 等待线程处理完毕
         try {
-            Long timeout = batchExecuteRuleRequest.getTimeout();
+            Long timeout = batchExecuteRequest.getTimeout();
             if (timeout.equals(-1L)) {
                 countDownLatch.await();
             } else {
@@ -107,17 +110,17 @@ public class GeneralRuleOutServiceImpl implements GeneralRuleOutService {
     /**
      * 引擎中是否存在这个规则
      *
-     * @param isExistsRuleRequest 参数
+     * @param isExistsRequest 参数
      * @return true存在
      */
     @Override
-    public Boolean isExists(IsExistsGeneralRuleRequest isExistsRuleRequest) {
-        String workspaceCode = isExistsRuleRequest.getWorkspaceCode();
+    public Boolean isExists(IsExistsRequest isExistsRequest) {
+        String workspaceCode = isExistsRequest.getWorkspaceCode();
         AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
-        if (!accessKey.equals(isExistsRuleRequest.getAccessKeyId(), isExistsRuleRequest.getAccessKeySecret())) {
+        if (!accessKey.equals(isExistsRequest.getAccessKeyId(), isExistsRequest.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        return this.engine.isExists(isExistsRuleRequest.getWorkspaceCode(), isExistsRuleRequest.getCode());
+        return this.engine.isExists(isExistsRequest.getWorkspaceCode(), isExistsRequest.getCode());
     }
 
 }
