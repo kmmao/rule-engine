@@ -20,7 +20,7 @@ import java.util.List;
 public class AddVariableRequest {
 
     @NotBlank
-    @Length(min = 1, max = 15, message = "变量名称长度在 1 到 15 个字符")
+    @Length(min = 1, max = 25, message = "变量名称长度在 1 到 25 个字符")
     private String name;
 
     @NotNull

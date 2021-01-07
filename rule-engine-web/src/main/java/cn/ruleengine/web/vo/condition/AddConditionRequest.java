@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class AddConditionRequest {
 
-    @Length(min = 1, max = 15, message = "条件名称长度在 1 到 15 个字符")
+    @Length(min = 1, max = 25, message = "条件名称长度在 1 到 25 个字符")
     @NotBlank(message = "条件名称不能为空")
     private String name;
 

@@ -1,6 +1,7 @@
 package cn.ruleengine.web.vo.condition;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ public class UpdateConditionRequest {
     @NotNull
     private Integer id;
 
+    @Length(min = 1, max = 25, message = "条件名称长度在 1 到 25 个字符")
     @NotBlank(message = "条件名称不能为空")
     private String name;
 

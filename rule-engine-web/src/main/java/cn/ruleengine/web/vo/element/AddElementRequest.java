@@ -17,11 +17,11 @@ import javax.validation.constraints.Pattern;
 @Data
 public class AddElementRequest {
 
-    @Length(min = 1, max = 15, message = "元素名称长度在 1 到 15 个字符")
+    @Length(min = 1, max = 25, message = "元素名称长度在 1 到 25 个字符")
     @NotBlank(message = "元素名称不能为空")
     private String name;
 
-    @Length(min = 1, max = 15, message = "元素Code长度在 1 到 15 个字符")
+    @Length(min = 1, max = 25, message = "元素Code长度在 1 到 25 个字符")
     @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_&#\\-]*$", message = "元素Code只能字母开头，以及字母数字_&#-组成")
     @NotBlank(message = "元素编码不能为空")
     private String code;

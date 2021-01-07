@@ -1,6 +1,7 @@
 package cn.ruleengine.web.vo.variable;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ public class UpdateVariableRequest {
     @NotNull
     private Integer id;
 
+    @Length(min = 1, max = 25, message = "变量名称长度在 1 到 25 个字符")
     @NotBlank
     private String name;
 

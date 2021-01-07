@@ -2,6 +2,7 @@ package cn.ruleengine.web.vo.element;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class UpdateElementRequest {
     private Integer id;
 
     @NotBlank(message = "元素名称不能为空")
+    @Length(min = 1, max = 25, message = "元素名称长度在 1 到 25 个字符")
     private String name;
 
     private String description;
