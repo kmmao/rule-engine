@@ -18,6 +18,9 @@ package cn.ruleengine.core.cache;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * 函数是否缓存
+ * <p>
+ * 注意：目前只有发布后的规则执行会触发函数缓存，模拟运行则不会
  *
  * @author dingqianwen
  * @date 2020/8/6
