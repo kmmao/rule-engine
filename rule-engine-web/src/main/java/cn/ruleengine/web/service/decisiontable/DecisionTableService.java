@@ -94,4 +94,12 @@ public interface DecisionTableService {
      * @return true
      */
     Boolean publish(Integer id);
+
+    /**
+     * 获取预览已发布的决策表
+     *
+     * @param id 决策表id
+     * @return ViewDecisionTableResponse
+     */
+    ViewDecisionTableResponse getPublishDecisionTable(Integer id);
 }

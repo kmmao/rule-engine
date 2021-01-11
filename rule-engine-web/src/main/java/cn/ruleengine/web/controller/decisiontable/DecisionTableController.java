@@ -193,4 +193,19 @@ public class DecisionTableController {
         return plainResult;
     }
 
+    /**
+     * 获取预览已发布的决策表
+     *
+     * @param idRequest 决策表id
+     * @return ViewDecisionTableResponse
+     */
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("getPublishDecisionTable")
+    @ApiOperation("获取发布决策表信息")
+    public BaseResult getPublishDecisionTable(@Valid @RequestBody IdRequest idRequest) {
+        PlainResult<ViewDecisionTableResponse> plainResult = new PlainResult<>();
+        plainResult.setData(decisionTableService.getPublishDecisionTable(idRequest.getId()));
+        return plainResult;
+    }
+
 }

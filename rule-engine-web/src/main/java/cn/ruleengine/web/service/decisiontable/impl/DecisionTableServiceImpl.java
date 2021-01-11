@@ -373,6 +373,26 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     }
 
     /**
+     * 获取预览已发布的决策表
+     *
+     * @param id 决策表id
+     * @return ViewDecisionTableResponse
+     */
+    @Override
+    public ViewDecisionTableResponse getPublishDecisionTable(Integer id) {
+        RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
+                .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineDecisionTablePublish::getDecisionTableId, id)
+                .one();
+        if (ruleEngineDecisionTablePublish == null) {
+            throw new ValidException("找不到发布的规则:{}", id);
+        }
+        String data = ruleEngineDecisionTablePublish.getData();
+        DecisionTable decisionTable = DecisionTable.buildDecisionTable(data);
+        return this.decisionTableResponseProcess(decisionTable);
+    }
+
+    /**
      * 处理决策表预览数据
      *
      * @param decisionTable 决策表
