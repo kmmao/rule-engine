@@ -315,6 +315,14 @@ public class DecisionTableServiceImpl implements DecisionTableService {
      */
     @Override
     public ViewDecisionTableResponse getViewDecisionTable(Integer id) {
+        RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(id);
+        if (ruleEngineDecisionTable == null) {
+            throw new ValidException("找不到预览的规则数据:{}", id);
+        }
+        // 如果只有已发布
+        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+            return this.getPublishDecisionTable(id);
+        }
         RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
                 .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
                 .eq(RuleEngineDecisionTablePublish::getDecisionTableId, id)
