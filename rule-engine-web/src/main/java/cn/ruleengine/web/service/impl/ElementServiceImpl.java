@@ -199,6 +199,8 @@ public class ElementServiceImpl implements ElementService {
                 throw new ValidException("有条件在引用此元素，无法删除");
             }
         }
+        // TODO: 2021/1/11  决策表引用
+        // ...
         return ruleEngineElementManager.removeById(id);
     }
 

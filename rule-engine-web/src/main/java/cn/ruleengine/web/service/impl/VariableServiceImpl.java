@@ -341,6 +341,8 @@ public class VariableServiceImpl implements VariableService {
                 throw new ValidException("有条件在引用此变量，无法删除");
             }
         }
+        // TODO: 2021/1/11  决策表引用
+        // ...
         VariableMessageBody variableMessageBody = new VariableMessageBody();
         variableMessageBody.setType(VariableMessageBody.Type.REMOVE);
         variableMessageBody.setId(id);
