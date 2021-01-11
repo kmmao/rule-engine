@@ -40,7 +40,7 @@ import javax.annotation.Resource;
 public class GeneralRuleMessageListener {
 
     @Resource
-    private GeneralRuleEngine defaultEngine;
+    private GeneralRuleEngine generalRuleEngine;
     @Resource
     private GeneralRulePublishService rulePublishService;
 
@@ -56,16 +56,16 @@ public class GeneralRuleMessageListener {
         String ruleCode = ruleMessageBody.getRuleCode();
         switch (ruleMessageBody.getType()) {
             case UPDATE:
-                log.info("开始更新规则：{}", ruleMessageBody.getRuleCode());
-                this.defaultEngine.addGeneralRule(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
+                log.info("开始更新规则：{}", ruleCode);
+                this.generalRuleEngine.addGeneralRule(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
                 break;
             case LOAD:
-                log.info("开始加载规则：{}", ruleMessageBody.getRuleCode());
-                this.defaultEngine.addGeneralRule(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
+                log.info("开始加载规则：{}", ruleCode);
+                this.generalRuleEngine.addGeneralRule(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
                 break;
             case REMOVE:
-                log.info("开始移除规则：{}", ruleMessageBody.getRuleCode());
-                this.defaultEngine.remove(workspaceCode, ruleCode);
+                log.info("开始移除规则：{}", ruleCode);
+                this.generalRuleEngine.remove(workspaceCode, ruleCode);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + ruleMessageBody.getType());

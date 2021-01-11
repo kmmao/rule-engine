@@ -53,7 +53,25 @@ public class DecisionTableMessageListener {
             key = RabbitTopicConfig.DECISION_TABLE_TOPIC_ROUTING_KEY)
     )
     public void message(DecisionTableMessageBody decisionTableMessageBody) {
-
+        log.info("决策表消息：{}", decisionTableMessageBody);
+        String workspaceCode = decisionTableMessageBody.getWorkspaceCode();
+        String decisionTableCode = decisionTableMessageBody.getDecisionTableCode();
+        switch (decisionTableMessageBody.getType()) {
+            case UPDATE:
+                log.info("开始更新决策表：{}", decisionTableCode);
+                this.decisionTableEngine.addDecisionTable(decisionTablePublishService.getPublishDecisionTable(workspaceCode, decisionTableCode));
+                break;
+            case LOAD:
+                log.info("开始加载决策表：{}", decisionTableCode);
+                this.decisionTableEngine.addDecisionTable(decisionTablePublishService.getPublishDecisionTable(workspaceCode, decisionTableCode));
+                break;
+            case REMOVE:
+                log.info("开始移除决策表：{}", decisionTableCode);
+                this.decisionTableEngine.removeDecisionTable(workspaceCode, decisionTableCode);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + decisionTableMessageBody.getType());
+        }
     }
 
 }
