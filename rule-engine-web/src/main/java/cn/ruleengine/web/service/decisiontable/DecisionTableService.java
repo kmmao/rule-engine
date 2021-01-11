@@ -86,4 +86,12 @@ public interface DecisionTableService {
      * @return ViewDecisionTableResponse
      */
     ViewDecisionTableResponse getViewDecisionTable(Integer id);
+
+    /**
+     * 规则决策表
+     *
+     * @param id 决策表id
+     * @return true
+     */
+    Boolean publish(Integer id);
 }

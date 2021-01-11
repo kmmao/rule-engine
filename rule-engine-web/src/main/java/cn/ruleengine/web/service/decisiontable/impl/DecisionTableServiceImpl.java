@@ -328,6 +328,51 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     }
 
     /**
+     * 规则决策表
+     *
+     * @param id 决策表id
+     * @return true
+     */
+    @Override
+    public Boolean publish(Integer id) {
+        RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(id);
+        if (ruleEngineDecisionTable == null) {
+            throw new ValidException("不存在决策表:{}", id);
+        }
+        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.EDIT.getStatus())) {
+            throw new ValidException("该决策表不可执行:{}", id);
+        }
+        // 如果已经是发布决策表了
+        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+            return true;
+        }
+        // 修改为已发布
+        this.ruleEngineDecisionTableManager.lambdaUpdate()
+                .set(RuleEngineDecisionTable::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineDecisionTable::getId, ruleEngineDecisionTable.getId())
+                .update();
+        // 删除原有的已发布规则数据
+        this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
+                .remove();
+        // 更新待发布为已发布
+        this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                .set(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
+                .update();
+        // 加载规则
+        DecisionTableMessageBody decisionTableMessageBody = new DecisionTableMessageBody();
+        decisionTableMessageBody.setType(DecisionTableMessageBody.Type.LOAD);
+        decisionTableMessageBody.setDecisionTableCode(ruleEngineDecisionTable.getCode());
+        decisionTableMessageBody.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
+        decisionTableMessageBody.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
+        this.eventPublisher.publishEvent(new DecisionTableEvent(decisionTableMessageBody));
+        return true;
+    }
+
+    /**
      * 处理决策表预览数据
      *
      * @param decisionTable 决策表

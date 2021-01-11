@@ -2,6 +2,7 @@ package cn.ruleengine.web.controller.decisiontable;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
+import cn.ruleengine.web.annotation.SystemLog;
 import cn.ruleengine.web.enums.DataPermissionType;
 import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
@@ -172,6 +173,23 @@ public class DecisionTableController {
     public BaseResult getViewDecisionTable(@Valid @RequestBody IdRequest idRequest) {
         PlainResult<ViewDecisionTableResponse> plainResult = new PlainResult<>();
         plainResult.setData(decisionTableService.getViewDecisionTable(idRequest.getId()));
+        return plainResult;
+    }
+
+    /**
+     * 规则决策表
+     *
+     * @param idRequest 决策表id
+     * @return true
+     */
+    @ReSubmitLock
+    @SystemLog
+    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("publish")
+    @ApiOperation("发布决策表")
+    public BaseResult publish(@Validated @RequestBody IdRequest idRequest) {
+        PlainResult<Boolean> plainResult = new PlainResult<>();
+        plainResult.setData(decisionTableService.publish(idRequest.getId()));
         return plainResult;
     }
 
