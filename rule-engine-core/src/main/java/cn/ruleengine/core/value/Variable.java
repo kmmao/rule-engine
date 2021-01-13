@@ -66,7 +66,11 @@ public class Variable implements Value {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (!(obj instanceof Variable)) {
+            return false;
+        }
+        // 如果id一样，则是同一个变量
+        return this.variableId.equals(((Variable) obj).variableId);
     }
 
 }

@@ -57,6 +57,16 @@ public class ParameterService {
         if (decisionTable.getDefaultActionValue() != null) {
             this.getFromVariableElement(elementIds, decisionTable.getDefaultActionValue());
         }
+        // 目前先这么做，因为决策表单元格中使用函数型变量很少
+        Set<Value> valueSet = new HashSet<>();
+        decisionTable.getDecisionTree().values().stream().flatMap(Collection::stream).forEach(f -> {
+            f.getColls().forEach(c -> {
+                if (!valueSet.contains(c.getRightValue())) {
+                    this.getFromVariableElement(elementIds, c.getRightValue());
+                    valueSet.add(c.getRightValue());
+                }
+            });
+        });
         return this.getParameters(elementIds);
     }
 

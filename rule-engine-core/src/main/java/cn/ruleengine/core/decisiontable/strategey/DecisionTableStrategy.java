@@ -53,10 +53,11 @@ public interface DecisionTableStrategy {
      *
      * @param collHeadCompareMap 表头比较器
      * @param row                一行规则
+     * @param input              用户输入参数
      * @param configuration      规则引擎配置信息
      * @return action
      */
-    default Value getActionByRow(Map<Integer, CollHeadCompare> collHeadCompareMap, Row row, RuleEngineConfiguration configuration) {
+    default Value getActionByRow(Map<Integer, CollHeadCompare> collHeadCompareMap, Row row, Input input, RuleEngineConfiguration configuration) {
         List<Coll> colls = row.getColls();
         // 校验此行单元格条件是否成立
         for (int i = 0; i < colls.size(); i++) {
@@ -67,8 +68,11 @@ public interface DecisionTableStrategy {
             }
             // 获取到表头比较器，与下面单元格比较
             CollHeadCompare collHeadCompare = collHeadCompareMap.get(i);
-            // 右值可以有固定值变量，固定值，无元素 input=null
-            Object rValue = coll.getRightValue().getValue(null, configuration);
+            /*
+             * 右值可以有固定值变量，固定值，无元素 input=null
+             * 更新：决策表单元格变量可以为函数型变量
+             */
+            Object rValue = coll.getRightValue().getValue(input, configuration);
             if (!collHeadCompare.compare(rValue)) {
                 // 单元格内条件只要有一个不成立，则比较失败
                 return null;

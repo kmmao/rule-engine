@@ -62,7 +62,7 @@ public class HighestPriorityAllStrategy implements DecisionTableStrategy {
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
             // 一个row可以看做一个规则
             for (Row row : tree.getValue()) {
-                Value action = this.getActionByRow(collHeadCompareMap, row, configuration);
+                Value action = this.getActionByRow(collHeadCompareMap, row, input,configuration);
                 Optional.ofNullable(action).ifPresent(p -> {
                     actions.add(action.getValue(input, configuration));
                 });

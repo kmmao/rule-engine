@@ -60,7 +60,7 @@ public class HighestPrioritySingleStrategy implements DecisionTableStrategy {
             List<Row> rows = tree.getValue();
             // 一个row可以看做一个规则
             for (Row row : rows) {
-                Value action = this.getActionByRow(collHeadCompareMap, row, configuration);
+                Value action = this.getActionByRow(collHeadCompareMap, row, input, configuration);
                 if (action != null) {
                     return Collections.singletonList(row.getAction().getValue(input, configuration));
                 }
