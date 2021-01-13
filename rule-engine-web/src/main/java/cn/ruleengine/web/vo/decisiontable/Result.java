@@ -17,5 +17,4 @@ public class Result {
     private String valueType;
     private String variableValue;
     private Integer type;
-    private Boolean visible;
 }
