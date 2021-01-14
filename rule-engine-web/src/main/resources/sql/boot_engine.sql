@@ -882,3 +882,46 @@ create table rule_engine_workspace
 INSERT INTO boot_engine.rule_engine_workspace (id, code, name, access_key_id, access_key_secret, description, create_time, update_time, deleted) VALUES (1, 'default', '默认工作空间', 'root', '123456', '默认的', '2020-11-21 02:41:33', '2020-11-21 02:41:34', 0);
 INSERT INTO boot_engine.rule_engine_workspace (id, code, name, access_key_id, access_key_secret, description, create_time, update_time, deleted) VALUES (2, 'test', '测试', 'gdfhdgfh', 'sdfasdfas', '供测试使用', '2020-11-21 19:36:12', '2020-11-21 19:36:13', 0);
 INSERT INTO boot_engine.rule_engine_workspace (id, code, name, access_key_id, access_key_secret, description, create_time, update_time, deleted) VALUES (4, 'prd', '线上', 'asdfasdf', 'asasdfasdfas', '请勿随意修改', '2020-11-07 21:49:36', '2020-11-07 21:49:38', 0);
+
+CREATE TABLE `rule_engine_rule_set` (
+                                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                                        `name` varchar(50) DEFAULT NULL,
+                                        `code` varchar(50) DEFAULT NULL,
+                                        `description` varchar(500) DEFAULT NULL,
+                                        `workspace_id` int(11) DEFAULT NULL,
+                                        `workspace_code` varchar(20) DEFAULT NULL,
+                                        `status` tinyint(4) DEFAULT NULL,
+                                        `create_user_id` int(11) DEFAULT NULL,
+                                        `create_user_name` varchar(100) DEFAULT NULL,
+                                        `enable_default_rule` bigint(20) DEFAULT NULL,
+                                        `default_rule_id` int(11) DEFAULT NULL,
+                                        `create_time` timestamp NULL DEFAULT NULL,
+                                        `update_time` timestamp NULL DEFAULT NULL,
+                                        `deleted` tinyint(4) DEFAULT NULL,
+                                        PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=154 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `rule_engine_rule_set_publish` (
+                                                `id` int(11) NOT NULL AUTO_INCREMENT,
+                                                `rule_set_id` int(11) NOT NULL,
+                                                `rule_set_code` varchar(50) DEFAULT NULL,
+                                                `workspace_id` int(11) DEFAULT NULL,
+                                                `workspace_code` varchar(20) DEFAULT NULL,
+                                                `data` json DEFAULT NULL,
+                                                `status` tinyint(4) DEFAULT NULL,
+                                                `create_time` timestamp NULL DEFAULT NULL,
+                                                `update_time` timestamp NULL DEFAULT NULL,
+                                                `deleted` tinyint(4) DEFAULT NULL,
+                                                PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `rule_engine_rule_set_rule` (
+                                             `id` int(11) NOT NULL AUTO_INCREMENT,
+                                             `rule_set_id` int(11) DEFAULT NULL,
+                                             `rule_id` int(11) DEFAULT NULL,
+                                             `order_no` int(11) DEFAULT NULL,
+                                             `create_time` timestamp NULL DEFAULT NULL,
+                                             `update_time` timestamp NULL DEFAULT NULL,
+                                             `deleted` tinyint(4) DEFAULT NULL,
+                                             PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=154 DEFAULT CHARSET=utf8;

@@ -1,8 +1,11 @@
 package cn.ruleengine.web.controller.ruleset;
 
+import cn.ruleengine.web.service.ruleset.RuleSetService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -16,4 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("ruleEngine/ruleSet")
 public class RuleSetController {
+
+    @Resource
+    private RuleSetService ruleSetService;
+
 }
