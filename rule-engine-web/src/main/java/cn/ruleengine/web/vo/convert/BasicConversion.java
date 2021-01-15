@@ -8,6 +8,7 @@ import cn.ruleengine.web.vo.element.GetElementResponse;
 import cn.ruleengine.web.vo.generalrule.GeneralRuleDefinition;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
+import cn.ruleengine.web.vo.ruleset.RuleSetDefinition;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.user.UserResponse;
 import cn.ruleengine.web.vo.variable.GetVariableResponse;
@@ -118,4 +119,11 @@ public interface BasicConversion {
      */
     DecisionTableDefinition convert(RuleEngineDecisionTable ruleEngineDecisionTable);
 
+    /**
+     * ruleEngineRuleSet to RuleSetDefinition
+     *
+     * @param ruleEngineRuleSet ruleEngineRuleSet
+     * @return RuleSetDefinition
+     */
+    RuleSetDefinition convert(RuleEngineRuleSet ruleEngineRuleSet);
 }
