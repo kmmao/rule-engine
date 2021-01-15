@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.RuleSetEngine;
 import cn.ruleengine.core.exception.ValidException;
@@ -7,14 +8,18 @@ import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.RuleSetMessageBody;
 import cn.ruleengine.web.listener.event.RuleSetEvent;
+import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ruleset.RuleSetService;
 import cn.ruleengine.web.store.entity.*;
+import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
 import cn.ruleengine.web.store.manager.RuleEngineRuleSetManager;
 import cn.ruleengine.web.store.manager.RuleEngineRuleSetPublishManager;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
+import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.generalrule.ListGeneralRuleRequest;
 import cn.ruleengine.web.vo.ruleset.*;
@@ -25,6 +30,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +54,10 @@ public class RuleSetServiceImpl implements RuleSetService {
     private RuleEngineRuleSetPublishManager ruleEngineRuleSetPublishManager;
     @Resource
     private ApplicationEventPublisher eventPublisher;
+    @Resource
+    private RuleEngineConditionGroupService ruleEngineConditionGroupService;
+    @Resource
+    private RuleEngineRuleManager ruleEngineRuleManager;
 
     /**
      * 获取规则集列表
@@ -180,7 +191,59 @@ public class RuleSetServiceImpl implements RuleSetService {
      */
     @Override
     public Boolean updateRuleSet(UpdateRuleSetRequest updateRuleSetRequest) {
-        return null;
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(updateRuleSetRequest.getId());
+        if (ruleEngineRuleSet == null) {
+            throw new ValidException("不存在规则集:{}", updateRuleSetRequest.getId());
+        }
+        // 如果之前是待发布，则删除原有待发布数据
+        if (Objects.equals(ruleEngineRuleSet.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
+            this.ruleEngineRuleSetPublishManager.lambdaUpdate()
+                    .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineRuleSetPublish::getRuleSetId, updateRuleSetRequest.getId())
+                    .remove();
+        }
+        ruleEngineRuleSet.setStrategyType(updateRuleSetRequest.getStrategyType());
+        ruleEngineRuleSet.setStatus(DataStatus.EDIT.getStatus());
+        ruleEngineRuleSet.setEnableDefaultRule(updateRuleSetRequest.getEnableDefaultRule());
+        List<RuleBody> ruleSet = updateRuleSetRequest.getRuleSet();
+
+        for (RuleBody ruleBody : ruleSet) {
+            Integer ruleId = this.saveRule(ruleBody);
+            Integer ruleSetId = ruleEngineRuleSet.getId();
+            Integer orderNo = ruleBody.getOrderNo();
+        }
+        // TODO: 2021/1/15  建立规则集与规则的关系
+        // ..
+        RuleBody defaultRule = updateRuleSetRequest.getDefaultRule();
+        if (defaultRule != null) {
+            Integer defaultRuleId = this.saveRule(defaultRule);
+            ruleEngineRuleSet.setDefaultRuleId(defaultRuleId);
+        }
+        this.ruleEngineRuleSetManager.updateById(ruleEngineRuleSet);
+        // TODO: 2021/1/15  删除老的规则集规则关系
+        // ...
+        return true;
+    }
+
+    /**
+     * 保存规则并返回规则id
+     *
+     * @param ruleBody 规则体
+     * @return 规则id
+     */
+    private Integer saveRule(RuleBody ruleBody) {
+        RuleEngineRule ruleEngineRule = new RuleEngineRule();
+        ruleEngineRule.setName(ruleBody.getName());
+        ConfigValue action = ruleBody.getAction();
+        ruleEngineRule.setActionType(action.getType());
+        ruleEngineRule.setActionValueType(action.getValueType());
+        ruleEngineRule.setActionValue(action.getValue());
+        this.ruleEngineRuleManager.save(ruleEngineRule);
+        List<ConditionGroupConfig> conditionGroup = ruleBody.getConditionGroup();
+        if (CollUtil.isNotEmpty(conditionGroup)) {
+            this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineRule.getId(), conditionGroup);
+        }
+        return ruleEngineRule.getId();
     }
 
     /**

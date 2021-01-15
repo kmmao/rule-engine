@@ -10,6 +10,7 @@ import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
 import cn.ruleengine.web.listener.event.GeneralRuleEvent;
 import cn.ruleengine.web.service.ConditionService;
+import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.impl.ParameterService;
 import cn.ruleengine.web.service.generalrule.GeneralRuleResolveService;
@@ -95,6 +96,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     private ApplicationEventPublisher eventPublisher;
     @Resource
     private ValueResolve valueResolve;
+    @Resource
+    private RuleEngineConditionGroupService ruleEngineConditionGroupService;
 
     /**
      * 规则列表
@@ -174,7 +177,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         // 如果原来有条件信息，先删除原有信息
         this.removeConditionGroupByRuleId(ruleEngineGeneralRule.getRuleId());
         // 保存条件信息
-        this.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), updateRuleRequest.getConditionGroup());
+        this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), updateRuleRequest.getConditionGroup());
         //  更新规则信息
         ruleEngineGeneralRule.setId(updateRuleRequest.getId());
         ruleEngineGeneralRule.setStatus(DataStatus.EDIT.getStatus());
@@ -197,38 +200,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         return true;
     }
 
-    /**
-     * 保存条件组
-     *
-     * @param ruleId         规则id
-     * @param conditionGroup 条件组信息
-     */
-    private void saveConditionGroup(Integer ruleId, List<ConditionGroupConfig> conditionGroup) {
-        if (CollUtil.isEmpty(conditionGroup)) {
-            return;
-        }
-        List<RuleEngineConditionGroupCondition> ruleEngineConditionGroupConditions = new LinkedList<>();
-        for (ConditionGroupConfig groupConfig : conditionGroup) {
-            RuleEngineConditionGroup engineConditionGroup = new RuleEngineConditionGroup();
-            engineConditionGroup.setName(groupConfig.getName());
-            engineConditionGroup.setRuleId(ruleId);
-            engineConditionGroup.setOrderNo(groupConfig.getOrderNo());
-            this.ruleEngineConditionGroupManager.save(engineConditionGroup);
-            List<ConditionGroupCondition> conditionGroupConditions = groupConfig.getConditionGroupCondition();
-            if (CollUtil.isNotEmpty(conditionGroupConditions)) {
-                for (ConditionGroupCondition conditionGroupCondition : conditionGroupConditions) {
-                    RuleEngineConditionGroupCondition ruleEngineConditionGroupCondition = new RuleEngineConditionGroupCondition();
-                    ruleEngineConditionGroupCondition.setConditionId(conditionGroupCondition.getCondition().getId());
-                    ruleEngineConditionGroupCondition.setConditionGroupId(engineConditionGroup.getId());
-                    ruleEngineConditionGroupCondition.setOrderNo(conditionGroupCondition.getOrderNo());
-                    ruleEngineConditionGroupConditions.add(ruleEngineConditionGroupCondition);
-                }
-            }
-        }
-        if (CollUtil.isNotEmpty(ruleEngineConditionGroupConditions)) {
-            this.ruleEngineConditionGroupConditionManager.saveBatch(ruleEngineConditionGroupConditions);
-        }
-    }
+
 
     /**
      * 删除规则
@@ -370,7 +342,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         // 如果原来有条件信息，先删除原有信息
         this.removeConditionGroupByRuleId(ruleEngineGeneralRule.getRuleId());
         // 保存条件信息
-        this.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), releaseRequest.getConditionGroup());
+        this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), releaseRequest.getConditionGroup());
         //  更新规则信息
         ruleEngineGeneralRule.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         // 保存结果

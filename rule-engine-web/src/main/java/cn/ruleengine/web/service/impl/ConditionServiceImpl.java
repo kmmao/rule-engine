@@ -381,6 +381,8 @@ public class ConditionServiceImpl implements ConditionService {
         this.ruleEngineConditionManager.updateById(condition);
         // 更新引用此规则的条件到编辑中
         this.ruleEngineConditionMapper.updateRuleWaitPublish(conditionId);
+        // TODO: 2021/1/15  规则集引用的
+        // ...
         return true;
     }
 

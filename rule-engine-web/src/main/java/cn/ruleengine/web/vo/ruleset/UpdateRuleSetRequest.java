@@ -22,6 +22,8 @@ public class UpdateRuleSetRequest {
 
     /**
      * 决策表执行策略类型
+     *
+     * @see cn.ruleengine.core.rule.RuleSetStrategyType
      */
     private Integer strategyType = 1;
 
@@ -29,6 +31,8 @@ public class UpdateRuleSetRequest {
      * 规则集
      */
     private List<RuleBody> ruleSet;
+
+    private Integer enableDefaultRule;
 
     private RuleBody defaultRule;
 

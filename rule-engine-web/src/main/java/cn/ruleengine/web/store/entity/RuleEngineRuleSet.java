@@ -40,11 +40,17 @@ public class RuleEngineRuleSet implements Serializable {
 
     private Integer status;
 
+
+    /**
+     * 执行策略类型
+     */
+    private Integer strategyType;
+
     private Integer createUserId;
 
     private String createUserName;
 
-    private Long enableDefaultRule;
+    private Integer enableDefaultRule;
 
     private Integer defaultRuleId;
 

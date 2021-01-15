@@ -1,6 +1,9 @@
 package cn.ruleengine.web.service;
 
+import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import cn.ruleengine.web.vo.condition.group.SaveOrUpdateConditionGroup;
+
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -19,6 +22,14 @@ public interface RuleEngineConditionGroupService {
      * @return int
      */
     Integer saveOrUpdateConditionGroup(SaveOrUpdateConditionGroup saveOrUpdateConditionGroup);
+
+    /**
+     * 保存条件组
+     *
+     * @param ruleId         规则id
+     * @param conditionGroup 条件组信息
+     */
+    void saveConditionGroup(Integer ruleId, List<ConditionGroupConfig> conditionGroup);
 
     /**
      * 删除条件组

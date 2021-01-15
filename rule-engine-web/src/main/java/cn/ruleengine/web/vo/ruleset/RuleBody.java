@@ -25,6 +25,11 @@ public class RuleBody {
     @NotBlank
     private String name;
     /**
+     * 规则集是有序的，默认循序执行规则集
+     */
+    private Integer orderNo;
+
+    /**
      * 规则条件组
      */
     @NotNull
