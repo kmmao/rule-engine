@@ -17,7 +17,7 @@ public class VariableEvent extends ApplicationEvent {
     private static final long serialVersionUID = 7277630131038817515L;
 
     @Getter
-    private VariableMessageBody variableMessageBody;
+    private final VariableMessageBody variableMessageBody;
 
     public VariableEvent(VariableMessageBody variableMessageBody) {
         super(variableMessageBody);

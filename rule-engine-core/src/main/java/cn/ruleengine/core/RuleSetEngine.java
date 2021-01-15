@@ -140,4 +140,14 @@ public class RuleSetEngine implements Engine {
         log.info("The rules engine has been destroyed");
     }
 
+    /**
+     * 从规则引擎删除一个规则集
+     *
+     * @param ruleSetCode 规则集code
+     */
+    public void remove(String workspaceCode, @NonNull String ruleSetCode) {
+        if (this.workspaceMap.containsKey(workspaceCode)) {
+            this.workspaceMap.get(workspaceCode).remove(ruleSetCode);
+        }
+    }
 }

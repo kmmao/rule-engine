@@ -1,6 +1,6 @@
 package cn.ruleengine.web.listener.event;
 
-import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
+import cn.ruleengine.web.listener.body.RuleSetMessageBody;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -12,16 +12,16 @@ import org.springframework.context.ApplicationEvent;
  * @create 2020-12-23 17:55
  * @since 1.0.0
  */
-public class GeneralRuleEvent extends ApplicationEvent {
+public class RuleSetEvent extends ApplicationEvent {
 
     private static final long serialVersionUID = 1628296277627810450L;
 
     @Getter
-    private final GeneralRuleMessageBody ruleMessageBody;
+    private final RuleSetMessageBody ruleSetMessageBody;
 
-    public GeneralRuleEvent(GeneralRuleMessageBody ruleMessageBody) {
-        super(ruleMessageBody);
-        this.ruleMessageBody = ruleMessageBody;
+    public RuleSetEvent(RuleSetMessageBody ruleSetMessageBody) {
+        super(ruleSetMessageBody);
+        this.ruleSetMessageBody = ruleSetMessageBody;
     }
 
 }

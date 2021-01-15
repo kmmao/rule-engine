@@ -54,12 +54,10 @@ public class GeneralRuleOutServiceImpl implements RuleEngineOutService {
     public Object execute(ExecuteRequest executeRule) {
         log.info("开始执行普通规则，入参：{}", executeRule);
         String workspaceCode = executeRule.getWorkspaceCode();
-        long currentTimeMillis = System.currentTimeMillis();
         AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
         if (!accessKey.equals(executeRule.getAccessKeyId(), executeRule.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        log.info("校验AccessKey耗时：{}", (System.currentTimeMillis() - currentTimeMillis));
         Input input = new DefaultInput();
         input.putAll(executeRule.getParam());
         return this.engine.execute(input, workspaceCode, executeRule.getCode());

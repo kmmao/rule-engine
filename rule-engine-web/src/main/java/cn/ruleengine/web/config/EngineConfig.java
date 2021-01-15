@@ -21,13 +21,13 @@ import cn.ruleengine.core.cache.DefaultFunctionCache;
 
 import cn.ruleengine.web.service.generalrule.GeneralRulePublishService;
 import cn.ruleengine.web.service.VariableResolveService;
+import cn.ruleengine.web.service.ruleset.RuleSetPublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -47,6 +47,8 @@ public class EngineConfig {
     private GeneralRulePublishService rulePublishService;
     @Resource
     private DecisionTablePublishService decisionTablePublishService;
+    @Resource
+    private RuleSetPublishService ruleSetPublishService;
 
     /**
      * 规则引擎配置
@@ -99,7 +101,7 @@ public class EngineConfig {
     public Engine ruleSetEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化规则集引擎");
         RuleSetEngine ruleSetEngine = new RuleSetEngine(ruleEngineConfiguration);
-        ruleSetEngine.addMultipleRuleSet(new ArrayList<>());
+        ruleSetEngine.addMultipleRuleSet(this.ruleSetPublishService.getAllPublishRuleSet());
         log.info("规则集引擎初始化完毕");
         return ruleSetEngine;
     }

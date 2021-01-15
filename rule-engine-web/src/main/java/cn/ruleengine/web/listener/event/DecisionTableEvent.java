@@ -17,7 +17,7 @@ public class DecisionTableEvent extends ApplicationEvent {
     private static final long serialVersionUID = 1628296277627810450L;
 
     @Getter
-    private DecisionTableMessageBody decisionTableMessageBody;
+    private final DecisionTableMessageBody decisionTableMessageBody;
 
     public DecisionTableEvent(DecisionTableMessageBody decisionTableMessageBody) {
         super(decisionTableMessageBody);

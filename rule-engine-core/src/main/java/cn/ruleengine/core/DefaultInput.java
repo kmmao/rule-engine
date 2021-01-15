@@ -32,7 +32,7 @@ public class DefaultInput implements Input {
     /**
      * 项目中使用到的运行参数
      */
-    private Map<String, Object> inputParam = new HashMap<>();
+    private final Map<String, Object> inputParam = new HashMap<>();
 
     /**
      * 添加一个输入参数

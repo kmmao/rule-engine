@@ -30,7 +30,6 @@ import cn.ruleengine.web.vo.base.response.PlainResult;
 import cn.ruleengine.web.vo.generalrule.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -108,7 +107,7 @@ public class GeneralRuleController {
     @DataPermission(id = "#releaseRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
     @ApiOperation("生成普通规则代发布")
-    public BaseResult generationRelease(@Validated @RequestBody GenerationReleaseRequest releaseRequest) {
+    public BaseResult generationRelease(@Valid @RequestBody GenerationReleaseRequest releaseRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(ruleService.generationRelease(releaseRequest));
         return plainResult;
@@ -125,7 +124,7 @@ public class GeneralRuleController {
     @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布规则")
-    public BaseResult publish(@Validated @RequestBody IdRequest idRequest) {
+    public BaseResult publish(@Valid @RequestBody IdRequest idRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(ruleService.publish(idRequest.getId()));
         return plainResult;

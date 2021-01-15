@@ -22,6 +22,7 @@ import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.rule.strategy.RuleSetStrategy;
 import cn.ruleengine.core.rule.strategy.RuleSetStrategyFactory;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -89,6 +90,7 @@ public class RuleSet implements JsonParse {
      */
     private boolean enableMonitor = false;
 
+
     public void addRule(@NonNull Rule rule) {
         Objects.requireNonNull(rule);
         this.rules.add(rule);
@@ -117,6 +119,17 @@ public class RuleSet implements JsonParse {
                 log.warn("警告：规则集执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
             }
         }
+    }
+
+    /**
+     * 根据rule set json字符串构建一个规则
+     *
+     * @param jsonString rule json字符串
+     * @return rule
+     */
+    @SneakyThrows
+    public static RuleSet buildRuleSet(@NonNull String jsonString) {
+        return OBJECT_MAPPER.readValue(jsonString, RuleSet.class);
     }
 
 }

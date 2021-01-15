@@ -13,9 +13,9 @@ import cn.ruleengine.web.vo.generalrule.RunTestRequest;
 public interface RunTestService {
 
     /**
-     * 规则模拟运行
+     * 模拟运行
      *
-     * @param runTestRequest 规则参数信息
+     * @param runTestRequest 参数信息
      * @return result
      */
     Object run(RunTestRequest runTestRequest);
