@@ -1,5 +1,11 @@
 package cn.ruleengine.web.vo.ruleset;
 
+import cn.ruleengine.core.rule.AbnormalAlarm;
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -8,5 +14,24 @@ package cn.ruleengine.web.vo.ruleset;
  * @date 2021/1/15
  * @since 1.0.0
  */
+@Data
 public class UpdateRuleSetRequest {
+
+    @NotNull
+    private Integer id;
+
+    /**
+     * 决策表执行策略类型
+     */
+    private Integer strategyType = 1;
+
+    /**
+     * 规则集
+     */
+    private List<RuleBody> ruleSet;
+
+    private RuleBody defaultRule;
+
+    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
+
 }

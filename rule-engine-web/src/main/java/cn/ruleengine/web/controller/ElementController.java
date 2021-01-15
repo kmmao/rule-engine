@@ -17,7 +17,6 @@ package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
-import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.enums.DataPermissionType;
 import cn.ruleengine.web.enums.PermissionType;
 import cn.ruleengine.web.service.ElementService;

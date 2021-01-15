@@ -3,7 +3,6 @@ package cn.ruleengine.web.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.enums.DeletedEnum;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -201,6 +200,8 @@ public class ElementServiceImpl implements ElementService {
         }
         // TODO: 2021/1/11  决策表引用
         // ...
+        // TODO: 2021/1/15 规则集引用
+        // ... 考虑是否会重新设计
         return ruleEngineElementManager.removeById(id);
     }
 
