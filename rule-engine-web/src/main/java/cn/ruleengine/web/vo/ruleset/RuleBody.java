@@ -18,7 +18,10 @@ import java.util.List;
  */
 @Data
 public class RuleBody {
-
+    /**
+     * 规则id
+     */
+    private Integer id;
     /**
      * 规则名称
      */

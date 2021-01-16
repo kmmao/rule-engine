@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.RuleSetEngine;
@@ -11,9 +12,7 @@ import cn.ruleengine.web.listener.event.RuleSetEvent;
 import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ruleset.RuleSetService;
 import cn.ruleengine.web.store.entity.*;
-import cn.ruleengine.web.store.manager.RuleEngineRuleManager;
-import cn.ruleengine.web.store.manager.RuleEngineRuleSetManager;
-import cn.ruleengine.web.store.manager.RuleEngineRuleSetPublishManager;
+import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
@@ -28,10 +27,13 @@ import cn.ruleengine.web.vo.workspace.Workspace;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -41,6 +43,7 @@ import java.util.Objects;
  * @date 2021/1/14
  * @since 1.0.0
  */
+@Transactional(rollbackFor = Exception.class)
 @Service
 public class RuleSetServiceImpl implements RuleSetService {
 
@@ -56,6 +59,12 @@ public class RuleSetServiceImpl implements RuleSetService {
     private RuleEngineConditionGroupService ruleEngineConditionGroupService;
     @Resource
     private RuleEngineRuleManager ruleEngineRuleManager;
+    @Resource
+    private RuleEngineRuleSetRuleManager ruleEngineRuleSetRuleManager;
+    @Resource
+    private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
+    @Resource
+    private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
 
     /**
      * 获取规则集列表
@@ -71,18 +80,17 @@ public class RuleSetServiceImpl implements RuleSetService {
         return PageUtils.page(this.ruleEngineRuleSetManager, page, () -> {
             QueryWrapper<RuleEngineRuleSet> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineRuleSet::getWorkspaceId, workspace.getId());
-            PageUtils.defaultOrder(orders, wrapper);
-
             ListGeneralRuleRequest query = pageRequest.getQuery();
-            if (Validator.isNotEmpty(query.getName())) {
-                wrapper.lambda().like(RuleEngineRuleSet::getName, query.getName());
-            }
             if (Validator.isNotEmpty(query.getCode())) {
                 wrapper.lambda().like(RuleEngineRuleSet::getCode, query.getCode());
+            }
+            if (Validator.isNotEmpty(query.getName())) {
+                wrapper.lambda().like(RuleEngineRuleSet::getName, query.getName());
             }
             if (Validator.isNotEmpty(query.getStatus())) {
                 wrapper.lambda().eq(RuleEngineRuleSet::getStatus, query.getStatus());
             }
+            PageUtils.defaultOrder(orders, wrapper);
             return wrapper;
         }, m -> {
             ListRuleSetResponse listRuleResponse = new ListRuleSetResponse();
@@ -204,23 +212,67 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleEngineRuleSet.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineRuleSet.setEnableDefaultRule(updateRuleSetRequest.getEnableDefaultRule());
         List<RuleBody> ruleSet = updateRuleSetRequest.getRuleSet();
-
+        // 以下代码性能可优化
+        this.deleteRuleSetRule(ruleEngineRuleSet);
+        // 绑定新的
+        ArrayList<RuleEngineRuleSetRule> ruleEngineRuleSetRules = new ArrayList<>();
         for (RuleBody ruleBody : ruleSet) {
             Integer ruleId = this.saveRule(ruleBody);
             Integer ruleSetId = ruleEngineRuleSet.getId();
             Integer orderNo = ruleBody.getOrderNo();
+            RuleEngineRuleSetRule ruleEngineRuleSetRule = new RuleEngineRuleSetRule();
+            ruleEngineRuleSetRule.setRuleSetId(ruleSetId);
+            ruleEngineRuleSetRule.setRuleId(ruleId);
+            ruleEngineRuleSetRule.setOrderNo(orderNo);
         }
-        // TODO: 2021/1/15  建立规则集与规则的关系
-        // ..
+        this.ruleEngineRuleSetRuleManager.saveBatch(ruleEngineRuleSetRules);
         RuleBody defaultRule = updateRuleSetRequest.getDefaultRule();
         if (defaultRule != null) {
             Integer defaultRuleId = this.saveRule(defaultRule);
             ruleEngineRuleSet.setDefaultRuleId(defaultRuleId);
         }
         this.ruleEngineRuleSetManager.updateById(ruleEngineRuleSet);
-        // TODO: 2021/1/15  删除老的规则集规则关系
-        // ...
         return true;
+    }
+
+    /**
+     * 删除老的规则集规则关系
+     *
+     * @param ruleEngineRuleSet ruleEngineRuleSet
+     */
+    public void deleteRuleSetRule(RuleEngineRuleSet ruleEngineRuleSet) {
+        // 删除老的规则集规则关系
+        List<RuleEngineRuleSetRule> engineRuleSetRules = this.ruleEngineRuleSetRuleManager.lambdaQuery()
+                .eq(RuleEngineRuleSetRule::getRuleSetId, ruleEngineRuleSet.getId())
+                .list();
+        if (CollUtil.isNotEmpty(engineRuleSetRules)) {
+            this.ruleEngineRuleSetRuleManager.removeByIds(engineRuleSetRules.stream().map(RuleEngineRuleSetRule::getId).collect(Collectors.toList()));
+            List<Integer> ruleIds = engineRuleSetRules.stream().map(RuleEngineRuleSetRule::getRuleId).collect(Collectors.toList());
+            ruleIds.add(ruleEngineRuleSet.getDefaultRuleId());
+            this.ruleEngineRuleManager.removeByIds(ruleIds);
+            // 删除规则集条件组
+            this.removeConditionGroupByRuleIds(ruleIds);
+        }
+    }
+
+    /**
+     * 删除规则条件组信息
+     *
+     * @param ruleIds 规则ids
+     */
+    public void removeConditionGroupByRuleIds(List<Integer> ruleIds) {
+        List<RuleEngineConditionGroup> engineConditionGroups = ruleEngineConditionGroupManager.lambdaQuery()
+                .in(RuleEngineConditionGroup::getRuleId, ruleIds)
+                .list();
+        if (CollUtil.isNotEmpty(engineConditionGroups)) {
+            List<Integer> engineConditionGroupIds = engineConditionGroups.stream().map(RuleEngineConditionGroup::getId).collect(Collectors.toList());
+            if (this.ruleEngineConditionGroupManager.removeByIds(engineConditionGroupIds)) {
+                // 删除条件组条件
+                this.ruleEngineConditionGroupConditionManager.lambdaUpdate()
+                        .in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds)
+                        .remove();
+            }
+        }
     }
 
     /**
@@ -299,7 +351,7 @@ public class RuleSetServiceImpl implements RuleSetService {
             this.eventPublisher.publishEvent(new RuleSetEvent(ruleSetMessageBody));
         }
         // 删除规则集规则
-        // TODO: 2021/1/15
+        this.deleteRuleSetRule(ruleEngineRuleSet);
         // 删除规则发布记录
         this.ruleEngineRuleSetPublishManager.lambdaUpdate().eq(RuleEngineRuleSetPublish::getRuleSetId, id).remove();
         // 删除规则
@@ -321,4 +373,5 @@ public class RuleSetServiceImpl implements RuleSetService {
                 .count();
         return count != null && count >= 1;
     }
+
 }

@@ -28,9 +28,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       name: master
-      url:
-      username:
-      password:
+      url: jdbc:mysql://localhost:3306/boot_engine?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+      username: root
+      password: 123456
       driver-class-name: com.mysql.jdbc.Driver
       # 初始化大小，最小，最大
       initialSize: 100
@@ -61,8 +61,8 @@ spring:
         login-password: 123456
   #消息队列配置 目前mq主要就是发布重新发布/规则通知其他服务器重新加载规则等，如果单体服务可以去除
   rabbitmq:
-    host:
-    port:
+    host: localhost
+    port: 5672
     username:
     password:
     listener:
@@ -85,8 +85,8 @@ spring:
   #redis配置
   redis:
     database: 2
-    host:
-    password:
+    host: localhost
+    password: 123456
     port: 6000
     lettuce:
       pool:
