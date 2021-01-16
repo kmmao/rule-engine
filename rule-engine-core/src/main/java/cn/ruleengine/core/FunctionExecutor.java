@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 public class FunctionExecutor {
 
 
-    private FunctionExecuteMethodParamsParser functionExecuteMethodParamsParser = new FunctionExecuteMethodParamsParser();
+    private final FunctionExecuteMethodParamsParser functionExecuteMethodParamsParser = new FunctionExecuteMethodParamsParser();
 
     /**
      * 函数执行器

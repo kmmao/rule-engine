@@ -3,13 +3,12 @@ package cn.ruleengine.web.service.generalrule.impl;
 
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.rule.GeneralRule;
-import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
 import cn.ruleengine.web.listener.event.GeneralRuleEvent;
-import cn.ruleengine.web.service.ConditionService;
+import cn.ruleengine.web.service.ActionService;
 import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.impl.ParameterService;
@@ -49,8 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -79,25 +76,19 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     @Resource
     private Engine engine;
     @Resource
-    private ConditionService conditionService;
-    @Resource
     private ParameterService ruleCountInfoService;
     @Resource
     private RuleEngineGeneralRulePublishManager ruleEngineGeneralRulePublishManager;
     @Resource
     private GeneralRuleResolveService ruleResolveService;
     @Resource
-    private RuleEngineConditionManager ruleEngineConditionManager;
-    @Resource
-    private RuleEngineVariableManager ruleEngineVariableManager;
-    @Resource
-    private RuleEngineElementManager ruleEngineElementManager;
-    @Resource
     private ApplicationEventPublisher eventPublisher;
     @Resource
     private ValueResolve valueResolve;
     @Resource
     private RuleEngineConditionGroupService ruleEngineConditionGroupService;
+    @Resource
+    private ActionService actionService;
 
     /**
      * 规则列表
@@ -175,7 +166,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
                     .remove();
         }
         // 如果原来有条件信息，先删除原有信息
-        this.removeConditionGroupByRuleId(ruleEngineGeneralRule.getRuleId());
+        this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(Collections.singletonList(ruleEngineGeneralRule.getRuleId()));
         // 保存条件信息
         this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), updateRuleRequest.getConditionGroup());
         //  更新规则信息
@@ -199,7 +190,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         return true;
     }
-
 
 
     /**
@@ -227,29 +217,9 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         // 删除规则发布记录
         this.ruleEngineGeneralRulePublishManager.lambdaUpdate().eq(RuleEngineGeneralRulePublish::getGeneralRuleId, id).remove();
         // 删除规则条件组信息
-        this.removeConditionGroupByRuleId(ruleEngineGeneralRule.getRuleId());
+        this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(Collections.singletonList(ruleEngineGeneralRule.getRuleId()));
         // 删除规则
         return this.ruleEngineGeneralRuleManager.removeById(id);
-    }
-
-    /**
-     * 删除规则条件组信息
-     *
-     * @param ruleId 规则id
-     */
-    public void removeConditionGroupByRuleId(Integer ruleId) {
-        List<RuleEngineConditionGroup> engineConditionGroups = ruleEngineConditionGroupManager.lambdaQuery()
-                .eq(RuleEngineConditionGroup::getRuleId, ruleId)
-                .list();
-        if (CollUtil.isNotEmpty(engineConditionGroups)) {
-            List<Integer> engineConditionGroupIds = engineConditionGroups.stream().map(RuleEngineConditionGroup::getId).collect(Collectors.toList());
-            if (this.ruleEngineConditionGroupManager.removeByIds(engineConditionGroupIds)) {
-                // 删除条件组条件
-                this.ruleEngineConditionGroupConditionManager.lambdaUpdate()
-                        .in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds)
-                        .remove();
-            }
-        }
     }
 
     /**
@@ -340,7 +310,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         DefaultAction defaultAction = releaseRequest.getDefaultAction();
         defaultAction.valid();
         // 如果原来有条件信息，先删除原有信息
-        this.removeConditionGroupByRuleId(ruleEngineGeneralRule.getRuleId());
+        this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(Collections.singletonList(ruleEngineGeneralRule.getRuleId()));
         // 保存条件信息
         this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), releaseRequest.getConditionGroup());
         //  更新规则信息
@@ -444,60 +414,13 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleResponse.setCode(ruleEngineGeneralRule.getCode());
         ruleResponse.setName(ruleEngineGeneralRule.getName());
         ruleResponse.setDescription(ruleEngineGeneralRule.getDescription());
-        List<RuleEngineConditionGroup> engineConditionGroups = this.ruleEngineConditionGroupManager.lambdaQuery()
-                .eq(RuleEngineConditionGroup::getRuleId, ruleEngineGeneralRule.getRuleId())
-                .orderByAsc(RuleEngineConditionGroup::getOrderNo)
-                .list();
-        if (CollUtil.isNotEmpty(engineConditionGroups)) {
-            // 加载所有的用到的条件组条件
-            Set<Integer> conditionGroupIds = engineConditionGroups.stream().map(RuleEngineConditionGroup::getId).collect(Collectors.toSet());
-            List<RuleEngineConditionGroupCondition> ruleEngineConditionGroupConditions = this.ruleEngineConditionGroupConditionManager.lambdaQuery()
-                    .in(RuleEngineConditionGroupCondition::getConditionGroupId, conditionGroupIds)
-                    .orderByAsc(RuleEngineConditionGroupCondition::getOrderNo)
-                    .list();
-            if (CollUtil.isNotEmpty(ruleEngineConditionGroupConditions)) {
-                Map<Integer, List<RuleEngineConditionGroupCondition>> conditionGroupConditionMaps = ruleEngineConditionGroupConditions.stream()
-                        .collect(Collectors.groupingBy(RuleEngineConditionGroupCondition::getConditionGroupId));
-                Set<Integer> conditionIds = conditionGroupConditionMaps.values().stream().flatMap(Collection::stream).map(RuleEngineConditionGroupCondition::getConditionId)
-                        .collect(Collectors.toSet());
-                List<RuleEngineCondition> ruleEngineConditions = this.ruleEngineConditionManager.lambdaQuery().in(RuleEngineCondition::getId, conditionIds).list();
-                if (CollUtil.isNotEmpty(ruleEngineConditions)) {
-                    Map<Integer, RuleEngineCondition> conditionMap = ruleEngineConditions.stream().collect(Collectors.toMap(RuleEngineCondition::getId, Function.identity()));
-                    Map<Integer, RuleEngineElement> elementMap = this.conditionService.getConditionElementMap(conditionMap.values());
-                    Map<Integer, RuleEngineVariable> variableMap = this.conditionService.getConditionVariableMap(conditionMap.values());
-                    // 转换条件组数据
-                    List<ConditionGroupConfig> conditionGroup = new ArrayList<>();
-                    for (RuleEngineConditionGroup engineConditionGroup : engineConditionGroups) {
-                        ConditionGroupConfig group = new ConditionGroupConfig();
-                        group.setId(engineConditionGroup.getId());
-                        group.setName(engineConditionGroup.getName());
-                        group.setOrderNo(engineConditionGroup.getOrderNo());
-                        List<RuleEngineConditionGroupCondition> conditionGroupConditions = conditionGroupConditionMaps.get(engineConditionGroup.getId());
-                        if (CollUtil.isEmpty(conditionGroupConditions)) {
-                            continue;
-                        }
-                        List<ConditionGroupCondition> groupConditions = new ArrayList<>(conditionGroupConditions.size());
-                        for (RuleEngineConditionGroupCondition conditionGroupCondition : conditionGroupConditions) {
-                            ConditionGroupCondition conditionSet = new ConditionGroupCondition();
-                            conditionSet.setId(conditionGroupCondition.getId());
-                            conditionSet.setOrderNo(conditionGroupCondition.getOrderNo());
-                            RuleEngineCondition engineCondition = conditionMap.get(conditionGroupCondition.getConditionId());
-                            conditionSet.setCondition(this.conditionService.getConditionResponse(engineCondition, variableMap, elementMap));
-                            groupConditions.add(conditionSet);
-                        }
-                        group.setConditionGroupCondition(groupConditions);
-                        conditionGroup.add(group);
-                    }
-                    ruleResponse.setConditionGroup(conditionGroup);
-                }
-            }
-        }
+        ruleResponse.setConditionGroup(this.ruleEngineConditionGroupService.getConditionGroupConfig(ruleEngineGeneralRule.getRuleId()));
         // 结果
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(ruleEngineGeneralRule.getRuleId());
-        ConfigValue action = this.getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
+        ConfigValue action = this.actionService.getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
         ruleResponse.setAction(action);
         // 默认结果
-        ConfigValue defaultValue = this.getAction(ruleEngineGeneralRule.getDefaultActionValue(), ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType());
+        ConfigValue defaultValue = this.actionService.getAction(ruleEngineGeneralRule.getDefaultActionValue(), ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType());
         DefaultAction defaultAction = new DefaultAction(defaultValue);
         defaultAction.setEnableDefaultAction(ruleEngineGeneralRule.getEnableDefaultAction());
         ruleResponse.setDefaultAction(defaultAction);
@@ -606,36 +529,5 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         return ruleResponse;
     }
 
-
-    /**
-     * 解析结果/默认结果
-     *
-     * @param value     结果值/可能为变量/元素
-     * @param type      变量/元素/固定值
-     * @param valueType STRING/NUMBER...
-     * @return Action
-     */
-    public ConfigValue getAction(String value, Integer type, String valueType) {
-        ConfigValue action = new ConfigValue();
-        if (Validator.isEmpty(type)) {
-            return action;
-        }
-        action.setValueType(valueType);
-        action.setType(type);
-        if (Validator.isEmpty(value)) {
-            return action;
-        }
-        if (type.equals(VariableType.ELEMENT.getType())) {
-            action.setValueName(this.ruleEngineElementManager.getById(value).getName());
-        } else if (type.equals(VariableType.VARIABLE.getType())) {
-            RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(value);
-            action.setValueName(engineVariable.getName());
-            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
-                action.setVariableValue(engineVariable.getValue());
-            }
-        }
-        action.setValue(value);
-        return action;
-    }
 
 }

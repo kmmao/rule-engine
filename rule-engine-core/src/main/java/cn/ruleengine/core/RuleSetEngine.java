@@ -45,7 +45,7 @@ public class RuleSetEngine implements Engine {
     /**
      * 启动时加载的规则
      */
-    private Map<String, Map<String, RuleSet>> workspaceMap = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, RuleSet>> workspaceMap = new ConcurrentHashMap<>();
 
     /**
      * 规则引擎运行所需的参数

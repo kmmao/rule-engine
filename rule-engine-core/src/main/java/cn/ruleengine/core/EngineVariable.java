@@ -41,7 +41,7 @@ public class EngineVariable implements Closeable {
      * <p>
      * 因为变量是程序中可以动态变化的值，当规则引用的变量值发生了变化时，只需要发送mq消息，把此变量值替换了即可
      */
-    private Map<Integer, Value> variableMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Value> variableMap = new ConcurrentHashMap<>();
 
     /**
      * 从引擎中删除一个变量

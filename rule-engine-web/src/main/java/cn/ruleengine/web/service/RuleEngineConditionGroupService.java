@@ -39,4 +39,19 @@ public interface RuleEngineConditionGroupService {
      */
     Boolean delete(Integer id);
 
+    /**
+     * 删除规则条件组信息
+     *
+     * @param ruleIds 规则ids
+     */
+    void removeConditionGroupByRuleIds(List<Integer> ruleIds);
+
+    /**
+     * 获取条件组配置
+     *
+     * @param ruleId 规则id
+     * @return ConditionGroupConfig list
+     */
+    List<ConditionGroupConfig> getConditionGroupConfig(Integer ruleId);
+
 }

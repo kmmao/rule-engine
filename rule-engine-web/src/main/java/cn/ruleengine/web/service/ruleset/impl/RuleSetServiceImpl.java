@@ -1,5 +1,8 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+import cn.ruleengine.web.service.ActionService;
+import cn.ruleengine.web.vo.ruleset.RuleBody;
+
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
@@ -32,7 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +70,8 @@ public class RuleSetServiceImpl implements RuleSetService {
     private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
     @Resource
     private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
+    @Resource
+    private ActionService actionService;
 
     /**
      * 获取规则集列表
@@ -251,29 +258,10 @@ public class RuleSetServiceImpl implements RuleSetService {
             ruleIds.add(ruleEngineRuleSet.getDefaultRuleId());
             this.ruleEngineRuleManager.removeByIds(ruleIds);
             // 删除规则集条件组
-            this.removeConditionGroupByRuleIds(ruleIds);
+            this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(ruleIds);
         }
     }
 
-    /**
-     * 删除规则条件组信息
-     *
-     * @param ruleIds 规则ids
-     */
-    public void removeConditionGroupByRuleIds(List<Integer> ruleIds) {
-        List<RuleEngineConditionGroup> engineConditionGroups = ruleEngineConditionGroupManager.lambdaQuery()
-                .in(RuleEngineConditionGroup::getRuleId, ruleIds)
-                .list();
-        if (CollUtil.isNotEmpty(engineConditionGroups)) {
-            List<Integer> engineConditionGroupIds = engineConditionGroups.stream().map(RuleEngineConditionGroup::getId).collect(Collectors.toList());
-            if (this.ruleEngineConditionGroupManager.removeByIds(engineConditionGroupIds)) {
-                // 删除条件组条件
-                this.ruleEngineConditionGroupConditionManager.lambdaUpdate()
-                        .in(RuleEngineConditionGroupCondition::getConditionGroupId, engineConditionGroupIds)
-                        .remove();
-            }
-        }
-    }
 
     /**
      * 保存规则并返回规则id
@@ -304,7 +292,54 @@ public class RuleSetServiceImpl implements RuleSetService {
      */
     @Override
     public GetRuleSetResponse getRuleSetConfig(Integer id) {
-        return null;
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(id);
+        if (ruleEngineRuleSet == null) {
+            throw new ValidException("不存在规则集:{}", id);
+        }
+        GetRuleSetResponse ruleSetResponse = new GetRuleSetResponse();
+        ruleSetResponse.setId(ruleEngineRuleSet.getId());
+        ruleSetResponse.setName(ruleEngineRuleSet.getName());
+        ruleSetResponse.setCode(ruleEngineRuleSet.getCode());
+        ruleSetResponse.setDescription(ruleEngineRuleSet.getDescription());
+        ruleSetResponse.setWorkspaceId(ruleEngineRuleSet.getWorkspaceId());
+        ruleSetResponse.setWorkspaceCode(ruleEngineRuleSet.getWorkspaceCode());
+        // 先做功能后期优化
+        List<RuleEngineRuleSetRule> ruleEngineRuleSetRules = this.ruleEngineRuleSetRuleManager.lambdaQuery().eq(RuleEngineRuleSetRule::getRuleSetId, id).list();
+        List<Integer> ruleIds = ruleEngineRuleSetRules.stream().map(RuleEngineRuleSetRule::getRuleId).collect(Collectors.toList());
+        ruleIds.add(ruleEngineRuleSet.getDefaultRuleId());
+        Map<Integer, RuleEngineRule> ruleEngineRuleMap = this.ruleEngineRuleManager.lambdaQuery().in(RuleEngineRule::getId, ruleIds).list()
+                .stream().collect(Collectors.toMap(RuleEngineRule::getId, Function.identity()));
+        List<RuleBody> ruleSet = new ArrayList<>();
+        if (CollUtil.isNotEmpty(ruleEngineRuleSetRules)) {
+            for (RuleEngineRuleSetRule ruleEngineRuleSetRule : ruleEngineRuleSetRules) {
+                RuleEngineRule ruleEngineRule = ruleEngineRuleMap.get(ruleEngineRuleSetRule.getRuleId());
+                RuleBody ruleBody = this.getRuleBody(ruleEngineRule, ruleEngineRuleSetRule.getOrderNo());
+                ruleSet.add(ruleBody);
+            }
+        }
+        ruleSetResponse.setRuleSet(ruleSet);
+        if (ruleEngineRuleSet.getDefaultRuleId() != null) {
+            RuleEngineRule ruleEngineRule = ruleEngineRuleMap.get(ruleEngineRuleSet.getDefaultRuleId());
+            ruleSetResponse.setDefaultRule(this.getRuleBody(ruleEngineRule, null));
+        }
+        return ruleSetResponse;
+    }
+
+    /**
+     * 获取规则body
+     *
+     * @param ruleEngineRule 规则
+     * @param orderNo        规则集顺序
+     * @return RuleBody
+     */
+    public RuleBody getRuleBody(RuleEngineRule ruleEngineRule, Integer orderNo) {
+        RuleBody ruleBody = new RuleBody();
+        ruleBody.setId(ruleEngineRule.getId());
+        ruleBody.setName(ruleEngineRule.getName());
+        ruleBody.setOrderNo(orderNo);
+        ruleBody.setConditionGroup(this.ruleEngineConditionGroupService.getConditionGroupConfig(ruleEngineRule.getId()));
+        ruleBody.setAction(this.actionService.getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType()));
+        return ruleBody;
     }
 
     /**

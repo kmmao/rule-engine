@@ -41,7 +41,7 @@ public class DecisionTableEngine implements Engine {
     /**
      * 启动时加载的决策表
      */
-    private Map<String, Map<String, DecisionTable>> workspaceMap = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, DecisionTable>> workspaceMap = new ConcurrentHashMap<>();
 
     /**
      * 规则引擎运行所需的参数

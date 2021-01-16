@@ -46,7 +46,7 @@ public class GeneralRuleEngine implements Engine {
     /**
      * 启动时加载的规则
      */
-    private Map<String, Map<String, GeneralRule>> workspaceMap = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, GeneralRule>> workspaceMap = new ConcurrentHashMap<>();
 
     /**
      * 规则引擎运行所需的参数
@@ -149,7 +149,7 @@ public class GeneralRuleEngine implements Engine {
         String workspaceCode = Objects.requireNonNull(generalRule.getWorkspaceCode());
         String ruleCode = Objects.requireNonNull(generalRule.getCode());
         if (!this.workspaceMap.containsKey(workspaceCode)) {
-            this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>());
+            this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>(20));
         }
         // 如果开启监控，返回一个被代理的规则对象
         if (generalRule.isEnableMonitor()) {
