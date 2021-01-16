@@ -891,6 +891,7 @@ CREATE TABLE `rule_engine_rule_set` (
                                         `workspace_id` int(11) DEFAULT NULL,
                                         `workspace_code` varchar(20) DEFAULT NULL,
                                         `status` tinyint(4) DEFAULT NULL,
+                                        `strategy_type`    tinyint      null,
                                         `create_user_id` int(11) DEFAULT NULL,
                                         `create_user_name` varchar(100) DEFAULT NULL,
                                         `enable_default_rule` bigint(20) DEFAULT NULL,
