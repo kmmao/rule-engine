@@ -30,8 +30,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +45,7 @@ import java.util.Objects;
 public class RuleSetServiceImpl implements RuleSetService {
 
     @Resource
-    private RuleSetEngine engine;
+    private RuleSetEngine ruleSetEngine;
     @Resource
     private RuleEngineRuleSetManager ruleEngineRuleSetManager;
     @Resource
@@ -91,7 +89,7 @@ public class RuleSetServiceImpl implements RuleSetService {
             listRuleResponse.setId(m.getId());
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setIsPublish(this.engine.isExists(m.getWorkspaceCode(), m.getCode()));
+            listRuleResponse.setIsPublish(this.ruleSetEngine.isExists(m.getWorkspaceCode(), m.getCode()));
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateTime(m.getCreateTime());
@@ -292,7 +290,7 @@ public class RuleSetServiceImpl implements RuleSetService {
             return false;
         }
         // 从引擎中移除规则
-        if (this.engine.isExists(ruleEngineRuleSet.getWorkspaceCode(), ruleEngineRuleSet.getCode())) {
+        if (this.ruleSetEngine.isExists(ruleEngineRuleSet.getWorkspaceCode(), ruleEngineRuleSet.getCode())) {
             RuleSetMessageBody ruleSetMessageBody = new RuleSetMessageBody();
             ruleSetMessageBody.setType(RuleSetMessageBody.Type.REMOVE);
             ruleSetMessageBody.setWorkspaceId(ruleEngineRuleSet.getWorkspaceId());
