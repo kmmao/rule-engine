@@ -30,6 +30,10 @@ public class GetRuleSetResponse {
 
     private List<RuleBody> ruleSet;
 
+    private Integer strategyType;
+
+    private Integer enableDefaultRule;
+
     private RuleBody defaultRule;
 
     private AbnormalAlarm abnormalAlarm;

@@ -67,10 +67,6 @@ public class RuleSetServiceImpl implements RuleSetService {
     @Resource
     private RuleEngineRuleSetRuleManager ruleEngineRuleSetRuleManager;
     @Resource
-    private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
-    @Resource
-    private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
-    @Resource
     private ActionService actionService;
 
     /**
@@ -105,8 +101,8 @@ public class RuleSetServiceImpl implements RuleSetService {
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
             listRuleResponse.setIsPublish(this.ruleSetEngine.isExists(m.getWorkspaceCode(), m.getCode()));
-            listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
+            listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setCreateTime(m.getCreateTime());
             return listRuleResponse;
         });
@@ -222,7 +218,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         // 以下代码性能可优化
         this.deleteRuleSetRule(ruleEngineRuleSet);
         // 绑定新的
-        ArrayList<RuleEngineRuleSetRule> ruleEngineRuleSetRules = new ArrayList<>();
+        List<RuleEngineRuleSetRule> ruleEngineRuleSetRules = new ArrayList<>();
         for (RuleBody ruleBody : ruleSet) {
             Integer ruleId = this.saveRule(ruleBody);
             Integer ruleSetId = ruleEngineRuleSet.getId();
@@ -231,6 +227,7 @@ public class RuleSetServiceImpl implements RuleSetService {
             ruleEngineRuleSetRule.setRuleSetId(ruleSetId);
             ruleEngineRuleSetRule.setRuleId(ruleId);
             ruleEngineRuleSetRule.setOrderNo(orderNo);
+            ruleEngineRuleSetRules.add(ruleEngineRuleSetRule);
         }
         this.ruleEngineRuleSetRuleManager.saveBatch(ruleEngineRuleSetRules);
         RuleBody defaultRule = updateRuleSetRequest.getDefaultRule();
@@ -273,9 +270,11 @@ public class RuleSetServiceImpl implements RuleSetService {
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setName(ruleBody.getName());
         ConfigValue action = ruleBody.getAction();
-        ruleEngineRule.setActionType(action.getType());
-        ruleEngineRule.setActionValueType(action.getValueType());
-        ruleEngineRule.setActionValue(action.getValue());
+        if (action != null) {
+            ruleEngineRule.setActionType(action.getType());
+            ruleEngineRule.setActionValueType(action.getValueType());
+            ruleEngineRule.setActionValue(action.getValue());
+        }
         this.ruleEngineRuleManager.save(ruleEngineRule);
         List<ConditionGroupConfig> conditionGroup = ruleBody.getConditionGroup();
         if (CollUtil.isNotEmpty(conditionGroup)) {
@@ -303,6 +302,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleSetResponse.setDescription(ruleEngineRuleSet.getDescription());
         ruleSetResponse.setWorkspaceId(ruleEngineRuleSet.getWorkspaceId());
         ruleSetResponse.setWorkspaceCode(ruleEngineRuleSet.getWorkspaceCode());
+        ruleSetResponse.setStrategyType(ruleEngineRuleSet.getStrategyType());
         // 先做功能后期优化
         List<RuleEngineRuleSetRule> ruleEngineRuleSetRules = this.ruleEngineRuleSetRuleManager.lambdaQuery().eq(RuleEngineRuleSetRule::getRuleSetId, id).list();
         List<Integer> ruleIds = ruleEngineRuleSetRules.stream().map(RuleEngineRuleSetRule::getRuleId).collect(Collectors.toList());
@@ -322,6 +322,7 @@ public class RuleSetServiceImpl implements RuleSetService {
             RuleEngineRule ruleEngineRule = ruleEngineRuleMap.get(ruleEngineRuleSet.getDefaultRuleId());
             ruleSetResponse.setDefaultRule(this.getRuleBody(ruleEngineRule, null));
         }
+        ruleSetResponse.setEnableDefaultRule(ruleEngineRuleSet.getEnableDefaultRule());
         return ruleSetResponse;
     }
 

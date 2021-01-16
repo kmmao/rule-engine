@@ -32,7 +32,6 @@ import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
 
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -69,10 +68,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     private RuleEngineGeneralRuleMapper ruleEngineGeneralRuleMapper;
     @Resource
     private RuleEngineRuleMapper ruleEngineRuleMapper;
-    @Resource
-    private RuleEngineConditionGroupConditionManager ruleEngineConditionGroupConditionManager;
-    @Resource
-    private RuleEngineConditionGroupManager ruleEngineConditionGroupManager;
     @Resource
     private Engine engine;
     @Resource

@@ -7,12 +7,13 @@
 #### 开源不易，请尊重作者劳动成果，作者白天工作，晚上下班与周末维护此项目，如果对你有帮助辛苦给个star，这是对我最大的鼓励。
 #### 业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑。
 
-前端代码地址：https://github.com/DingQianWen/rule-engine-front  
+前端代码地址：https://gitee.com/qwding/rule-engine-front
 项目展示地址：http://ruleengine.cn/   
 申请登录权限联系QQ：761945125，Email：761945125@qq.com
 
 ### 技术文档
 简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
+详细文档：http://ruleengine.cn/doc
 
 ### 技术栈/版本介绍：
 - 所涉及的相关的技术有：
@@ -136,7 +137,7 @@ public GeneralRuleInterface generalRuleInterface() {
     };
 }
 ```
-现在你就已经学会了如何使用，更多使用方式敬请期待我们将文档补全！
+现在你就已经学会了如何使用，更多使用方式敬请期待！
 
 
 ### 下一步进展

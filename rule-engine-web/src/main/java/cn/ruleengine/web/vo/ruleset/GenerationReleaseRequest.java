@@ -34,6 +34,8 @@ public class GenerationReleaseRequest {
     @NotNull
     private List<RuleBody> ruleSet;
 
+    private Integer enableDefaultRule;
+
     private RuleBody defaultRule;
 
     @NotNull
