@@ -65,9 +65,9 @@ public class RabbitTopicConfig {
     }
 
     @Bean
-    public Binding ruleSetBindingExchangeMessage(@Qualifier("ruleSetQueue") Queue ruleQueue,
-                                                 @Qualifier("ruleSetExchange") TopicExchange ruleExchange) {
-        return BindingBuilder.bind(ruleQueue).to(ruleExchange).with(RULE_SET_TOPIC_ROUTING_KEY);
+    public Binding ruleSetBindingExchangeMessage(@Qualifier("ruleSetQueue") Queue ruleSetQueue,
+                                                 @Qualifier("ruleSetExchange") TopicExchange ruleSetExchange) {
+        return BindingBuilder.bind(ruleSetQueue).to(ruleSetExchange).with(RULE_SET_TOPIC_ROUTING_KEY);
     }
 
 

@@ -17,7 +17,7 @@ package cn.ruleengine.web.listener;
 
 import cn.ruleengine.core.RuleSetEngine;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
-import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
+import cn.ruleengine.web.listener.body.RuleSetMessageBody;
 import cn.ruleengine.web.service.ruleset.RuleSetPublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -53,11 +53,11 @@ public class RuleSetMessageListener {
             exchange = @Exchange(value = RabbitTopicConfig.RULE_SET_EXCHANGE, type = ExchangeTypes.TOPIC),
             key = RabbitTopicConfig.RULE_SET_TOPIC_ROUTING_KEY)
     )
-    public void message(GeneralRuleMessageBody ruleMessageBody) {
-        log.info("规则集消息：{}", ruleMessageBody);
-        String workspaceCode = ruleMessageBody.getWorkspaceCode();
-        String ruleCode = ruleMessageBody.getRuleCode();
-        switch (ruleMessageBody.getType()) {
+    public void message(RuleSetMessageBody ruleSetMessageBody) {
+        log.info("规则集消息：{}", ruleSetMessageBody);
+        String workspaceCode = ruleSetMessageBody.getWorkspaceCode();
+        String ruleCode = ruleSetMessageBody.getRuleSetCode();
+        switch (ruleSetMessageBody.getType()) {
             case UPDATE:
                 log.info("开始更新规则集：{}", ruleCode);
                 this.ruleSetEngine.addRuleSet(ruleSetPublishService.getPublishRuleSet(workspaceCode, ruleCode));
@@ -71,7 +71,7 @@ public class RuleSetMessageListener {
                 this.ruleSetEngine.remove(workspaceCode, ruleCode);
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + ruleMessageBody.getType());
+                throw new IllegalStateException("Unexpected value: " + ruleSetMessageBody.getType());
         }
     }
 }
