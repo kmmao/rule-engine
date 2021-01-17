@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service;
 
+import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import cn.ruleengine.web.vo.condition.group.SaveOrUpdateConditionGroup;
 
@@ -54,4 +55,5 @@ public interface RuleEngineConditionGroupService {
      */
     List<ConditionGroupConfig> getConditionGroupConfig(Integer ruleId);
 
+    List<ConditionGroupConfig> pressConditionGroupConfig(List<ConditionGroup> conditionGroups);
 }

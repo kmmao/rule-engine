@@ -1,6 +1,13 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+import cn.ruleengine.core.condition.ConditionGroup;
+import cn.ruleengine.core.rule.Rule;
+import cn.ruleengine.core.rule.RuleSet;
+import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.ActionService;
+import cn.ruleengine.web.service.ValueResolve;
+import cn.ruleengine.web.service.impl.ParameterService;
+import cn.ruleengine.web.service.ruleset.RuleSetResolveService;
 import cn.ruleengine.web.vo.ruleset.RuleBody;
 
 
@@ -68,6 +75,12 @@ public class RuleSetServiceImpl implements RuleSetService {
     private RuleEngineRuleSetRuleManager ruleEngineRuleSetRuleManager;
     @Resource
     private ActionService actionService;
+    @Resource
+    private RuleSetResolveService ruleSetResolveService;
+    @Resource
+    private ParameterService parameterService;
+    @Resource
+    private ValueResolve valueResolve;
 
     /**
      * 获取规则集列表
@@ -178,7 +191,62 @@ public class RuleSetServiceImpl implements RuleSetService {
      */
     @Override
     public Boolean generationRelease(GenerationReleaseRequest releaseRequest) {
-        return null;
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(releaseRequest.getId());
+        if (ruleEngineRuleSet == null) {
+            throw new ValidException("不存在规则集:{}", releaseRequest.getId());
+        }
+        Integer originStatus = ruleEngineRuleSet.getStatus();
+        // 如果之前是待发布，则删除原有待发布数据
+        if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
+            this.ruleEngineRuleSetPublishManager.lambdaUpdate()
+                    .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                    .eq(RuleEngineRuleSetPublish::getRuleSetId, releaseRequest.getId())
+                    .remove();
+        }
+        ruleEngineRuleSet.setStrategyType(releaseRequest.getStrategyType());
+        ruleEngineRuleSet.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
+        ruleEngineRuleSet.setEnableDefaultRule(releaseRequest.getEnableDefaultRule());
+        // 以下代码性能可优化
+        this.deleteRuleSetRule(ruleEngineRuleSet);
+        // 绑定新的
+        this.bindNewRuleSet(releaseRequest.getRuleSet(), ruleEngineRuleSet.getId());
+        RuleBody defaultRule = releaseRequest.getDefaultRule();
+        if (defaultRule != null) {
+            Integer defaultRuleId = this.saveRule(defaultRule);
+            ruleEngineRuleSet.setDefaultRuleId(defaultRuleId);
+        }
+        this.ruleEngineRuleSetManager.updateById(ruleEngineRuleSet);
+        // 添加新的待发布数据
+        RuleSet rs = this.ruleSetResolveService.ruleSetProcess(ruleEngineRuleSet);
+        RuleEngineRuleSetPublish ruleSetPublish = new RuleEngineRuleSetPublish();
+        ruleSetPublish.setRuleSetId(rs.getId());
+        ruleSetPublish.setRuleSetCode(rs.getCode());
+        ruleSetPublish.setData(rs.toJson());
+        ruleSetPublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
+        ruleSetPublish.setWorkspaceId(rs.getWorkspaceId());
+        ruleSetPublish.setWorkspaceCode(rs.getWorkspaceCode());
+        this.ruleEngineRuleSetPublishManager.save(ruleSetPublish);
+        return true;
+    }
+
+    /**
+     * 绑定新的规则集规则
+     *
+     * @param ruleSet   规则集
+     * @param ruleSetId 规则集合id
+     */
+    private void bindNewRuleSet(List<RuleBody> ruleSet, Integer ruleSetId) {
+        List<RuleEngineRuleSetRule> ruleEngineRuleSetRules = new ArrayList<>();
+        for (RuleBody ruleBody : ruleSet) {
+            Integer ruleId = this.saveRule(ruleBody);
+            Integer orderNo = ruleBody.getOrderNo();
+            RuleEngineRuleSetRule ruleEngineRuleSetRule = new RuleEngineRuleSetRule();
+            ruleEngineRuleSetRule.setRuleSetId(ruleSetId);
+            ruleEngineRuleSetRule.setRuleId(ruleId);
+            ruleEngineRuleSetRule.setOrderNo(orderNo);
+            ruleEngineRuleSetRules.add(ruleEngineRuleSetRule);
+        }
+        this.ruleEngineRuleSetRuleManager.saveBatch(ruleEngineRuleSetRules);
     }
 
     /**
@@ -189,7 +257,41 @@ public class RuleSetServiceImpl implements RuleSetService {
      */
     @Override
     public Boolean publish(Integer id) {
-        return null;
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(id);
+        if (ruleEngineRuleSet == null) {
+            throw new ValidException("不存在规则集:{}", id);
+        }
+        if (ruleEngineRuleSet.getStatus().equals(DataStatus.EDIT.getStatus())) {
+            throw new ValidException("该规则集不可执行:{}", id);
+        }
+        // 如果已经是发布规则了
+        if (ruleEngineRuleSet.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+            return true;
+        }
+        // 修改为已发布
+        this.ruleEngineRuleSetManager.lambdaUpdate()
+                .set(RuleEngineRuleSet::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRuleSet::getId, ruleEngineRuleSet.getId())
+                .update();
+        // 删除原有的已发布规则数据
+        this.ruleEngineRuleSetPublishManager.lambdaUpdate()
+                .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleEngineRuleSet.getId())
+                .remove();
+        // 更新待发布为已发布
+        this.ruleEngineRuleSetPublishManager.lambdaUpdate()
+                .set(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleEngineRuleSet.getId())
+                .update();
+        // 加载规则集
+        RuleSetMessageBody ruleSetMessageBody = new RuleSetMessageBody();
+        ruleSetMessageBody.setType(RuleSetMessageBody.Type.LOAD);
+        ruleSetMessageBody.setRuleSetCode(ruleEngineRuleSet.getCode());
+        ruleSetMessageBody.setWorkspaceId(ruleEngineRuleSet.getWorkspaceId());
+        ruleSetMessageBody.setWorkspaceCode(ruleEngineRuleSet.getWorkspaceCode());
+        this.eventPublisher.publishEvent(new RuleSetEvent(ruleSetMessageBody));
+        return true;
     }
 
     /**
@@ -218,18 +320,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         // 以下代码性能可优化
         this.deleteRuleSetRule(ruleEngineRuleSet);
         // 绑定新的
-        List<RuleEngineRuleSetRule> ruleEngineRuleSetRules = new ArrayList<>();
-        for (RuleBody ruleBody : ruleSet) {
-            Integer ruleId = this.saveRule(ruleBody);
-            Integer ruleSetId = ruleEngineRuleSet.getId();
-            Integer orderNo = ruleBody.getOrderNo();
-            RuleEngineRuleSetRule ruleEngineRuleSetRule = new RuleEngineRuleSetRule();
-            ruleEngineRuleSetRule.setRuleSetId(ruleSetId);
-            ruleEngineRuleSetRule.setRuleId(ruleId);
-            ruleEngineRuleSetRule.setOrderNo(orderNo);
-            ruleEngineRuleSetRules.add(ruleEngineRuleSetRule);
-        }
-        this.ruleEngineRuleSetRuleManager.saveBatch(ruleEngineRuleSetRules);
+        this.bindNewRuleSet(ruleSet, ruleEngineRuleSet.getId());
         RuleBody defaultRule = updateRuleSetRequest.getDefaultRule();
         if (defaultRule != null) {
             Integer defaultRuleId = this.saveRule(defaultRule);
@@ -351,7 +442,71 @@ public class RuleSetServiceImpl implements RuleSetService {
      */
     @Override
     public ViewRuleSetResponse getViewRuleSet(Integer id) {
-        return null;
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(id);
+        if (ruleEngineRuleSet == null) {
+            throw new ValidException("找不到预览的规则集数据:{}", id);
+        }
+        // 如果只有已发布
+        if (ruleEngineRuleSet.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+            return this.getPublishRuleSet(id);
+        }
+        RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
+                .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRuleSetPublish::getRuleSetId, id)
+                .one();
+        if (ruleSetPublish == null) {
+            throw new ValidException("找不到预览的规则集数据:{}", id);
+        }
+        String data = ruleSetPublish.getData();
+        RuleSet ruleSet = RuleSet.buildRuleSet(data);
+        return this.getRuleSetResponseProcess(ruleSet);
+    }
+
+    /**
+     * 解析Rule set配置信息为ViewRuleSetResponse
+     *
+     * @param ruleSet ruleSet
+     * @return ViewRuleSetResponse
+     */
+    private ViewRuleSetResponse getRuleSetResponseProcess(RuleSet ruleSet) {
+        ViewRuleSetResponse viewRuleSetResponse = new ViewRuleSetResponse();
+        viewRuleSetResponse.setId(ruleSet.getId());
+        viewRuleSetResponse.setName(ruleSet.getName());
+        viewRuleSetResponse.setCode(ruleSet.getCode());
+        viewRuleSetResponse.setDescription(ruleSet.getDescription());
+        viewRuleSetResponse.setWorkspaceId(ruleSet.getWorkspaceId());
+        viewRuleSetResponse.setWorkspaceCode(ruleSet.getWorkspaceCode());
+        viewRuleSetResponse.setStrategyType(ruleSet.getStrategyType().getValue());
+        List<Rule> rules = ruleSet.getRules();
+        List<RuleBody> ruleBodies = new ArrayList<>();
+        for (int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
+            RuleBody ruleBody = this.getRuleBody(rule, i);
+            ruleBodies.add(ruleBody);
+        }
+        viewRuleSetResponse.setRuleSet(ruleBodies);
+        Rule defaultRule = ruleSet.getDefaultRule();
+        if (defaultRule != null) {
+            RuleBody ruleBody = this.getRuleBody(defaultRule, null);
+            viewRuleSetResponse.setDefaultRule(ruleBody);
+            viewRuleSetResponse.setEnableDefaultRule(EnableEnum.ENABLE.getStatus());
+        } else {
+            viewRuleSetResponse.setEnableDefaultRule(EnableEnum.DISABLE.getStatus());
+        }
+        // 规则set调用接口，以及规则set入参
+        viewRuleSetResponse.setParameters(this.parameterService.getParameters(ruleSet));
+        return viewRuleSetResponse;
+    }
+
+    private RuleBody getRuleBody(Rule defaultRule, Integer orderNo) {
+        RuleBody ruleBody = new RuleBody();
+        ruleBody.setId(defaultRule.getId());
+        ruleBody.setName(defaultRule.getName());
+        ruleBody.setOrderNo(orderNo);
+        List<ConditionGroup> conditionGroups = defaultRule.getConditionSet().getConditionGroups();
+        ruleBody.setConditionGroup(this.ruleEngineConditionGroupService.pressConditionGroupConfig(conditionGroups));
+        ruleBody.setAction(valueResolve.getConfigValue(defaultRule.getActionValue()));
+        return ruleBody;
     }
 
     /**
@@ -362,7 +517,16 @@ public class RuleSetServiceImpl implements RuleSetService {
      */
     @Override
     public ViewRuleSetResponse getPublishRuleSet(Integer id) {
-        return null;
+        RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
+                .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                .eq(RuleEngineRuleSetPublish::getRuleSetId, id)
+                .one();
+        if (ruleSetPublish == null) {
+            throw new ValidException("找不到发布的规则集:{}", id);
+        }
+        String data = ruleSetPublish.getData();
+        RuleSet ruleSet = RuleSet.buildRuleSet(data);
+        return this.getRuleSetResponseProcess(ruleSet);
     }
 
     /**

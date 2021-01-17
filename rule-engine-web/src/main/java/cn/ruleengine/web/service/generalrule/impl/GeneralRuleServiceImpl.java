@@ -71,7 +71,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     @Resource
     private Engine engine;
     @Resource
-    private ParameterService ruleCountInfoService;
+    private ParameterService parameterService;
     @Resource
     private RuleEngineGeneralRulePublishManager ruleEngineGeneralRulePublishManager;
     @Resource
@@ -472,10 +472,10 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     }
 
     /**
-     * 解析Rule配置信息为GetRuleResponse
+     * 解析Rule配置信息为ViewGeneralRuleResponse
      *
      * @param rule Rule
-     * @return GetRuleResponse
+     * @return ViewGeneralRuleResponse
      */
     private ViewGeneralRuleResponse getRuleResponseProcess(GeneralRule rule) {
         ViewGeneralRuleResponse ruleResponse = new ViewGeneralRuleResponse();
@@ -485,29 +485,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleResponse.setWorkspaceId(rule.getWorkspaceId());
         ruleResponse.setWorkspaceCode(rule.getWorkspaceCode());
         ruleResponse.setDescription(rule.getDescription());
-
         List<ConditionGroup> conditionGroups = rule.getConditionSet().getConditionGroups();
-        List<ConditionGroupConfig> groupArrayList = new ArrayList<>(conditionGroups.size());
-        for (ConditionGroup conditionGroup : conditionGroups) {
-            ConditionGroupConfig group = new ConditionGroupConfig();
-            List<Condition> conditions = conditionGroup.getConditions();
-            List<ConditionGroupCondition> conditionGroupConditions = new ArrayList<>(conditions.size());
-            for (Condition condition : conditions) {
-                ConditionGroupCondition conditionSet = new ConditionGroupCondition();
-                ConditionResponse conditionResponse = new ConditionResponse();
-                conditionResponse.setName(condition.getName());
-                ConfigBean configBean = new ConfigBean();
-                configBean.setLeftValue(valueResolve.getConfigValue(condition.getLeftValue()));
-                configBean.setSymbol(condition.getOperator().getExplanation());
-                configBean.setRightValue(valueResolve.getConfigValue(condition.getRightValue()));
-                conditionResponse.setConfig(configBean);
-                conditionSet.setCondition(conditionResponse);
-                conditionGroupConditions.add(conditionSet);
-            }
-            group.setConditionGroupCondition(conditionGroupConditions);
-            groupArrayList.add(group);
-        }
-        ruleResponse.setConditionGroup(groupArrayList);
+        ruleResponse.setConditionGroup(this.ruleEngineConditionGroupService.pressConditionGroupConfig(conditionGroups));
         ruleResponse.setAction(valueResolve.getConfigValue(rule.getActionValue()));
         DefaultAction defaultAction;
         if (rule.getDefaultActionValue() != null) {
@@ -520,7 +499,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleResponse.setDefaultAction(defaultAction);
         ruleResponse.setAbnormalAlarm(rule.getAbnormalAlarm());
         // 规则调用接口，以及规则入参
-        ruleResponse.setParameters(this.ruleCountInfoService.getParameters(rule));
+        ruleResponse.setParameters(this.parameterService.getParameters(rule));
         return ruleResponse;
     }
 

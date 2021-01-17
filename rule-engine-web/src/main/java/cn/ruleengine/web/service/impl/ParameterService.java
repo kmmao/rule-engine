@@ -6,6 +6,8 @@ import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.core.rule.Parameter;
+import cn.ruleengine.core.rule.Rule;
+import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.value.Element;
 import cn.ruleengine.core.value.Function;
 import cn.ruleengine.core.value.Value;
@@ -92,6 +94,17 @@ public class ParameterService {
      */
     public Set<Parameter> getParameters(GeneralRule rule) {
         Set<Integer> elementIds = new HashSet<>();
+
+        Value value = rule.getActionValue();
+        this.getFromVariableElement(elementIds, value);
+        Value defaultActionValue = rule.getDefaultActionValue();
+        if (defaultActionValue != null) {
+            this.getFromVariableElement(elementIds, defaultActionValue);
+        }
+        return this.getParameters(elementIds);
+    }
+
+    private void getConditionElement(Set<Integer> elementIds, Rule rule) {
         ConditionSet conditionSet = rule.getConditionSet();
         List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
         for (ConditionGroup conditionGroup : conditionGroups) {
@@ -101,13 +114,6 @@ public class ParameterService {
                 this.getFromVariableElement(elementIds, condition.getLeftValue());
             }
         }
-        Value value = rule.getActionValue();
-        this.getFromVariableElement(elementIds, value);
-        Value defaultActionValue = rule.getDefaultActionValue();
-        if (defaultActionValue != null) {
-            this.getFromVariableElement(elementIds, defaultActionValue);
-        }
-        return this.getParameters(elementIds);
     }
 
     /**
@@ -141,6 +147,23 @@ public class ParameterService {
             Element element = (Element) value;
             elementIds.add(element.getElementId());
         }
+    }
+
+    /**
+     * 规则set调用接口，以及规则set入参
+     *
+     * @param ruleSet ruleSet
+     * @return Parameter
+     */
+    public Set<Parameter> getParameters(RuleSet ruleSet) {
+        Set<Integer> elementIds = new HashSet<>();
+        List<Rule> rules = ruleSet.getRules();
+        for (Rule rule : rules) {
+            this.getConditionElement(elementIds, rule);
+        }
+        Rule defaultRule = ruleSet.getDefaultRule();
+        this.getConditionElement(elementIds, defaultRule);
+        return this.getParameters(elementIds);
     }
 
 }

@@ -2,14 +2,19 @@ package cn.ruleengine.web.service.impl;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.condition.Condition;
+import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.service.RuleEngineConditionGroupService;
+import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.RuleEngineConditionGroupConditionManager;
 import cn.ruleengine.web.store.manager.RuleEngineConditionGroupManager;
 import cn.ruleengine.web.store.manager.RuleEngineConditionManager;
 import cn.ruleengine.web.vo.condition.ConditionGroupCondition;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
+import cn.ruleengine.web.vo.condition.ConditionResponse;
+import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.SaveOrUpdateConditionGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +44,8 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
     private ConditionService conditionService;
     @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
+    @Resource
+    private ValueResolve valueResolve;
 
     /**
      * 保存或者更新条件组
@@ -183,6 +190,34 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
             return conditionGroup;
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<ConditionGroupConfig> pressConditionGroupConfig(List<ConditionGroup> conditionGroups) {
+        if (CollUtil.isEmpty(conditionGroups)) {
+            return Collections.emptyList();
+        }
+        List<ConditionGroupConfig> groupArrayList = new ArrayList<>(conditionGroups.size());
+        for (ConditionGroup conditionGroup : conditionGroups) {
+            ConditionGroupConfig group = new ConditionGroupConfig();
+            List<Condition> conditions = conditionGroup.getConditions();
+            List<ConditionGroupCondition> conditionGroupConditions = new ArrayList<>(conditions.size());
+            for (Condition condition : conditions) {
+                ConditionGroupCondition conditionSet = new ConditionGroupCondition();
+                ConditionResponse conditionResponse = new ConditionResponse();
+                conditionResponse.setName(condition.getName());
+                ConfigBean configBean = new ConfigBean();
+                configBean.setLeftValue(valueResolve.getConfigValue(condition.getLeftValue()));
+                configBean.setSymbol(condition.getOperator().getExplanation());
+                configBean.setRightValue(valueResolve.getConfigValue(condition.getRightValue()));
+                conditionResponse.setConfig(configBean);
+                conditionSet.setCondition(conditionResponse);
+                conditionGroupConditions.add(conditionSet);
+            }
+            group.setConditionGroupCondition(conditionGroupConditions);
+            groupArrayList.add(group);
+        }
+        return groupArrayList;
     }
 
 }

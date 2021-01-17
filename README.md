@@ -5,6 +5,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/DingQianWen/rule-engine.svg)](https://github.com/DingQianWen/rule-engine/issues)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/DingQianWen/rule-engine.svg)](https://github.com/DingQianWen/rule-engine/issues "Percentage of issues still open")
 #### 开源不易，请尊重作者劳动成果，作者白天工作，晚上下班与周末维护此项目，如果对你有帮助辛苦给个star，这是对我最大的鼓励。
+#### 由于赶时间rule-engine-web模块代码写的不算太好，有很多优化点，但是只是影响web配置页面响应性能，规则计算不会受到影响，只要没cu si，后期我是绝对会优化的。
 #### 业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑。
 
 前端代码地址：https://gitee.com/qwding/rule-engine-front  
@@ -141,11 +142,11 @@ public GeneralRuleInterface generalRuleInterface() {
 
 
 ### 下一步进展
- - 规则版本（开发中）  
+ - 规则版本（待开发）  
  - 规则监控（待开发）  
  - 评分卡（待开发）  
  - 决策树（待开发）   
- - 决策表（基本开发完成，配置体验以及代码质量待优化）   
+ - 决策表（开发完成，配置体验以及代码质量待优化）   
  - 规则集（开发中，页面待开发）
  - 元素组（待开发）
 
