@@ -3,6 +3,7 @@ package cn.ruleengine.web.service.ruleset.impl;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleSet;
+import cn.ruleengine.core.rule.RuleSetStrategyType;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.ActionService;
 import cn.ruleengine.web.service.ValueResolve;
@@ -141,6 +142,8 @@ public class RuleSetServiceImpl implements RuleSetService {
             ruleEngineGeneralRule.setCreateUserName(userData.getUsername());
             ruleEngineGeneralRule.setWorkspaceId(workspace.getId());
             ruleEngineGeneralRule.setWorkspaceCode(workspace.getCode());
+            // 初始化默认策略
+            ruleEngineGeneralRule.setStrategyType(RuleSetStrategyType.ALL_RULE.getValue());
         } else {
             ruleEngineGeneralRule = this.ruleEngineRuleSetManager.lambdaQuery()
                     .eq(RuleEngineRuleSet::getId, ruleSetDefinition.getId())
@@ -412,6 +415,8 @@ public class RuleSetServiceImpl implements RuleSetService {
         if (ruleEngineRuleSet.getDefaultRuleId() != null) {
             RuleEngineRule ruleEngineRule = ruleEngineRuleMap.get(ruleEngineRuleSet.getDefaultRuleId());
             ruleSetResponse.setDefaultRule(this.getRuleBody(ruleEngineRule, null));
+        } else {
+            ruleSetResponse.setDefaultRule(new RuleBody());
         }
         ruleSetResponse.setEnableDefaultRule(ruleEngineRuleSet.getEnableDefaultRule());
         return ruleSetResponse;

@@ -36,4 +36,18 @@ public enum RuleSetStrategyType {
         this.value = value;
     }
 
+    public static RuleSetStrategyType getByValue(Integer value) {
+        switch (value) {
+            case 1:
+                return ALL_RULE;
+            case 2:
+                return WHEN_A_RULE_IS_HIT;
+            case 3:
+                return THE_FIRST_RULE;
+            case 4:
+                return WHEN_A_RULE_EXECUTE_FAILS;
+            default:
+                throw new IllegalStateException("Unexpected value: " + value);
+        }
+    }
 }

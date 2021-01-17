@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,15 +36,13 @@ public class RuleBody {
     /**
      * 规则条件组
      */
-    @NotNull
     @Valid
-    private List<ConditionGroupConfig> conditionGroup;
+    private List<ConditionGroupConfig> conditionGroup = new ArrayList<>();
 
     /**
      * 规则结果
      */
-    @NotNull
     @Valid
-    private ConfigValue action;
+    private ConfigValue action = new ConfigValue();
 
 }
