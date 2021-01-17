@@ -105,6 +105,9 @@ public class ParameterService {
     }
 
     private void getConditionElement(Set<Integer> elementIds, Rule rule) {
+        if (rule == null) {
+            return;
+        }
         ConditionSet conditionSet = rule.getConditionSet();
         List<ConditionGroup> conditionGroups = conditionSet.getConditionGroups();
         for (ConditionGroup conditionGroup : conditionGroups) {

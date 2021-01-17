@@ -52,7 +52,7 @@ public class EventPublisherListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = RuleSetEvent.class)
     public void ruleSetEvent(RuleSetEvent ruleSetEvent) {
         RuleSetMessageBody ruleSetMessageBody = ruleSetEvent.getRuleSetMessageBody();
-        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_EXCHANGE, RabbitTopicConfig.RULE_TOPIC_ROUTING_KEY, ruleSetMessageBody);
+        this.rabbitTemplate.convertAndSend(RabbitTopicConfig.RULE_SET_EXCHANGE, RabbitTopicConfig.RULE_SET_TOPIC_ROUTING_KEY, ruleSetMessageBody);
     }
 
     @Async
