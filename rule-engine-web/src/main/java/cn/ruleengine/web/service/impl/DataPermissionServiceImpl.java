@@ -39,6 +39,8 @@ public class DataPermissionServiceImpl implements DataPermissionService {
     private RuleEngineGeneralRuleManager ruleEngineGeneralRuleManager;
     @Resource
     private WorkspaceService workspaceService;
+    @Resource
+    private RuleEngineRuleSetManager ruleEngineRuleSetManager;
 
 
     /**
@@ -108,7 +110,17 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 }
                 return this.permissionTypeProcess(userId, ruleEngineDecisionTable.getWorkspaceId(), type);
             case RULE_SET:
+                RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(id);
+                // 不影响后续逻辑
+                if (ruleEngineRuleSet == null) {
+                    return true;
+                }
+                if (Objects.equals(ruleEngineRuleSet.getCreateUserId(), userId)) {
+                    return true;
+                }
+                return this.permissionTypeProcess(userId, ruleEngineRuleSet.getWorkspaceId(), type);
             case ELEMENT_GROUP:
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + dataPermissionType);
         }
