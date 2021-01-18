@@ -49,12 +49,12 @@ public class ConditionSetService {
             List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
             List<Condition> conditions = new ArrayList<>();
             for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
-                ConditionResponse con = groupCondition.getCondition();
+                ConditionBody conditionBody = groupCondition.getCondition();
                 Condition condition = new Condition();
-                condition.setId(con.getId());
-                condition.setName(con.getName());
+                condition.setId(conditionBody.getId());
+                condition.setName(conditionBody.getName());
                 condition.setOrderNo(groupCondition.getOrderNo());
-                ConfigBean config = con.getConfig();
+                ConfigBean config = conditionBody.getConfig();
                 ConfigValue leftValue = config.getLeftValue();
                 condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
                 condition.setOperator(Operator.getByName(config.getSymbol()));

@@ -198,6 +198,19 @@ public class RuleSetServiceImpl implements RuleSetService {
         if (ruleEngineRuleSet == null) {
             throw new ValidException("不存在规则集:{}", releaseRequest.getId());
         }
+        RuleBody defaultRule = releaseRequest.getDefaultRule();
+        if (Objects.equals(releaseRequest.getEnableDefaultRule(), EnableEnum.ENABLE.getStatus())) {
+            ConfigValue action = defaultRule.getAction();
+            if (Validator.isEmpty(action.getType())) {
+                throw new ValidException("规则集默认规则结果类型不能为空");
+            }
+            if (Validator.isEmpty(action.getValueType())) {
+                throw new ValidException("规则集默认规则结果值类型不能为空");
+            }
+            if (Validator.isEmpty(action.getValue())) {
+                throw new ValidException("规则集默认规则结果值不能为空");
+            }
+        }
         Integer originStatus = ruleEngineRuleSet.getStatus();
         // 如果之前是待发布，则删除原有待发布数据
         if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
@@ -213,7 +226,6 @@ public class RuleSetServiceImpl implements RuleSetService {
         this.deleteRuleSetRule(ruleEngineRuleSet);
         // 绑定新的
         this.bindNewRuleSet(releaseRequest.getRuleSet(), ruleEngineRuleSet.getId());
-        RuleBody defaultRule = releaseRequest.getDefaultRule();
         if (defaultRule != null) {
             Integer defaultRuleId = this.saveRule(defaultRule);
             ruleEngineRuleSet.setDefaultRuleId(defaultRuleId);

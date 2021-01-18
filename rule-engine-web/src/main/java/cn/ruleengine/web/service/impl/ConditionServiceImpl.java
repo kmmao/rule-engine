@@ -120,7 +120,7 @@ public class ConditionServiceImpl implements ConditionService {
      * @return ConditionResponse
      */
     @Override
-    public ConditionResponse getById(Integer id) {
+    public ConditionBody getById(Integer id) {
         RuleEngineCondition condition = this.ruleEngineConditionManager.lambdaQuery()
                 .eq(RuleEngineCondition::getId, id)
                 .one();
@@ -137,8 +137,8 @@ public class ConditionServiceImpl implements ConditionService {
      * @return ConditionResponse
      */
     @Override
-    public ConditionResponse getConditionResponse(RuleEngineCondition engineCondition) {
-        ConditionResponse conditionResponse = new ConditionResponse();
+    public ConditionBody getConditionResponse(RuleEngineCondition engineCondition) {
+        ConditionBody conditionResponse = new ConditionBody();
 
         conditionResponse.setDescription(engineCondition.getDescription());
         conditionResponse.setId(engineCondition.getId());
@@ -158,8 +158,8 @@ public class ConditionServiceImpl implements ConditionService {
      * @return ConditionResponse
      */
     @Override
-    public ConditionResponse getConditionResponse(RuleEngineCondition engineCondition, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
-        ConditionResponse conditionResponse = new ConditionResponse();
+    public ConditionBody getConditionResponse(RuleEngineCondition engineCondition, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
+        ConditionBody conditionResponse = new ConditionBody();
 
         conditionResponse.setDescription(engineCondition.getDescription());
         conditionResponse.setId(engineCondition.getId());

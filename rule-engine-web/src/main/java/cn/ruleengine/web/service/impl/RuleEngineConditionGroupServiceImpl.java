@@ -13,7 +13,7 @@ import cn.ruleengine.web.store.manager.RuleEngineConditionGroupManager;
 import cn.ruleengine.web.store.manager.RuleEngineConditionManager;
 import cn.ruleengine.web.vo.condition.ConditionGroupCondition;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
-import cn.ruleengine.web.vo.condition.ConditionResponse;
+import cn.ruleengine.web.vo.condition.ConditionBody;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.SaveOrUpdateConditionGroup;
 import org.springframework.scheduling.annotation.Async;
@@ -206,7 +206,7 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
             List<ConditionGroupCondition> conditionGroupConditions = new ArrayList<>(conditions.size());
             for (Condition condition : conditions) {
                 ConditionGroupCondition conditionSet = new ConditionGroupCondition();
-                ConditionResponse conditionResponse = new ConditionResponse();
+                ConditionBody conditionResponse = new ConditionBody();
                 conditionResponse.setName(condition.getName());
                 ConfigBean configBean = new ConfigBean();
                 configBean.setLeftValue(valueResolve.getConfigValue(condition.getLeftValue()));

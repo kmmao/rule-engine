@@ -79,8 +79,8 @@ public class ConditionController {
     @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("get")
     @ApiOperation("根据id查询条件")
-    public PlainResult<ConditionResponse> getById(@RequestBody @Valid IdRequest idRequest) {
-        PlainResult<ConditionResponse> plainResult = new PlainResult<>();
+    public PlainResult<ConditionBody> getById(@RequestBody @Valid IdRequest idRequest) {
+        PlainResult<ConditionBody> plainResult = new PlainResult<>();
         plainResult.setData(conditionService.getById(idRequest.getId()));
         return plainResult;
     }

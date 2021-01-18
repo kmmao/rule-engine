@@ -15,6 +15,6 @@ public class ConditionGroupCondition {
 
     private Integer id;
     private Integer orderNo;
-    private ConditionResponse condition;
+    private ConditionBody condition;
 
 }

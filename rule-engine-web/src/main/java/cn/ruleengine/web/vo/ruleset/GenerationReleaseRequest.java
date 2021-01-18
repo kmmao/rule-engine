@@ -37,7 +37,7 @@ public class GenerationReleaseRequest {
 
     private Integer enableDefaultRule;
 
-    private RuleBody defaultRule;
+    private RuleBody defaultRule = new RuleBody();
 
     @NotNull
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();

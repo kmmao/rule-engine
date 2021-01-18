@@ -11,7 +11,7 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class ConditionResponse {
+public class ConditionBody {
 
     private Integer id;
 
@@ -20,4 +20,5 @@ public class ConditionResponse {
     private String description;
 
     private ConfigBean config;
+
 }

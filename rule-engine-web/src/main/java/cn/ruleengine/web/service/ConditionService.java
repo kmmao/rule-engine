@@ -45,7 +45,7 @@ public interface ConditionService {
      * @param id 条件id
      * @return ConditionResponse
      */
-    ConditionResponse getById(Integer id);
+    ConditionBody getById(Integer id);
 
     /**
      * 条件转换
@@ -53,7 +53,7 @@ public interface ConditionService {
      * @param engineCondition engineCondition
      * @return ConditionResponse
      */
-    ConditionResponse getConditionResponse(RuleEngineCondition engineCondition);
+    ConditionBody getConditionResponse(RuleEngineCondition engineCondition);
 
     /**
      * 条件转换
@@ -63,7 +63,7 @@ public interface ConditionService {
      * @param elementMap      条件用到的元素
      * @return ConditionResponse
      */
-    ConditionResponse getConditionResponse(RuleEngineCondition engineCondition, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap);
+    ConditionBody getConditionResponse(RuleEngineCondition engineCondition, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap);
 
     /**
      * 条件列表
