@@ -94,7 +94,8 @@ public class ParameterService {
      */
     public Set<Parameter> getParameters(GeneralRule rule) {
         Set<Integer> elementIds = new HashSet<>();
-
+        // bug 修复 感谢qq昵称懂先生及时报出问题
+        this.getConditionElement(elementIds, rule);
         Value value = rule.getActionValue();
         this.getFromVariableElement(elementIds, value);
         Value defaultActionValue = rule.getDefaultActionValue();
