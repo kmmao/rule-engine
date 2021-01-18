@@ -57,7 +57,7 @@ public class ConditionSetService {
                 ConfigBean config = con.getConfig();
                 ConfigValue leftValue = config.getLeftValue();
                 condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
-                condition.setOperator(Operator.getByName(con.getName()));
+                condition.setOperator(Operator.getByName(config.getSymbol()));
                 ConfigValue rightValue = config.getRightValue();
                 condition.setRightValue(this.valueResolve.getValue(rightValue.getType(), rightValue.getValueType(), rightValue.getValue()));
                 conditions.add(condition);
