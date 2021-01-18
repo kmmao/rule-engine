@@ -9,10 +9,10 @@ import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
 import cn.ruleengine.web.listener.event.GeneralRuleEvent;
 import cn.ruleengine.web.service.ActionService;
+import cn.ruleengine.web.service.ConditionSetService;
 import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.impl.ParameterService;
-import cn.ruleengine.web.service.generalrule.GeneralRuleResolveService;
 import cn.ruleengine.web.service.generalrule.GeneralRuleService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -74,8 +74,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     @Resource
     private RuleEngineGeneralRulePublishManager ruleEngineGeneralRulePublishManager;
     @Resource
-    private GeneralRuleResolveService ruleResolveService;
-    @Resource
     private ApplicationEventPublisher eventPublisher;
     @Resource
     private ValueResolve valueResolve;
@@ -83,6 +81,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     private RuleEngineConditionGroupService ruleEngineConditionGroupService;
     @Resource
     private ActionService actionService;
+    @Resource
+    private ConditionSetService conditionSetService;
 
     /**
      * 规则列表
@@ -333,14 +333,28 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
                     .remove();
         }
         // 添加新的待发布数据
-        GeneralRule rule = this.ruleResolveService.ruleProcess(ruleEngineGeneralRule);
+        GeneralRule generalRule = new GeneralRule();
+        generalRule.setId(releaseRequest.getId());
+        generalRule.setCode(ruleEngineGeneralRule.getCode());
+        generalRule.setName(ruleEngineGeneralRule.getName());
+        generalRule.setWorkspaceCode(ruleEngineGeneralRule.getWorkspaceCode());
+        generalRule.setWorkspaceId(ruleEngineGeneralRule.getWorkspaceId());
+        generalRule.setDescription(ruleEngineGeneralRule.getDescription());
+        generalRule.setConditionSet(this.conditionSetService.loadConditionSet(releaseRequest.getConditionGroup()));
+        generalRule.setActionValue(this.valueResolve.getValue(action.getType(), action.getValueType(), action.getValue()));
+        generalRule.setAbnormalAlarm(releaseRequest.getAbnormalAlarm());
+        // 如果启用了默认结果
+        if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
+            generalRule.setDefaultActionValue(this.valueResolve.getValue(defaultAction.getType(), defaultAction.getValueType(), defaultAction.getValue()));
+        }
+
         RuleEngineGeneralRulePublish rulePublish = new RuleEngineGeneralRulePublish();
-        rulePublish.setGeneralRuleId(rule.getId());
-        rulePublish.setGeneralRuleCode(rule.getCode());
-        rulePublish.setData(rule.toJson());
+        rulePublish.setGeneralRuleId(generalRule.getId());
+        rulePublish.setGeneralRuleCode(generalRule.getCode());
+        rulePublish.setData(generalRule.toJson());
         rulePublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
-        rulePublish.setWorkspaceId(rule.getWorkspaceId());
-        rulePublish.setWorkspaceCode(rule.getWorkspaceCode());
+        rulePublish.setWorkspaceId(generalRule.getWorkspaceId());
+        rulePublish.setWorkspaceCode(generalRule.getWorkspaceCode());
         this.ruleEngineGeneralRulePublishManager.save(rulePublish);
         return true;
     }

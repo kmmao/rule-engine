@@ -11,13 +11,11 @@ import cn.ruleengine.web.store.entity.RuleEngineConditionGroupCondition;
 import cn.ruleengine.web.store.manager.RuleEngineConditionGroupConditionManager;
 import cn.ruleengine.web.store.manager.RuleEngineConditionGroupManager;
 import cn.ruleengine.web.store.manager.RuleEngineConditionManager;
+import cn.ruleengine.web.vo.condition.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,6 +38,35 @@ public class ConditionSetService {
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private ValueResolve valueResolve;
+
+    public ConditionSet loadConditionSet(List<ConditionGroupConfig> conditionGroup) {
+        ConditionSet conditionSet = new ConditionSet();
+        for (ConditionGroupConfig conditionGroupConfig : conditionGroup) {
+            ConditionGroup conditionGroups = new ConditionGroup();
+            conditionGroups.setId(conditionGroupConfig.getId());
+            conditionGroups.setName(conditionGroupConfig.getName());
+            conditionGroups.setOrderNo(conditionGroupConfig.getOrderNo());
+            List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
+            List<Condition> conditions = new ArrayList<>();
+            for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
+                ConditionResponse con = groupCondition.getCondition();
+                Condition condition = new Condition();
+                condition.setId(con.getId());
+                condition.setName(con.getName());
+                condition.setOrderNo(groupCondition.getOrderNo());
+                ConfigBean config = con.getConfig();
+                ConfigValue leftValue = config.getLeftValue();
+                condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
+                condition.setOperator(Operator.getByName(con.getName()));
+                ConfigValue rightValue = config.getRightValue();
+                condition.setRightValue(this.valueResolve.getValue(rightValue.getType(), rightValue.getValueType(), rightValue.getValue()));
+                conditions.add(condition);
+            }
+            conditionGroups.setConditions(conditions);
+            conditionSet.addConditionGroup(conditionGroups);
+        }
+        return conditionSet;
+    }
 
     /**
      * 获取规则配置条件集，懒得写的，待优化

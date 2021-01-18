@@ -1,14 +1,13 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
-import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
-import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.RuleSetStrategyType;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.ActionService;
+import cn.ruleengine.web.service.ConditionSetService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.impl.ParameterService;
 import cn.ruleengine.web.vo.condition.*;
@@ -81,6 +80,8 @@ public class RuleSetServiceImpl implements RuleSetService {
     private ParameterService parameterService;
     @Resource
     private ValueResolve valueResolve;
+    @Resource
+    private ConditionSetService conditionSetService;
 
     /**
      * 获取规则集列表
@@ -257,31 +258,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         rule.setId(ruleBody.getId());
         rule.setName(ruleBody.getName());
         List<ConditionGroupConfig> conditionGroup = ruleBody.getConditionGroup();
-        ConditionSet conditionSet = new ConditionSet();
-        for (ConditionGroupConfig conditionGroupConfig : conditionGroup) {
-            ConditionGroup conditionGroups = new ConditionGroup();
-            conditionGroups.setId(conditionGroupConfig.getId());
-            conditionGroups.setName(conditionGroupConfig.getName());
-            conditionGroups.setOrderNo(conditionGroupConfig.getOrderNo());
-            List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
-            List<Condition> conditions = new ArrayList<>();
-            for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
-                ConditionResponse con = groupCondition.getCondition();
-                Condition condition = new Condition();
-                condition.setId(con.getId());
-                condition.setName(con.getName());
-                condition.setOrderNo(groupCondition.getOrderNo());
-                ConfigBean config = con.getConfig();
-                ConfigValue leftValue = config.getLeftValue();
-                condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
-                condition.setOperator(Operator.getByName(con.getName()));
-                ConfigValue rightValue = config.getRightValue();
-                condition.setRightValue(this.valueResolve.getValue(rightValue.getType(), rightValue.getValueType(), rightValue.getValue()));
-                conditions.add(condition);
-            }
-            conditionGroups.setConditions(conditions);
-            conditionSet.addConditionGroup(conditionGroups);
-        }
+        ConditionSet conditionSet = this.conditionSetService.loadConditionSet(conditionGroup);
         rule.setConditionSet(conditionSet);
         ConfigValue action = ruleBody.getAction();
         rule.setActionValue(this.valueResolve.getValue(action.getType(), action.getValueType(), action.getValue()));
