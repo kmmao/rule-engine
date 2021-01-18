@@ -29,7 +29,7 @@ import javax.annotation.Resource;
 public class RuleSetOutServiceImpl implements RuleEngineOutService {
 
     @Resource
-    private RuleSetEngine engine;
+    private RuleSetEngine ruleSetEngine;
     @Resource
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Resource
@@ -51,7 +51,7 @@ public class RuleSetOutServiceImpl implements RuleEngineOutService {
         }
         Input input = new DefaultInput();
         input.putAll(executeRequest.getParam());
-        return this.engine.execute(input, workspaceCode, executeRequest.getCode());
+        return this.ruleSetEngine.execute(input, workspaceCode, executeRequest.getCode());
     }
 
     /**
@@ -78,7 +78,7 @@ public class RuleSetOutServiceImpl implements RuleEngineOutService {
         if (!accessKey.equals(isExistsRequest.getAccessKeyId(), isExistsRequest.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        return this.engine.isExists(isExistsRequest.getWorkspaceCode(), isExistsRequest.getCode());
+        return this.ruleSetEngine.isExists(isExistsRequest.getWorkspaceCode(), isExistsRequest.getCode());
     }
 
 }
