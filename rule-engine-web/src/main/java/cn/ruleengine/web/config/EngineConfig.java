@@ -70,7 +70,7 @@ public class EngineConfig {
      */
     @Primary
     @Bean(destroyMethod = "close")
-    public Engine ruleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
+    public Engine generalRuleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化普通规则引擎");
         GeneralRuleEngine ruleEngine = new GeneralRuleEngine(ruleEngineConfiguration);
         ruleEngine.addMultipleGeneralRule(this.rulePublishService.getAllPublishGeneralRule());
