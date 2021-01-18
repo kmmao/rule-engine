@@ -11,6 +11,7 @@ import cn.ruleengine.web.listener.event.RuleSetEvent;
 import cn.ruleengine.web.listener.event.VariableEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * 默认使用rabbit，前提是配置了，没有的话使用redis
  *
  * @author 丁乾文
  * @create 2020-12-23 17:50
@@ -32,6 +34,8 @@ public class EventPublisherListener {
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+    @Resource
+    private ApplicationContext applicationContext;
 
     /**
      * 事物结束后，发送mq消息通知需要加载或者移出的规则
