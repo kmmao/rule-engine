@@ -43,7 +43,7 @@ public class ConditionSet implements ConditionCompare{
      * 条件
      */
     @Getter
-    private List<ConditionGroup> conditionGroups = new ArrayList<>();
+    private final List<ConditionGroup> conditionGroups = new ArrayList<>();
 
     public void addConditionGroup(@NonNull ConditionGroup conditionGroup) {
         Objects.requireNonNull(conditionGroup);

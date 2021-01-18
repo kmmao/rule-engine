@@ -1,0 +1,145 @@
+{
+  "rows": [
+    {
+      "result": {
+        "type": 2,
+        "value": "00",
+        "visible": false,
+        "tempType": 8,
+        "valueType": "COLLECTION"
+      },
+      "priority": 2,
+      "conditions": [
+        {
+          "type": 2,
+          "value": "true",
+          "visible": false,
+          "tempType": 6,
+          "valueType": "BOOLEAN"
+        },
+        {
+          "type": 2,
+          "value": "123",
+          "visible": false,
+          "tempType": 5,
+          "valueType": "STRING"
+        }
+      ]
+    },
+    {
+      "result": {
+        "type": 2,
+        "value": "1,2",
+        "visible": false,
+        "tempType": 8,
+        "valueType": "COLLECTION"
+      },
+      "priority": 1,
+      "conditions": [
+        {
+          "type": 2,
+          "value": "true",
+          "visible": false,
+          "tempType": 6,
+          "valueType": "BOOLEAN"
+        },
+        {
+          "type": 2,
+          "value": "123",
+          "visible": false,
+          "tempType": 5,
+          "valueType": "STRING"
+        }
+      ]
+    },
+    {
+      "result": {
+        "type": 2,
+        "value": "0",
+        "visible": false,
+        "tempType": 8,
+        "valueType": "COLLECTION"
+      },
+      "priority": 1,
+      "conditions": [
+        {
+          "type": 2,
+          "value": "true",
+          "visible": false,
+          "tempType": 6,
+          "valueType": "BOOLEAN"
+        },
+        {
+          "type": 2,
+          "value": "0",
+          "visible": false,
+          "tempType": 5,
+          "valueType": "STRING"
+        }
+      ]
+    },
+    {
+      "result": {
+        "type": 2,
+        "value": "12",
+        "visible": false,
+        "tempType": 8,
+        "valueType": "COLLECTION"
+      },
+      "priority": 1,
+      "conditions": [
+        {
+          "type": 1,
+          "value": "118",
+          "visible": false,
+          "tempType": 1,
+          "valueName": "年龄在7-11之间",
+          "valueType": "BOOLEAN"
+        },
+        {
+          "visible": false
+        }
+      ]
+    }
+  ],
+  "collResultHead": {
+    "type": 2,
+    "tempType": 8,
+    "valueType": "COLLECTION",
+    "defaultAction": {
+      "type": 2,
+      "value": "默认值",
+      "visible": false,
+      "tempType": 8,
+      "valueType": "COLLECTION",
+      "enableDefaultAction": 0
+    }
+  },
+  "collConditionHeads": [
+    {
+      "name": "条件",
+      "symbol": "EQ",
+      "visible": false,
+      "leftValue": {
+        "type": 0,
+        "value": "122",
+        "visible": false,
+        "tempType": 0,
+        "valueName": "布尔元素",
+        "valueType": "BOOLEAN"
+      }
+    },
+    {
+      "name": "条件",
+      "symbol": "EQ",
+      "visible": false,
+      "leftValue": {
+        "type": 2,
+        "value": "123",
+        "visible": false,
+        "tempType": 5,
+        "valueType": "STRING"
+      }
+    }
+  ]
+}

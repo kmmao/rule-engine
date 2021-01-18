@@ -16,6 +16,7 @@ import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import cn.ruleengine.web.vo.condition.ConditionResponse;
 import cn.ruleengine.web.vo.condition.ConfigBean;
 import cn.ruleengine.web.vo.condition.group.SaveOrUpdateConditionGroup;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,6 +116,7 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
      *
      * @param ruleIds 规则ids
      */
+    @Async
     @Override
     public void removeConditionGroupByRuleIds(List<Integer> ruleIds) {
         List<RuleEngineConditionGroup> engineConditionGroups = ruleEngineConditionGroupManager.lambdaQuery()

@@ -28,7 +28,6 @@ import cn.ruleengine.web.vo.base.response.PageResult;
 import cn.ruleengine.web.vo.generalrule.*;
 import cn.ruleengine.core.condition.ConditionGroup;
 
-import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.web.vo.generalrule.DefaultAction;
 
 

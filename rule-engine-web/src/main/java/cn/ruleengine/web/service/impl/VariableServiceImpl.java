@@ -342,8 +342,6 @@ public class VariableServiceImpl implements VariableService {
             }
         }
         // TODO: 2021/1/11  决策表引用
-        // ...
-        // TODO: 2021/1/15 规则集引用
         // ... 考虑是否会重新设计
         VariableMessageBody variableMessageBody = new VariableMessageBody();
         variableMessageBody.setType(VariableMessageBody.Type.REMOVE);

@@ -200,8 +200,6 @@ public class ElementServiceImpl implements ElementService {
         }
         // TODO: 2021/1/11  决策表引用
         // ...
-        // TODO: 2021/1/15 规则集引用
-        // ... 考虑是否会重新设计
         return ruleEngineElementManager.removeById(id);
     }
 

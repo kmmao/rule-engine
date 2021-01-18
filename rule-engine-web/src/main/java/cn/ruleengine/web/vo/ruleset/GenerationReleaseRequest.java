@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public class GenerationReleaseRequest {
      */
     @Valid
     @NotNull
-    private List<RuleBody> ruleSet;
+    private List<RuleBody> ruleSet = new ArrayList<>();
 
     private Integer enableDefaultRule;
 

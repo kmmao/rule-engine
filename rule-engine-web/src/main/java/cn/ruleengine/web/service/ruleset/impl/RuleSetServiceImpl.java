@@ -1,6 +1,9 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.ConditionGroup;
+import cn.ruleengine.core.condition.ConditionSet;
+import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.RuleSetStrategyType;
@@ -8,7 +11,7 @@ import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.ActionService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.impl.ParameterService;
-import cn.ruleengine.web.service.ruleset.RuleSetResolveService;
+import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.ruleset.RuleBody;
 
 
@@ -28,8 +31,6 @@ import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.request.PageRequest;
 import cn.ruleengine.web.vo.base.response.PageBase;
 import cn.ruleengine.web.vo.base.response.PageResult;
-import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
-import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.generalrule.ListGeneralRuleRequest;
 import cn.ruleengine.web.vo.ruleset.*;
@@ -76,8 +77,6 @@ public class RuleSetServiceImpl implements RuleSetService {
     private RuleEngineRuleSetRuleManager ruleEngineRuleSetRuleManager;
     @Resource
     private ActionService actionService;
-    @Resource
-    private RuleSetResolveService ruleSetResolveService;
     @Resource
     private ParameterService parameterService;
     @Resource
@@ -220,16 +219,73 @@ public class RuleSetServiceImpl implements RuleSetService {
         }
         this.ruleEngineRuleSetManager.updateById(ruleEngineRuleSet);
         // 添加新的待发布数据
-        RuleSet rs = this.ruleSetResolveService.ruleSetProcess(ruleEngineRuleSet);
+        RuleSet ruleSet = new RuleSet();
+        ruleSet.setId(ruleEngineRuleSet.getId());
+        ruleSet.setName(ruleEngineRuleSet.getName());
+        ruleSet.setCode(ruleEngineRuleSet.getCode());
+        ruleSet.setWorkspaceId(ruleEngineRuleSet.getWorkspaceId());
+        ruleSet.setWorkspaceCode(ruleEngineRuleSet.getWorkspaceCode());
+        ruleSet.setDescription(ruleEngineRuleSet.getDescription());
+        ruleSet.setStrategyType(RuleSetStrategyType.getByValue(releaseRequest.getStrategyType()));
+        List<RuleBody> bodyList = releaseRequest.getRuleSet();
+        for (RuleBody ruleBody : bodyList) {
+            Rule rule = this.getRule(ruleBody);
+            ruleSet.addRule(rule);
+        }
+        // 如果启用了默认规则
+        if (EnableEnum.ENABLE.getStatus().equals(releaseRequest.getEnableDefaultRule())) {
+            RuleBody defaultRuleBody = releaseRequest.getDefaultRule();
+            Rule rule = this.getRule(defaultRuleBody);
+            ruleSet.setDefaultRule(rule);
+        }
         RuleEngineRuleSetPublish ruleSetPublish = new RuleEngineRuleSetPublish();
-        ruleSetPublish.setRuleSetId(rs.getId());
-        ruleSetPublish.setRuleSetCode(rs.getCode());
-        ruleSetPublish.setData(rs.toJson());
+        ruleSetPublish.setRuleSetId(ruleSet.getId());
+        ruleSetPublish.setRuleSetCode(ruleSet.getCode());
+        ruleSetPublish.setData(ruleSet.toJson());
         ruleSetPublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
-        ruleSetPublish.setWorkspaceId(rs.getWorkspaceId());
-        ruleSetPublish.setWorkspaceCode(rs.getWorkspaceCode());
+        ruleSetPublish.setWorkspaceId(ruleSet.getWorkspaceId());
+        ruleSetPublish.setWorkspaceCode(ruleSet.getWorkspaceCode());
         this.ruleEngineRuleSetPublishManager.save(ruleSetPublish);
         return true;
+    }
+
+    private Rule getRule(RuleBody ruleBody) {
+        if (ruleBody == null) {
+            return null;
+        }
+        Rule rule = new Rule();
+        rule.setId(ruleBody.getId());
+        rule.setName(ruleBody.getName());
+        List<ConditionGroupConfig> conditionGroup = ruleBody.getConditionGroup();
+        ConditionSet conditionSet = new ConditionSet();
+        for (ConditionGroupConfig conditionGroupConfig : conditionGroup) {
+            ConditionGroup conditionGroups = new ConditionGroup();
+            conditionGroups.setId(conditionGroupConfig.getId());
+            conditionGroups.setName(conditionGroupConfig.getName());
+            conditionGroups.setOrderNo(conditionGroupConfig.getOrderNo());
+            List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
+            List<Condition> conditions = new ArrayList<>();
+            for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
+                ConditionResponse con = groupCondition.getCondition();
+                Condition condition = new Condition();
+                condition.setId(con.getId());
+                condition.setName(con.getName());
+                condition.setOrderNo(groupCondition.getOrderNo());
+                ConfigBean config = con.getConfig();
+                ConfigValue leftValue = config.getLeftValue();
+                condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
+                condition.setOperator(Operator.getByName(con.getName()));
+                ConfigValue rightValue = config.getRightValue();
+                condition.setRightValue(this.valueResolve.getValue(rightValue.getType(), rightValue.getValueType(), rightValue.getValue()));
+                conditions.add(condition);
+            }
+            conditionGroups.setConditions(conditions);
+            conditionSet.addConditionGroup(conditionGroups);
+        }
+        rule.setConditionSet(conditionSet);
+        ConfigValue action = ruleBody.getAction();
+        rule.setActionValue(this.valueResolve.getValue(action.getType(), action.getValueType(), action.getValue()));
+        return rule;
     }
 
     /**
