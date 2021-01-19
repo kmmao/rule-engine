@@ -96,8 +96,7 @@ public class ParameterService {
         Set<Integer> elementIds = new HashSet<>();
         // bug 修复 感谢qq昵称懂先生及时报出问题
         this.getConditionElement(elementIds, rule);
-        Value value = rule.getActionValue();
-        this.getFromVariableElement(elementIds, value);
+        // 默认结果
         Value defaultActionValue = rule.getDefaultActionValue();
         if (defaultActionValue != null) {
             this.getFromVariableElement(elementIds, defaultActionValue);
@@ -118,6 +117,9 @@ public class ParameterService {
                 this.getFromVariableElement(elementIds, condition.getLeftValue());
             }
         }
+        // 规则结果
+        Value value = rule.getActionValue();
+        this.getFromVariableElement(elementIds, value);
     }
 
     /**
