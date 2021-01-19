@@ -1,4 +1,4 @@
-package cn.ruleengine.web.service.impl;
+package cn.ruleengine.web.service;
 
 
 import cn.hutool.core.collection.CollUtil;

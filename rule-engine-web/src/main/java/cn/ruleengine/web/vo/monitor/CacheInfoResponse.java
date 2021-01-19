@@ -1,9 +1,8 @@
-package cn.ruleengine.web.vo.system;
+package cn.ruleengine.web.vo.monitor;
 
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Properties;
  * @since 1.0.0
  */
 @Data
-public class CacheMonitorResponse {
+public class CacheInfoResponse {
 
     private Properties info;
 

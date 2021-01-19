@@ -12,7 +12,7 @@ import cn.ruleengine.web.service.ActionService;
 import cn.ruleengine.web.service.ConditionSetService;
 import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ValueResolve;
-import cn.ruleengine.web.service.impl.ParameterService;
+import cn.ruleengine.web.service.ParameterService;
 import cn.ruleengine.web.service.generalrule.GeneralRuleService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;

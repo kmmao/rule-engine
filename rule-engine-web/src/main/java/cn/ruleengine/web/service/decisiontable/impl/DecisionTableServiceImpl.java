@@ -13,7 +13,7 @@ import cn.ruleengine.web.listener.event.DecisionTableEvent;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.decisiontable.DecisionTableResolveService;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
-import cn.ruleengine.web.service.impl.ParameterService;
+import cn.ruleengine.web.service.ParameterService;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTable;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTablePublish;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTableManager;

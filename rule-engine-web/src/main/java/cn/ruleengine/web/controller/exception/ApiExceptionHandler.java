@@ -1,23 +1,17 @@
 package cn.ruleengine.web.controller.exception;
 
 import cn.hutool.core.util.StrUtil;
-import cn.ruleengine.core.exception.ValueException;
+import cn.ruleengine.core.exception.*;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.NoLoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
 import cn.ruleengine.web.vo.base.response.BaseResult;
-import cn.ruleengine.core.exception.ConditionException;
-import cn.ruleengine.core.exception.EngineException;
-import cn.ruleengine.core.exception.FunctionException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -297,4 +291,20 @@ public class ApiExceptionHandler {
         result.setCode(ErrorCodeEnum.RULE4009.getCode());
         return result;
     }
+
+    /**
+     * validException
+     *
+     * @param e validException
+     * @return BaseResult
+     */
+    @ExceptionHandler(value = ValidException.class)
+    public BaseResult validException(ValidException e) {
+        log.error("ValidException", e);
+        BaseResult result = BaseResult.err();
+        result.setMessage(ErrorCodeEnum.RULE4009.getMsg());
+        result.setCode(ErrorCodeEnum.RULE4009.getCode());
+        return result;
+    }
+
 }
