@@ -2,6 +2,7 @@ package cn.ruleengine.web.service;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.rule.GeneralRule;
@@ -14,7 +15,6 @@ import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.value.Variable;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.manager.RuleEngineElementManager;
-import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class ParameterService {
 
     @Resource
-    private Engine engine;
+    private RuleEngineConfiguration ruleEngineConfiguration;
     @Resource
     private RuleEngineElementManager ruleEngineElementManager;
 
@@ -130,7 +130,7 @@ public class ParameterService {
      */
     private void getFromVariableElement(Set<Integer> elementIds, Value value) {
         if (value instanceof Variable) {
-            Value val = this.engine.getEngineVariable().getVariable(((Variable) value).getVariableId());
+            Value val = this.ruleEngineConfiguration.getEngineVariable().getVariable(((Variable) value).getVariableId());
             if (val instanceof Function) {
                 Function function = (Function) val;
                 Map<String, Value> param = function.getParam();
