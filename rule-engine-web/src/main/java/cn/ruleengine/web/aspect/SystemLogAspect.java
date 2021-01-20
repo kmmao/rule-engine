@@ -19,7 +19,8 @@ import cn.hutool.http.Header;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.enums.DeletedEnum;
+import cn.ruleengine.web.message.ISender;
+import cn.ruleengine.web.message.SenderEnum;
 import cn.ruleengine.web.store.entity.RuleEngineSystemLog;
 import cn.ruleengine.web.util.HttpServletUtils;
 import cn.ruleengine.web.util.IPUtils;
@@ -53,7 +54,7 @@ import java.util.Optional;
 public class SystemLogAspect {
 
     @Resource
-    private RabbitTemplate rabbitTemplate;
+    private ISender senderProxy;
 
     @Around("@annotation(systemLog)")
     private Object before(ProceedingJoinPoint joinPoint, SystemLog systemLog) throws Throwable {
@@ -104,7 +105,7 @@ public class SystemLogAspect {
             log.setRunningTime(runningTime);
             log.setUpdateTime(endTime);
             //对日志持久化,日志使用@Async异步在高并发情况下仍然会出现问题,这里使用消息队列
-            rabbitTemplate.convertAndSend(RabbitQueueConfig.SYSTEM_LOG_QUEUE, log);
+            senderProxy.execute(SenderEnum.RABBITMQ.getSenderType(), log);
         }
     }
 }
