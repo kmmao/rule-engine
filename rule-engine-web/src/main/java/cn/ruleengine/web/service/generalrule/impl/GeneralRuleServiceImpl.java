@@ -277,13 +277,13 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
      */
     @Override
     public GeneralRuleDefinition getRuleDefinition(Integer id) {
-        RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.lambdaQuery()
-                .eq(RuleEngineRule::getId, id)
+        RuleEngineGeneralRule engineGeneralRule = this.ruleEngineGeneralRuleManager.lambdaQuery()
+                .eq(RuleEngineGeneralRule::getId, id)
                 .one();
-        if (ruleEngineRule == null) {
+        if (engineGeneralRule == null) {
             return null;
         }
-        return BasicConversion.INSTANCE.convert(ruleEngineRule);
+        return BasicConversion.INSTANCE.convert(engineGeneralRule);
     }
 
     /**

@@ -126,4 +126,13 @@ public interface BasicConversion {
      * @return RuleSetDefinition
      */
     RuleSetDefinition convert(RuleEngineRuleSet ruleEngineRuleSet);
+
+    /**
+     * engineGeneralRule to GeneralRuleDefinition
+     *
+     * @param engineGeneralRule engineGeneralRule
+     * @return GeneralRuleDefinition
+     */
+    GeneralRuleDefinition convert(RuleEngineGeneralRule engineGeneralRule);
+
 }
