@@ -33,10 +33,10 @@ public interface UserService {
     /**
      * 验证用户名是否重复
      *
-     * @param verifyNameRequest verifyNameRequest
+     * @param username username
      * @return Boolean
      */
-    Boolean verifyName(VerifyNameRequest verifyNameRequest);
+    Boolean verifyName(String username);
 
     /**
      * 忘记密码获取验证码
@@ -49,10 +49,10 @@ public interface UserService {
     /**
      * 验证邮箱是否重复
      *
-     * @param verifyEmailRequest verifyEmailRequest
+     * @param email email
      * @return Boolean
      */
-    Boolean verifyEmail(VerifyEmailRequest verifyEmailRequest);
+    Boolean verifyEmail(String email);
 
     /**
      * 修改密码

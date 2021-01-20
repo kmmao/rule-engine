@@ -36,4 +36,5 @@ public class ValidException extends EngineException {
     public ValidException(String message, Object... args) {
         super(StrFormatter.format(message, args));
     }
+
 }

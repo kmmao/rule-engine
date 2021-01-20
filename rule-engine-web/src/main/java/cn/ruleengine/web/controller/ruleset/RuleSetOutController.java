@@ -96,5 +96,6 @@ public class RuleSetOutController {
         plainResult.setData(ruleOutService.isExists(isExistsRequest));
         return plainResult;
     }
+
 }
 

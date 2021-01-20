@@ -11,7 +11,6 @@ import cn.ruleengine.web.store.manager.RuleEngineUserManager;
 import cn.ruleengine.web.util.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.user.*;
-import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.interceptor.AbstractTokenInterceptor;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import org.redisson.api.RBucket;
@@ -123,14 +122,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean register(RegisterRequest registerRequest) {
         checkVerifyCode(registerRequest.getEmail(), registerRequest.getCode(), REGISTER_EMAIL_CODE_PRE);
-        VerifyNameRequest request = new VerifyNameRequest();
-        request.setUsername(registerRequest.getUsername());
-        if (verifyName(request)) {
+        if (verifyName(registerRequest.getUsername())) {
             throw new ValidationException("用户名已经存在!");
         }
-        VerifyEmailRequest verifyEmailRequest = new VerifyEmailRequest();
-        verifyEmailRequest.setEmail(registerRequest.getEmail());
-        if (verifyEmail(verifyEmailRequest)) {
+        if (verifyEmail(registerRequest.getEmail())) {
             throw new ValidationException("邮箱已经存在!");
         }
         RuleEngineUser ruleEngineUser = new RuleEngineUser();
@@ -144,13 +139,13 @@ public class UserServiceImpl implements UserService {
     /**
      * 验证用户名是否重复
      *
-     * @param verifyNameRequest verifyNameRequest
+     * @param username username
      * @return Boolean
      */
     @Override
-    public Boolean verifyName(VerifyNameRequest verifyNameRequest) {
+    public Boolean verifyName(String username) {
         return null != ruleEngineUserManager.lambdaQuery()
-                .eq(RuleEngineUser::getUsername, verifyNameRequest.getUsername())
+                .eq(RuleEngineUser::getUsername, username)
                 .one();
     }
 
@@ -166,9 +161,7 @@ public class UserServiceImpl implements UserService {
         String email = verifyCodeByEmailRequest.getEmail();
         if (VerifyCodeType.FORGOT.getValue().equals(type)) {
             //忘记密码时检查此邮箱在本系统中是否存在
-            VerifyEmailRequest verifyEmailRequest = new VerifyEmailRequest();
-            verifyEmailRequest.setEmail(email);
-            if (!verifyEmail(verifyEmailRequest)) {
+            if (!verifyEmail(email)) {
                 throw new ValidationException("你输入的邮箱账号在本系统中不存在");
             }
             //获取验证码时,把当前邮箱获取的验证码存入到redis,备用
@@ -185,13 +178,13 @@ public class UserServiceImpl implements UserService {
     /**
      * 验证邮箱是否重复
      *
-     * @param verifyEmailRequest verifyEmailRequest
+     * @param email email
      * @return Boolean
      */
     @Override
-    public Boolean verifyEmail(VerifyEmailRequest verifyEmailRequest) {
+    public Boolean verifyEmail(String email) {
         return null != ruleEngineUserManager.lambdaQuery()
-                .eq(RuleEngineUser::getEmail, verifyEmailRequest.getEmail())
+                .eq(RuleEngineUser::getEmail, email)
                 .one();
     }
 
@@ -272,11 +265,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean updateUserInfo(UpdateUserInfoRequest userInfoRequest) {
         if (!Context.getCurrentUser().getId().equals(userInfoRequest.getId())) {
-            throw new ValidException("无权限修改!");
+            throw new ValidationException("无权限修改!");
         }
         RuleEngineUser ruleEngineUser = this.ruleEngineUserManager.getById(userInfoRequest.getId());
         if (ruleEngineUser == null) {
-            throw new ValidException("没有此用户!");
+            throw new ValidationException("没有此用户!");
         }
         ruleEngineUser.setId(userInfoRequest.getId());
         ruleEngineUser.setEmail(userInfoRequest.getEmail());
