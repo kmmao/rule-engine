@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.decisiontable.*;
 import cn.ruleengine.core.exception.ValidException;
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
@@ -236,7 +235,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
                     .remove();
         }
         ruleEngineDecisionTable.setStrategyType(updateDecisionTableRequest.getStrategyType());
-        ruleEngineDecisionTable.setAbnormalAlarm(JSON.toJSONString(updateDecisionTableRequest.getAbnormalAlarm()));
         ruleEngineDecisionTable.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(updateDecisionTableRequest.getTableData()));
         return this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
@@ -262,7 +260,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableResponse.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
         decisionTableResponse.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
         decisionTableResponse.setTableData(JSON.parseObject(ruleEngineDecisionTable.getTableData(), TableData.class));
-        decisionTableResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineDecisionTable.getAbnormalAlarm(), AbnormalAlarm.class));
         decisionTableResponse.setStrategyType(ruleEngineDecisionTable.getStrategyType());
         return decisionTableResponse;
     }
@@ -291,7 +288,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
                     .remove();
         }
         ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
-        ruleEngineDecisionTable.setAbnormalAlarm(JSON.toJSONString(releaseRequest.getAbnormalAlarm()));
         ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
         this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
@@ -414,7 +410,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableResponse.setDescription(decisionTable.getDescription());
         decisionTableResponse.setWorkspaceId(decisionTable.getWorkspaceId());
         decisionTableResponse.setWorkspaceCode(decisionTable.getWorkspaceCode());
-        decisionTableResponse.setAbnormalAlarm(decisionTable.getAbnormalAlarm());
         decisionTableResponse.setStrategyType(decisionTable.getStrategyType().getValue());
         TableData tableData = new TableData();
         List<CollHead> collHeads = decisionTable.getCollHeads();

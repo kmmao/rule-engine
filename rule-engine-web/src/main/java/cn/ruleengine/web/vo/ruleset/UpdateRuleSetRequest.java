@@ -35,7 +35,4 @@ public class UpdateRuleSetRequest {
     private Integer enableDefaultRule;
 
     private RuleBody defaultRule;
-
-    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
-
 }

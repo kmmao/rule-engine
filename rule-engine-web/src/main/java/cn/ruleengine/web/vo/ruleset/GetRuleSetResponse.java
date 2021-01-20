@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.ruleset;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import lombok.Data;
 
 import java.util.List;
@@ -35,7 +34,5 @@ public class GetRuleSetResponse {
     private Integer enableDefaultRule;
 
     private RuleBody defaultRule;
-
-    private AbnormalAlarm abnormalAlarm;
 
 }

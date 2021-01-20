@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.decisiontable;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -31,7 +30,5 @@ public class GenerationReleaseRequest {
      */
     @Valid
     private TableData tableData;
-
-    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
 }

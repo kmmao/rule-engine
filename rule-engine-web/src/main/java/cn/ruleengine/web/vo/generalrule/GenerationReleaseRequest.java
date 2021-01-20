@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.generalrule;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.web.vo.condition.ConditionGroupConfig;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 import lombok.Data;
@@ -30,8 +29,5 @@ public class GenerationReleaseRequest {
     private ConfigValue action;
 
     private DefaultAction defaultAction;
-
-    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
-
 
 }

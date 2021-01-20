@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.decisiontable;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -29,7 +28,5 @@ public class UpdateDecisionTableRequest {
      * 决策表数据
      */
     private Object tableData;
-
-    private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
 }

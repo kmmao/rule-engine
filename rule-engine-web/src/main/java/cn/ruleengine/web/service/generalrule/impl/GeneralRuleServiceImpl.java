@@ -1,7 +1,6 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.EnableEnum;
@@ -32,8 +31,6 @@ import cn.ruleengine.web.vo.generalrule.DefaultAction;
 
 
 import cn.hutool.core.lang.Validator;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.exception.ValidException;
 
@@ -180,7 +177,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleEngineGeneralRule.setDefaultActionValue(defaultAction.getValue());
         ruleEngineGeneralRule.setDefaultActionValueType(defaultAction.getValueType());
         ruleEngineGeneralRule.setDefaultActionType(defaultAction.getType());
-        ruleEngineGeneralRule.setAbnormalAlarm(JSONObject.toJSONString(updateRuleRequest.getAbnormalAlarm()));
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         return true;
     }
@@ -322,7 +318,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleEngineGeneralRule.setDefaultActionValue(defaultAction.getValue());
         ruleEngineGeneralRule.setDefaultActionValueType(defaultAction.getValueType());
         ruleEngineGeneralRule.setDefaultActionType(defaultAction.getType());
-        ruleEngineGeneralRule.setAbnormalAlarm(JSONObject.toJSONString(releaseRequest.getAbnormalAlarm()));
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         // 生成待发布规则
         if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
@@ -342,7 +337,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         generalRule.setDescription(ruleEngineGeneralRule.getDescription());
         generalRule.setConditionSet(this.conditionSetService.loadConditionSet(releaseRequest.getConditionGroup()));
         generalRule.setActionValue(this.valueResolve.getValue(action.getType(), action.getValueType(), action.getValue()));
-        generalRule.setAbnormalAlarm(releaseRequest.getAbnormalAlarm());
         // 如果启用了默认结果
         if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
             generalRule.setDefaultActionValue(this.valueResolve.getValue(defaultAction.getType(), defaultAction.getValueType(), defaultAction.getValue()));
@@ -432,7 +426,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         DefaultAction defaultAction = new DefaultAction(defaultValue);
         defaultAction.setEnableDefaultAction(ruleEngineGeneralRule.getEnableDefaultAction());
         ruleResponse.setDefaultAction(defaultAction);
-        ruleResponse.setAbnormalAlarm(JSON.parseObject(ruleEngineGeneralRule.getAbnormalAlarm(), AbnormalAlarm.class));
         return ruleResponse;
     }
 
@@ -510,7 +503,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             defaultAction.setEnableDefaultAction(EnableEnum.DISABLE.getStatus());
         }
         ruleResponse.setDefaultAction(defaultAction);
-        ruleResponse.setAbnormalAlarm(rule.getAbnormalAlarm());
         // 规则调用接口，以及规则入参
         ruleResponse.setParameters(this.parameterService.getParameters(rule));
         return ruleResponse;

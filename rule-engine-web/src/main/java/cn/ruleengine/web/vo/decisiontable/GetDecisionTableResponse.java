@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.decisiontable;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import lombok.Data;
 
 /**
@@ -32,7 +31,5 @@ public class GetDecisionTableResponse {
      * 决策表数据
      */
     private TableData tableData;
-
-    private AbnormalAlarm abnormalAlarm;
 
 }
