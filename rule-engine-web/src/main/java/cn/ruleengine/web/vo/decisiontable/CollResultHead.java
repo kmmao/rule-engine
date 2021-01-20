@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CollResultHead {
 
-    private Integer tempType;
     /**
      * 结果类型 固定值 变量
      */

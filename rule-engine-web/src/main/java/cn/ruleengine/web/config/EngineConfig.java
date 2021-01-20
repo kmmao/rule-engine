@@ -24,6 +24,7 @@ import cn.ruleengine.web.service.VariableResolveService;
 import cn.ruleengine.web.service.ruleset.RuleSetPublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -55,6 +56,7 @@ public class EngineConfig {
      *
      * @return RuleEngineConfiguration
      */
+    @Lazy
     @Bean(destroyMethod = "close")
     public RuleEngineConfiguration ruleEngineConfiguration() {
         RuleEngineConfiguration configuration = new RuleEngineConfiguration();

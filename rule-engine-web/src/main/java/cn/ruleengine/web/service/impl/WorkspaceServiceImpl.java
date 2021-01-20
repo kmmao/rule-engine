@@ -52,7 +52,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     /**
      * 内存缓存
      */
-    private LRUCache<String, AccessKey> accessKeyCache = CacheUtil.newLRUCache(100);
+    private final LRUCache<String, AccessKey> accessKeyCache = CacheUtil.newLRUCache(100);
 
     /**
      * 用户有权限的工作空间

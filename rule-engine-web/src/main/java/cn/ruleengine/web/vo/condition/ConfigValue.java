@@ -16,8 +16,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ConfigValue {
 
-    private Integer tempType;
-
     @NotNull
     private Integer type;
 
