@@ -34,7 +34,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class SystemLogMessageListener implements ISystemLogMessageListener{
+public class SystemLogMessageListener {
 
     @Resource
     private RuleEngineSystemLogManager ruleEngineSystemLogManager;
