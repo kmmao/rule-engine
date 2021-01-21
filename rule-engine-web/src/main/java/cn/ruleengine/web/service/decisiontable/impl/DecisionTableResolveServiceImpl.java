@@ -64,7 +64,6 @@ public class DecisionTableResolveServiceImpl implements DecisionTableResolveServ
         decisionTable.setDescription(ruleEngineDecisionTable.getDescription());
         decisionTable.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
         decisionTable.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
-        decisionTable.setAbnormalAlarm(JSON.parseObject(ruleEngineDecisionTable.getAbnormalAlarm(), AbnormalAlarm.class));
         decisionTable.setStrategyType(DecisionTableStrategyType.getByValue(ruleEngineDecisionTable.getStrategyType()));
         List<CollConditionHeads> collConditionHeads = tableData.getCollConditionHeads();
         for (CollConditionHeads collConditionHead : collConditionHeads) {
