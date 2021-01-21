@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.base.response;
+package cn.ruleengine.web.vo.base;
 
 /**
  * 〈一句话功能简述〉<br>

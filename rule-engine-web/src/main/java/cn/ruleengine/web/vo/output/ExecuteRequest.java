@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.out;
+package cn.ruleengine.web.vo.output;
 
 import lombok.Data;
 

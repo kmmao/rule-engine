@@ -1,8 +1,8 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.service.MonitorService;
-import cn.ruleengine.web.vo.base.response.BaseResult;
-import cn.ruleengine.web.vo.base.response.PlainResult;
+import cn.ruleengine.web.vo.base.BaseResult;
+import cn.ruleengine.web.vo.base.PlainResult;
 import cn.ruleengine.web.vo.monitor.CacheInfoResponse;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;

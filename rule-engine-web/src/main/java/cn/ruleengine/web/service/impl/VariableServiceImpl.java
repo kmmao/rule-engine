@@ -11,9 +11,9 @@ import cn.ruleengine.web.store.manager.*;
 import cn.ruleengine.web.store.mapper.RuleEngineVariableMapper;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.convert.BasicConversion;
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageBase;
-import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageBase;
+import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.variable.*;
 

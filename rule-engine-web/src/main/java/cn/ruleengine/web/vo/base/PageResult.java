@@ -1,12 +1,11 @@
-package cn.ruleengine.web.vo.base.response;
+package cn.ruleengine.web.vo.base;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -16,16 +15,16 @@ import java.util.List;
  * @create 2019/9/30
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-@ApiModel
 @AllArgsConstructor
 @NoArgsConstructor
-public class Rows<T> {
+@ApiModel(value = "返回分页数据")
+public class PageResult<T> extends BaseResult {
 
-    @ApiModelProperty("分页数据")
-    private List<T> rows;
+    private static final long serialVersionUID = -6689010616909835472L;
 
-    @ApiModelProperty("分页参数")
-    private PageResponse page;
+    @ApiModelProperty("数据")
+    private Rows<T> data;
 
 }

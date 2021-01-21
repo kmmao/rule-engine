@@ -1,6 +1,6 @@
-package cn.ruleengine.web.vo.base.request;
+package cn.ruleengine.web.vo.base;
 
-import cn.ruleengine.web.vo.base.response.PageBase;
+import cn.ruleengine.web.vo.base.PageBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

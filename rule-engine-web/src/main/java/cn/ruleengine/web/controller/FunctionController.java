@@ -17,10 +17,10 @@ package cn.ruleengine.web.controller;
 
 
 import cn.ruleengine.web.service.FunctionService;
-import cn.ruleengine.web.vo.base.request.IdRequest;
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageResult;
-import cn.ruleengine.web.vo.base.response.PlainResult;
+import cn.ruleengine.web.vo.base.IdRequest;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.base.PlainResult;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;
 import cn.ruleengine.web.vo.function.ListFunctionResponse;

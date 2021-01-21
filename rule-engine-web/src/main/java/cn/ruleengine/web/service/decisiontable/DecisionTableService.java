@@ -1,7 +1,7 @@
 package cn.ruleengine.web.service.decisiontable;
 
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.decisiontable.*;
 import cn.ruleengine.web.vo.generalrule.GetGeneralRuleResponse;
 

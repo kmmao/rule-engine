@@ -16,11 +16,11 @@
 package cn.ruleengine.web.util;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageBase;
-import cn.ruleengine.web.vo.base.response.PageResponse;
-import cn.ruleengine.web.vo.base.response.PageResult;
-import cn.ruleengine.web.vo.base.response.Rows;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageBase;
+import cn.ruleengine.web.vo.base.PageResponse;
+import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.base.Rows;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;

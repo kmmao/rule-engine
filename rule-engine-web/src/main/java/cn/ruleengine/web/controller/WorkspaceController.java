@@ -16,11 +16,11 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.RoleAuth;
-import cn.ruleengine.web.vo.base.request.IdRequest;
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.request.Param;
-import cn.ruleengine.web.vo.base.response.BaseResult;
-import cn.ruleengine.web.vo.base.response.PlainResult;
+import cn.ruleengine.web.vo.base.IdRequest;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.Param;
+import cn.ruleengine.web.vo.base.BaseResult;
+import cn.ruleengine.web.vo.base.PlainResult;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;

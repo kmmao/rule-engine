@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.base.response;
+package cn.ruleengine.web.vo.base;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

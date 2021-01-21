@@ -1,8 +1,8 @@
 package cn.ruleengine.web.store.mapper;
 
 import cn.ruleengine.web.store.entity.RuleEngineWorkspace;
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageBase;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

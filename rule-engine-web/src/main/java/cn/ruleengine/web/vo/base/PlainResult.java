@@ -1,11 +1,9 @@
-package cn.ruleengine.web.vo.base.response;
+package cn.ruleengine.web.vo.base;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -17,14 +15,12 @@ import lombok.NoArgsConstructor;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ApiModel(value = "返回分页数据")
-public class PageResult<T> extends BaseResult {
+@ApiModel("返回普通数据")
+public class PlainResult<T> extends BaseResult{
 
-    private static final long serialVersionUID = -6689010616909835472L;
+    private static final long serialVersionUID = 8794822903345524683L;
 
     @ApiModelProperty("数据")
-    private Rows<T> data;
+    private T data;
 
 }

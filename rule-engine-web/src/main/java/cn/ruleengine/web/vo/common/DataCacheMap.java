@@ -24,12 +24,8 @@ public class DataCacheMap {
 
     private Map<Integer, RuleEngineVariable> variableMap = new HashMap<>();
 
-    private Map<String, RuleEngineVariable> variableNameMap = new HashMap<>();
-
     private Map<Integer, RuleEngineFunction> functionMap = new HashMap<>();
 
     private Map<Integer, List<RuleEngineFunctionValue>> functionValueMap = new HashMap<>();
-
-    private Map<Integer, RuleEngineCondition> conditionMap = new HashMap<>();
 
 }

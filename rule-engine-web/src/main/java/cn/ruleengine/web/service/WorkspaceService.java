@@ -1,7 +1,7 @@
 package cn.ruleengine.web.service;
 
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;

@@ -1,6 +1,6 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
-import cn.ruleengine.web.vo.out.BatchExecuteRequest;
+import cn.ruleengine.web.vo.output.BatchExecuteRequest;
 import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleResponse;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;

@@ -5,8 +5,8 @@ import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
-import cn.ruleengine.web.vo.base.request.PageRequest;
-import cn.ruleengine.web.vo.base.response.PageResult;
+import cn.ruleengine.web.vo.base.PageRequest;
+import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.condition.*;
 
 import java.util.Collection;

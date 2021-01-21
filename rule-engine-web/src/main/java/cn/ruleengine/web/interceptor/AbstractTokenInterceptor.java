@@ -21,7 +21,7 @@ import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.util.JWTUtils;
 import cn.ruleengine.web.util.ResponseUtils;
-import cn.ruleengine.web.vo.base.response.BaseResult;
+import cn.ruleengine.web.vo.base.BaseResult;
 import cn.ruleengine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;

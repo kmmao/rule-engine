@@ -7,7 +7,7 @@ import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.NoLoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
-import cn.ruleengine.web.vo.base.response.BaseResult;
+import cn.ruleengine.web.vo.base.BaseResult;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
