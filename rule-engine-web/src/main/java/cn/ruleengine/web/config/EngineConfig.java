@@ -24,7 +24,6 @@ import cn.ruleengine.web.service.VariableResolveService;
 import cn.ruleengine.web.service.ruleset.RuleSetPublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +55,6 @@ public class EngineConfig {
      *
      * @return RuleEngineConfiguration
      */
-    @Lazy
     @Bean(destroyMethod = "close")
     public RuleEngineConfiguration ruleEngineConfiguration() {
         RuleEngineConfiguration configuration = new RuleEngineConfiguration();
@@ -72,7 +70,7 @@ public class EngineConfig {
      */
     @Primary
     @Bean(destroyMethod = "close")
-    public Engine generalRuleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
+    public GeneralRuleEngine generalRuleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化普通规则引擎");
         GeneralRuleEngine ruleEngine = new GeneralRuleEngine(ruleEngineConfiguration);
         ruleEngine.addMultipleGeneralRule(this.rulePublishService.getAllPublishGeneralRule());
@@ -86,7 +84,7 @@ public class EngineConfig {
      * @return engine
      */
     @Bean(destroyMethod = "close")
-    public Engine decisionTableEngine(RuleEngineConfiguration ruleEngineConfiguration) {
+    public DecisionTableEngine decisionTableEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化决策表引擎");
         DecisionTableEngine ruleEngine = new DecisionTableEngine(ruleEngineConfiguration);
         ruleEngine.addMultipleDecisionTable(this.decisionTablePublishService.getAllPublishDecisionTable());
@@ -100,7 +98,7 @@ public class EngineConfig {
      * @return engine
      */
     @Bean(destroyMethod = "close")
-    public Engine ruleSetEngine(RuleEngineConfiguration ruleEngineConfiguration) {
+    public RuleSetEngine ruleSetEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化规则集引擎");
         RuleSetEngine ruleSetEngine = new RuleSetEngine(ruleEngineConfiguration);
         ruleSetEngine.addMultipleRuleSet(this.ruleSetPublishService.getAllPublishRuleSet());

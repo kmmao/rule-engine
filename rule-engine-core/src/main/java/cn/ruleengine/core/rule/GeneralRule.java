@@ -118,7 +118,6 @@ public class GeneralRule extends Rule {
         this.setPrecondition(generalRule.getPrecondition());
         this.setEnableMonitor(generalRule.isEnableMonitor());
         this.setDefaultActionValue(generalRule.getDefaultActionValue());
-        this.setAbnormalAlarm(generalRule.getAbnormalAlarm());
         this.setDescription(generalRule.getDescription());
         this.setWorkspaceId(generalRule.getWorkspaceId());
         this.setWorkspaceCode(generalRule.getWorkspaceCode());

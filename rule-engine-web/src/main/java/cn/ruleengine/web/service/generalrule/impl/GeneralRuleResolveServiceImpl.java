@@ -65,7 +65,6 @@ public class GeneralRuleResolveServiceImpl implements GeneralRuleResolveService 
         rule.setConditionSet(this.conditionSetService.loadConditionSet(ruleEngineGeneralRule.getRuleId()));
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(ruleEngineGeneralRule.getRuleId());
         rule.setActionValue(this.valueResolve.getValue(ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType(), ruleEngineRule.getActionValue()));
-        rule.setAbnormalAlarm(JSONObject.parseObject(ruleEngineGeneralRule.getAbnormalAlarm(), AbnormalAlarm.class));
         // 如果启用了默认结果
         if (EnableEnum.ENABLE.getStatus().equals(ruleEngineGeneralRule.getEnableDefaultAction())) {
             rule.setDefaultActionValue(this.valueResolve.getValue(ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType(), ruleEngineGeneralRule.getDefaultActionValue()));
