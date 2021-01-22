@@ -18,6 +18,7 @@ package cn.ruleengine.web.function;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
 
 
 /**
@@ -33,7 +34,7 @@ public class IsEmptyFunction {
 
 
     @Executor
-    public Boolean executor(String value) {
+    public Boolean executor(@Param(value = "value",required = false) String value) {
         return Validator.isEmpty(value);
     }
 

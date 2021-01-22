@@ -3,6 +3,7 @@ package cn.ruleengine.web.function;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
 
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -20,7 +21,7 @@ import java.util.*;
 public class CurrentDateFunction {
 
     @Executor
-    public String executor(String pattern, String timeZone) {
+    public String executor(@Param(value = "pattern",required = false) String pattern,@Param(value = "timeZone",required = false) String timeZone) {
         ZoneId zoneId = Optional.ofNullable(timeZone).filter(Validator::isNotEmpty).map(ZoneId::of).orElseGet(ZoneId::systemDefault);
         ZonedDateTime zonedDateTime = ZonedDateTime.now(zoneId);
         Instant instant = zonedDateTime.toInstant();

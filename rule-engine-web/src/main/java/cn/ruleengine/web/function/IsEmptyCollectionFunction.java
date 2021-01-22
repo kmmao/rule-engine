@@ -19,6 +19,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.FailureStrategy;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.List;
 public class IsEmptyCollectionFunction {
 
     @Executor
-    public Boolean executor(List<String> list) {
+    public Boolean executor(@Param(value = "list",required = false) List<String> list) {
         return CollUtil.isEmpty(list);
     }
 

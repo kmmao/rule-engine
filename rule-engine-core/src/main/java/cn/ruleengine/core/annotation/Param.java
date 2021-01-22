@@ -25,6 +25,9 @@ import java.lang.annotation.Target;
  * 〈一句话功能简述〉<br>
  * 〈〉
  * 只适用在普通数据类型上，例如String，Integer，Boolean，BigDecimal，List，Set
+ * <p>
+ * executor(@Param(value = "pattern",required = false) String pattern,@Param(value = "timeZone",required = false) String timeZone)
+ * 建议加上@Param
  *
  * @author dingqianwen
  * @date 2020/8/4

@@ -3,6 +3,7 @@ package cn.ruleengine.web.function;
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class CollectionDeduplicationFunction {
 
     @Executor
-    public List<?> executor(List<?> list) {
+    public List<?> executor(@Param(value = "list",required = false) List<?> list) {
         if (CollUtil.isEmpty(list)) {
             return Collections.emptyList();
         }

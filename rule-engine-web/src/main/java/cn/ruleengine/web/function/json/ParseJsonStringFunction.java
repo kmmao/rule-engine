@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
 
+import cn.ruleengine.core.annotation.Param;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -22,7 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ParseJsonStringFunction implements JsonEval {
 
     @Executor
-    public String executor(String jsonString, String jsonValuePath) {
+    public String executor(@Param(value = "jsonString", required = false) String jsonString,
+                           @Param(value = "jsonValuePath", required = false) String jsonValuePath) {
         Object value = this.eval(jsonString, jsonValuePath);
         // 返回null 而不是String.valueOf后的null字符
         if (Validator.isEmpty(value)) {

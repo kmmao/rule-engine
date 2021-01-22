@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.NumberUtil;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ValidationException;
@@ -23,7 +24,8 @@ import java.math.BigDecimal;
 public class ParseJsonNumberFunction implements JsonEval {
 
     @Executor
-    public BigDecimal executor(String jsonString, String jsonValuePath) {
+    public BigDecimal executor(@Param(value = "jsonString", required = false) String jsonString,
+                               @Param(value = "jsonValuePath", required = false) String jsonValuePath) {
         Object value = this.eval(jsonString, jsonValuePath);
         // 返回null 而不是String.valueOf后的null字符
         if (Validator.isEmpty(value)) {

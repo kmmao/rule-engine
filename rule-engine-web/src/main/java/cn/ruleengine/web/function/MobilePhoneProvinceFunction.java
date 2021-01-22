@@ -1,10 +1,8 @@
 package cn.ruleengine.web.function;
 
 import cn.hutool.core.lang.Validator;
-import cn.ruleengine.core.annotation.Executor;
-import cn.ruleengine.core.annotation.FailureStrategy;
+import cn.ruleengine.core.annotation.*;
 import cn.ruleengine.core.annotation.Function;
-import cn.ruleengine.core.annotation.FunctionCacheable;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -34,7 +32,7 @@ public class MobilePhoneProvinceFunction {
     private RestTemplate restTemplate;
 
     @Executor
-    public String executor(String phone) {
+    public String executor(@Param(value = "phone",required = false) String phone) {
         if (!Validator.isMobile(phone)) {
             return StringPool.EMPTY;
         }

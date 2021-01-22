@@ -2,6 +2,7 @@ package cn.ruleengine.web.function;
 
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -16,7 +17,7 @@ import cn.ruleengine.core.annotation.Function;
 public class LetterToLowerCaseFunction {
 
     @Executor
-    public String executor(String letter) {
+    public String executor(@Param(value = "letter",required = false) String letter) {
         if (letter == null) {
             return null;
         }
