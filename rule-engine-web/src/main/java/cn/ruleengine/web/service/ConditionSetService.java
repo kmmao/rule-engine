@@ -63,7 +63,10 @@ public class ConditionSetService {
                     conditionGroups.addCondition(condition);
                 }
             }
-            conditionSet.addConditionGroup(conditionGroups);
+            // 条件组内没有条件，生成待发布json 则不再处理
+            if (CollUtil.isNotEmpty(conditionGroups.getConditions())) {
+                conditionSet.addConditionGroup(conditionGroups);
+            }
         }
         return conditionSet;
     }
