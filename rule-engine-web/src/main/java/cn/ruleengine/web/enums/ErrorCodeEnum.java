@@ -16,6 +16,10 @@ import java.util.Map;
 public enum ErrorCodeEnum {
 
     /**
+     * RULE 99990099 error code enum.
+     */
+    RULE99990099(99990099, "校验错误"),
+    /**
      * RULE 99990100 error code enum.
      */
     RULE99990100(9999100, "参数异常"),
