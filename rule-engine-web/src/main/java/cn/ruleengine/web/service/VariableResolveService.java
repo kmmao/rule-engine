@@ -1,10 +1,13 @@
 package cn.ruleengine.web.service;
 
+import cn.ruleengine.web.store.entity.RuleEngineElement;
+import cn.ruleengine.web.store.entity.RuleEngineFunction;
+import cn.ruleengine.web.store.entity.RuleEngineFunctionValue;
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
-import cn.ruleengine.web.vo.common.DataCacheMap;
 import cn.ruleengine.core.value.Function;
 import cn.ruleengine.core.value.Value;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,8 +39,9 @@ public interface VariableResolveService {
      * 规则引擎函数处理
      *
      * @param ruleEngineVariable 规则函数元数据
-     * @param cacheMap           配置缓存数据
+     * @param engineFunctionMap  engineFunction缓存数据
      * @return Function
      */
-    Function functionProcess(RuleEngineVariable ruleEngineVariable, DataCacheMap cacheMap);
+    Function functionProcess(RuleEngineVariable ruleEngineVariable, Map<Integer, RuleEngineFunction> engineFunctionMap, Map<Integer, List<RuleEngineFunctionValue>> functionValueMap, Map<Integer, RuleEngineElement> engineElementMap);
+
 }

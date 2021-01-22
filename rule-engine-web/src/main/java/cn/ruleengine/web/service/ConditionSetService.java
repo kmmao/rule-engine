@@ -47,22 +47,22 @@ public class ConditionSetService {
             conditionGroups.setName(conditionGroupConfig.getName());
             conditionGroups.setOrderNo(conditionGroupConfig.getOrderNo());
             List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
-            List<Condition> conditions = new ArrayList<>();
-            for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
-                ConditionBody conditionBody = groupCondition.getCondition();
-                Condition condition = new Condition();
-                condition.setId(conditionBody.getId());
-                condition.setName(conditionBody.getName());
-                condition.setOrderNo(groupCondition.getOrderNo());
-                ConfigBean config = conditionBody.getConfig();
-                ConfigValue leftValue = config.getLeftValue();
-                condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
-                condition.setOperator(Operator.getByName(config.getSymbol()));
-                ConfigValue rightValue = config.getRightValue();
-                condition.setRightValue(this.valueResolve.getValue(rightValue.getType(), rightValue.getValueType(), rightValue.getValue()));
-                conditions.add(condition);
+            if (CollUtil.isNotEmpty(conditionGroupCondition)) {
+                for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
+                    ConditionBody conditionBody = groupCondition.getCondition();
+                    Condition condition = new Condition();
+                    condition.setId(conditionBody.getId());
+                    condition.setName(conditionBody.getName());
+                    condition.setOrderNo(groupCondition.getOrderNo());
+                    ConfigBean config = conditionBody.getConfig();
+                    ConfigValue leftValue = config.getLeftValue();
+                    condition.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
+                    condition.setOperator(Operator.getByName(config.getSymbol()));
+                    ConfigValue rightValue = config.getRightValue();
+                    condition.setRightValue(this.valueResolve.getValue(rightValue.getType(), rightValue.getValueType(), rightValue.getValue()));
+                    conditionGroups.addCondition(condition);
+                }
             }
-            conditionGroups.setConditions(conditions);
             conditionSet.addConditionGroup(conditionGroups);
         }
         return conditionSet;

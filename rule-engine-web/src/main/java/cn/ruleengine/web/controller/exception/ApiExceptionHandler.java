@@ -303,7 +303,7 @@ public class ApiExceptionHandler {
         log.error("ValidException", e);
         BaseResult result = BaseResult.err();
         result.setMessage(e.getMessage());
-        result.setCode(ErrorCodeEnum.RULE4009.getCode());
+        result.setCode(ErrorCodeEnum.RULE99990099.getCode());
         return result;
     }
 

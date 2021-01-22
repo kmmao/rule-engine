@@ -154,29 +154,35 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
                 .in(RuleEngineConditionGroupCondition::getConditionGroupId, conditionGroupIds)
                 .orderByAsc(RuleEngineConditionGroupCondition::getOrderNo)
                 .list();
-        if (CollUtil.isEmpty(ruleEngineConditionGroupConditions)) {
-            return Collections.emptyList();
+        Map<Integer, List<RuleEngineConditionGroupCondition>> conditionGroupConditionMaps;
+        Map<Integer, RuleEngineCondition> conditionMap = Collections.emptyMap();
+        Map<Integer, RuleEngineElement> elementMap = Collections.emptyMap();
+        Map<Integer, RuleEngineVariable> variableMap = Collections.emptyMap();
+        if (CollUtil.isNotEmpty(ruleEngineConditionGroupConditions)) {
+            conditionGroupConditionMaps = ruleEngineConditionGroupConditions.stream()
+                    .collect(Collectors.groupingBy(RuleEngineConditionGroupCondition::getConditionGroupId));
+            Set<Integer> conditionIds = conditionGroupConditionMaps.values().stream().flatMap(Collection::stream)
+                    .map(RuleEngineConditionGroupCondition::getConditionId)
+                    .collect(Collectors.toSet());
+            List<RuleEngineCondition> ruleEngineConditions = this.ruleEngineConditionManager.lambdaQuery()
+                    .in(RuleEngineCondition::getId, conditionIds).list();
+            if (CollUtil.isNotEmpty(ruleEngineConditions)) {
+                conditionMap = ruleEngineConditions.stream().collect(Collectors.toMap(RuleEngineCondition::getId, Function.identity()));
+                elementMap = this.conditionService.getConditionElementMap(conditionMap.values());
+                variableMap = this.conditionService.getConditionVariableMap(conditionMap.values());
+            }
+        } else {
+            conditionGroupConditionMaps = Collections.emptyMap();
         }
-        Map<Integer, List<RuleEngineConditionGroupCondition>> conditionGroupConditionMaps = ruleEngineConditionGroupConditions.stream()
-                .collect(Collectors.groupingBy(RuleEngineConditionGroupCondition::getConditionGroupId));
-        Set<Integer> conditionIds = conditionGroupConditionMaps.values().stream().flatMap(Collection::stream).map(RuleEngineConditionGroupCondition::getConditionId)
-                .collect(Collectors.toSet());
-        List<RuleEngineCondition> ruleEngineConditions = this.ruleEngineConditionManager.lambdaQuery().in(RuleEngineCondition::getId, conditionIds).list();
-        if (CollUtil.isNotEmpty(ruleEngineConditions)) {
-            Map<Integer, RuleEngineCondition> conditionMap = ruleEngineConditions.stream().collect(Collectors.toMap(RuleEngineCondition::getId, Function.identity()));
-            Map<Integer, RuleEngineElement> elementMap = this.conditionService.getConditionElementMap(conditionMap.values());
-            Map<Integer, RuleEngineVariable> variableMap = this.conditionService.getConditionVariableMap(conditionMap.values());
-            // 转换条件组数据
-            List<ConditionGroupConfig> conditionGroup = new ArrayList<>();
-            for (RuleEngineConditionGroup engineConditionGroup : engineConditionGroups) {
-                ConditionGroupConfig group = new ConditionGroupConfig();
-                group.setId(engineConditionGroup.getId());
-                group.setName(engineConditionGroup.getName());
-                group.setOrderNo(engineConditionGroup.getOrderNo());
-                List<RuleEngineConditionGroupCondition> conditionGroupConditions = conditionGroupConditionMaps.get(engineConditionGroup.getId());
-                if (CollUtil.isEmpty(conditionGroupConditions)) {
-                    continue;
-                }
+        // 转换条件组数据
+        List<ConditionGroupConfig> conditionGroup = new ArrayList<>();
+        for (RuleEngineConditionGroup engineConditionGroup : engineConditionGroups) {
+            ConditionGroupConfig group = new ConditionGroupConfig();
+            group.setId(engineConditionGroup.getId());
+            group.setName(engineConditionGroup.getName());
+            group.setOrderNo(engineConditionGroup.getOrderNo());
+            List<RuleEngineConditionGroupCondition> conditionGroupConditions = conditionGroupConditionMaps.get(engineConditionGroup.getId());
+            if (CollUtil.isNotEmpty(conditionGroupConditions)) {
                 List<ConditionGroupCondition> groupConditions = new ArrayList<>(conditionGroupConditions.size());
                 for (RuleEngineConditionGroupCondition conditionGroupCondition : conditionGroupConditions) {
                     ConditionGroupCondition conditionSet = new ConditionGroupCondition();
@@ -187,11 +193,10 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
                     groupConditions.add(conditionSet);
                 }
                 group.setConditionGroupCondition(groupConditions);
-                conditionGroup.add(group);
             }
-            return conditionGroup;
+            conditionGroup.add(group);
         }
-        return Collections.emptyList();
+        return conditionGroup;
     }
 
     @Override
@@ -209,9 +214,9 @@ public class RuleEngineConditionGroupServiceImpl implements RuleEngineConditionG
                 ConditionBody conditionResponse = new ConditionBody();
                 conditionResponse.setName(condition.getName());
                 ConfigBean configBean = new ConfigBean();
-                configBean.setLeftValue(valueResolve.getConfigValue(condition.getLeftValue()));
+                configBean.setLeftValue(this.valueResolve.getConfigValue(condition.getLeftValue()));
                 configBean.setSymbol(condition.getOperator().getExplanation());
-                configBean.setRightValue(valueResolve.getConfigValue(condition.getRightValue()));
+                configBean.setRightValue(this.valueResolve.getConfigValue(condition.getRightValue()));
                 conditionResponse.setConfig(configBean);
                 conditionSet.setCondition(conditionResponse);
                 conditionGroupConditions.add(conditionSet);
