@@ -2,4 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ruleengine.web.store.mapper.RuleEngineDecisionTablePublishMapper">
 
+    <select id="countReferenceByVariableId" resultType="int">
+         select count(*)
+            from rule_engine_decision_table_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.variableIds', JSON_ARRAY(#{id}))
+    </select>
+
+    <select id="countReferenceByElementId" resultType="int">
+         select count(*)
+            from rule_engine_decision_table_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
+    </select>
 </mapper>

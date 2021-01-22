@@ -50,6 +50,8 @@ public class RuleEngineDecisionTable implements Serializable {
 
     private Integer status;
 
+    private String referenceData;
+
     private String abnormalAlarm;
 
     @TableField(fill = FieldFill.INSERT)

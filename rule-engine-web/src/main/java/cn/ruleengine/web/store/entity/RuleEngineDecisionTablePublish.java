@@ -2,7 +2,6 @@ package cn.ruleengine.web.store.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 
-import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -39,6 +38,8 @@ public class RuleEngineDecisionTablePublish implements Serializable {
     private String data;
 
     private Integer status;
+
+    private String referenceData;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

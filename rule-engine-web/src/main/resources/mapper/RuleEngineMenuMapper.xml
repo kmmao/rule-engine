@@ -12,5 +12,8 @@
             and ur.role_id = r.id
             and r.id = rm.role_id
             and rm.menu_id = m.id
+            and m.deleted=0
+            and ur.deleted=0
+            and rm.deleted=0
     </select>
 </mapper>

@@ -2,5 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ruleengine.web.store.mapper.RuleEngineElementMapper">
 
+    <select id="countPublishRuleElement" resultType="java.lang.Integer">
+            select count(*)
+            from rule_engine_general_rule_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.data -> '$**.elementId', JSON_ARRAY(#{variableId}))
+    </select>
 
+    <select id="countPublishRuleSetElement" resultType="java.lang.Integer">
+               select count(*)
+            from rule_engine_rule_set_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.data -> '$**.elementId', JSON_ARRAY(#{variableId}))
+    </select>
 </mapper>

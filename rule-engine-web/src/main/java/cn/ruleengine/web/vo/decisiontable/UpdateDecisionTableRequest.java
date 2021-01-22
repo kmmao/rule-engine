@@ -27,6 +27,6 @@ public class UpdateDecisionTableRequest {
     /**
      * 决策表数据
      */
-    private Object tableData;
+    private TableData tableData;
 
 }

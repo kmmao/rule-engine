@@ -8,6 +8,8 @@ import cn.ruleengine.web.listener.event.VariableEvent;
 import cn.ruleengine.web.service.VariableService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
+import cn.ruleengine.web.store.mapper.RuleEngineDecisionTableMapper;
+import cn.ruleengine.web.store.mapper.RuleEngineDecisionTablePublishMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineVariableMapper;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.convert.BasicConversion;
@@ -64,6 +66,10 @@ public class VariableServiceImpl implements VariableService {
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private ApplicationEventPublisher eventPublisher;
+    @Resource
+    private RuleEngineDecisionTableMapper ruleEngineDecisionTableMapper;
+    @Resource
+    private RuleEngineDecisionTablePublishMapper ruleEngineDecisionTablePublishMapper;
 
     /**
      * 添加变量
@@ -309,11 +315,31 @@ public class VariableServiceImpl implements VariableService {
             }
         }
         {
+            Integer count = ruleEngineVariableMapper.countPublishRuleSetVar(id);
+            if (count != null && count > 0) {
+                throw new ValidException("有发布规则集在引用此变量，无法删除");
+            }
+        }
+        {
             Integer count = this.ruleEngineFunctionValueManager.lambdaQuery()
                     .eq(RuleEngineFunctionValue::getType, VariableType.VARIABLE.getType())
                     .eq(RuleEngineFunctionValue::getValue, id).count();
             if (count != null && count > 0) {
                 throw new ValidException("有函数值在引用此变量，无法删除");
+            }
+        }
+        //  决策表引用
+        {
+            int reference = this.ruleEngineDecisionTableMapper.countReferenceByVariableId(id);
+            if (reference > 0) {
+                throw new ValidException("有决策表在引用此变量，无法删除");
+            }
+        }
+        // 发布决策表引用
+        {
+            int reference = this.ruleEngineDecisionTablePublishMapper.countReferenceByVariableId(id);
+            if (reference > 0) {
+                throw new ValidException("有发布决策表在引用此变量，无法删除");
             }
         }
         {
@@ -341,8 +367,6 @@ public class VariableServiceImpl implements VariableService {
                 throw new ValidException("有条件在引用此变量，无法删除");
             }
         }
-        // TODO: 2021/1/11  决策表引用
-        // ... 考虑是否会重新设计
         VariableMessageBody variableMessageBody = new VariableMessageBody();
         variableMessageBody.setType(VariableMessageBody.Type.REMOVE);
         variableMessageBody.setId(id);

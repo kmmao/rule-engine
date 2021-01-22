@@ -22,4 +22,11 @@ public interface RuleEngineVariableMapper extends BaseMapper<RuleEngineVariable>
      */
     Integer countPublishRuleVar(@Param("variableId") Integer variableId);
 
+    /**
+     * 统计发布规则集中引用此变量的数量
+     *
+     * @param variableId 变量id
+     * @return 引用的数量
+     */
+    Integer countPublishRuleSetVar(@Param("variableId") Integer variableId);
 }

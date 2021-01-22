@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.decisiontable.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.decisiontable.*;
@@ -21,6 +22,7 @@ import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ReferenceData;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.decisiontable.*;
@@ -237,7 +239,37 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTable.setStrategyType(updateDecisionTableRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(updateDecisionTableRequest.getTableData()));
+        ruleEngineDecisionTable.setReferenceData(JSON.toJSONString(this.countReferenceData(updateDecisionTableRequest.getTableData())));
         return this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
+    }
+
+    /**
+     * 统计决策表引用的变量以及元素id
+     *
+     * @param tableData 决策表
+     * @return ReferenceData
+     */
+    public ReferenceData countReferenceData(TableData tableData) {
+        ReferenceData referenceData = new ReferenceData();
+        List<CollConditionHeads> collConditionHeads = tableData.getCollConditionHeads();
+        if (CollUtil.isNotEmpty(collConditionHeads)) {
+            for (CollConditionHeads collConditionHead : collConditionHeads) {
+                referenceData.resolve(collConditionHead.getLeftValue());
+            }
+        }
+        CollResultHead collResultHead = tableData.getCollResultHead();
+        DefaultAction defaultAction = collResultHead.getDefaultAction();
+        referenceData.resolve(defaultAction);
+        List<Rows> rows = tableData.getRows();
+        for (Rows row : rows) {
+            List<ConfigValue> conditions = row.getConditions();
+            for (ConfigValue condition : conditions) {
+                referenceData.resolve(condition);
+            }
+            ConfigValue result = row.getResult();
+            referenceData.resolve(result);
+        }
+        return referenceData;
     }
 
     /**
@@ -290,6 +322,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
+        String referenceDataJson = JSON.toJSONString(this.countReferenceData(releaseRequest.getTableData()));
+        ruleEngineDecisionTable.setReferenceData(referenceDataJson);
         this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
         RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = new RuleEngineDecisionTablePublish();
         ruleEngineDecisionTablePublish.setDecisionTableId(ruleEngineDecisionTable.getId());
@@ -299,6 +333,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         DecisionTable decisionTable = this.decisionTableResolveService.decisionTableProcess(ruleEngineDecisionTable);
         ruleEngineDecisionTablePublish.setData(decisionTable.toJson());
         ruleEngineDecisionTablePublish.setStatus(ruleEngineDecisionTable.getStatus());
+        ruleEngineDecisionTablePublish.setReferenceData(referenceDataJson);
         this.ruleEngineDecisionTablePublishManager.save(ruleEngineDecisionTablePublish);
         return true;
     }

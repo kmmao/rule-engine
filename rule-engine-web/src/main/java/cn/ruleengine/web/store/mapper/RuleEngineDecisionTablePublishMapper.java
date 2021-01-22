@@ -2,6 +2,7 @@ package cn.ruleengine.web.store.mapper;
 
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTablePublish;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -12,5 +13,21 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-12-27
  */
 public interface RuleEngineDecisionTablePublishMapper extends BaseMapper<RuleEngineDecisionTablePublish> {
+
+    /**
+     * 统计决策表引用此变量的数量
+     *
+     * @param id id
+     * @return int
+     */
+    int countReferenceByVariableId(@Param("id") Integer id);
+
+    /**
+     * 统计决策表引用此元素的数量
+     *
+     * @param id id
+     * @return int
+     */
+    int countReferenceByElementId(@Param("id") Integer id);
 
 }
