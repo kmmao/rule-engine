@@ -29,6 +29,9 @@ import java.util.stream.Collectors;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * <p>
+ * 虽然表中存在reference_data字段存储了element，但是并不能简单的通过reference_data来寻找element，
+ * 存在函数变量循环引用问题，变量引用链随时发生改变
  *
  * @author dingqianwen
  * @date 2020/8/27

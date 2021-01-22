@@ -27,10 +27,6 @@ public class ValueResolveImpl implements ValueResolve {
     private RuleEngineElementManager ruleEngineElementManager;
     @Resource
     private RuleEngineVariableManager ruleEngineVariableManager;
-    @Resource
-    private RuleEngineFunctionManager ruleEngineFunctionManager;
-    @Resource
-    private RuleEngineFunctionValueManager ruleEngineFunctionValueManager;
 
     /**
      * 解析值，变为Value
