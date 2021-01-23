@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.rule.Rule;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * @create 2020/12/29
  * @since 1.0.0
  */
+@Slf4j
 public class TheFirstRuleStrategy implements RuleSetStrategy {
 
     private static TheFirstRuleStrategy theFirstRuleStrategy = new TheFirstRuleStrategy();
@@ -31,9 +33,15 @@ public class TheFirstRuleStrategy implements RuleSetStrategy {
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
         // 当没有任何规则时
         if (CollUtil.isEmpty(rules)) {
+            log.info("规则集为空");
             return Collections.emptyList();
         }
-        Object action = rules.iterator().next().execute(input, configuration);
+        Rule rule = rules.iterator().next();
+        log.info("执行规则：{}", rule.getName());
+        Object action = rule.execute(input, configuration);
+        if (action != null) {
+            log.info("规则：{} 命中结果：{}", rule.getName(), action);
+        }
         return Collections.singletonList(action);
     }
 
