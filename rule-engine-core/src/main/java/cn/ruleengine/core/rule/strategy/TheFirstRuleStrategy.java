@@ -1,5 +1,6 @@
 package cn.ruleengine.core.rule.strategy;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.rule.Rule;
@@ -28,6 +29,10 @@ public class TheFirstRuleStrategy implements RuleSetStrategy {
 
     @Override
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
+        // 当没有任何规则时
+        if (CollUtil.isEmpty(rules)) {
+            return Collections.emptyList();
+        }
         Object action = rules.iterator().next().execute(input, configuration);
         return Collections.singletonList(action);
     }
