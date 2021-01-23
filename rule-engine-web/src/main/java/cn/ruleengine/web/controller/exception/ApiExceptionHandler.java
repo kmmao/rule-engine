@@ -4,8 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.exception.*;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.exception.ApiException;
+import cn.ruleengine.web.exception.AuthException;
 import cn.ruleengine.web.exception.DataPermissionException;
-import cn.ruleengine.web.exception.NoLoginException;
+import cn.ruleengine.web.exception.LoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
 import cn.ruleengine.web.vo.base.BaseResult;
 import lombok.SneakyThrows;
@@ -233,7 +234,7 @@ public class ApiExceptionHandler {
         BaseResult result = BaseResult.err();
         Field source = ObjectError.class.getDeclaredField("source");
         source.setAccessible(true);
-        ConstraintViolation constraintViolation = (ConstraintViolation) source.get(e.getBindingResult().getFieldError());
+        ConstraintViolation<?> constraintViolation = (ConstraintViolation<?>) source.get(e.getBindingResult().getFieldError());
         String messageTemplate = constraintViolation.getMessageTemplate();
         // 如果使用默认的{javax.validation.constraints.***.message}
         if (messageTemplate.startsWith(StrUtil.DELIM_START) && messageTemplate.endsWith(StrUtil.DELIM_END)) {
@@ -278,17 +279,32 @@ public class ApiExceptionHandler {
 
 
     /**
-     * 未登录
+     * 权限异常
      *
      * @param e e
      * @return BaseResult
      */
-    @ExceptionHandler(value = NoLoginException.class)
-    public BaseResult noLoginException(NoLoginException e) {
-        log.warn("NoLoginException", e);
+    @ExceptionHandler(value = AuthException.class)
+    public BaseResult authException(AuthException e) {
+        log.warn("AuthException", e);
         BaseResult result = BaseResult.err();
-        result.setMessage(ErrorCodeEnum.RULE4009.getMsg());
-        result.setCode(ErrorCodeEnum.RULE4009.getCode());
+        result.setMessage(e.getMessage());
+        result.setCode(e.getCode());
+        return result;
+    }
+
+    /**
+     * 登录异常
+     *
+     * @param e e
+     * @return BaseResult
+     */
+    @ExceptionHandler(value = LoginException.class)
+    public BaseResult loginException(LoginException e) {
+        log.debug("loginException:{}", e.getMessage());
+        BaseResult result = BaseResult.err();
+        result.setMessage(e.getMessage());
+        result.setCode(ErrorCodeEnum.RULE99990101.getCode());
         return result;
     }
 

@@ -3,6 +3,7 @@ package cn.ruleengine.web.service.impl;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.HtmlTemplatesEnum;
 import cn.ruleengine.web.enums.VerifyCodeType;
+import cn.ruleengine.web.exception.LoginException;
 import cn.ruleengine.web.service.RoleService;
 import cn.ruleengine.web.service.UserService;
 import cn.ruleengine.web.store.entity.RuleEngineRole;
@@ -78,10 +79,10 @@ public class UserServiceImpl implements UserService {
                 .and(a -> a.eq(RuleEngineUser::getUsername, loginRequest.getUsername())
                         .or().eq(RuleEngineUser::getEmail, loginRequest.getUsername())).one();
         if (ruleEngineUser == null) {
-            throw new ValidationException("用户名/邮箱不存在!");
+            throw new LoginException("用户名/邮箱不存在!");
         }
         if (!(ruleEngineUser.getPassword().equals(MD5Utils.encrypt(loginRequest.getPassword())))) {
-            throw new ValidationException("登录密码错误!");
+            throw new LoginException("登录密码错误!");
         }
         String token = JWTUtils.genderToken(String.valueOf(ruleEngineUser.getId()), "rule-engine", ruleEngineUser.getUsername());
         HttpServletResponse response = HttpServletUtils.getResponse();

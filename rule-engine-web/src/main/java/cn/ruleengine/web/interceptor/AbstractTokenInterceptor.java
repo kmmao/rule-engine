@@ -15,13 +15,12 @@
  */
 package cn.ruleengine.web.interceptor;
 
-import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.web.annotation.NoAuth;
 import cn.ruleengine.web.annotation.RoleAuth;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
+import cn.ruleengine.web.exception.AuthException;
 import cn.ruleengine.web.util.JWTUtils;
-import cn.ruleengine.web.util.ResponseUtils;
-import cn.ruleengine.web.vo.base.BaseResult;
 import cn.ruleengine.web.vo.user.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
@@ -75,18 +74,16 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         }
         //获取Header中的token
         String token = request.getHeader(TOKEN);
-        if (Validator.isEmpty(token)) {
+        if (StrUtil.isNullOrUndefined(token)) {
             log.warn("Token为空");
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE10010004.getCode(), ErrorCodeEnum.RULE10010004.getMsg()));
-            return false;
+            throw new AuthException(ErrorCodeEnum.RULE10010004);
         }
         try {
             // 对token进行验证
             JWTUtils.verifyToken(token);
         } catch (Exception e) {
             log.warn("Token验证不通过,Token:{}", token);
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE10011039.getCode(), ErrorCodeEnum.RULE10011039.getMsg()));
-            return false;
+            throw new AuthException(ErrorCodeEnum.RULE10011039);
         }
         // 从redis获取到用户信息保存到本地
         RBucket<UserData> bucket = this.redissonClient.getBucket(this.tokenKeyPrefix.concat(token));
@@ -94,8 +91,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         UserData userData = bucket.get();
         if (userData == null) {
             log.warn("验证信息失效!");
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE99990402.getCode(), ErrorCodeEnum.RULE99990402.getMsg()));
-            return false;
+            throw new AuthException(ErrorCodeEnum.RULE99990402);
         }
         //更新过期时间
         bucket.expire(this.redisTokenKeepTime, TimeUnit.MILLISECONDS);
@@ -105,8 +101,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
         if (roleAuth != null && !this.auth(roleAuth.code(), roleAuth.transfer(), userData)) {
             //Token验证通过,但是用户无权限访问
             log.warn("无权限访问,User:{}", userData);
-            ResponseUtils.responseJson(BaseResult.err(ErrorCodeEnum.RULE99990401.getCode(), ErrorCodeEnum.RULE99990401.getMsg()));
-            return false;
+            throw new AuthException(ErrorCodeEnum.RULE99990401);
         }
         log.debug("权限验证通过,User:{}", userData);
         USER.set(userData);
