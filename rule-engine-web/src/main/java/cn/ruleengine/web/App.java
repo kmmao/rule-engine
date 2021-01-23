@@ -60,7 +60,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
         scanBasePackages = "cn.ruleengine")
 @MapperScan({"cn.ruleengine.web.store.mapper"})
 @EnableTransactionManagement
-@Import({LogicSqlInjector.class, RestTemplate.class, PaginationInterceptor.class})
+@Import({/*LogicSqlInjector.class,*/
+        RestTemplate.class,
+        PaginationInterceptor.class})
 @EnableSwagger2
 @EnableSwaggerBootstrapUI
 public class App {

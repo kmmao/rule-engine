@@ -59,11 +59,11 @@ public class DataPermissionAspect {
     /**
      * 解析spel表达式
      */
-    private ExpressionParser parser = new SpelExpressionParser();
+    private final ExpressionParser parser = new SpelExpressionParser();
     /**
      * 将方法参数纳入Spring管理
      */
-    private LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
+    private final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
 
     /**
      * 此注解主要防止通过url越权操作数据
