@@ -41,8 +41,9 @@ public class TheFirstRuleStrategy implements RuleSetStrategy {
         Object action = rule.execute(input, configuration);
         if (action != null) {
             log.info("规则：{} 命中结果：{}", rule.getName(), action);
+            return Collections.singletonList(action);
         }
-        return Collections.singletonList(action);
+        return Collections.emptyList();
     }
 
 }
