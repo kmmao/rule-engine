@@ -147,9 +147,10 @@ auth:
     keyPrefix: "rule-engine:token:"
     keepTime: 3600000
 
-#阿里巴巴oss
+# aliyun oss
 aliyun:
   oss:
+    enable: false
     endPoint:
     accessKeyId:
     accessKeySecret:

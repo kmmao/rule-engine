@@ -5,9 +5,13 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.ObjectMetadata;
+import jodd.util.StringPool;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -29,13 +33,23 @@ import java.util.Date;
 @Component
 public class AliOSSClient {
 
-    @Resource
+    @Getter
     private Properties properties;
-    @Resource
     private OSSClient ossClient;
+
+    @Autowired(required = false)
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    @Autowired(required = false)
+    public void setOssClient(OSSClient ossClient) {
+        this.ossClient = ossClient;
+    }
 
     @Data
     @Component
+    @ConditionalOnProperty(prefix = "aliyun.oss", name = "enable", havingValue = "true")
     @ConfigurationProperties("aliyun.oss")
     public static class Properties {
         private String endPoint;
@@ -66,6 +80,10 @@ public class AliOSSClient {
      * @return url连接
      */
     public String upload(InputStream is, String fileName, String folder) {
+        if (this.ossClient == null) {
+            log.warn("aliyun oss not configured！");
+            return StringPool.EMPTY;
+        }
         //创建OSS客户端
         try {
             String dir = Validator.isEmpty(folder) ? fileName : folder + "/" + fileName;

@@ -49,8 +49,6 @@ public class UserServiceImpl implements UserService {
     @Resource
     private AliOSSClient aliOSSClient;
     @Resource
-    private AliOSSClient.Properties properties;
-    @Resource
     private RoleService roleService;
 
     @Value("${auth.redis.token.keyPrefix:token:}")
@@ -253,7 +251,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {
-        String defaultFolder = this.properties.getDefaultFolder();
+        String defaultFolder = this.aliOSSClient.getProperties().getDefaultFolder();
         return aliOSSClient.upload(file.getInputStream(), file.getOriginalFilename(), defaultFolder);
     }
 
