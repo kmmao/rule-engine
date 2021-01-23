@@ -7,11 +7,7 @@ import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.GeneralRuleMessageBody;
 import cn.ruleengine.web.listener.event.GeneralRuleEvent;
-import cn.ruleengine.web.service.ActionService;
-import cn.ruleengine.web.service.ConditionSetService;
-import cn.ruleengine.web.service.RuleEngineConditionGroupService;
-import cn.ruleengine.web.service.ValueResolve;
-import cn.ruleengine.web.service.ParameterService;
+import cn.ruleengine.web.service.*;
 import cn.ruleengine.web.service.generalrule.GeneralRuleService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -19,11 +15,13 @@ import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineGeneralRuleMapper;
 
 import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.vo.common.ReferenceData;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.decisiontable.TableData;
 import cn.ruleengine.web.vo.generalrule.*;
 import cn.ruleengine.core.condition.ConditionGroup;
 
@@ -34,6 +32,7 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.exception.ValidException;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
@@ -42,6 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -80,6 +80,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     private ActionService actionService;
     @Resource
     private ConditionSetService conditionSetService;
+    @Resource
+    private ReferenceDataService referenceDataService;
 
     /**
      * 规则列表
@@ -140,47 +142,50 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     /**
      * 更新规则信息
      *
-     * @param updateRuleRequest 规则配置数据
+     * @param generalRuleBody 规则配置数据
      * @return true执行成功
      */
     @Override
-    public Boolean updateRule(UpdateGeneralRuleRequest updateRuleRequest) {
-        RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(updateRuleRequest.getId());
+    public Boolean updateRule(GeneralRuleBody generalRuleBody) {
+        RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(generalRuleBody.getId());
         if (ruleEngineGeneralRule == null) {
-            throw new ValidException("不存在规则:{}", updateRuleRequest.getId());
+            throw new ValidException("不存在规则:{}", generalRuleBody.getId());
         }
         // 如果之前是待发布，则删除原有待发布数据
         if (Objects.equals(ruleEngineGeneralRule.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
             this.ruleEngineGeneralRulePublishManager.lambdaUpdate()
                     .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
-                    .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, updateRuleRequest.getId())
+                    .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, generalRuleBody.getId())
                     .remove();
         }
         // 如果原来有条件信息，先删除原有信息
         this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(Collections.singletonList(ruleEngineGeneralRule.getRuleId()));
         // 保存条件信息
-        this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), updateRuleRequest.getConditionGroup());
+        this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), generalRuleBody.getConditionGroup());
         //  更新规则信息
-        ruleEngineGeneralRule.setId(updateRuleRequest.getId());
+        ruleEngineGeneralRule.setId(generalRuleBody.getId());
         ruleEngineGeneralRule.setStatus(DataStatus.EDIT.getStatus());
         // 保存规则结果
-        ConfigValue action = updateRuleRequest.getAction();
-        RuleEngineRule ruleEngineRule = new RuleEngineRule();
-        ruleEngineRule.setId(ruleEngineGeneralRule.getRuleId());
-        ruleEngineRule.setActionType(action.getType());
-        ruleEngineRule.setActionValueType(action.getValueType());
-        ruleEngineRule.setActionValue(action.getValue());
-        ruleEngineRuleMapper.updateRuleById(ruleEngineRule);
+        this.saveAction(ruleEngineGeneralRule.getRuleId(), generalRuleBody.getAction());
         // 保存默认结果
-        DefaultAction defaultAction = updateRuleRequest.getDefaultAction();
+        DefaultAction defaultAction = generalRuleBody.getDefaultAction();
         ruleEngineGeneralRule.setEnableDefaultAction(defaultAction.getEnableDefaultAction());
         ruleEngineGeneralRule.setDefaultActionValue(defaultAction.getValue());
         ruleEngineGeneralRule.setDefaultActionValueType(defaultAction.getValueType());
         ruleEngineGeneralRule.setDefaultActionType(defaultAction.getType());
+        ruleEngineGeneralRule.setReferenceData(JSON.toJSONString(referenceDataService.countReferenceData(generalRuleBody)));
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         return true;
     }
 
+    private void saveAction(Integer ruleId, ConfigValue action) {
+        RuleEngineRule ruleEngineRule = new RuleEngineRule();
+        ruleEngineRule.setId(ruleId);
+        ruleEngineRule.setActionType(action.getType());
+        ruleEngineRule.setActionValueType(action.getValueType());
+        ruleEngineRule.setActionValue(action.getValue());
+        this.ruleEngineRuleMapper.updateRuleById(ruleEngineRule);
+    }
 
     /**
      * 删除规则
@@ -285,39 +290,36 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     /**
      * 生成待发布版本，更新规则数据
      *
-     * @param releaseRequest 规则配置数据
+     * @param generalRuleBody 规则配置数据
      * @return true
      */
     @Override
-    public Boolean generationRelease(GenerationReleaseRequest releaseRequest) {
+    public Boolean generationRelease(GeneralRuleBody generalRuleBody) {
         // 更新规则
-        RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(releaseRequest.getId());
+        RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(generalRuleBody.getId());
         if (ruleEngineGeneralRule == null) {
-            throw new ValidException("不存在规则:{}", releaseRequest.getId());
+            throw new ValidException("不存在规则:{}", generalRuleBody.getId());
         }
         Integer originStatus = ruleEngineGeneralRule.getStatus();
         // 如果开启了默认结果
-        DefaultAction defaultAction = releaseRequest.getDefaultAction();
+        DefaultAction defaultAction = generalRuleBody.getDefaultAction();
         defaultAction.valid();
         // 如果原来有条件信息，先删除原有信息
         this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(Collections.singletonList(ruleEngineGeneralRule.getRuleId()));
         // 保存条件信息
-        this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), releaseRequest.getConditionGroup());
+        this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), generalRuleBody.getConditionGroup());
         //  更新规则信息
         ruleEngineGeneralRule.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         // 保存结果
-        ConfigValue action = releaseRequest.getAction();
-        RuleEngineRule ruleEngineRule = new RuleEngineRule();
-        ruleEngineRule.setActionValue(action.getValue());
-        ruleEngineRule.setId(ruleEngineGeneralRule.getRuleId());
-        ruleEngineRule.setActionType(action.getType());
-        ruleEngineRule.setActionValueType(action.getValueType());
-        ruleEngineRuleMapper.updateRuleById(ruleEngineRule);
+        ConfigValue action = generalRuleBody.getAction();
+        this.saveAction(ruleEngineGeneralRule.getRuleId(), generalRuleBody.getAction());
         // 保存默认结果
         ruleEngineGeneralRule.setEnableDefaultAction(defaultAction.getEnableDefaultAction());
         ruleEngineGeneralRule.setDefaultActionValue(defaultAction.getValue());
         ruleEngineGeneralRule.setDefaultActionValueType(defaultAction.getValueType());
         ruleEngineGeneralRule.setDefaultActionType(defaultAction.getType());
+        String referenceData = JSON.toJSONString(referenceDataService.countReferenceData(generalRuleBody));
+        ruleEngineGeneralRule.setReferenceData(referenceData);
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         // 生成待发布规则
         if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
@@ -329,13 +331,13 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         }
         // 添加新的待发布数据
         GeneralRule generalRule = new GeneralRule();
-        generalRule.setId(releaseRequest.getId());
+        generalRule.setId(generalRuleBody.getId());
         generalRule.setCode(ruleEngineGeneralRule.getCode());
         generalRule.setName(ruleEngineGeneralRule.getName());
         generalRule.setWorkspaceCode(ruleEngineGeneralRule.getWorkspaceCode());
         generalRule.setWorkspaceId(ruleEngineGeneralRule.getWorkspaceId());
         generalRule.setDescription(ruleEngineGeneralRule.getDescription());
-        generalRule.setConditionSet(this.conditionSetService.loadConditionSet(releaseRequest.getConditionGroup()));
+        generalRule.setConditionSet(this.conditionSetService.loadConditionSet(generalRuleBody.getConditionGroup()));
         generalRule.setActionValue(this.valueResolve.getValue(action.getType(), action.getValueType(), action.getValue()));
         // 如果启用了默认结果
         if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
@@ -349,6 +351,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         rulePublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         rulePublish.setWorkspaceId(generalRule.getWorkspaceId());
         rulePublish.setWorkspaceCode(generalRule.getWorkspaceCode());
+        rulePublish.setReferenceData(referenceData);
         this.ruleEngineGeneralRulePublishManager.save(rulePublish);
         return true;
     }

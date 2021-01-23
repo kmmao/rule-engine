@@ -42,10 +42,10 @@ public interface RuleSetService {
     /**
      * 生成待发布版本，更新规则数据
      *
-     * @param releaseRequest 规则集配置数据
+     * @param ruleSetBody 规则集配置数据
      * @return true
      */
-    Boolean generationRelease(GenerationReleaseRequest releaseRequest);
+    Boolean generationRelease(RuleSetBody ruleSetBody);
 
     /**
      * 规则集发布
@@ -58,10 +58,10 @@ public interface RuleSetService {
     /**
      * 更新规则集信息
      *
-     * @param updateRuleSetRequest 规则配置数据
+     * @param ruleSetBody 规则配置数据
      * @return true执行成功
      */
-    Boolean updateRuleSet(UpdateRuleSetRequest updateRuleSetRequest);
+    Boolean updateRuleSet(RuleSetBody ruleSetBody);
 
     /**
      * 获取规则集信息

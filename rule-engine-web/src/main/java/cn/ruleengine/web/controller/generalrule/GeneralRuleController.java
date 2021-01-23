@@ -100,16 +100,16 @@ public class GeneralRuleController {
     /**
      * 生成待发布版本，更新规则数据
      *
-     * @param releaseRequest 规则配置数据
+     * @param generalRuleBody 规则配置数据
      * @return true
      */
     @ReSubmitLock
-    @DataPermission(id = "#releaseRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#generalRuleBody.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
     @ApiOperation("生成普通规则代发布")
-    public BaseResult generationRelease(@Valid @RequestBody GenerationReleaseRequest releaseRequest) {
+    public BaseResult generationRelease(@Valid @RequestBody GeneralRuleBody generalRuleBody) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(ruleService.generationRelease(releaseRequest));
+        plainResult.setData(ruleService.generationRelease(generalRuleBody));
         return plainResult;
     }
 
@@ -133,16 +133,16 @@ public class GeneralRuleController {
     /**
      * 更新规则信息
      *
-     * @param updateRuleRequest 规则配置数据
+     * @param generalRuleBody 规则配置数据
      * @return true执行成功
      */
     @ReSubmitLock
-    @DataPermission(id = "#updateRuleRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#generalRuleBody.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("updateRule")
     @ApiOperation("更新规则信息")
-    public BaseResult updateRule(@Valid @RequestBody UpdateGeneralRuleRequest updateRuleRequest) {
+    public BaseResult updateRule(@Valid @RequestBody GeneralRuleBody generalRuleBody) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(ruleService.updateRule(updateRuleRequest));
+        plainResult.setData(ruleService.updateRule(generalRuleBody));
         return plainResult;
     }
 

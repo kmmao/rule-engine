@@ -54,6 +54,8 @@ public class RuleEngineRuleSet implements Serializable {
 
     private Integer defaultRuleId;
 
+    private String referenceData;
+
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

@@ -5,12 +5,36 @@
     <select id="countPublishRuleElement" resultType="java.lang.Integer">
             select count(*)
             from rule_engine_general_rule_publish r
-            where r.deleted = 0 and  JSON_CONTAINS(r.data -> '$**.elementId', JSON_ARRAY(#{variableId}))
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
     </select>
 
     <select id="countPublishRuleSetElement" resultType="java.lang.Integer">
-               select count(*)
+            select count(*)
             from rule_engine_rule_set_publish r
-            where r.deleted = 0 and  JSON_CONTAINS(r.data -> '$**.elementId', JSON_ARRAY(#{variableId}))
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
+    </select>
+
+    <select id="countRuleElement" resultType="java.lang.Integer">
+                  select count(*)
+            from rule_engine_general_rule r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
+    </select>
+
+    <select id="countRuleSetElement" resultType="java.lang.Integer">
+           select count(*)
+            from rule_engine_rule_set r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
+    </select>
+
+    <select id="countDecisionTableElementId" resultType="int">
+            select count(*)
+            from rule_engine_decision_table r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
+    </select>
+
+    <select id="countPublishDecisionTableElementId" resultType="int">
+          select count(*)
+            from rule_engine_decision_table_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.elementIds', JSON_ARRAY(#{id}))
     </select>
 </mapper>

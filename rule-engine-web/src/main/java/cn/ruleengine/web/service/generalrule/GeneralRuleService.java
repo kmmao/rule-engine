@@ -41,10 +41,10 @@ public interface GeneralRuleService {
     /**
      * 更新规则信息
      *
-     * @param updateRuleRequest 规则配置数据
+     * @param generalRuleBody 规则配置数据
      * @return true执行成功
      */
-    Boolean updateRule(UpdateGeneralRuleRequest updateRuleRequest);
+    Boolean updateRule(GeneralRuleBody generalRuleBody);
 
     /**
      * 删除规则
@@ -73,10 +73,10 @@ public interface GeneralRuleService {
     /**
      * 生成待发布版本，更新规则数据
      *
-     * @param generationReleaseRequest 规则配置数据
+     * @param generalRuleBody 规则配置数据
      * @return true
      */
-    Boolean generationRelease(GenerationReleaseRequest generationReleaseRequest);
+    Boolean generationRelease(GeneralRuleBody generalRuleBody);
 
     /**
      * 规则发布

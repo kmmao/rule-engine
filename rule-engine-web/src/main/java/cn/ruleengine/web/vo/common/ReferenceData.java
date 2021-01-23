@@ -20,6 +20,11 @@ public class ReferenceData {
 
     private Set<Integer> elementIds = new HashSet<>();
     private Set<Integer> variableIds = new HashSet<>();
+    private Set<Integer> conditionIds = new HashSet<>();
+
+    public void addConditionId(Integer id) {
+        this.conditionIds.add(id);
+    }
 
     public void resolve(ConfigValue configValue) {
         if (configValue == null) {

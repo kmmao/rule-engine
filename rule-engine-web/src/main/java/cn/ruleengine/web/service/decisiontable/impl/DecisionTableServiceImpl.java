@@ -10,6 +10,7 @@ import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
 import cn.ruleengine.web.listener.event.DecisionTableEvent;
+import cn.ruleengine.web.service.ReferenceDataService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.service.decisiontable.DecisionTableResolveService;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
@@ -22,7 +23,6 @@ import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
-import cn.ruleengine.web.vo.common.ReferenceData;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.decisiontable.*;
@@ -65,6 +65,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     private ValueResolve valueResolve;
     @Resource
     private ParameterService parameterService;
+    @Resource
+    private ReferenceDataService referenceDataService;
 
     /**
      * 决策表列表
@@ -239,37 +241,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTable.setStrategyType(updateDecisionTableRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(updateDecisionTableRequest.getTableData()));
-        ruleEngineDecisionTable.setReferenceData(JSON.toJSONString(this.countReferenceData(updateDecisionTableRequest.getTableData())));
+        ruleEngineDecisionTable.setReferenceData(JSON.toJSONString(referenceDataService.countReferenceData(updateDecisionTableRequest.getTableData())));
         return this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
-    }
-
-    /**
-     * 统计决策表引用的变量以及元素id
-     *
-     * @param tableData 决策表
-     * @return ReferenceData
-     */
-    public ReferenceData countReferenceData(TableData tableData) {
-        ReferenceData referenceData = new ReferenceData();
-        List<CollConditionHeads> collConditionHeads = tableData.getCollConditionHeads();
-        if (CollUtil.isNotEmpty(collConditionHeads)) {
-            for (CollConditionHeads collConditionHead : collConditionHeads) {
-                referenceData.resolve(collConditionHead.getLeftValue());
-            }
-        }
-        CollResultHead collResultHead = tableData.getCollResultHead();
-        DefaultAction defaultAction = collResultHead.getDefaultAction();
-        referenceData.resolve(defaultAction);
-        List<Rows> rows = tableData.getRows();
-        for (Rows row : rows) {
-            List<ConfigValue> conditions = row.getConditions();
-            for (ConfigValue condition : conditions) {
-                referenceData.resolve(condition);
-            }
-            ConfigValue result = row.getResult();
-            referenceData.resolve(result);
-        }
-        return referenceData;
     }
 
     /**
@@ -322,7 +295,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
-        String referenceDataJson = JSON.toJSONString(this.countReferenceData(releaseRequest.getTableData()));
+        String referenceDataJson = JSON.toJSONString(referenceDataService.countReferenceData(releaseRequest.getTableData()));
         ruleEngineDecisionTable.setReferenceData(referenceDataJson);
         this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
         RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = new RuleEngineDecisionTablePublish();

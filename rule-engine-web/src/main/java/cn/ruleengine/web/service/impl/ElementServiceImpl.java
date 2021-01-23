@@ -6,8 +6,6 @@ import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
-import cn.ruleengine.web.store.mapper.RuleEngineDecisionTableMapper;
-import cn.ruleengine.web.store.mapper.RuleEngineDecisionTablePublishMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineElementMapper;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.convert.BasicConversion;
@@ -42,14 +40,6 @@ public class ElementServiceImpl implements ElementService {
     private RuleEngineFunctionValueManager ruleEngineFunctionValueManager;
     @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
-    @Resource
-    private RuleEngineRuleManager ruleEngineRuleManager;
-    @Resource
-    private RuleEngineGeneralRuleManager ruleEngineGeneralRuleManager;
-    @Resource
-    private RuleEngineDecisionTableMapper ruleEngineDecisionTableMapper;
-    @Resource
-    private RuleEngineDecisionTablePublishMapper ruleEngineDecisionTablePublishMapper;
     @Resource
     private RuleEngineElementMapper ruleEngineElementMapper;
 
@@ -188,37 +178,37 @@ public class ElementServiceImpl implements ElementService {
         {
             Integer count = ruleEngineElementMapper.countPublishRuleElement(id);
             if (count != null && count > 0) {
-                throw new ValidException("有发布规则在引用此元素，无法删除");
+                throw new ValidException("有发布/待发布规则在引用此元素，无法删除");
             }
         }
         {
             Integer count = ruleEngineElementMapper.countPublishRuleSetElement(id);
             if (count != null && count > 0) {
-                throw new ValidException("有发布规则集在引用此元素，无法删除");
+                throw new ValidException("有发布/待发布规则集在引用此元素，无法删除");
             }
         }
         {
-            Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getActionType, VariableType.ELEMENT.getType()).eq(RuleEngineRule::getActionValue, id).count();
+            Integer count = ruleEngineElementMapper.countRuleElement(id);
             if (count != null && count > 0) {
-                throw new ValidException("有普通规则规则/规则集在引用此元素，无法删除");
+                throw new ValidException("有规则在引用此元素，无法删除");
             }
         }
         {
-            Integer count = this.ruleEngineGeneralRuleManager.lambdaQuery().eq(RuleEngineGeneralRule::getDefaultActionType, VariableType.ELEMENT.getType()).eq(RuleEngineGeneralRule::getDefaultActionValue, id).count();
+            Integer count = ruleEngineElementMapper.countRuleSetElement(id);
             if (count != null && count > 0) {
-                throw new ValidException("有普通规则结果在引用此元素，无法删除");
+                throw new ValidException("有规则集在引用此元素，无法删除");
             }
         }
         {
-            int reference = this.ruleEngineDecisionTableMapper.countReferenceByElementId(id);
+            int reference = this.ruleEngineElementMapper.countDecisionTableElementId(id);
             if (reference > 0) {
                 throw new ValidException("有决策表在引用此元素，无法删除");
             }
         }
         {
-            int reference = this.ruleEngineDecisionTablePublishMapper.countReferenceByElementId(id);
+            int reference = this.ruleEngineElementMapper.countPublishDecisionTableElementId(id);
             if (reference > 0) {
-                throw new ValidException("有发布决策表在引用此元素，无法删除");
+                throw new ValidException("有发布/待发布决策表在引用此元素，无法删除");
             }
         }
         {

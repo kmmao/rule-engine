@@ -6,6 +6,7 @@
         update rule_engine_general_rule
         set  abnormal_alarm=#{abnormalAlarm},
              status=#{status},
+             reference_data=#{referenceData},
              default_action_type=#{defaultActionType},
              default_action_value=#{defaultActionValue},
              default_action_value_type=#{defaultActionValueType},

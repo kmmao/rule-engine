@@ -12,12 +12,12 @@ import java.util.List;
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2020/8/24
+ * @author 丁乾文
+ * @create 2021/1/23
  * @since 1.0.0
  */
 @Data
-public class GenerationReleaseRequest {
+public class GeneralRuleBody {
 
     @NotNull
     private Integer id;
@@ -25,7 +25,6 @@ public class GenerationReleaseRequest {
     private List<ConditionGroupConfig> conditionGroup;
 
     @NotNull
-    @Valid
     private ConfigValue action;
 
     private DefaultAction defaultAction;

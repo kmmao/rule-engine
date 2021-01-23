@@ -61,6 +61,8 @@ public class RuleEngineGeneralRule implements Serializable {
      */
     private String abnormalAlarm;
 
+    private String referenceData;
+
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

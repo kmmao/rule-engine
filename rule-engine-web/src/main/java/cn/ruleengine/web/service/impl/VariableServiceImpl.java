@@ -8,8 +8,6 @@ import cn.ruleengine.web.listener.event.VariableEvent;
 import cn.ruleengine.web.service.VariableService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
-import cn.ruleengine.web.store.mapper.RuleEngineDecisionTableMapper;
-import cn.ruleengine.web.store.mapper.RuleEngineDecisionTablePublishMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineVariableMapper;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.convert.BasicConversion;
@@ -59,17 +57,9 @@ public class VariableServiceImpl implements VariableService {
     @Resource
     private ApplicationContext applicationContext;
     @Resource
-    private RuleEngineRuleManager ruleEngineRuleManager;
-    @Resource
-    private RuleEngineGeneralRuleManager ruleEngineGeneralRuleManager;
-    @Resource
     private RuleEngineConditionManager ruleEngineConditionManager;
     @Resource
     private ApplicationEventPublisher eventPublisher;
-    @Resource
-    private RuleEngineDecisionTableMapper ruleEngineDecisionTableMapper;
-    @Resource
-    private RuleEngineDecisionTablePublishMapper ruleEngineDecisionTablePublishMapper;
 
     /**
      * 添加变量
@@ -309,15 +299,41 @@ public class VariableServiceImpl implements VariableService {
             throw new ValidException("找不到要删除的变量：{}", id);
         }
         {
-            Integer count = ruleEngineVariableMapper.countPublishRuleVar(id);
+            Integer count = ruleEngineVariableMapper.countRuleVariable(id);
             if (count != null && count > 0) {
-                throw new ValidException("有发布规则在引用此变量，无法删除");
+                throw new ValidException("有规则在引用此变量，无法删除");
             }
         }
         {
-            Integer count = ruleEngineVariableMapper.countPublishRuleSetVar(id);
+            Integer count = ruleEngineVariableMapper.countRuleSetVariable(id);
             if (count != null && count > 0) {
-                throw new ValidException("有发布规则集在引用此变量，无法删除");
+                throw new ValidException("有规则集在引用此变量，无法删除");
+            }
+        }
+        {
+            Integer count = ruleEngineVariableMapper.countPublishRuleVariable(id);
+            if (count != null && count > 0) {
+                throw new ValidException("有发布/待发布规则在引用此变量，无法删除");
+            }
+        }
+        {
+            Integer count = ruleEngineVariableMapper.countPublishRuleSetVariable(id);
+            if (count != null && count > 0) {
+                throw new ValidException("有发布/待发布规则集在引用此变量，无法删除");
+            }
+        }
+        //  决策表引用
+        {
+            int reference = this.ruleEngineVariableMapper.countDecisionTableVariableId(id);
+            if (reference > 0) {
+                throw new ValidException("有决策表在引用此变量，无法删除");
+            }
+        }
+        // 发布/待发布决策表引用
+        {
+            int reference = this.ruleEngineVariableMapper.countPublishDecisionTableVariableId(id);
+            if (reference > 0) {
+                throw new ValidException("有发布/待发布决策表在引用此变量，无法删除");
             }
         }
         {
@@ -326,34 +342,6 @@ public class VariableServiceImpl implements VariableService {
                     .eq(RuleEngineFunctionValue::getValue, id).count();
             if (count != null && count > 0) {
                 throw new ValidException("有函数值在引用此变量，无法删除");
-            }
-        }
-        //  决策表引用
-        {
-            int reference = this.ruleEngineDecisionTableMapper.countReferenceByVariableId(id);
-            if (reference > 0) {
-                throw new ValidException("有决策表在引用此变量，无法删除");
-            }
-        }
-        // 发布决策表引用
-        {
-            int reference = this.ruleEngineDecisionTablePublishMapper.countReferenceByVariableId(id);
-            if (reference > 0) {
-                throw new ValidException("有发布决策表在引用此变量，无法删除");
-            }
-        }
-        {
-            Integer count = this.ruleEngineRuleManager.lambdaQuery().eq(RuleEngineRule::getActionType, VariableType.VARIABLE.getType()).eq(RuleEngineRule::getActionValue, id)
-                    .count();
-            if (count != null && count > 0) {
-                throw new ValidException("有规则在引用此变量，无法删除");
-            }
-        }
-        {
-            Integer count = this.ruleEngineGeneralRuleManager.lambdaQuery().eq(RuleEngineGeneralRule::getDefaultActionType, VariableType.VARIABLE.getType()).eq(RuleEngineGeneralRule::getDefaultActionValue, id)
-                    .count();
-            if (count != null && count > 0) {
-                throw new ValidException("有规则在引用此变量，无法删除");
             }
         }
         {

@@ -6,10 +6,7 @@ import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.RuleSetStrategyType;
 import cn.ruleengine.web.enums.EnableEnum;
-import cn.ruleengine.web.service.ActionService;
-import cn.ruleengine.web.service.ConditionSetService;
-import cn.ruleengine.web.service.ValueResolve;
-import cn.ruleengine.web.service.ParameterService;
+import cn.ruleengine.web.service.*;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.ruleset.RuleBody;
 
@@ -22,7 +19,6 @@ import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.listener.body.RuleSetMessageBody;
 import cn.ruleengine.web.listener.event.RuleSetEvent;
-import cn.ruleengine.web.service.RuleEngineConditionGroupService;
 import cn.ruleengine.web.service.ruleset.RuleSetService;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
@@ -35,6 +31,7 @@ import cn.ruleengine.web.vo.generalrule.ListGeneralRuleRequest;
 import cn.ruleengine.web.vo.ruleset.*;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -82,6 +79,8 @@ public class RuleSetServiceImpl implements RuleSetService {
     private ValueResolve valueResolve;
     @Resource
     private ConditionSetService conditionSetService;
+    @Resource
+    private ReferenceDataService referenceDataService;
 
     /**
      * 获取规则集列表
@@ -189,17 +188,17 @@ public class RuleSetServiceImpl implements RuleSetService {
     /**
      * 生成待发布版本，更新规则数据
      *
-     * @param releaseRequest 规则集配置数据
+     * @param ruleSetBody 规则集配置数据
      * @return true
      */
     @Override
-    public Boolean generationRelease(GenerationReleaseRequest releaseRequest) {
-        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(releaseRequest.getId());
+    public Boolean generationRelease(RuleSetBody ruleSetBody) {
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(ruleSetBody.getId());
         if (ruleEngineRuleSet == null) {
-            throw new ValidException("不存在规则集:{}", releaseRequest.getId());
+            throw new ValidException("不存在规则集:{}", ruleSetBody.getId());
         }
-        RuleBody defaultRule = releaseRequest.getDefaultRule();
-        if (Objects.equals(releaseRequest.getEnableDefaultRule(), EnableEnum.ENABLE.getStatus())) {
+        RuleBody defaultRule = ruleSetBody.getDefaultRule();
+        if (Objects.equals(ruleSetBody.getEnableDefaultRule(), EnableEnum.ENABLE.getStatus())) {
             ConfigValue action = defaultRule.getAction();
             if (Validator.isEmpty(action.getType())) {
                 throw new ValidException("规则集默认规则结果类型不能为空");
@@ -216,16 +215,18 @@ public class RuleSetServiceImpl implements RuleSetService {
         if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
             this.ruleEngineRuleSetPublishManager.lambdaUpdate()
                     .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
-                    .eq(RuleEngineRuleSetPublish::getRuleSetId, releaseRequest.getId())
+                    .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleSetBody.getId())
                     .remove();
         }
-        ruleEngineRuleSet.setStrategyType(releaseRequest.getStrategyType());
+        ruleEngineRuleSet.setStrategyType(ruleSetBody.getStrategyType());
         ruleEngineRuleSet.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
-        ruleEngineRuleSet.setEnableDefaultRule(releaseRequest.getEnableDefaultRule());
+        ruleEngineRuleSet.setEnableDefaultRule(ruleSetBody.getEnableDefaultRule());
+        String referenceData = JSON.toJSONString(referenceDataService.countReferenceData(ruleSetBody));
+        ruleEngineRuleSet.setReferenceData(referenceData);
         // 以下代码性能可优化
         this.deleteRuleSetRule(ruleEngineRuleSet);
         // 绑定新的
-        this.bindNewRuleSet(releaseRequest.getRuleSet(), ruleEngineRuleSet.getId());
+        this.bindNewRuleSet(ruleSetBody.getRuleSet(), ruleEngineRuleSet.getId());
         if (defaultRule != null) {
             Integer defaultRuleId = this.saveRule(defaultRule);
             ruleEngineRuleSet.setDefaultRuleId(defaultRuleId);
@@ -239,15 +240,15 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleSet.setWorkspaceId(ruleEngineRuleSet.getWorkspaceId());
         ruleSet.setWorkspaceCode(ruleEngineRuleSet.getWorkspaceCode());
         ruleSet.setDescription(ruleEngineRuleSet.getDescription());
-        ruleSet.setStrategyType(RuleSetStrategyType.getByValue(releaseRequest.getStrategyType()));
-        List<RuleBody> bodyList = releaseRequest.getRuleSet();
+        ruleSet.setStrategyType(RuleSetStrategyType.getByValue(ruleSetBody.getStrategyType()));
+        List<RuleBody> bodyList = ruleSetBody.getRuleSet();
         for (RuleBody ruleBody : bodyList) {
             Rule rule = this.getRule(ruleBody);
             ruleSet.addRule(rule);
         }
         // 如果启用了默认规则
-        if (EnableEnum.ENABLE.getStatus().equals(releaseRequest.getEnableDefaultRule())) {
-            RuleBody defaultRuleBody = releaseRequest.getDefaultRule();
+        if (EnableEnum.ENABLE.getStatus().equals(ruleSetBody.getEnableDefaultRule())) {
+            RuleBody defaultRuleBody = ruleSetBody.getDefaultRule();
             Rule rule = this.getRule(defaultRuleBody);
             ruleSet.setDefaultRule(rule);
         }
@@ -258,6 +259,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleSetPublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleSetPublish.setWorkspaceId(ruleSet.getWorkspaceId());
         ruleSetPublish.setWorkspaceCode(ruleSet.getWorkspaceCode());
+        ruleSetPublish.setReferenceData(referenceData);
         this.ruleEngineRuleSetPublishManager.save(ruleSetPublish);
         return true;
     }
@@ -345,31 +347,32 @@ public class RuleSetServiceImpl implements RuleSetService {
     /**
      * 更新规则集信息
      *
-     * @param updateRuleSetRequest 规则配置数据
+     * @param ruleSetBody 规则配置数据
      * @return true执行成功
      */
     @Override
-    public Boolean updateRuleSet(UpdateRuleSetRequest updateRuleSetRequest) {
-        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(updateRuleSetRequest.getId());
+    public Boolean updateRuleSet(RuleSetBody ruleSetBody) {
+        RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(ruleSetBody.getId());
         if (ruleEngineRuleSet == null) {
-            throw new ValidException("不存在规则集:{}", updateRuleSetRequest.getId());
+            throw new ValidException("不存在规则集:{}", ruleSetBody.getId());
         }
         // 如果之前是待发布，则删除原有待发布数据
         if (Objects.equals(ruleEngineRuleSet.getStatus(), DataStatus.WAIT_PUBLISH.getStatus())) {
             this.ruleEngineRuleSetPublishManager.lambdaUpdate()
                     .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
-                    .eq(RuleEngineRuleSetPublish::getRuleSetId, updateRuleSetRequest.getId())
+                    .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleSetBody.getId())
                     .remove();
         }
-        ruleEngineRuleSet.setStrategyType(updateRuleSetRequest.getStrategyType());
+        ruleEngineRuleSet.setStrategyType(ruleSetBody.getStrategyType());
         ruleEngineRuleSet.setStatus(DataStatus.EDIT.getStatus());
-        ruleEngineRuleSet.setEnableDefaultRule(updateRuleSetRequest.getEnableDefaultRule());
-        List<RuleBody> ruleSet = updateRuleSetRequest.getRuleSet();
+        ruleEngineRuleSet.setEnableDefaultRule(ruleSetBody.getEnableDefaultRule());
+        ruleEngineRuleSet.setReferenceData(JSON.toJSONString(referenceDataService.countReferenceData(ruleSetBody)));
+        List<RuleBody> ruleSet = ruleSetBody.getRuleSet();
         // 以下代码性能可优化
         this.deleteRuleSetRule(ruleEngineRuleSet);
         // 绑定新的
         this.bindNewRuleSet(ruleSet, ruleEngineRuleSet.getId());
-        RuleBody defaultRule = updateRuleSetRequest.getDefaultRule();
+        RuleBody defaultRule = ruleSetBody.getDefaultRule();
         if (defaultRule != null) {
             Integer defaultRuleId = this.saveRule(defaultRule);
             ruleEngineRuleSet.setDefaultRuleId(defaultRuleId);
