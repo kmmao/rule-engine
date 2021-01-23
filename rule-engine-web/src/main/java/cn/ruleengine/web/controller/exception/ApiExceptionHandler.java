@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.exception.*;
 import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.exception.ApiException;
-import cn.ruleengine.web.exception.AuthException;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.LoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
@@ -274,22 +273,6 @@ public class ApiExceptionHandler {
         ConstraintViolation<?> constraintViolation = arrayList.get(0);
         result.setMessage(constraintViolation.getMessage());
         result.setCode(ErrorCodeEnum.RULE99990100.getCode());
-        return result;
-    }
-
-
-    /**
-     * 权限异常
-     *
-     * @param e e
-     * @return BaseResult
-     */
-    @ExceptionHandler(value = AuthException.class)
-    public BaseResult authException(AuthException e) {
-        log.warn("AuthException", e);
-        BaseResult result = BaseResult.err();
-        result.setMessage(e.getMessage());
-        result.setCode(e.getCode());
         return result;
     }
 
