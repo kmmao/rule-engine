@@ -7,17 +7,18 @@
         update rule_engine_general_rule rule
         set rule.status=0
         where rule.status = 2
-          and rule.id in (select rri.id
-                          from (select rer.id
-                                from rule_engine_general_rule rer,
-                                     rule_engine_condition_group recg,
-                                     rule_engine_condition_group_condition recgc
-                                where rer.deleted = 0
-                                  and recg.deleted = 0
-                                  and recgc.deleted = 0
-                                  and rer.id = recg.rule_id
-                                  and recg.id = recgc.condition_group_id
-                                  and recgc.condition_id = #{conditionId}) as rri);
+          and rule.id in (select distinct r.general_rule_id
+            from rule_engine_general_rule_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.conditionIds', JSON_ARRAY(#{conditionId}))) as rri);
     </update>
+
+    <select id="updateRuleSetWaitPublish">
+        update rule_engine_rule_set rule
+        set rule.status=0
+        where rule.status = 2
+          and rule.id in (select distinct r.rule_set_id
+            from rule_engine_rule_set_publish r
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.conditionIds', JSON_ARRAY(#{conditionId}))) as rri);
+    </select>
 
 </mapper>

@@ -21,4 +21,10 @@ public interface RuleEngineConditionMapper extends BaseMapper<RuleEngineConditio
      */
     void updateRuleWaitPublish(Integer conditionId);
 
+    /**
+     * 更新引用此规则集的条件到待发布
+     *
+     * @param conditionId 条件id
+     */
+    void updateRuleSetWaitPublish(Integer conditionId);
 }
