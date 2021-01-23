@@ -237,7 +237,7 @@ public class FunctionExecutor {
                         throw new ValueException(next.getMessage());
                     }
                     if (messageTemplate.startsWith(StrUtil.DELIM_START) && messageTemplate.endsWith(StrUtil.DELIM_END)) {
-                        throw new ValueException(next.getPropertyPath().toString() + next.getMessage());
+                        throw new ValueException(next.getPropertyPath().toString() + " " + next.getMessage());
                     }
                 }
             }
