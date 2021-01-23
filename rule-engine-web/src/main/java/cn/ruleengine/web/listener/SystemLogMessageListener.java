@@ -45,8 +45,9 @@ public class SystemLogMessageListener {
      * @param ruleEngineSystemLog 日志内容
      */
     @RabbitListener(queues = RabbitQueueConfig.SYSTEM_LOG_QUEUE)
-    public void execute(RuleEngineSystemLog ruleEngineSystemLog) {
+    public void message(RuleEngineSystemLog ruleEngineSystemLog) {
         log.info("接收到日志消息,准备存入数据库!");
         this.ruleEngineSystemLogManager.save(ruleEngineSystemLog);
     }
+
 }
