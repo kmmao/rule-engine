@@ -70,7 +70,7 @@ public class ConditionServiceImpl implements ConditionService {
     @Resource
     private ValueResolve valueResolve;
     @Resource
-    private Engine engine;
+    private RuleEngineConfiguration ruleEngineConfiguration;
 
 
     /**
@@ -417,7 +417,7 @@ public class ConditionServiceImpl implements ConditionService {
                 .eq(RuleEngineConditionGroupCondition::getConditionId, id)
                 .count();
         if (count != null && count > 0) {
-            throw new ValidException("有规则在引用此条件，无法删除");
+            throw new ValidException("有规则/规则集在引用此条件，无法删除");
         }
         return this.ruleEngineConditionManager.removeById(id);
     }
@@ -483,7 +483,7 @@ public class ConditionServiceImpl implements ConditionService {
             }
         }
         RuleEngineConfiguration configuration = new RuleEngineConfiguration();
-        configuration.setEngineVariable(this.engine.getEngineVariable());
+        configuration.setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
         Condition condition = new Condition();
         condition.setId(ruleEngineCondition.getId());
         condition.setName(ruleEngineCondition.getName());
@@ -503,7 +503,7 @@ public class ConditionServiceImpl implements ConditionService {
      */
     private void conditionAllElementId(Set<Integer> elementIds, Integer type, String value) {
         if (VariableType.VARIABLE.getType().equals(type)) {
-            Value val = this.engine.getEngineVariable().getVariable(Integer.valueOf(value));
+            Value val = this.ruleEngineConfiguration.getEngineVariable().getVariable(Integer.valueOf(value));
             if (val instanceof Function) {
                 Function function = (Function) val;
                 Map<String, Value> param = function.getParam();
