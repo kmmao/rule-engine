@@ -9,7 +9,7 @@
         where rule.status = 2
           and rule.id in (select distinct r.general_rule_id
             from rule_engine_general_rule_publish r
-            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.conditionIds', JSON_ARRAY(#{conditionId}))) as rri);
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.conditionIds', JSON_ARRAY(#{conditionId})));
     </update>
 
     <select id="updateRuleSetWaitPublish">
@@ -18,7 +18,7 @@
         where rule.status = 2
           and rule.id in (select distinct r.rule_set_id
             from rule_engine_rule_set_publish r
-            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.conditionIds', JSON_ARRAY(#{conditionId}))) as rri);
+            where r.deleted = 0 and  JSON_CONTAINS(r.reference_data -> '$.conditionIds', JSON_ARRAY(#{conditionId})));
     </select>
 
 </mapper>
