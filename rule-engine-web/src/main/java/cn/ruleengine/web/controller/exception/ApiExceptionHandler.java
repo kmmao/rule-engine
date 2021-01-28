@@ -25,6 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -232,12 +233,14 @@ public class ApiExceptionHandler {
         log.warn("MethodArgumentNotValidException", e);
         BaseResult result = BaseResult.err();
         Field source = ObjectError.class.getDeclaredField("source");
-        source.setAccessible(true);
+        if (!Modifier.isPublic(source.getModifiers())) {
+            source.setAccessible(true);
+        }
         ConstraintViolation<?> constraintViolation = (ConstraintViolation<?>) source.get(e.getBindingResult().getFieldError());
         String messageTemplate = constraintViolation.getMessageTemplate();
         // 如果使用默认的{javax.validation.constraints.***.message}
         if (messageTemplate.startsWith(StrUtil.DELIM_START) && messageTemplate.endsWith(StrUtil.DELIM_END)) {
-            result.setMessage(constraintViolation.getPropertyPath().toString() + constraintViolation.getMessage());
+            result.setMessage(constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage());
         } else {
             result.setMessage(constraintViolation.getMessage());
         }
