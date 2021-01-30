@@ -32,5 +32,6 @@ public class AddFunction {
 
     private String description;
 
-    private List<Param> param;
+    private List<FunctionParam> param;
+
 }

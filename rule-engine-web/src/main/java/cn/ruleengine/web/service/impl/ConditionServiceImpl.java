@@ -21,6 +21,7 @@ import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.Rows;
+import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.variable.ParamValue;
@@ -29,7 +30,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.DefaultInput;
-import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.Operator;
@@ -465,17 +465,17 @@ public class ConditionServiceImpl implements ConditionService {
     /**
      * 测试运行条件
      *
-     * @param executeCondition 参数
+     * @param executeTestRequest 参数
      * @return true/false
      */
     @Override
-    public Boolean run(ExecuteConditionRequest executeCondition) {
-        Integer conditionId = executeCondition.getId();
+    public Boolean run(ExecuteTestRequest executeTestRequest) {
+        Integer conditionId = executeTestRequest.getId();
         RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.getById(conditionId);
         if (ruleEngineCondition == null) {
             throw new ValidException("规则条件找不到：{}", conditionId);
         }
-        List<ParamValue> paramValues = executeCondition.getParamValues();
+        List<ParamValue> paramValues = executeTestRequest.getParamValues();
         Input input = new DefaultInput();
         if (CollUtil.isNotEmpty(paramValues)) {
             for (ParamValue paramValue : paramValues) {

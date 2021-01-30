@@ -3,7 +3,7 @@ package cn.ruleengine.web.service.generalrule.impl;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.ruleengine.web.service.RuleEngineOutService;
 import cn.ruleengine.web.vo.output.BatchExecuteRequest;
-import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleResponse;
+import cn.ruleengine.web.vo.output.BatchExecuteResponse;
 import cn.ruleengine.web.vo.output.ExecuteRequest;
 import cn.ruleengine.web.vo.output.IsExistsRequest;
 import cn.ruleengine.web.vo.workspace.AccessKey;
@@ -79,7 +79,7 @@ public class GeneralRuleOutServiceImpl implements RuleEngineOutService {
         List<BatchExecuteRequest.ExecuteInfo> executeInfos = batchExecuteRequest.getExecuteInfos();
         Integer threadSegNumber = batchExecuteRequest.getThreadSegNumber();
         log.info("批量执行规则数量：{},单个线程执行{}条规则", executeInfos.size(), threadSegNumber);
-        List<BatchExecuteRuleResponse> outPuts = new CopyOnWriteArrayList<>();
+        List<BatchExecuteResponse> outPuts = new CopyOnWriteArrayList<>();
         int countDownNumber = executeInfos.size() % threadSegNumber == 0 ? executeInfos.size() / threadSegNumber : (executeInfos.size() / threadSegNumber) + 1;
         CountDownLatch countDownLatch = ThreadUtil.newCountDownLatch(countDownNumber);
         // 批量插入，执行一次批量

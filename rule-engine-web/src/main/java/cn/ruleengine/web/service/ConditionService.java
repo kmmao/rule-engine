@@ -7,6 +7,7 @@ import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.condition.*;
 
 import java.util.Collection;
@@ -116,9 +117,9 @@ public interface ConditionService {
     /**
      * 测试运行条件
      *
-     * @param executeCondition 参数
+     * @param executeTestRequest 参数
      * @return true/false
      */
-    Boolean run(ExecuteConditionRequest executeCondition);
+    Boolean run(ExecuteTestRequest executeTestRequest);
 
 }

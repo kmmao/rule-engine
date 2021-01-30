@@ -39,15 +39,15 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        setFieldValByName(DELETED, DeletedEnum.ENABLE.getStatus(), metaObject);
+        this.setFieldValByName(DELETED, DeletedEnum.ENABLE.getStatus(), metaObject);
         Date currentDate = new Date();
-        setFieldValByName(CREATE_TIME, currentDate, metaObject);
-        setFieldValByName(UPDATE_TIME, currentDate, metaObject);
+        this.setFieldValByName(CREATE_TIME, currentDate, metaObject);
+        this.setFieldValByName(UPDATE_TIME, currentDate, metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        setFieldValByName(UPDATE_TIME, new Date(), metaObject);
+        this.setFieldValByName(UPDATE_TIME, new Date(), metaObject);
     }
 
 }

@@ -1,6 +1,5 @@
 package cn.ruleengine.web.service.decisiontable.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.decisiontable.*;
@@ -407,9 +406,9 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableResponse.setName(decisionTable.getName());
         decisionTableResponse.setCode(decisionTable.getCode());
         decisionTableResponse.setDescription(decisionTable.getDescription());
+        decisionTableResponse.setStrategyType(decisionTable.getStrategyType().getValue());
         decisionTableResponse.setWorkspaceId(decisionTable.getWorkspaceId());
         decisionTableResponse.setWorkspaceCode(decisionTable.getWorkspaceCode());
-        decisionTableResponse.setStrategyType(decisionTable.getStrategyType().getValue());
         TableData tableData = new TableData();
         List<CollHead> collHeads = decisionTable.getCollHeads();
         List<CollConditionHeads> collConditionHeads = new ArrayList<>();

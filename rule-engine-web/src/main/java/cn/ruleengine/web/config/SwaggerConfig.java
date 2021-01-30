@@ -56,7 +56,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("规则引擎")
-                .contact(new Contact("规则引擎", "http://www.ruleengine.cn", "761945125@qq.com"))
+                .contact(new Contact("dingqianwen", "http://www.ruleengine.cn", "761945125@qq.com"))
                 .version("1.2.0")
                 .description("规则引擎接口文档")
                 .build();

@@ -1,7 +1,7 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
 import cn.ruleengine.web.vo.output.BatchExecuteRequest;
-import cn.ruleengine.web.vo.generalrule.BatchExecuteRuleResponse;
+import cn.ruleengine.web.vo.output.BatchExecuteResponse;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.Input;
@@ -25,11 +25,11 @@ public class BatchExecuteGeneralRuleTask implements Runnable {
 
     private List<BatchExecuteRequest.ExecuteInfo> infoList;
     private Engine engine;
-    private List<BatchExecuteRuleResponse> outPuts;
+    private List<BatchExecuteResponse> outPuts;
     private CountDownLatch countDownLatch;
     private String workspaceCode;
 
-    public BatchExecuteGeneralRuleTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteRuleResponse> outPuts, Engine engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
+    public BatchExecuteGeneralRuleTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteResponse> outPuts, Engine engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
         this.workspaceCode = workspaceCode;
         this.countDownLatch = countDownLatch;
         this.outPuts = outPuts;
@@ -46,7 +46,7 @@ public class BatchExecuteGeneralRuleTask implements Runnable {
                 input.put(param.getKey(), param.getValue());
             }
             // 封装规则执行结果
-            BatchExecuteRuleResponse ruleResponse = new BatchExecuteRuleResponse();
+            BatchExecuteResponse ruleResponse = new BatchExecuteResponse();
             ruleResponse.setSymbol(executeInfo.getSymbol());
             try {
                 OutPut outPut = this.engine.execute(input, this.workspaceCode, executeInfo.getCode());

@@ -66,6 +66,11 @@ public class EventPublisherListener {
         }
     }
 
+    /**
+     * 事物结束后，对规则集的操作
+     *
+     * @param ruleSetEvent 规则集事件
+     */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = RuleSetEvent.class)
     public void ruleSetEvent(RuleSetEvent ruleSetEvent) {
@@ -78,6 +83,11 @@ public class EventPublisherListener {
         }
     }
 
+    /**
+     * 事物结束后，对决策表的操作
+     *
+     * @param decisionTableEvent 决策表事件
+     */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = DecisionTableEvent.class)
     public void decisionTableEvent(DecisionTableEvent decisionTableEvent) {
@@ -90,6 +100,11 @@ public class EventPublisherListener {
         }
     }
 
+    /**
+     * 事物结束后，对变量的操作
+     *
+     * @param variableEvent 变量事件
+     */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, classes = VariableEvent.class)
     public void variableEvent(VariableEvent variableEvent) {

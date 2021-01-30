@@ -27,6 +27,7 @@ import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.Param;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.condition.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -146,15 +147,15 @@ public class ConditionController {
     /**
      * 测试运行条件
      *
-     * @param executeCondition 参数
+     * @param executeTestRequest 参数
      * @return true/false
      */
-    @DataPermission(id = "#executeCondition.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#executeTestRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
     @PostMapping("run")
     @ApiOperation("测试运行条件")
-    public PlainResult<Boolean> run(@RequestBody @Valid ExecuteConditionRequest executeCondition) {
+    public PlainResult<Boolean> run(@RequestBody @Valid ExecuteTestRequest executeTestRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(this.conditionService.run(executeCondition));
+        plainResult.setData(this.conditionService.run(executeTestRequest));
         return plainResult;
     }
 

@@ -2,10 +2,10 @@ package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;
 import cn.ruleengine.web.vo.function.ListFunctionResponse;
-import cn.ruleengine.web.vo.function.RunFunction;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -36,8 +36,8 @@ public interface FunctionService {
     /**
      * 函数模拟测试
      *
-     * @param runFunction 函数入参值
+     * @param executeTestRequest 函数入参值
      * @return result
      */
-    Object run(RunFunction runFunction);
+    Object run(ExecuteTestRequest executeTestRequest);
 }

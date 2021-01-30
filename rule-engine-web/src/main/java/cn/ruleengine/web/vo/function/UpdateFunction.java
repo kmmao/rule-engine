@@ -1,10 +1,9 @@
 package cn.ruleengine.web.vo.function;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -14,26 +13,11 @@ import java.util.List;
  * @date 2020/9/11
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UpdateFunction {
+public class UpdateFunction extends AddFunction{
+
     @NotNull
     private Integer id;
 
-    /**
-     * 函数java代码
-     */
-    @NotBlank
-    private String javaCode;
-    /**
-     * 类名称
-     */
-    @NotBlank
-    private String className;
-
-    @NotBlank
-    private String name;
-
-    private String description;
-
-    private List<Param> param;
 }

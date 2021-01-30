@@ -1,12 +1,9 @@
 package cn.ruleengine.web.vo.condition;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 〈一句话功能简述〉<br>

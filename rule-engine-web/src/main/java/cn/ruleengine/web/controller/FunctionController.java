@@ -21,10 +21,10 @@ import cn.ruleengine.web.vo.base.IdRequest;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;
 import cn.ruleengine.web.vo.function.ListFunctionResponse;
-import cn.ruleengine.web.vo.function.RunFunction;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,14 +80,14 @@ public class FunctionController {
     /**
      * 函数模拟测试
      *
-     * @param runFunction 函数入参值
+     * @param executeTestRequest 函数入参值
      * @return result
      */
     @PostMapping("run")
     @ApiOperation("函数模拟测试")
-    public PlainResult<Object> run(@Valid @RequestBody RunFunction runFunction) {
+    public PlainResult<Object> run(@Valid @RequestBody ExecuteTestRequest executeTestRequest) {
         PlainResult<Object> plainResult = new PlainResult<>();
-        plainResult.setData(functionService.run(runFunction));
+        plainResult.setData(functionService.run(executeTestRequest));
         return plainResult;
     }
 

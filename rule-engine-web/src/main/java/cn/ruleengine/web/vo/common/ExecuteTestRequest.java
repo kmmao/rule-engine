@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.condition;
+package cn.ruleengine.web.vo.common;
 
 import cn.ruleengine.web.vo.variable.ParamValue;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-public class ExecuteConditionRequest {
+public class ExecuteTestRequest {
 
     @NotNull
     private Integer id;

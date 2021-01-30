@@ -12,5 +12,5 @@ import lombok.Data;
  */
 @Data
 public class ListFunctionRequest {
-    private  String name;
+    private String name;
 }

@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.generalrule;
+package cn.ruleengine.web.vo.output;
 
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -12,7 +12,7 @@ import org.springframework.lang.Nullable;
  * @since 1.0.0
  */
 @Data
-public class BatchExecuteRuleResponse {
+public class BatchExecuteResponse {
 
 
     /**

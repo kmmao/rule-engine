@@ -15,6 +15,7 @@ import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.Rows;
+import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.function.*;
 import cn.ruleengine.web.vo.variable.ParamValue;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -121,13 +122,13 @@ public class FunctionServiceImpl implements FunctionService {
     }
 
 
-    private void saveFunctionParam(List<Param> param, Integer functionId) {
+    private void saveFunctionParam(List<FunctionParam> param, Integer functionId) {
         if (CollUtil.isNotEmpty(param)) {
             List<RuleEngineFunctionParam> functionParamList = param.stream().map(m -> {
                 RuleEngineFunctionParam ruleEngineFunctionParam = new RuleEngineFunctionParam();
                 ruleEngineFunctionParam.setFunctionId(functionId);
-                ruleEngineFunctionParam.setParamName(m.getParamName());
-                ruleEngineFunctionParam.setParamCode(m.getParamCode());
+                ruleEngineFunctionParam.setParamName(m.getName());
+                ruleEngineFunctionParam.setParamCode(m.getCode());
                 ruleEngineFunctionParam.setValueType(m.getValueType());
                 return ruleEngineFunctionParam;
             }).collect(Collectors.toList());
@@ -138,20 +139,20 @@ public class FunctionServiceImpl implements FunctionService {
     /**
      * 函数模拟测试
      *
-     * @param runFunction 函数入参值
+     * @param executeTestRequest 函数入参值
      * @return result
      */
     @Override
-    public Object run(RunFunction runFunction) {
-        RuleEngineFunction engineFunction = this.ruleEngineFunctionManager.getById(runFunction.getId());
+    public Object run(ExecuteTestRequest executeTestRequest) {
+        RuleEngineFunction engineFunction = this.ruleEngineFunctionManager.getById(executeTestRequest.getId());
         if (engineFunction == null) {
-            throw new ValidException("不存在函数：{}", runFunction.getId());
+            throw new ValidException("不存在函数：{}", executeTestRequest.getId());
         }
         String executor = engineFunction.getExecutor();
-        if (applicationContext.containsBean(executor)) {
-            Object abstractFunction = applicationContext.getBean(executor);
+        if (this.applicationContext.containsBean(executor)) {
+            Object abstractFunction = this.applicationContext.getBean(executor);
             // 执行函数入参
-            Map<String, Object> paramValue = this.getParamValue(runFunction.getParamValues());
+            Map<String, Object> paramValue = this.getParamValue(executeTestRequest.getParamValues());
             Function function = new Function(abstractFunction);
             return function.executor(paramValue);
         } else {
