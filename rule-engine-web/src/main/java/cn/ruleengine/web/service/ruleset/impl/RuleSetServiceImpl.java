@@ -7,6 +7,7 @@ import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.RuleSetStrategyType;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.*;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.ruleset.RuleBody;
 
@@ -490,18 +491,28 @@ public class RuleSetServiceImpl implements RuleSetService {
     /**
      * 规则集预览
      *
-     * @param id 规则集id
+     * @param viewRequest 规则集id
      * @return GetRuleResponse
      */
     @Override
-    public ViewRuleSetResponse getViewRuleSet(Integer id) {
+    public ViewRuleSetResponse view(ViewRequest viewRequest) {
+        Integer id = viewRequest.getId();
         RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(id);
         if (ruleEngineRuleSet == null) {
             throw new ValidException("找不到预览的规则集数据:{}", id);
         }
         // 如果只有已发布
-        if (ruleEngineRuleSet.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
-            return this.getPublishRuleSet(id);
+        if (ruleEngineRuleSet.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getType().equals(DataStatus.PUBLISHED.getStatus())) {
+            RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
+                    .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                    .eq(RuleEngineRuleSetPublish::getRuleSetId, id)
+                    .one();
+            if (ruleSetPublish == null) {
+                throw new ValidException("找不到发布的规则集:{}", id);
+            }
+            String data = ruleSetPublish.getData();
+            RuleSet ruleSet = RuleSet.buildRuleSet(data);
+            return this.getRuleSetResponseProcess(ruleSet);
         }
         RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
                 .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
@@ -562,25 +573,6 @@ public class RuleSetServiceImpl implements RuleSetService {
         return ruleBody;
     }
 
-    /**
-     * 获取预览已发布的规则集
-     *
-     * @param id 规则集id
-     * @return ViewRuleSetResponse
-     */
-    @Override
-    public ViewRuleSetResponse getPublishRuleSet(Integer id) {
-        RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
-                .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
-                .eq(RuleEngineRuleSetPublish::getRuleSetId, id)
-                .one();
-        if (ruleSetPublish == null) {
-            throw new ValidException("找不到发布的规则集:{}", id);
-        }
-        String data = ruleSetPublish.getData();
-        RuleSet ruleSet = RuleSet.buildRuleSet(data);
-        return this.getRuleSetResponseProcess(ruleSet);
-    }
 
     /**
      * 删除规则集

@@ -27,6 +27,7 @@ import cn.ruleengine.web.vo.base.Param;
 import cn.ruleengine.web.vo.base.BaseResult;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.generalrule.ListGeneralRuleRequest;
 import cn.ruleengine.web.vo.ruleset.*;
 import io.swagger.annotations.Api;
@@ -167,33 +168,17 @@ public class RuleSetController {
     /**
      * 规则集预览
      *
-     * @param idRequest 规则集id
+     * @param viewRequest 规则集id
      * @return ViewRuleSetResponse
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("getViewRuleSet")
+    @DataPermission(id = "#viewRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("view")
     @ApiOperation("获取规则集信息")
-    public BaseResult getViewRuleSet(@Valid @RequestBody IdRequest idRequest) {
+    public BaseResult view(@Valid @RequestBody ViewRequest viewRequest) {
         PlainResult<ViewRuleSetResponse> plainResult = new PlainResult<>();
-        plainResult.setData(ruleSetService.getViewRuleSet(idRequest.getId()));
+        plainResult.setData(ruleSetService.view(viewRequest));
         return plainResult;
     }
-
-    /**
-     * 获取预览已发布的规则集
-     *
-     * @param idRequest 规则集id
-     * @return ViewRuleSetResponse
-     */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("getPublishRuleSet")
-    @ApiOperation("获取发布规则集信息")
-    public BaseResult getPublishRuleSet(@Valid @RequestBody IdRequest idRequest) {
-        PlainResult<ViewRuleSetResponse> plainResult = new PlainResult<>();
-        plainResult.setData(ruleSetService.getPublishRuleSet(idRequest.getId()));
-        return plainResult;
-    }
-
     /**
      * 删除规则集
      *

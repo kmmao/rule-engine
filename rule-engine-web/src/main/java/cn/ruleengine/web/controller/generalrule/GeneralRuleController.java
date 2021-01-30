@@ -27,6 +27,7 @@ import cn.ruleengine.web.vo.base.Param;
 import cn.ruleengine.web.vo.base.BaseResult;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.generalrule.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -164,30 +165,15 @@ public class GeneralRuleController {
     /**
      * 规则预览
      *
-     * @param idRequest 规则id
+     * @param viewRequest 规则id
      * @return GetRuleResponse
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("getViewRule")
-    @ApiOperation("获取规则信息")
-    public BaseResult getViewRule(@Valid @RequestBody IdRequest idRequest) {
+    @DataPermission(id = "#viewRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("view")
+    @ApiOperation("预览规则")
+    public BaseResult view(@Valid @RequestBody ViewRequest viewRequest) {
         PlainResult<ViewGeneralRuleResponse> plainResult = new PlainResult<>();
-        plainResult.setData(ruleService.getViewRule(idRequest.getId()));
-        return plainResult;
-    }
-
-    /**
-     * 获取预览已发布的规则
-     *
-     * @param idRequest 规则id
-     * @return GetRuleResponse
-     */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("getPublishRule")
-    @ApiOperation("获取发布规则信息")
-    public BaseResult getPublishRule(@Valid @RequestBody IdRequest idRequest) {
-        PlainResult<ViewGeneralRuleResponse> plainResult = new PlainResult<>();
-        plainResult.setData(ruleService.getPublishRule(idRequest.getId()));
+        plainResult.setData(ruleService.view(viewRequest));
         return plainResult;
     }
 

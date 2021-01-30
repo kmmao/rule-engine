@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.decisiontable;
 
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.decisiontable.*;
 import cn.ruleengine.web.vo.generalrule.GetGeneralRuleResponse;
 
@@ -82,10 +83,10 @@ public interface DecisionTableService {
     /**
      * 获取决策表展示信息
      *
-     * @param id 决策表id
+     * @param viewRequest 决策表id
      * @return ViewDecisionTableResponse
      */
-    ViewDecisionTableResponse getViewDecisionTable(Integer id);
+    ViewDecisionTableResponse view(ViewRequest viewRequest);
 
     /**
      * 规则决策表
@@ -95,11 +96,4 @@ public interface DecisionTableService {
      */
     Boolean publish(Integer id);
 
-    /**
-     * 获取预览已发布的决策表
-     *
-     * @param id 决策表id
-     * @return ViewDecisionTableResponse
-     */
-    ViewDecisionTableResponse getPublishDecisionTable(Integer id);
 }

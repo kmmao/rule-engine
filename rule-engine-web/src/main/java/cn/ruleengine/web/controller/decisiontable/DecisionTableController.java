@@ -12,6 +12,7 @@ import cn.ruleengine.web.vo.base.Param;
 import cn.ruleengine.web.vo.base.BaseResult;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.decisiontable.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -162,15 +163,15 @@ public class DecisionTableController {
     /**
      * 获取决策表展示信息
      *
-     * @param idRequest 决策表id
+     * @param viewRequest 决策表id
      * @return ViewDecisionTableResponse
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("getViewDecisionTable")
+    @DataPermission(id = "#viewRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @PostMapping("view")
     @ApiOperation("获取决策表展示信息")
-    public BaseResult getViewDecisionTable(@Valid @RequestBody IdRequest idRequest) {
+    public BaseResult view(@Valid @RequestBody ViewRequest viewRequest) {
         PlainResult<ViewDecisionTableResponse> plainResult = new PlainResult<>();
-        plainResult.setData(decisionTableService.getViewDecisionTable(idRequest.getId()));
+        plainResult.setData(decisionTableService.view(viewRequest));
         return plainResult;
     }
 
@@ -188,21 +189,6 @@ public class DecisionTableController {
     public BaseResult publish(@Valid @RequestBody IdRequest idRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(decisionTableService.publish(idRequest.getId()));
-        return plainResult;
-    }
-
-    /**
-     * 获取预览已发布的决策表
-     *
-     * @param idRequest 决策表id
-     * @return ViewDecisionTableResponse
-     */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
-    @PostMapping("getPublishDecisionTable")
-    @ApiOperation("获取发布决策表信息")
-    public BaseResult getPublishDecisionTable(@Valid @RequestBody IdRequest idRequest) {
-        PlainResult<ViewDecisionTableResponse> plainResult = new PlainResult<>();
-        plainResult.setData(decisionTableService.getPublishDecisionTable(idRequest.getId()));
         return plainResult;
     }
 

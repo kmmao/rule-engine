@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.generalrule;
 
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.generalrule.*;
 
 /**
@@ -87,18 +88,10 @@ public interface GeneralRuleService {
     Boolean publish(Integer id);
 
     /**
-     * 获取预览已发布的规则
-     *
-     * @param id 规则id
-     * @return GetRuleResponse
-     */
-    ViewGeneralRuleResponse getPublishRule(Integer id);
-
-    /**
      * 规则预览
      *
-     * @param id 规则id
+     * @param viewRequest 规则id
      * @return GetRuleResponse
      */
-    ViewGeneralRuleResponse getViewRule(Integer id);
+    ViewGeneralRuleResponse view(ViewRequest viewRequest);
 }

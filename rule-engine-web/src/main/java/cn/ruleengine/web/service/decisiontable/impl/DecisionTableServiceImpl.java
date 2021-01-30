@@ -23,6 +23,7 @@ import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.decisiontable.*;
@@ -314,18 +315,28 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     /**
      * 获取决策表展示信息
      *
-     * @param id 决策表id
+     * @param viewRequest 决策表id
      * @return ViewDecisionTableResponse
      */
     @Override
-    public ViewDecisionTableResponse getViewDecisionTable(Integer id) {
+    public ViewDecisionTableResponse view(ViewRequest viewRequest) {
+        Integer id = viewRequest.getId();
         RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(id);
         if (ruleEngineDecisionTable == null) {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
         // 如果只有已发布
-        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
-            return this.getPublishDecisionTable(id);
+        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getType().equals(DataStatus.PUBLISHED.getStatus())) {
+            RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
+                    .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                    .eq(RuleEngineDecisionTablePublish::getDecisionTableId, id)
+                    .one();
+            if (ruleEngineDecisionTablePublish == null) {
+                throw new ValidException("找不到发布的规则:{}", id);
+            }
+            String data = ruleEngineDecisionTablePublish.getData();
+            DecisionTable decisionTable = DecisionTable.buildDecisionTable(data);
+            return this.decisionTableResponseProcess(decisionTable);
         }
         RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
                 .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
@@ -382,26 +393,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         decisionTableMessageBody.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
         this.eventPublisher.publishEvent(new DecisionTableEvent(decisionTableMessageBody));
         return true;
-    }
-
-    /**
-     * 获取预览已发布的决策表
-     *
-     * @param id 决策表id
-     * @return ViewDecisionTableResponse
-     */
-    @Override
-    public ViewDecisionTableResponse getPublishDecisionTable(Integer id) {
-        RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
-                .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
-                .eq(RuleEngineDecisionTablePublish::getDecisionTableId, id)
-                .one();
-        if (ruleEngineDecisionTablePublish == null) {
-            throw new ValidException("找不到发布的规则:{}", id);
-        }
-        String data = ruleEngineDecisionTablePublish.getData();
-        DecisionTable decisionTable = DecisionTable.buildDecisionTable(data);
-        return this.decisionTableResponseProcess(decisionTable);
     }
 
     /**

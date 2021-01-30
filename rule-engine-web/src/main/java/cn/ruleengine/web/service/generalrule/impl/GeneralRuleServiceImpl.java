@@ -16,6 +16,7 @@ import cn.ruleengine.web.store.mapper.RuleEngineGeneralRuleMapper;
 
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.common.ReferenceData;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.PageRequest;
@@ -41,7 +42,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -433,40 +433,29 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     }
 
     /**
-     * 获取预览已发布的规则
-     *
-     * @param id 规则id
-     * @return GetRuleResponse
-     */
-    @Override
-    public ViewGeneralRuleResponse getPublishRule(Integer id) {
-        RuleEngineGeneralRulePublish engineRulePublish = this.ruleEngineGeneralRulePublishManager.lambdaQuery()
-                .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
-                .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, id)
-                .one();
-        if (engineRulePublish == null) {
-            throw new ValidException("找不到发布的规则:{}", id);
-        }
-        String data = engineRulePublish.getData();
-        GeneralRule rule = GeneralRule.buildRule(data);
-        return this.getRuleResponseProcess(rule);
-    }
-
-    /**
      * 规则预览
      *
-     * @param id 规则id
+     * @param viewRequest 规则id
      * @return GetRuleResponse
      */
     @Override
-    public ViewGeneralRuleResponse getViewRule(Integer id) {
+    public ViewGeneralRuleResponse view(ViewRequest viewRequest) {
+        Integer id = viewRequest.getId();
         RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(id);
         if (ruleEngineGeneralRule == null) {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
-        // 如果只有已发布
-        if (ruleEngineGeneralRule.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
-            return this.getPublishRule(id);
+        if (ruleEngineGeneralRule.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getType().equals(DataStatus.PUBLISHED.getStatus())) {
+            RuleEngineGeneralRulePublish engineRulePublish = this.ruleEngineGeneralRulePublishManager.lambdaQuery()
+                    .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                    .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, id)
+                    .one();
+            if (engineRulePublish == null) {
+                throw new ValidException("找不到发布的规则:{}", id);
+            }
+            String data = engineRulePublish.getData();
+            GeneralRule rule = GeneralRule.buildRule(data);
+            return this.getRuleResponseProcess(rule);
         }
         RuleEngineGeneralRulePublish engineRulePublish = this.ruleEngineGeneralRulePublishManager.lambdaQuery()
                 .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())

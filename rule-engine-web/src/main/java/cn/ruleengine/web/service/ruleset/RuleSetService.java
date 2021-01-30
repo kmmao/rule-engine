@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.ruleset;
 
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.generalrule.ListGeneralRuleRequest;
 import cn.ruleengine.web.vo.ruleset.*;
 
@@ -74,18 +75,11 @@ public interface RuleSetService {
     /**
      * 规则集预览
      *
-     * @param id 规则集id
+     * @param viewRequest 规则集id
      * @return GetRuleResponse
      */
-    ViewRuleSetResponse getViewRuleSet(Integer id);
+    ViewRuleSetResponse view(ViewRequest viewRequest);
 
-    /**
-     * 获取预览已发布的规则集
-     *
-     * @param id 规则集id
-     * @return ViewRuleSetResponse
-     */
-    ViewRuleSetResponse getPublishRuleSet(Integer id);
 
     /**
      * 删除规则集
