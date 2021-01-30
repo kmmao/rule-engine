@@ -251,8 +251,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {
-        String defaultFolder = this.aliOSSClient.getProperties().getDefaultFolder();
-        return aliOSSClient.upload(file.getInputStream(), file.getOriginalFilename(), defaultFolder);
+        return this.aliOSSClient.upload(file.getInputStream(), file.getOriginalFilename());
     }
 
     /**

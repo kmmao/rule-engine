@@ -16,7 +16,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.validation.ValidationException;
 import java.io.InputStream;
 import java.util.Date;
@@ -52,6 +51,10 @@ public class AliOSSClient {
     @ConditionalOnProperty(prefix = "aliyun.oss", name = "enable", havingValue = "true")
     @ConfigurationProperties("aliyun.oss")
     public static class Properties {
+        /**
+         * 是否启用oss
+         */
+        private boolean enable;
         private String endPoint;
         private String accessKeyId;
         private String accessKeySecret;
@@ -66,9 +69,20 @@ public class AliOSSClient {
      */
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnBean(Properties.class)
-    private OSSClient ossClient() {
+    private OSSClient ossClient(Properties properties) {
         log.info("init ossClient");
         return new OSSClient(properties.getEndPoint(), properties.getAccessKeyId(), properties.getAccessKeySecret());
+    }
+
+    /**
+     * 上传文件,使用默认文件夹
+     *
+     * @param is       文件数据
+     * @param fileName 文件名称
+     * @return url连接
+     */
+    public String upload(InputStream is, String fileName) {
+        return this.upload(is, fileName, properties.getDefaultFolder());
     }
 
     /**
@@ -119,4 +133,5 @@ public class AliOSSClient {
             IoUtil.close(is);
         }
     }
+
 }
