@@ -67,7 +67,7 @@ public class DecisionTableMessageListener {
                 break;
             case REMOVE:
                 log.info("开始移除决策表：{}", decisionTableCode);
-                this.decisionTableEngine.removeDecisionTable(workspaceCode, decisionTableCode);
+                this.decisionTableEngine.remove(workspaceCode, decisionTableCode);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + decisionTableMessageBody.getType());
