@@ -2,18 +2,17 @@ package cn.ruleengine.core.monitor;
 
 import lombok.Data;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2021/2/1
+ * @author 丁乾文
+ * @create 2021/2/1
  * @since 1.0.0
  */
 @Data
-public class GeneralIndicator implements Indicator {
+public class SimpleGeneralRuleIndicator implements Indicator  {
+
 
     /**
      * 普通规则id
@@ -28,49 +27,61 @@ public class GeneralIndicator implements Indicator {
     /**
      * 最小耗时 单位ms
      */
-    private AtomicLong minimalTime = null;
+    private Long minimalTime = null;
     /**
      * 最大耗时 单位ms
      */
-    private AtomicLong maximumTime = new AtomicLong(0L);
+    private Long maximumTime = 0L;
     /**
      * 平均耗时 单位ms
      */
-    private AtomicLong averageTime = new AtomicLong(0L);
+    private Long averageTime = 0L;
+    /**
+     * 总耗时 单位ms
+     */
+    private Long totalTime = 0L;
     /**
      * 总次数
      */
-    private AtomicLong totalCount = new AtomicLong(0L);
+    private Long totalCount = 0L;
 
     /**
      * 结果命中次数
      */
-    private AtomicLong actionCount = new AtomicLong(0L);
+    private Long actionCount = 0L;
 
     /**
      * 默认结果命中次数
      */
-    private AtomicLong defaultActionCount = new AtomicLong(0L);
+    private Long defaultActionCount = 0L;
 
     /**
      * 未命中次数
      */
-    private AtomicLong missesCount = new AtomicLong(0L);
+    private Long missesCount = 0L;
 
+    @Override
+    public void addTimeConsuming(Long costTime) {
+
+    }
+
+    @Override
     public void incrementActionCount() {
-        actionCount.incrementAndGet();
+
     }
 
+    @Override
     public void incrementTotalCount() {
-        totalCount.incrementAndGet();
+
     }
 
+    @Override
     public void incrementDefaultActionCount() {
-        defaultActionCount.incrementAndGet();
+
     }
 
+    @Override
     public void incrementMissesCount() {
-        missesCount.incrementAndGet();
-    }
 
+    }
 }

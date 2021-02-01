@@ -166,7 +166,8 @@ public class DecisionTableEngine implements Engine {
      *
      * @param code 决策表code
      */
-    public void removeDecisionTable(String workspaceCode, @NonNull String code) {
+    @Override
+    public void remove(String workspaceCode, @NonNull String code) {
         if (this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.get(workspaceCode).remove(code);
         }

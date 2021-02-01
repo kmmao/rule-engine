@@ -153,8 +153,8 @@ public class GeneralRuleEngine implements Engine {
         }
         // 如果开启监控，返回一个被代理的规则对象
         if (generalRule.isEnableMonitor()) {
-            GeneralRuleMonitorProxy ruleMonitorProxy = new GeneralRuleMonitorProxy();
-            generalRule = ruleMonitorProxy.getRuleProxy(generalRule);
+            GeneralRuleMonitorProxy ruleMonitorProxy = new GeneralRuleMonitorProxy(this.configuration,generalRule);
+            generalRule = ruleMonitorProxy.getProxy();
         }
         this.workspaceMap.get(workspaceCode).put(ruleCode, generalRule);
     }
@@ -174,6 +174,7 @@ public class GeneralRuleEngine implements Engine {
      *
      * @param ruleCode 规则code
      */
+    @Override
     public void remove(String workspaceCode, @NonNull String ruleCode) {
         if (this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.get(workspaceCode).remove(ruleCode);

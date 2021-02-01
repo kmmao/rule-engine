@@ -1,18 +1,39 @@
 package cn.ruleengine.core.monitor;
 
+import lombok.Data;
+
+import java.io.Closeable;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2020/12/20
+ * @author 丁乾文
+ * @create 2021/2/1
  * @since 1.0.0
  */
-public interface Monitor {
+@Data
+public class Monitor implements Closeable {
+
 
     /**
-     * 添加监控指标数据
+     * 普通规则监控数据
      */
-    void addIndicator();
+    private Map<Integer, Indicator> generalRuleMonitor = new HashMap<>();
+
+    public void initGeneralRuleMonitor(Integer id, Indicator indicator) {
+        this.generalRuleMonitor.put(id, indicator);
+    }
+
+    public Indicator getGeneralRuleMonitor(Integer id) {
+        return this.generalRuleMonitor.get(id);
+    }
+
+    @Override
+    public void close() {
+        this.generalRuleMonitor.clear();
+    }
 
 }

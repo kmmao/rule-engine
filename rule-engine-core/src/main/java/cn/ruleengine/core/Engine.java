@@ -67,4 +67,12 @@ public interface Engine extends Closeable {
      */
     boolean isExists(String workspaceCode, String code);
 
+    /**
+     * 从规则引擎删除一个规则...
+     *
+     * @param workspaceCode 工作空间code
+     * @param code          规则/决策表code
+     */
+    void remove(String workspaceCode, @NonNull String code);
+
 }

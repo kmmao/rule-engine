@@ -20,11 +20,13 @@ import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.listener.DefaultExecuteListener;
 import cn.ruleengine.core.listener.ExecuteListener;
 import cn.ruleengine.core.cache.FunctionCache;
+import cn.ruleengine.core.monitor.Monitor;
 import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.GeneralRule;
 import lombok.Data;
 
 import java.io.Closeable;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -62,11 +64,17 @@ public class RuleEngineConfiguration implements Closeable {
      */
     private EngineVariable engineVariable = new EngineVariable();
 
+    /**
+     * 监控数据
+     */
+    private Monitor monitor = new Monitor();
+
 
     @Override
     public void close() {
         this.engineVariable.close();
         this.functionCache.clear();
+        this.monitor.close();
     }
 
 }
