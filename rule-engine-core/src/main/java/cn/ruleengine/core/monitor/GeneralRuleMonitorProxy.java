@@ -30,6 +30,15 @@ public class GeneralRuleMonitorProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         // TODO: 2020/12/21 待完成
+        GeneralIndicator generalIndicator = new GeneralIndicator();
+        switch (method.getName()) {
+            case "getActionValue":
+                break;
+            case "getDefaultActionValue":
+                break;
+            default:
+                break;
+        }
         return method.invoke(this.ruleObject, args);
     }
 
