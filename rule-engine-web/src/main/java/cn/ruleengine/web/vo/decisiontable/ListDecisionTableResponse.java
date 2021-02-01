@@ -23,10 +23,9 @@ public class ListDecisionTableResponse {
 
     private String createUserName;
 
-    /**
-     * 是否发布
-     */
-    private Boolean isPublish;
+    private String currentVersion;
+
+    private String publishVersion;
 
     private Integer status;
 

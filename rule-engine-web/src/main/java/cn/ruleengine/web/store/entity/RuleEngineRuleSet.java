@@ -38,7 +38,18 @@ public class RuleEngineRuleSet implements Serializable {
 
     private String workspaceCode;
 
+    /**
+     * 当前规则的最新状态
+     */
     private Integer status;
+    /**
+     * 当前最新的版本号
+     */
+    private String currentVersion;
+    /**
+     * 当前已发布的版本号
+     */
+    private String publishVersion;
 
 
     /**

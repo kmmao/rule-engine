@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
 import cn.ruleengine.core.rule.Rule;
@@ -7,6 +8,7 @@ import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.RuleSetStrategyType;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.*;
+import cn.ruleengine.web.util.VersionUtils;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.ruleset.RuleBody;
@@ -102,8 +104,13 @@ public class RuleSetServiceImpl implements RuleSetService {
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineRuleSet::getName, query.getName());
             }
+            // 遗留bug修复
             if (Validator.isNotEmpty(query.getStatus())) {
-                wrapper.lambda().eq(RuleEngineRuleSet::getStatus, query.getStatus());
+                if (query.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+                    wrapper.lambda().isNotNull(RuleEngineRuleSet::getPublishVersion);
+                } else {
+                    wrapper.lambda().eq(RuleEngineRuleSet::getStatus, query.getStatus());
+                }
             }
             PageUtils.defaultOrder(orders, wrapper);
             return wrapper;
@@ -112,7 +119,8 @@ public class RuleSetServiceImpl implements RuleSetService {
             listRuleResponse.setId(m.getId());
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setIsPublish(this.ruleSetEngine.isExists(m.getWorkspaceCode(), m.getCode()));
+            listRuleResponse.setCurrentVersion(m.getCurrentVersion());
+            listRuleResponse.setPublishVersion(m.getPublishVersion());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setCreateTime(m.getCreateTime());
@@ -209,6 +217,16 @@ public class RuleSetServiceImpl implements RuleSetService {
                 throw new ValidException("规则集默认规则结果值不能为空");
             }
         }
+        // 更新版本
+        if (StrUtil.isBlank(ruleEngineRuleSet.getCurrentVersion())) {
+            ruleEngineRuleSet.setCurrentVersion(VersionUtils.INIT_VERSION);
+        } else {
+            // 如果待发布与已经发布版本一致，则需要更新一个版本号
+            if (ruleEngineRuleSet.getCurrentVersion().equals(ruleEngineRuleSet.getPublishVersion())) {
+                // 获取下一个版本
+                ruleEngineRuleSet.setCurrentVersion(VersionUtils.getNextVersion(ruleEngineRuleSet.getCurrentVersion()));
+            }
+        }
         Integer originStatus = ruleEngineRuleSet.getStatus();
         // 如果之前是待发布，则删除原有待发布数据
         if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
@@ -259,6 +277,8 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleSetPublish.setWorkspaceId(ruleSet.getWorkspaceId());
         ruleSetPublish.setWorkspaceCode(ruleSet.getWorkspaceCode());
         ruleSetPublish.setReferenceData(referenceData);
+        // add version
+        ruleSetPublish.setVersion(ruleEngineRuleSet.getCurrentVersion());
         this.ruleEngineRuleSetPublishManager.save(ruleSetPublish);
         return true;
     }
@@ -320,13 +340,19 @@ public class RuleSetServiceImpl implements RuleSetService {
         // 修改为已发布
         this.ruleEngineRuleSetManager.lambdaUpdate()
                 .set(RuleEngineRuleSet::getStatus, DataStatus.PUBLISHED.getStatus())
+                // 更新发布的版本号
+                .set(RuleEngineRuleSet::getPublishVersion, ruleEngineRuleSet.getCurrentVersion())
                 .eq(RuleEngineRuleSet::getId, ruleEngineRuleSet.getId())
                 .update();
-        // 删除原有的已发布规则数据
+        /*
+         * 删除原有的已发布规则集数据
+         * 修改为，原有已发布为历史版本，后期准备回退
+         */
         this.ruleEngineRuleSetPublishManager.lambdaUpdate()
+                .set(RuleEngineRuleSetPublish::getStatus, DataStatus.HISTORY_PUBLISHED.getStatus())
                 .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleEngineRuleSet.getId())
-                .remove();
+                .update();
         // 更新待发布为已发布
         this.ruleEngineRuleSetPublishManager.lambdaUpdate()
                 .set(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())

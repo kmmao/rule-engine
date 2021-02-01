@@ -120,7 +120,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             listRuleResponse.setCode(m.getCode());
             listRuleResponse.setCurrentVersion(m.getCurrentVersion());
             listRuleResponse.setPublishVersion(m.getPublishVersion());
-            listRuleResponse.setIsPublish(StrUtil.isNotBlank(m.getPublishVersion()));
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateTime(m.getCreateTime());

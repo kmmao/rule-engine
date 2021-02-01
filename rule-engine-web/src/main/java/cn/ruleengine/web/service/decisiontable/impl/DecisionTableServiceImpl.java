@@ -1,6 +1,7 @@
 package cn.ruleengine.web.service.decisiontable.impl;
 
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.decisiontable.*;
 import cn.ruleengine.core.exception.ValidException;
@@ -19,6 +20,7 @@ import cn.ruleengine.web.store.entity.RuleEngineDecisionTablePublish;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTableManager;
 import cn.ruleengine.web.store.manager.RuleEngineDecisionTablePublishManager;
 import cn.ruleengine.web.util.PageUtils;
+import cn.ruleengine.web.util.VersionUtils;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
@@ -88,8 +90,13 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineDecisionTable::getName, query.getName());
             }
+            // 遗留bug修复
             if (Validator.isNotEmpty(query.getStatus())) {
-                wrapper.lambda().eq(RuleEngineDecisionTable::getStatus, query.getStatus());
+                if (query.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+                    wrapper.lambda().isNotNull(RuleEngineDecisionTable::getPublishVersion);
+                } else {
+                    wrapper.lambda().eq(RuleEngineDecisionTable::getStatus, query.getStatus());
+                }
             }
             if (Validator.isNotEmpty(query.getCode())) {
                 wrapper.lambda().like(RuleEngineDecisionTable::getCode, query.getCode());
@@ -100,8 +107,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             decisionTableResponse.setId(m.getId());
             decisionTableResponse.setCode(m.getCode());
             decisionTableResponse.setName(m.getName());
-            decisionTableResponse.setIsPublish(this.decisionTableEngine.isExists(m.getWorkspaceCode(), m.getCode()));
-            decisionTableResponse.setCreateUserName(m.getCreateUserName());
+            decisionTableResponse.setCurrentVersion(m.getCurrentVersion());
+            decisionTableResponse.setPublishVersion(m.getPublishVersion());
             decisionTableResponse.setStatus(m.getStatus());
             decisionTableResponse.setCreateTime(m.getCreateTime());
             return decisionTableResponse;
@@ -284,6 +291,16 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         if (ruleEngineDecisionTable == null) {
             throw new ValidException("不存在决策表:{}", releaseRequest.getId());
         }
+        // 更新版本
+        if (StrUtil.isBlank(ruleEngineDecisionTable.getCurrentVersion())) {
+            ruleEngineDecisionTable.setCurrentVersion(VersionUtils.INIT_VERSION);
+        } else {
+            // 如果待发布与已经发布版本一致，则需要更新一个版本号
+            if (ruleEngineDecisionTable.getCurrentVersion().equals(ruleEngineDecisionTable.getPublishVersion())) {
+                // 获取下一个版本
+                ruleEngineDecisionTable.setCurrentVersion(VersionUtils.getNextVersion(ruleEngineDecisionTable.getCurrentVersion()));
+            }
+        }
         Integer originStatus = ruleEngineDecisionTable.getStatus();
         if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
             // 删除原有待发布规则
@@ -307,6 +324,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTablePublish.setData(decisionTable.toJson());
         ruleEngineDecisionTablePublish.setStatus(ruleEngineDecisionTable.getStatus());
         ruleEngineDecisionTablePublish.setReferenceData(referenceDataJson);
+        // add version
+        ruleEngineDecisionTablePublish.setVersion(ruleEngineDecisionTable.getCurrentVersion());
         this.ruleEngineDecisionTablePublishManager.save(ruleEngineDecisionTablePublish);
         return true;
     }
@@ -371,13 +390,19 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         // 修改为已发布
         this.ruleEngineDecisionTableManager.lambdaUpdate()
                 .set(RuleEngineDecisionTable::getStatus, DataStatus.PUBLISHED.getStatus())
+                // 更新发布的版本号
+                .set(RuleEngineDecisionTable::getPublishVersion, ruleEngineDecisionTable.getCurrentVersion())
                 .eq(RuleEngineDecisionTable::getId, ruleEngineDecisionTable.getId())
                 .update();
-        // 删除原有的已发布规则数据
+        /*
+         * 删除原有的已发布决策表数据
+         * 修改为，原有已发布为历史版本，后期准备回退
+         */
         this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                .set(RuleEngineDecisionTablePublish::getStatus, DataStatus.HISTORY_PUBLISHED.getStatus())
                 .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
-                .remove();
+                .update();
         // 更新待发布为已发布
         this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
                 .set(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
