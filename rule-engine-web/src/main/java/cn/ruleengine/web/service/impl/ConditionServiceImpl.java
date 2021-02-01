@@ -227,7 +227,9 @@ public class ConditionServiceImpl implements ConditionService {
 
             ConfigBean configBean = getConfigBean(m, variableMap, elementMap);
             listConditionResponse.setConfig(configBean);
-            listConditionResponse.setConfigInfo(String.format("%s %s %s", configBean.getLeftValue().getValueName(), m.getSymbol(), configBean.getRightValue().getValueName()));
+            // 获取符号说明
+            String symbol = Operator.getByName(m.getSymbol()).getExplanation();
+            listConditionResponse.setConfigInfo(String.format("%s %s %s", configBean.getLeftValue().getValueName(), symbol, configBean.getRightValue().getValueName()));
             return listConditionResponse;
         }).collect(Collectors.toList());
         pageResult.setData(new Rows<>(conditionResponses, PageUtils.getPageResponse(iPage)));

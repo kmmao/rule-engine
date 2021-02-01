@@ -1,5 +1,6 @@
 package cn.ruleengine.web.store.entity;
 
+import cn.ruleengine.core.condition.Operator;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,6 +52,9 @@ public class RuleEngineCondition implements Serializable {
 
     private String rightValue;
 
+    /**
+     * {@link Operator}
+     */
     private String symbol;
 
     @TableField(fill = FieldFill.INSERT)
