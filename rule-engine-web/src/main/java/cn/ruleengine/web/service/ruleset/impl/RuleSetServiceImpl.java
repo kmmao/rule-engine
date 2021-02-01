@@ -73,8 +73,6 @@ public class RuleSetServiceImpl implements RuleSetService {
     @Resource
     private RuleEngineRuleSetRuleManager ruleEngineRuleSetRuleManager;
     @Resource
-    private ActionService actionService;
-    @Resource
     private ParameterService parameterService;
     @Resource
     private ValueResolve valueResolve;
@@ -484,7 +482,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleBody.setName(ruleEngineRule.getName());
         ruleBody.setOrderNo(orderNo);
         ruleBody.setConditionGroup(this.ruleEngineConditionGroupService.getConditionGroupConfig(ruleEngineRule.getId()));
-        ruleBody.setAction(this.actionService.getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType()));
+        ruleBody.setAction(this.valueResolve.getConfigValue(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType()));
         return ruleBody;
     }
 

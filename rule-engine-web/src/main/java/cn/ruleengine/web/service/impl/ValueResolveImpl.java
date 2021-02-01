@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.impl;
 
+import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.*;
@@ -110,6 +111,70 @@ public class ValueResolveImpl implements ValueResolve {
             }
         }
         return value;
+    }
+
+    /**
+     * 解析值/变量/元素/固定值
+     *
+     * @param value     结果值/可能为变量/元素
+     * @param type      变量/元素/固定值
+     * @param valueType STRING/NUMBER...
+     * @return Action
+     */
+    @Override
+    public ConfigValue getConfigValue(String value, Integer type, String valueType) {
+        ConfigValue configValue = new ConfigValue();
+        if (Validator.isEmpty(type)) {
+            return configValue;
+        }
+        configValue.setValueType(valueType);
+        configValue.setType(type);
+        if (Validator.isEmpty(value)) {
+            return configValue;
+        }
+        if (type.equals(VariableType.ELEMENT.getType())) {
+            configValue.setValueName(this.ruleEngineElementManager.getById(value).getName());
+        } else if (type.equals(VariableType.VARIABLE.getType())) {
+            RuleEngineVariable engineVariable = this.ruleEngineVariableManager.getById(value);
+            configValue.setValueName(engineVariable.getName());
+            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
+                configValue.setVariableValue(engineVariable.getValue());
+            }
+        }
+        configValue.setValue(value);
+        return configValue;
+    }
+
+    /**
+     * 如果是变量，查询到变量name，如果是元素查询到元素name
+     *
+     * @param type        类型 变量/元素/固定值
+     * @param value       值
+     * @param valueType   值类型 STRING/NUMBER...
+     * @param variableMap 变量缓存
+     * @param elementMap  元素缓存
+     * @return ConfigValue
+     */
+    @Override
+    public ConfigValue getConfigValue(String value, Integer type, String valueType, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
+        String valueName = value;
+        String variableValue = null;
+        if (type.equals(VariableType.ELEMENT.getType())) {
+            valueName = elementMap.get(Integer.valueOf(value)).getName();
+        } else if (type.equals(VariableType.VARIABLE.getType())) {
+            RuleEngineVariable engineVariable = variableMap.get(Integer.valueOf(value));
+            valueName = engineVariable.getName();
+            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
+                variableValue = engineVariable.getValue();
+            }
+        }
+        ConfigValue configBeanValue = new ConfigValue();
+        configBeanValue.setType(type);
+        configBeanValue.setValue(value);
+        configBeanValue.setValueName(valueName);
+        configBeanValue.setVariableValue(variableValue);
+        configBeanValue.setValueType(valueType);
+        return configBeanValue;
     }
 
 }

@@ -17,9 +17,13 @@ public enum DataStatus {
     /**
      * 规则/决策表的各种状态
      */
-    EDIT(0), WAIT_PUBLISH(1), PUBLISHED(2);
+    EDIT(0), WAIT_PUBLISH(1), PUBLISHED(2),
+    /**
+     * 历史的已发布
+     */
+    HISTORY_PUBLISHED(3);
 
     @Getter
-    private Integer status;
+    private final Integer status;
 
 }

@@ -26,8 +26,15 @@ public class ListGeneralRuleResponse {
 
     /**
      * 是否发布
+     *
+     * @deprecated publishVersion
      */
+    @Deprecated
     private Boolean isPublish;
+
+    private String currentVersion;
+
+    private String publishVersion;
 
     private Integer status;
 

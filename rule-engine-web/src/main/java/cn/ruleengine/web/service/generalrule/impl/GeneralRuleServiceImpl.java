@@ -1,6 +1,7 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
 
+import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.EnableEnum;
@@ -15,14 +16,13 @@ import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineGeneralRuleMapper;
 
 import cn.ruleengine.web.util.PageUtils;
-import cn.ruleengine.web.vo.common.ReferenceData;
+import cn.ruleengine.web.util.VersionUtils;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
-import cn.ruleengine.web.vo.decisiontable.TableData;
 import cn.ruleengine.web.vo.generalrule.*;
 import cn.ruleengine.core.condition.ConditionGroup;
 
@@ -77,8 +77,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     @Resource
     private RuleEngineConditionGroupService ruleEngineConditionGroupService;
     @Resource
-    private ActionService actionService;
-    @Resource
     private ConditionSetService conditionSetService;
     @Resource
     private ReferenceDataService referenceDataService;
@@ -106,8 +104,13 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             if (Validator.isNotEmpty(query.getCode())) {
                 wrapper.lambda().like(RuleEngineGeneralRule::getCode, query.getCode());
             }
+            // 遗留bug修复
             if (Validator.isNotEmpty(query.getStatus())) {
-                wrapper.lambda().eq(RuleEngineGeneralRule::getStatus, query.getStatus());
+                if (query.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
+                    wrapper.lambda().isNotNull(RuleEngineGeneralRule::getPublishVersion);
+                } else {
+                    wrapper.lambda().eq(RuleEngineGeneralRule::getStatus, query.getStatus());
+                }
             }
             return wrapper;
         }, m -> {
@@ -115,7 +118,9 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             listRuleResponse.setId(m.getId());
             listRuleResponse.setName(m.getName());
             listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setIsPublish(this.engine.isExists(m.getWorkspaceCode(), m.getCode()));
+            listRuleResponse.setCurrentVersion(m.getCurrentVersion());
+            listRuleResponse.setPublishVersion(m.getPublishVersion());
+            listRuleResponse.setIsPublish(StrUtil.isNotBlank(m.getPublishVersion()));
             listRuleResponse.setCreateUserName(m.getCreateUserName());
             listRuleResponse.setStatus(m.getStatus());
             listRuleResponse.setCreateTime(m.getCreateTime());
@@ -308,6 +313,16 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         this.ruleEngineConditionGroupService.removeConditionGroupByRuleIds(Collections.singletonList(ruleEngineGeneralRule.getRuleId()));
         // 保存条件信息
         this.ruleEngineConditionGroupService.saveConditionGroup(ruleEngineGeneralRule.getRuleId(), generalRuleBody.getConditionGroup());
+        // 更新版本
+        if (StrUtil.isBlank(ruleEngineGeneralRule.getCurrentVersion())) {
+            ruleEngineGeneralRule.setCurrentVersion(VersionUtils.INIT_VERSION);
+        } else {
+            // 如果待发布与已经发布版本一致，则需要更新一个版本号
+            if (ruleEngineGeneralRule.getCurrentVersion().equals(ruleEngineGeneralRule.getPublishVersion())) {
+                // 获取下一个版本
+                ruleEngineGeneralRule.setCurrentVersion(VersionUtils.getNextVersion(ruleEngineGeneralRule.getCurrentVersion()));
+            }
+        }
         //  更新规则信息
         ruleEngineGeneralRule.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         // 保存结果
@@ -350,6 +365,8 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         rulePublish.setData(generalRule.toJson());
         rulePublish.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         rulePublish.setWorkspaceId(generalRule.getWorkspaceId());
+        // add version
+        rulePublish.setVersion(ruleEngineGeneralRule.getCurrentVersion());
         rulePublish.setWorkspaceCode(generalRule.getWorkspaceCode());
         rulePublish.setReferenceData(referenceData);
         this.ruleEngineGeneralRulePublishManager.save(rulePublish);
@@ -379,13 +396,19 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         // 修改为已发布
         this.ruleEngineGeneralRuleManager.lambdaUpdate()
                 .set(RuleEngineGeneralRule::getStatus, DataStatus.PUBLISHED.getStatus())
+                // 更新发布的版本号
+                .set(RuleEngineGeneralRule::getPublishVersion, ruleEngineGeneralRule.getCurrentVersion())
                 .eq(RuleEngineGeneralRule::getId, ruleEngineGeneralRule.getId())
                 .update();
-        // 删除原有的已发布规则数据
+        /*
+         * 删除原有的已发布规则数据
+         * 修改为，原有已发布为历史版本，后期准备回退
+         */
         this.ruleEngineGeneralRulePublishManager.lambdaUpdate()
+                .set(RuleEngineGeneralRulePublish::getStatus, DataStatus.HISTORY_PUBLISHED.getStatus())
                 .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                 .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, ruleEngineGeneralRule.getId())
-                .remove();
+                .update();
         // 更新待发布为已发布
         this.ruleEngineGeneralRulePublishManager.lambdaUpdate()
                 .set(RuleEngineGeneralRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
@@ -422,10 +445,10 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleResponse.setConditionGroup(this.ruleEngineConditionGroupService.getConditionGroupConfig(ruleEngineGeneralRule.getRuleId()));
         // 结果
         RuleEngineRule ruleEngineRule = this.ruleEngineRuleManager.getById(ruleEngineGeneralRule.getRuleId());
-        ConfigValue action = this.actionService.getAction(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
+        ConfigValue action = this.valueResolve.getConfigValue(ruleEngineRule.getActionValue(), ruleEngineRule.getActionType(), ruleEngineRule.getActionValueType());
         ruleResponse.setAction(action);
         // 默认结果
-        ConfigValue defaultValue = this.actionService.getAction(ruleEngineGeneralRule.getDefaultActionValue(), ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType());
+        ConfigValue defaultValue = this.valueResolve.getConfigValue(ruleEngineGeneralRule.getDefaultActionValue(), ruleEngineGeneralRule.getDefaultActionType(), ruleEngineGeneralRule.getDefaultActionValueType());
         DefaultAction defaultAction = new DefaultAction(defaultValue);
         defaultAction.setEnableDefaultAction(ruleEngineGeneralRule.getEnableDefaultAction());
         ruleResponse.setDefaultAction(defaultAction);

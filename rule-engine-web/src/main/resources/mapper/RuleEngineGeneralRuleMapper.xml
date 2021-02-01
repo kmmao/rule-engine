@@ -10,7 +10,8 @@
              default_action_type=#{defaultActionType},
              default_action_value=#{defaultActionValue},
              default_action_value_type=#{defaultActionValueType},
-             enable_default_action=#{enableDefaultAction}
+             enable_default_action=#{enableDefaultAction},
+             current_version=#{currentVersion}
          where id=#{id}
     </update>
 

@@ -2,6 +2,7 @@ package cn.ruleengine.web.service;
 
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.core.value.Value;
+import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.web.vo.condition.ConfigValue;
 
 import java.util.Map;
@@ -46,4 +47,25 @@ public interface ValueResolve {
      */
     ConfigValue getConfigValue(Value cValue);
 
+    /**
+     * 解析值/变量/元素/固定值
+     *
+     * @param value     结果值/可能为变量/元素
+     * @param type      变量/元素/固定值
+     * @param valueType STRING/NUMBER...
+     * @return Action
+     */
+    ConfigValue getConfigValue(String value, Integer type, String valueType);
+
+    /**
+     * 如果是变量，查询到变量name，如果是元素查询到元素name
+     *
+     * @param type        类型 变量/元素/固定值
+     * @param value       值
+     * @param valueType   值类型 STRING/NUMBER...
+     * @param variableMap 变量缓存
+     * @param elementMap  元素缓存
+     * @return ConfigValue
+     */
+    ConfigValue getConfigValue(String value, Integer type, String valueType, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap);
 }

@@ -170,47 +170,25 @@ public class ConditionServiceImpl implements ConditionService {
         return conditionResponse;
     }
 
+    /**
+     * 条件配置信息
+     *
+     * @param engineCondition 条件
+     * @return ConfigBean
+     */
     public ConfigBean getConfigBean(RuleEngineCondition engineCondition) {
         ConfigBean configBean = new ConfigBean();
 
-        ConfigValue leftValue = getConfigBeanValue(engineCondition.getLeftType(), engineCondition.getLeftValue(), engineCondition.getLeftValueType());
+        ConfigValue leftValue = valueResolve.getConfigValue(engineCondition.getLeftValue(), engineCondition.getLeftType(), engineCondition.getLeftValueType());
         configBean.setLeftValue(leftValue);
 
         configBean.setSymbol(engineCondition.getSymbol());
 
-        ConfigValue rightValue = getConfigBeanValue(engineCondition.getRightType(), engineCondition.getRightValue(), engineCondition.getRightValueType());
+        ConfigValue rightValue = valueResolve.getConfigValue(engineCondition.getRightValue(), engineCondition.getRightType(), engineCondition.getRightValueType());
         configBean.setRightValue(rightValue);
         return configBean;
     }
 
-    /**
-     * 如果是变量，查询到变量name，如果是元素查询到元素name
-     *
-     * @param type      类型 变量/元素/固定值
-     * @param value     值
-     * @param valueType 值类型 STRING/NUMBER...
-     * @return ConfigBean.Value
-     */
-    public ConfigValue getConfigBeanValue(Integer type, String value, String valueType) {
-        String valueName = value;
-        String variableValue = null;
-        if (type.equals(VariableType.ELEMENT.getType())) {
-            valueName = ruleEngineElementManager.getById(value).getName();
-        } else if (type.equals(VariableType.VARIABLE.getType())) {
-            RuleEngineVariable engineVariable = ruleEngineVariableManager.getById(value);
-            valueName = engineVariable.getName();
-            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
-                variableValue = engineVariable.getValue();
-            }
-        }
-        ConfigValue configBeanValue = new ConfigValue();
-        configBeanValue.setType(type);
-        configBeanValue.setValue(value);
-        configBeanValue.setValueName(valueName);
-        configBeanValue.setVariableValue(variableValue);
-        configBeanValue.setValueType(valueType);
-        return configBeanValue;
-    }
 
     /**
      * 条件列表
@@ -256,15 +234,23 @@ public class ConditionServiceImpl implements ConditionService {
         return pageResult;
     }
 
-    public ConfigBean getConfigBean(RuleEngineCondition m, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
+    /**
+     * 条件配置信息
+     *
+     * @param engineCondition 条件
+     * @param variableMap     条件引用的变量
+     * @param elementMap      条件引用的元素
+     * @return ConfigBean
+     */
+    public ConfigBean getConfigBean(RuleEngineCondition engineCondition, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
         ConfigBean configBean = new ConfigBean();
 
-        ConfigValue leftValue = getConfigBeanValue(m.getLeftType(), m.getLeftValue(), m.getLeftValueType(), variableMap, elementMap);
+        ConfigValue leftValue = this.valueResolve.getConfigValue(engineCondition.getLeftValue(), engineCondition.getLeftType(), engineCondition.getLeftValueType(), variableMap, elementMap);
         configBean.setLeftValue(leftValue);
 
-        configBean.setSymbol(m.getSymbol());
+        configBean.setSymbol(engineCondition.getSymbol());
 
-        ConfigValue rightValue = getConfigBeanValue(m.getRightType(), m.getRightValue(), m.getRightValueType(), variableMap, elementMap);
+        ConfigValue rightValue = this.valueResolve.getConfigValue(engineCondition.getRightValue(), engineCondition.getRightType(), engineCondition.getRightValueType(), variableMap, elementMap);
         configBean.setRightValue(rightValue);
         return configBean;
     }
@@ -320,36 +306,6 @@ public class ConditionServiceImpl implements ConditionService {
                 .orElse(new HashMap<>());
     }
 
-    /**
-     * 如果是变量，查询到变量name，如果是元素查询到元素name
-     *
-     * @param type        类型 变量/元素/固定值
-     * @param value       值
-     * @param valueType   值类型 STRING/NUMBER...
-     * @param variableMap 变量缓存
-     * @param elementMap  元素缓存
-     * @return ConfigValue
-     */
-    public ConfigValue getConfigBeanValue(Integer type, String value, String valueType, Map<Integer, RuleEngineVariable> variableMap, Map<Integer, RuleEngineElement> elementMap) {
-        String valueName = value;
-        String variableValue = null;
-        if (type.equals(VariableType.ELEMENT.getType())) {
-            valueName = elementMap.get(Integer.valueOf(value)).getName();
-        } else if (type.equals(VariableType.VARIABLE.getType())) {
-            RuleEngineVariable engineVariable = variableMap.get(Integer.valueOf(value));
-            valueName = engineVariable.getName();
-            if (engineVariable.getType().equals(VariableType.CONSTANT.getType())) {
-                variableValue = engineVariable.getValue();
-            }
-        }
-        ConfigValue configBeanValue = new ConfigValue();
-        configBeanValue.setType(type);
-        configBeanValue.setValue(value);
-        configBeanValue.setValueName(valueName);
-        configBeanValue.setVariableValue(variableValue);
-        configBeanValue.setValueType(valueType);
-        return configBeanValue;
-    }
 
     /**
      * 更新条件

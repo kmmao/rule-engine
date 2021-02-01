@@ -41,6 +41,10 @@ public class RuleEngineGeneralRulePublish implements Serializable {
      * see RuleStatus
      */
     private Integer status;
+    /**
+     * 版本号
+     */
+    private String version;
 
     private String referenceData;
 
