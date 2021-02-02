@@ -1,8 +1,8 @@
 package cn.ruleengine.web.service.decisiontable.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.decisiontable.*;
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.ValueResolve;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -74,7 +75,17 @@ public class DecisionTableResolveServiceImpl implements DecisionTableResolveServ
             collHead.setOperator(Operator.getByName(collConditionHead.getSymbol()));
             decisionTable.addCollHead(collHead);
         }
-        List<Rows> rows = tableData.getRows();
+        // 首先过滤掉没有结果的
+        List<Rows> rows = tableData.getRows().stream().filter(f -> {
+            ConfigValue result = f.getResult();
+            if (result.getType() == null) {
+                return true;
+            }
+            if (StrUtil.isBlank(result.getValue())) {
+                return true;
+            }
+            return StrUtil.isBlank(result.getValueType());
+        }).collect(Collectors.toList());
         for (int i = 0; i < rows.size(); i++) {
             Rows row = rows.get(i);
             Row decisionTableRow = new Row();
