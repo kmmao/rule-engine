@@ -79,12 +79,12 @@ public class DecisionTableResolveServiceImpl implements DecisionTableResolveServ
         List<Rows> rows = tableData.getRows().stream().filter(f -> {
             ConfigValue result = f.getResult();
             if (result.getType() == null) {
-                return true;
+                return false;
             }
             if (StrUtil.isBlank(result.getValue())) {
-                return true;
+                return false;
             }
-            return StrUtil.isBlank(result.getValueType());
+            return !StrUtil.isBlank(result.getValueType());
         }).collect(Collectors.toList());
         for (int i = 0; i < rows.size(); i++) {
             Rows row = rows.get(i);
@@ -112,5 +112,6 @@ public class DecisionTableResolveServiceImpl implements DecisionTableResolveServ
         }
         return decisionTable;
     }
+
 
 }
