@@ -2,6 +2,8 @@ package cn.ruleengine.core.monitor;
 
 import lombok.Data;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -13,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 1.0.0
  */
 @Data
-public class AtomicGeneralIndicator implements Indicator  {
+public class AtomicGeneralIndicator implements Indicator {
 
     /**
      * 普通规则id
@@ -24,7 +26,13 @@ public class AtomicGeneralIndicator implements Indicator  {
      * 普通规则code
      */
     private String code;
-
+    /**
+     * 折线图使用 1分钟一个纬度
+     * <p>
+     * 10:33：20次
+     * 10:34：40次
+     */
+    private Map<String, AtomicTimeCount> timeCount = new ConcurrentHashMap<>();
     /**
      * 最小耗时 单位ms
      */
@@ -49,17 +57,21 @@ public class AtomicGeneralIndicator implements Indicator  {
     /**
      * 结果命中次数
      */
-    private AtomicLong actionCount = new AtomicLong(0L);
+    private AtomicLong totalActionCount = new AtomicLong(0L);
 
     /**
      * 默认结果命中次数
      */
-    private AtomicLong defaultActionCount = new AtomicLong(0L);
+    private AtomicLong totalDefaultActionCount = new AtomicLong(0L);
 
     /**
      * 未命中次数
      */
-    private AtomicLong missesCount = new AtomicLong(0L);
+    private AtomicLong totalMissesCount = new AtomicLong(0L);
+    /**
+     * 失败异常数
+     */
+    private AtomicLong totalErrorCount = new AtomicLong(0L);
 
     /**
      * 添加耗时
@@ -85,7 +97,7 @@ public class AtomicGeneralIndicator implements Indicator  {
 
     @Override
     public void incrementActionCount() {
-        actionCount.incrementAndGet();
+        totalActionCount.incrementAndGet();
     }
 
     @Override
@@ -95,12 +107,16 @@ public class AtomicGeneralIndicator implements Indicator  {
 
     @Override
     public void incrementDefaultActionCount() {
-        defaultActionCount.incrementAndGet();
+        totalDefaultActionCount.incrementAndGet();
     }
 
     @Override
     public void incrementMissesCount() {
-        missesCount.incrementAndGet();
+        totalMissesCount.incrementAndGet();
     }
 
+    @Override
+    public void incrementErrorCount() {
+        totalErrorCount.incrementAndGet();
+    }
 }

@@ -18,16 +18,19 @@ import java.lang.reflect.Method;
  */
 public class GeneralRuleMonitorProxy implements MethodInterceptor {
 
-    private GeneralRule generalRule;
+    private final GeneralRule generalRule;
 
-    private RuleEngineConfiguration configuration;
+    private final RuleEngineConfiguration configuration;
 
     public GeneralRuleMonitorProxy(RuleEngineConfiguration configuration, GeneralRule generalRule) {
         this.generalRule = generalRule;
         this.configuration = configuration;
         Monitor monitor = configuration.getMonitor();
         // 默认使用AtomicGeneralIndicator
-        monitor.initGeneralRuleMonitor(generalRule.getId(), new AtomicGeneralIndicator());
+        AtomicGeneralIndicator atomicGeneralIndicator = new AtomicGeneralIndicator();
+        atomicGeneralIndicator.setId(generalRule.getId());
+        atomicGeneralIndicator.setCode(generalRule.getCode());
+        monitor.initGeneralRuleMonitor(generalRule.getId(), atomicGeneralIndicator);
     }
 
     public GeneralRule getProxy() {
@@ -37,13 +40,14 @@ public class GeneralRuleMonitorProxy implements MethodInterceptor {
         return (GeneralRule) enhancer.create();
     }
 
+    /**
+     * 普通规则监控统计
+     * <p>
+     * 还需要优化
+     */
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-        // TODO: 2020/12/21 待完成 待过滤掉Object中的方法等等
         Indicator indicator = configuration.getMonitor().getGeneralRuleMonitor(this.generalRule.getId());
-        long startTime = System.currentTimeMillis();
-        Object invoke = method.invoke(this.generalRule, args);
-        long cost = System.currentTimeMillis() - startTime;
         switch (method.getName()) {
             case "getActionValue":
                 indicator.incrementActionCount();
@@ -53,13 +57,25 @@ public class GeneralRuleMonitorProxy implements MethodInterceptor {
                 break;
             case "execute":
                 indicator.incrementTotalCount();
-                indicator.addTimeConsuming(cost);
-                break;
+                long startTime = System.currentTimeMillis();
+                Object invoke;
+                try {
+                    invoke = method.invoke(this.generalRule, args);
+                } catch (Exception e) {
+                    indicator.incrementErrorCount();
+                    throw e;
+                } finally {
+                    long cost = System.currentTimeMillis() - startTime;
+                    indicator.addTimeConsuming(cost);
+                }
+                if (invoke == null) {
+                    indicator.incrementMissesCount();
+                }
+                return invoke;
             default:
-                indicator.incrementMissesCount();
                 break;
         }
-        return invoke;
+        return method.invoke(this.generalRule, args);
     }
 
 }

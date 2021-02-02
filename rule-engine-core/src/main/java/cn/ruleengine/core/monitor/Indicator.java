@@ -35,4 +35,9 @@ public interface Indicator {
      * 添加未命中执行次数
      */
     void incrementMissesCount();
+
+    /**
+     * 失败异常数
+     */
+    void incrementErrorCount();
 }

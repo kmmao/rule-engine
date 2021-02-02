@@ -20,6 +20,9 @@ public class Monitor implements Closeable {
 
     /**
      * 普通规则监控数据
+     * <p>
+     * 注意：目前不支持集群监控
+     * 集群缓存数据同步问题待完成
      */
     private Map<Integer, Indicator> generalRuleMonitor = new HashMap<>();
 
@@ -29,6 +32,16 @@ public class Monitor implements Closeable {
 
     public Indicator getGeneralRuleMonitor(Integer id) {
         return this.generalRuleMonitor.get(id);
+    }
+
+    /**
+     * 返回所有规则的总的 调用次数，以及平均耗时...
+     *
+     * @return data
+     */
+    public Object getAllGeneralRuleMonitor() {
+
+        return null;
     }
 
     @Override

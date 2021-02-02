@@ -84,4 +84,9 @@ public class SimpleGeneralRuleIndicator implements Indicator  {
     public void incrementMissesCount() {
 
     }
+
+    @Override
+    public void incrementErrorCount() {
+
+    }
 }
