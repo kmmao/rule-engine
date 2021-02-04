@@ -85,11 +85,6 @@ public class RuleSet implements JsonParse {
 
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
-    /**
-     * 是否开启监控
-     */
-    private boolean enableMonitor = false;
-
 
     public void addRule(@NonNull Rule rule) {
         Objects.requireNonNull(rule);

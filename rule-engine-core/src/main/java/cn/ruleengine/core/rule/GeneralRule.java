@@ -46,11 +46,6 @@ public class GeneralRule extends Rule {
     private Precondition precondition = new Precondition();
 
     /**
-     * 是否开启监控
-     */
-    private boolean enableMonitor = false;
-
-    /**
      * 规则默认值
      */
     private Value defaultActionValue;
@@ -116,7 +111,6 @@ public class GeneralRule extends Rule {
         this.setCode(generalRule.getCode());
         this.setName(generalRule.getName());
         this.setPrecondition(generalRule.getPrecondition());
-        this.setEnableMonitor(generalRule.isEnableMonitor());
         this.setDefaultActionValue(generalRule.getDefaultActionValue());
         this.setDescription(generalRule.getDescription());
         this.setWorkspaceId(generalRule.getWorkspaceId());

@@ -120,9 +120,6 @@ public class RuleSetEngine implements Engine {
         if (!this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>());
         }
-        if (ruleSet.isEnableMonitor()) {
-            // 代理这个规则集进行监控
-        }
         this.workspaceMap.get(workspaceCode).put(ruleSetCode, ruleSet);
     }
 

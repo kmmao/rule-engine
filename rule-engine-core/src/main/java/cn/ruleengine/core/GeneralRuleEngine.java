@@ -18,7 +18,6 @@ package cn.ruleengine.core;
 
 import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.listener.ExecuteListener;
-import cn.ruleengine.core.monitor.GeneralRuleMonitorProxy;
 import cn.ruleengine.core.rule.GeneralRule;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -150,11 +149,6 @@ public class GeneralRuleEngine implements Engine {
         String ruleCode = Objects.requireNonNull(generalRule.getCode());
         if (!this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>(20));
-        }
-        // 如果开启监控，返回一个被代理的规则对象
-        if (generalRule.isEnableMonitor()) {
-            GeneralRuleMonitorProxy ruleMonitorProxy = new GeneralRuleMonitorProxy(this.configuration,generalRule);
-            generalRule = ruleMonitorProxy.getProxy();
         }
         this.workspaceMap.get(workspaceCode).put(ruleCode, generalRule);
     }
