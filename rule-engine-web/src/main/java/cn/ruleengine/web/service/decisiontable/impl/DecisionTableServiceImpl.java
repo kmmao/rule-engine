@@ -84,8 +84,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         return PageUtils.page(this.ruleEngineDecisionTableManager, page, () -> {
             QueryWrapper<RuleEngineDecisionTable> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineDecisionTable::getWorkspaceId, workspace.getId());
-            PageUtils.defaultOrder(orders, wrapper);
-
             ListDecisionTableRequest query = pageRequest.getQuery();
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineDecisionTable::getName, query.getName());
@@ -101,6 +99,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             if (Validator.isNotEmpty(query.getCode())) {
                 wrapper.lambda().like(RuleEngineDecisionTable::getCode, query.getCode());
             }
+            PageUtils.defaultOrder(orders, wrapper);
             return wrapper;
         }, m -> {
             ListDecisionTableResponse decisionTableResponse = new ListDecisionTableResponse();
@@ -301,20 +300,18 @@ public class DecisionTableServiceImpl implements DecisionTableService {
                 ruleEngineDecisionTable.setCurrentVersion(VersionUtils.getNextVersion(ruleEngineDecisionTable.getCurrentVersion()));
             }
         }
-        Integer originStatus = ruleEngineDecisionTable.getStatus();
-        if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
-            // 删除原有待发布规则
-            this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
-                    .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
-                    .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
-                    .remove();
-        }
         ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
         String referenceDataJson = JSON.toJSONString(referenceDataService.countReferenceData(releaseRequest.getTableData()));
         ruleEngineDecisionTable.setReferenceData(referenceDataJson);
         this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
+        // 删除原有待发布规则
+        this.ruleEngineDecisionTablePublishManager.lambdaUpdate()
+                .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineDecisionTablePublish::getDecisionTableId, ruleEngineDecisionTable.getId())
+                .remove();
+        // 生成新的待发布
         RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = new RuleEngineDecisionTablePublish();
         ruleEngineDecisionTablePublish.setDecisionTableId(ruleEngineDecisionTable.getId());
         ruleEngineDecisionTablePublish.setDecisionTableCode(ruleEngineDecisionTable.getCode());

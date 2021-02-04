@@ -35,6 +35,7 @@ import cn.ruleengine.web.vo.ruleset.*;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -96,23 +97,24 @@ public class RuleSetServiceImpl implements RuleSetService {
         Workspace workspace = Context.getCurrentWorkspace();
         return PageUtils.page(this.ruleEngineRuleSetManager, page, () -> {
             QueryWrapper<RuleEngineRuleSet> wrapper = new QueryWrapper<>();
-            wrapper.lambda().eq(RuleEngineRuleSet::getWorkspaceId, workspace.getId());
+            PageUtils.defaultOrder(orders, wrapper);
+            LambdaQueryWrapper<RuleEngineRuleSet> lambda = wrapper.lambda();
+            lambda.eq(RuleEngineRuleSet::getWorkspaceId, workspace.getId());
             ListGeneralRuleRequest query = pageRequest.getQuery();
             if (Validator.isNotEmpty(query.getCode())) {
-                wrapper.lambda().like(RuleEngineRuleSet::getCode, query.getCode());
+                lambda.like(RuleEngineRuleSet::getCode, query.getCode());
             }
             if (Validator.isNotEmpty(query.getName())) {
-                wrapper.lambda().like(RuleEngineRuleSet::getName, query.getName());
+                lambda.like(RuleEngineRuleSet::getName, query.getName());
             }
             // 遗留bug修复
             if (Validator.isNotEmpty(query.getStatus())) {
                 if (query.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
-                    wrapper.lambda().isNotNull(RuleEngineRuleSet::getPublishVersion);
+                    lambda.isNotNull(RuleEngineRuleSet::getPublishVersion);
                 } else {
-                    wrapper.lambda().eq(RuleEngineRuleSet::getStatus, query.getStatus());
+                    lambda.eq(RuleEngineRuleSet::getStatus, query.getStatus());
                 }
             }
-            PageUtils.defaultOrder(orders, wrapper);
             return wrapper;
         }, m -> {
             ListRuleSetResponse listRuleResponse = new ListRuleSetResponse();
@@ -227,14 +229,6 @@ public class RuleSetServiceImpl implements RuleSetService {
                 ruleEngineRuleSet.setCurrentVersion(VersionUtils.getNextVersion(ruleEngineRuleSet.getCurrentVersion()));
             }
         }
-        Integer originStatus = ruleEngineRuleSet.getStatus();
-        // 如果之前是待发布，则删除原有待发布数据
-        if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
-            this.ruleEngineRuleSetPublishManager.lambdaUpdate()
-                    .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
-                    .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleSetBody.getId())
-                    .remove();
-        }
         ruleEngineRuleSet.setStrategyType(ruleSetBody.getStrategyType());
         ruleEngineRuleSet.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineRuleSet.setEnableDefaultRule(ruleSetBody.getEnableDefaultRule());
@@ -269,6 +263,12 @@ public class RuleSetServiceImpl implements RuleSetService {
             Rule rule = this.getRule(defaultRuleBody);
             ruleSet.setDefaultRule(rule);
         }
+        // 如果之前是待发布，则删除原有待发布数据
+        this.ruleEngineRuleSetPublishManager.lambdaUpdate()
+                .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineRuleSetPublish::getRuleSetId, ruleSetBody.getId())
+                .remove();
+        // 生成新的待发布
         RuleEngineRuleSetPublish ruleSetPublish = new RuleEngineRuleSetPublish();
         ruleSetPublish.setRuleSetId(ruleSet.getId());
         ruleSetPublish.setRuleSetCode(ruleSet.getCode());

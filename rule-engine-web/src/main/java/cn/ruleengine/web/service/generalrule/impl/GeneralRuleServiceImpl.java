@@ -96,7 +96,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             QueryWrapper<RuleEngineGeneralRule> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RuleEngineGeneralRule::getWorkspaceId, workspace.getId());
             PageUtils.defaultOrder(orders, wrapper);
-
             ListGeneralRuleRequest query = pageRequest.getQuery();
             if (Validator.isNotEmpty(query.getName())) {
                 wrapper.lambda().like(RuleEngineGeneralRule::getName, query.getName());
@@ -304,7 +303,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         if (ruleEngineGeneralRule == null) {
             throw new ValidException("不存在规则:{}", generalRuleBody.getId());
         }
-        Integer originStatus = ruleEngineGeneralRule.getStatus();
         // 如果开启了默认结果
         DefaultAction defaultAction = generalRuleBody.getDefaultAction();
         defaultAction.valid();
@@ -335,14 +333,6 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         String referenceData = JSON.toJSONString(referenceDataService.countReferenceData(generalRuleBody));
         ruleEngineGeneralRule.setReferenceData(referenceData);
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
-        // 生成待发布规则
-        if (Objects.equals(originStatus, DataStatus.WAIT_PUBLISH.getStatus())) {
-            // 删除原有待发布规则
-            this.ruleEngineGeneralRulePublishManager.lambdaUpdate()
-                    .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
-                    .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, ruleEngineGeneralRule.getId())
-                    .remove();
-        }
         // 添加新的待发布数据
         GeneralRule generalRule = new GeneralRule();
         generalRule.setId(generalRuleBody.getId());
@@ -357,7 +347,12 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
             generalRule.setDefaultActionValue(this.valueResolve.getValue(defaultAction.getType(), defaultAction.getValueType(), defaultAction.getValue()));
         }
-
+        // 将不再判断是否存在待发布，直接执行删除sql
+        this.ruleEngineGeneralRulePublishManager.lambdaUpdate()
+                .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.WAIT_PUBLISH.getStatus())
+                .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, ruleEngineGeneralRule.getId())
+                .remove();
+        // 生成待发布规则
         RuleEngineGeneralRulePublish rulePublish = new RuleEngineGeneralRulePublish();
         rulePublish.setGeneralRuleId(generalRule.getId());
         rulePublish.setGeneralRuleCode(generalRule.getCode());
