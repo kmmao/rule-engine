@@ -11,6 +11,18 @@
 项目展示地址：http://ruleengine.cn/   
 申请登录权限联系QQ：761945125，Email：761945125@qq.com
 
+### 关于提出Bug奖励
+如果项目在使用过程中，发现项目缺陷或者漏洞等问题，可以在以下地址中提出问题反馈：  
+Gitee：https://gitee.com/qwding/rule-engine/issues  
+Github：https://github.com/rule-engine/rule-engine/issues  
+提出一个问题奖励2元（请大家不要嫌少哦！此项目属于非盈利项目，纯属个人兴趣开源以及开发，我们只想把此项目更加完善！）  
+
+提出问题后请联系作者打款。   
+
+注意： 
+- 每天奖励数量最多10个。
+- 重复问题没有奖励。
+
 ### 技术文档
 简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
 详细文档：http://ruleengine.cn/doc
