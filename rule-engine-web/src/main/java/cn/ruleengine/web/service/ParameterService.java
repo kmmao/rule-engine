@@ -75,6 +75,12 @@ public class ParameterService {
         return this.getParameters(elementIds);
     }
 
+    /**
+     * 根据元素code转换 Parameter
+     *
+     * @param elementIds 元素id
+     * @return Parameter
+     */
     private Set<Parameter> getParameters(Set<Integer> elementIds) {
         if (CollUtil.isEmpty(elementIds)) {
             return Collections.emptySet();
@@ -107,6 +113,12 @@ public class ParameterService {
         return this.getParameters(elementIds);
     }
 
+    /**
+     * 获取Rule中所有元素id
+     *
+     * @param elementIds 元素id
+     * @param rule       规则
+     */
     private void getConditionElement(Set<Integer> elementIds, Rule rule) {
         if (rule == null) {
             return;

@@ -39,6 +39,12 @@ public class ConditionSetService {
     @Resource
     private ValueResolve valueResolve;
 
+    /**
+     * 获取规则配置条件集，懒得写的，待优化
+     *
+     * @param conditionGroup 条件组配置
+     * @return 条件集
+     */
     public ConditionSet loadConditionSet(List<ConditionGroupConfig> conditionGroup) {
         ConditionSet conditionSet = new ConditionSet();
         for (ConditionGroupConfig conditionGroupConfig : conditionGroup) {
