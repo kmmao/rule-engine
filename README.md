@@ -1,9 +1,9 @@
 # 📌 规则引擎 RuleEngine 📌
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![GitHub Stars](https://img.shields.io/github/stars/DingQianWen/rule-engine)](https://github.com/DingQianWen/rule-engine/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/DingQianWen/rule-engine)](https://github.com/DingQianWen/rule-engine/fork)
-[![GitHub issues](https://img.shields.io/github/issues/DingQianWen/rule-engine.svg)](https://github.com/DingQianWen/rule-engine/issues)
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/DingQianWen/rule-engine.svg)](https://github.com/DingQianWen/rule-engine/issues "Percentage of issues still open")
+[![GitHub Stars](https://img.shields.io/github/stars/rule-engine/rule-engine)](https://github.com/rule-engine/rule-engine/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/rule-engine/rule-engine)](https://github.com/rule-engine/rule-engine/fork)
+[![GitHub issues](https://img.shields.io/github/issues/rule-engine/rule-engine.svg)](https://github.com/rule-engine/rule-engine/issues)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/rule-engine/rule-engine.svg)](https://github.com/rule-engine/rule-engine/issues "Percentage of issues still open")
 #### 开源不易，请尊重作者劳动成果，作者白天工作，晚上下班与周末维护此项目，如果对你有帮助辛苦给个star，这是对我最大的鼓励。  
 #### 业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑。
 
@@ -126,40 +126,43 @@ public class PhoneTestRule {
 
 我们默认使用Feign请求，当然你也可以自定义，只需要在项目中配置如下代码：
 ```java
-@Bean
-public GeneralRuleInterface generalRuleInterface() {
-    return new GeneralRuleInterface() {
+public class RuleEngineClientConfig {
 
-        @Override
-        public ExecuteResult execute(ExecuteParam executeParam) {
-            return restTemplate.postForObject("http://ruleserver.cn/ruleEngine/generalRule/execute", executeParam, ExecuteResult.class);
-        }
+    @Bean
+    public GeneralRuleInterface generalRuleInterface() {
+        return new GeneralRuleInterface() {
+    
+            @Override
+            public ExecuteResult execute(ExecuteParam executeParam) {
+                return restTemplate.postForObject("http://ruleserver.cn/ruleEngine/generalRule/execute", executeParam, ExecuteResult.class);
+            }
+    
+            @Override
+            public IsExistsResult isExists(IsExistsParam existsParam) {
+                // TODO: 2020/12/30  
+                return null;
+            }
+    
+            @Override
+            public BatchExecuteResult batchExecute(BatchParam batchParam) {
+                // TODO: 2020/12/30  
+                return null;
+            }
+        };
+    }
 
-        @Override
-        public IsExistsResult isExists(IsExistsParam existsParam) {
-            // TODO: 2020/12/30  
-            return null;
-        }
-
-        @Override
-        public BatchExecuteResult batchExecute(BatchParam batchParam) {
-            // TODO: 2020/12/30  
-            return null;
-        }
-    };
 }
 ```
 现在你就已经学会了如何使用，更多使用方式敬请期待！
 
 
 ### 下一步进展
- - 规则版本（待开发）  
+ - 规则版本（开发中）  
  - 规则监控（待开发）  
  - 评分卡（待开发）  
  - 决策树（待开发）   
- - 决策表（开发完成，配置体验以及代码质量待优化）   
- - 规则集（开发完成，待测试，配置体验以及代码质量待优化）
  - 元素组（待开发）
+ - 提供规则、规则集、决策表延迟加载功能，以及定时清理长时间未使用的规则、规则集、决策表功能（待开发）  
 
 目前忙于工作，功能待完善，欢迎有兴趣伙伴加入我们！
  
