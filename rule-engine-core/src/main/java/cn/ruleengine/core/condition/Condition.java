@@ -76,11 +76,15 @@ public class Condition implements ConditionCompare {
      */
     @Override
     public boolean compare(Input input, RuleEngineConfiguration configuration) {
-        log.debug("条件信息:{}", this);
+        if (log.isDebugEnabled()) {
+            log.debug("条件信息:{}", this);
+        }
         Compare compare = ConditionCompareFactory.getCompare(this.leftValue.getValueType());
         Object lValue = this.leftValue.getValue(input, configuration);
         Object rValue = this.rightValue.getValue(input, configuration);
-        log.debug("开始对比条件：{},左值：{}，运算符：{}，右值：{}", this.name, lValue, this.operator, rValue);
+        if (log.isDebugEnabled()) {
+            log.debug("开始对比条件：{},左值：{}，运算符：{}，右值：{}", this.name, lValue, this.operator, rValue);
+        }
         return compare.compare(lValue, this.operator, rValue);
     }
 

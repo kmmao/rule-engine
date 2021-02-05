@@ -58,6 +58,10 @@ public class Function implements Value {
     @Getter
     private Object abstractFunction;
 
+    private Class<?> abstractFunctionClass;
+
+    private String abstractFunctionSimpleName;
+
     /**
      * 函数执行主方法
      */
@@ -86,16 +90,14 @@ public class Function implements Value {
     @Getter
     private long liveOutTime;
 
-    /**
-     * 函数执行器
-     */
-    @Getter
-    private final FunctionExecutor functionExecutor = new FunctionExecutor();
-
     @Getter
     private Map<String, Value> param;
 
     Function() {
+    }
+
+    public Function(Object abstractFunction) {
+        this(null, abstractFunction, null, null);
     }
 
     public Function(Integer id, Object abstractFunction, ValueType valueType, Map<String, Value> param) {
@@ -103,6 +105,8 @@ public class Function implements Value {
         this.valueType = valueType;
         this.param = param;
         this.abstractFunction = abstractFunction;
+        this.abstractFunctionClass = abstractFunction.getClass();
+        this.abstractFunctionSimpleName = this.abstractFunctionClass.getSimpleName();
         // 预解析函数中的方法
         this.initExecutorMethod();
         this.initFailureStrategyMethod();
@@ -134,33 +138,39 @@ public class Function implements Value {
         }
     }
 
-    public Function(Object abstractFunction) {
-        this(null, abstractFunction, null, null);
-    }
-
+    /**
+     * 获取函数值
+     *
+     * @param input         入参
+     * @param configuration 规则配置信息
+     * @return value
+     */
     @Override
     public Object getValue(Input input, RuleEngineConfiguration configuration) {
         //处理函数入参
-        Map<String, Object> paramMap = new HashMap<>(this.param.size());
+        Map<String, Object> paramValue = new HashMap<>(this.param.size());
         for (Map.Entry<String, Value> entry : this.param.entrySet()) {
-            paramMap.put(entry.getKey(), entry.getValue().getValue(input, configuration));
+            paramValue.put(entry.getKey(), entry.getValue().getValue(input, configuration));
         }
         Object value;
         if (this.enableCache) {
             // 获取缓存实现类
             FunctionCache functionCache = configuration.getFunctionCache();
-            Class<?> abstractFunctionClass = this.abstractFunction.getClass();
-            String key = this.keyGenerator.generate(this.abstractFunction, paramMap);
+            String key = this.keyGenerator.generate(this.abstractFunction, paramValue);
             value = functionCache.get(key);
             if (value != null) {
-                log.debug("{}函数存在缓存", abstractFunctionClass.getSimpleName());
+                if (log.isDebugEnabled()) {
+                    log.debug("{}函数存在缓存", this.abstractFunctionSimpleName);
+                }
             } else {
-                log.debug("{}函数不存在缓存,开始执行函数", abstractFunctionClass.getSimpleName());
-                value = this.executor(paramMap);
+                if (log.isDebugEnabled()) {
+                    log.debug("{}函数不存在缓存,开始执行函数", this.abstractFunctionSimpleName);
+                }
+                value = this.executor(paramValue);
                 functionCache.put(key, value, this.liveOutTime);
             }
         } else {
-            value = this.executor(paramMap);
+            value = this.executor(paramValue);
         }
         return Optional.ofNullable(value).map(m -> {
             if (!valueType.getClassType().isAssignableFrom(m.getClass())) {
@@ -177,7 +187,8 @@ public class Function implements Value {
      * @return 函数返回结果
      */
     public Object executor(Map<String, Object> paramValue) {
-        return this.functionExecutor.executor(this.abstractFunction, this.executor, this.failureStrategy, paramValue);
+        FunctionExecutor functionExecutor = FunctionExecutor.getInstance();
+        return functionExecutor.executor(this.abstractFunction, this.executor, this.failureStrategy, paramValue);
     }
 
     /**

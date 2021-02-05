@@ -45,20 +45,32 @@ import java.util.stream.Stream;
 @Slf4j
 public class FunctionExecutor {
 
+    private final static FunctionExecutor FUNCTION_EXECUTOR = new FunctionExecutor();
 
-    private final FunctionExecuteMethodParamsParser functionExecuteMethodParamsParser = new FunctionExecuteMethodParamsParser();
+    /**
+     * 函数方法参数解析
+     */
+    private final static FunctionExecuteMethodParamsParser EXECUTE_METHOD_PARAMS_PARSER = new FunctionExecuteMethodParamsParser();
+
+    private FunctionExecutor() {
+
+    }
+
+    public static FunctionExecutor getInstance() {
+        return FUNCTION_EXECUTOR;
+    }
 
     /**
      * 函数执行器
      *
      * @param abstractFunction 执行的函数
-     * @param paramMap         函数入参
+     * @param paramValue       函数入参
      * @return 函数执行结果
      */
-    public Object executor(Object abstractFunction, Method executor, Method failureStrategy, Map<String, Object> paramMap) {
-        log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramMap);
+    public Object executor(Object abstractFunction, Method executor, Method failureStrategy, Map<String, Object> paramValue) {
+        log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramValue);
         Executor executorAnnotation = executor.getAnnotation(Executor.class);
-        Object[] executorMethodArgs = this.functionExecuteMethodParamsParser.getBindArgs(executor.getParameters(), paramMap);
+        Object[] executorMethodArgs = EXECUTE_METHOD_PARAMS_PARSER.getBindArgs(executor.getParameters(), paramValue);
         try {
             int maxAttempts = executorAnnotation.maxAttempts();
             int i = 0;
@@ -101,7 +113,7 @@ public class FunctionExecutor {
                             if (Arrays.equals(failureStrategy.getParameters(), executor.getParameters())) {
                                 return failureStrategy.invoke(abstractFunction, executorMethodArgs);
                             }
-                            Object[] failureStrategyMethodArgs = this.functionExecuteMethodParamsParser.getBindArgs(failureStrategy.getParameters(), paramMap);
+                            Object[] failureStrategyMethodArgs = EXECUTE_METHOD_PARAMS_PARSER.getBindArgs(failureStrategy.getParameters(), paramValue);
                             return failureStrategy.invoke(abstractFunction, failureStrategyMethodArgs);
                         } catch (IllegalAccessException ex) {
                             throw new FunctionException("失败策略方法非法访问异常{}", ex.getMessage());
@@ -118,6 +130,9 @@ public class FunctionExecutor {
 
     }
 
+    /**
+     * 函数方法参数解析
+     */
     private static class FunctionExecuteMethodParamsParser {
 
         /**
@@ -142,11 +157,11 @@ public class FunctionExecutor {
          * 获取绑定参数
          *
          * @param parameters 方法参数列表
-         * @param paramMap   执行入参
+         * @param paramValue 执行入参
          * @return 绑定后的参数列表
          */
         @SneakyThrows
-        private Object[] getBindArgs(Parameter[] parameters, Map<String, Object> paramMap) {
+        private Object[] getBindArgs(Parameter[] parameters, Map<String, Object> paramValue) {
             if (ArrayUtil.isEmpty(parameters)) {
                 return new Object[]{};
             }
@@ -155,19 +170,28 @@ public class FunctionExecutor {
                 Parameter parameter = parameters[i];
                 Class<?> parameterType = parameter.getType();
                 if (Map.class.isAssignableFrom(parameterType)) {
-                    args[i] = this.paramConvertMap(parameter, paramMap);
+                    args[i] = this.paramConvertMap(parameter, paramValue);
                 } else if (BASIC_TYPE.contains(parameterType)) {
-                    args[i] = this.paramConvertBasicType(parameter, paramMap);
+                    args[i] = this.paramConvertBasicType(parameter, paramValue);
                 } else if (List.class.isAssignableFrom(parameterType) || Set.class.isAssignableFrom(parameterType)) {
-                    args[i] = this.paramConvertCollection(parameter, paramMap);
+                    args[i] = this.paramConvertCollection(parameter, paramValue);
                 } else {
-                    args[i] = this.paramConvertBean(parameter, paramMap);
+                    args[i] = this.paramConvertBean(parameter, paramValue);
                 }
             }
             return args;
         }
 
-        private Map<String, Object> paramConvertMap(Parameter parameter, Map<String, Object> paramMap) {
+        /**
+         * 参数转换为Map
+         * <p>
+         * 效率最高
+         *
+         * @param parameter  方法参数
+         * @param paramValue 参数值
+         * @return Map
+         */
+        private Map<String, Object> paramConvertMap(Parameter parameter, Map<String, Object> paramValue) {
             Type parameterParameterizedType = parameter.getParameterizedType();
             if (parameterParameterizedType instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) parameterParameterizedType;
@@ -176,22 +200,36 @@ public class FunctionExecutor {
                     throw new ValidException("仅支持范型为<String,Object>类型Map");
                 }
             }
-            return paramMap;
+            return paramValue;
         }
 
+        /**
+         * 参数转换为基本类型
+         *
+         * @param parameter  方法参数
+         * @param paramValue 参数值
+         * @return 基本类型
+         */
         @SneakyThrows
-        private Object paramConvertBasicType(Parameter parameter, Map<String, Object> paramMap) {
+        private Object paramConvertBasicType(Parameter parameter, Map<String, Object> paramValue) {
             Class<?> parameterType = parameter.getType();
-            Object value = paramMap.get(getParameterName(parameter));
+            Object value = paramValue.get(getParameterName(parameter));
             this.paramValid(parameter, value);
             Object instance = parameterType.getConstructor(String.class).newInstance(String.valueOf(value));
             return Optional.ofNullable(value).map(m -> instance).orElse(null);
         }
 
-        private Collection<?> paramConvertCollection(Parameter parameter, Map<String, Object> paramMap) {
+        /**
+         * 参数转换为集合
+         *
+         * @param parameter  方法参数
+         * @param paramValue 参数值
+         * @return 集合
+         */
+        private Collection<?> paramConvertCollection(Parameter parameter, Map<String, Object> paramValue) {
             Class<?> parameterType = parameter.getType();
             Type parameterParameterizedType = parameter.getParameterizedType();
-            Collection<?> value = (Collection<?>) paramMap.get(getParameterName(parameter));
+            Collection<?> value = (Collection<?>) paramValue.get(getParameterName(parameter));
             // 校验集合参数
             this.paramValid(parameter, value);
             // bug 修复，空集合参数导致空指针问题
@@ -216,15 +254,22 @@ public class FunctionExecutor {
             return null;
         }
 
+        /**
+         * 参数转换为Bean
+         *
+         * @param parameter  方法参数
+         * @param paramValue 参数值
+         * @return Bean
+         */
         @SneakyThrows
-        private Object paramConvertBean(Parameter parameter, Map<String, Object> paramMap) {
+        private Object paramConvertBean(Parameter parameter, Map<String, Object> paramValue) {
             Class<?> parameterType = parameter.getType();
             Constructor<?> constructor = parameterType.getConstructor();
             if (!Modifier.isPublic(constructor.getModifiers())) {
                 constructor.setAccessible(true);
             }
             Object newInstance = constructor.newInstance();
-            BeanUtil.copyProperties(paramMap, newInstance);
+            BeanUtil.copyProperties(paramValue, newInstance);
             //如果参数前面有Valid注解
             if (parameter.isAnnotationPresent(Valid.class)) {
                 //参数校验,带有注解的属性校验
@@ -279,6 +324,5 @@ public class FunctionExecutor {
             }
         }
     }
-
 
 }
