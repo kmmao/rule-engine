@@ -43,7 +43,8 @@ public abstract class Engine<T extends DataSupport> implements Closeable {
     /**
      * 启动时加载的规则/决策表
      */
-    final Map<String, Map<String, T>> workspaceMap = new ConcurrentHashMap<>();
+    @Getter
+    private final Map<String, Map<String, T>> workspaceMap = new ConcurrentHashMap<>();
 
 
     /**

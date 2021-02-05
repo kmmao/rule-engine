@@ -55,7 +55,7 @@ public abstract class DataSupport {
      * @return 执行结果
      */
     @Nullable
-    public abstract Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration);
+    protected abstract Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration);
 
 
 //    @Data
