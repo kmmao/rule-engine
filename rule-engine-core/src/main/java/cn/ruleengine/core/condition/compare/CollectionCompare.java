@@ -40,10 +40,10 @@ public class CollectionCompare implements Compare {
 
     }
 
-    private static CollectionCompare collectionCompare = new CollectionCompare();
+    private static final CollectionCompare COLLECTION_COMPARE = new CollectionCompare();
 
     public static CollectionCompare getInstance() {
-        return collectionCompare;
+        return COLLECTION_COMPARE;
     }
 
     /**
@@ -65,6 +65,9 @@ public class CollectionCompare implements Compare {
         Collection<?> leftValueColl = (Collection<?>) leftValue;
         switch (operator) {
             case EQ:
+                if (!(rightValue instanceof Collection)) {
+                    throw new ConditionException("COLLECTION运算符:EQ,右值只能为集合");
+                }
                 Collection<?> rightValueColl = (Collection<?>) rightValue;
                 if (leftValueColl.size() != rightValueColl.size()) {
                     return false;

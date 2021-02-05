@@ -46,7 +46,7 @@ public interface Engine extends Closeable {
      * @param code          规则/决策表Code
      * @return 规则引擎计算的结果
      */
-    OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String code);
+    Output execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String code);
 
 
     /**

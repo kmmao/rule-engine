@@ -1,11 +1,11 @@
-package cn.ruleengine.web.service.generalrule.impl;
+package cn.ruleengine.web.service;
 
+import cn.ruleengine.core.Output;
 import cn.ruleengine.web.vo.output.BatchExecuteRequest;
 import cn.ruleengine.web.vo.output.BatchExecuteResponse;
 import cn.ruleengine.core.DefaultInput;
 import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.OutPut;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -21,18 +21,18 @@ import java.util.concurrent.CountDownLatch;
  * @since 1.0.0
  */
 @Slf4j
-public class BatchExecuteGeneralRuleTask implements Runnable {
+public class BatchExecuteTask implements Runnable {
 
-    private List<BatchExecuteRequest.ExecuteInfo> infoList;
-    private Engine engine;
-    private List<BatchExecuteResponse> outPuts;
-    private CountDownLatch countDownLatch;
-    private String workspaceCode;
+    private final List<BatchExecuteRequest.ExecuteInfo> infoList;
+    private final Engine engine;
+    private final List<BatchExecuteResponse> outputs;
+    private final CountDownLatch countDownLatch;
+    private final String workspaceCode;
 
-    public BatchExecuteGeneralRuleTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteResponse> outPuts, Engine engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
+    public BatchExecuteTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteResponse> outputs, Engine engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
         this.workspaceCode = workspaceCode;
         this.countDownLatch = countDownLatch;
-        this.outPuts = outPuts;
+        this.outputs = outputs;
         this.engine = engine;
         this.infoList = infoList;
     }
@@ -49,14 +49,14 @@ public class BatchExecuteGeneralRuleTask implements Runnable {
             BatchExecuteResponse ruleResponse = new BatchExecuteResponse();
             ruleResponse.setSymbol(executeInfo.getSymbol());
             try {
-                OutPut outPut = this.engine.execute(input, this.workspaceCode, executeInfo.getCode());
-                ruleResponse.setOutPut(outPut);
+                Output output = this.engine.execute(input, this.workspaceCode, executeInfo.getCode());
+                ruleResponse.setOutput(output);
             } catch (Exception e) {
-                log.error("执行规则异常", e);
+                log.error("Execution exception", e);
                 ruleResponse.setMessage(e.getMessage());
                 ruleResponse.setIsDone(false);
             }
-            this.outPuts.add(ruleResponse);
+            this.outputs.add(ruleResponse);
         }
         this.countDownLatch.countDown();
     }

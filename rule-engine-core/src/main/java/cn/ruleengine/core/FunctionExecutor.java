@@ -130,6 +130,8 @@ public class FunctionExecutor {
             {
                 add(String.class);
                 add(Integer.class);
+                add(Long.class);
+                add(Double.class);
                 add(BigDecimal.class);
                 add(Boolean.class);
             }

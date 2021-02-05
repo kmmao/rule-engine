@@ -90,7 +90,7 @@ public class Function implements Value {
      * 函数执行器
      */
     @Getter
-    private FunctionExecutor functionExecutor = new FunctionExecutor();
+    private final FunctionExecutor functionExecutor = new FunctionExecutor();
 
     @Getter
     private Map<String, Value> param;

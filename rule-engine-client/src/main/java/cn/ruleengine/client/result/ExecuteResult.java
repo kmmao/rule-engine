@@ -36,6 +36,6 @@ public class ExecuteResult extends Result {
     /**
      * 返回数据
      */
-    private OutPut data;
+    private Output data;
 
 }

@@ -37,10 +37,10 @@ public class NumberCompare implements Compare {
 
     }
 
-    private static NumberCompare numberCompare = new NumberCompare();
+    private static final NumberCompare NUMBER_COMPARE = new NumberCompare();
 
     public static NumberCompare getInstance() {
-        return numberCompare;
+        return NUMBER_COMPARE;
     }
 
     /**

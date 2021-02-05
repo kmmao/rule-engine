@@ -36,13 +36,13 @@ import java.util.*;
 @Slf4j
 public class AllPriorityStrategy implements DecisionTableStrategy {
 
-    private static AllPriorityStrategy allPriorityStrategy = new AllPriorityStrategy();
+    private static final AllPriorityStrategy ALL_PRIORITY_STRATEGY = new AllPriorityStrategy();
 
     private AllPriorityStrategy() {
     }
 
     public static AllPriorityStrategy getInstance() {
-        return allPriorityStrategy;
+        return ALL_PRIORITY_STRATEGY;
     }
 
     /**

@@ -32,9 +32,9 @@ import java.util.*;
 public class Executor {
 
     @Getter
-    private RuleEngineProperties ruleEngineProperties;
+    private final RuleEngineProperties ruleEngineProperties;
     @Getter
-    private BaseInterface baseInterface;
+    private final BaseInterface baseInterface;
 
     public Executor(RuleEngineProperties ruleEngineProperties, BaseInterface baseInterface) {
         this.ruleEngineProperties = ruleEngineProperties;
@@ -48,7 +48,7 @@ public class Executor {
      * @param input    规则参数
      * @return 规则结果
      */
-    public OutPut execute(@NonNull String code, @NonNull Map<String, Object> input) {
+    public Output execute(@NonNull String code, @NonNull Map<String, Object> input) {
         Objects.requireNonNull(code);
         Objects.requireNonNull(input);
         ExecuteParam executeParam = new ExecuteParam();
@@ -74,7 +74,7 @@ public class Executor {
      * @see Model
      */
     @SneakyThrows
-    public OutPut execute(@NonNull Object model) {
+    public Output execute(@NonNull Object model) {
         this.validRuleModel(model);
         Map<String, Object> input = new HashMap<>();
         Field[] fields = model.getClass().getDeclaredFields();
@@ -145,11 +145,11 @@ public class Executor {
      * 批量执行规则
      *
      * @param models 规则执行信息，规则code以及规则入参
-     * @return BatchOutPut
+     * @return BatchOutput
      * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
      */
     @SneakyThrows
-    public List<BatchOutPut> batchExecute(@NonNull List<Object> models) {
+    public List<BatchOutput> batchExecute(@NonNull List<Object> models) {
         return this.batchExecute(100, -1L, models);
     }
 
@@ -159,11 +159,11 @@ public class Executor {
      * @param threadSegNumber 指定一个线程处理多少规则
      * @param timeout         执行超时时间，-1永不超时
      * @param models          规则执行信息，规则code以及规则入参
-     * @return BatchOutPut
+     * @return BatchOutput
      * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
      */
     @SneakyThrows
-    public List<BatchOutPut> batchExecute(@NonNull Integer threadSegNumber, @NonNull Long timeout, @NonNull List<Object> models) {
+    public List<BatchOutput> batchExecute(@NonNull Integer threadSegNumber, @NonNull Long timeout, @NonNull List<Object> models) {
         Objects.requireNonNull(threadSegNumber);
         Objects.requireNonNull(timeout);
         Objects.requireNonNull(models);

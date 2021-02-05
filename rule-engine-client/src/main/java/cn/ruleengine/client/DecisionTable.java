@@ -1,7 +1,8 @@
 package cn.ruleengine.client;
 
 import cn.ruleengine.client.fegin.BaseInterface;
-import cn.ruleengine.client.result.OutPut;
+import cn.ruleengine.client.result.Output;
+import org.springframework.lang.NonNull;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -19,7 +20,7 @@ public class DecisionTable extends Executor {
     }
 
     @Override
-    public OutPut execute(Object model) {
+    public Output execute(@NonNull Object model) {
         return super.execute(model);
     }
 

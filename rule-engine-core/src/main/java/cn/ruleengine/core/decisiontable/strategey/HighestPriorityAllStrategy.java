@@ -37,13 +37,13 @@ import java.util.*;
 @Slf4j
 public class HighestPriorityAllStrategy implements DecisionTableStrategy {
 
-    private static HighestPriorityAllStrategy highestPriorityAllStrategy = new HighestPriorityAllStrategy();
+    private static final HighestPriorityAllStrategy HIGHEST_PRIORITY_ALL_STRATEGY = new HighestPriorityAllStrategy();
 
     private HighestPriorityAllStrategy() {
     }
 
     public static HighestPriorityAllStrategy getInstance() {
-        return highestPriorityAllStrategy;
+        return HIGHEST_PRIORITY_ALL_STRATEGY;
     }
 
 

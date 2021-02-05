@@ -35,10 +35,10 @@ public class StringCompare implements Compare {
 
     }
 
-    private static StringCompare stringCompare = new StringCompare();
+    private static final StringCompare STRING_COMPARE = new StringCompare();
 
     public static StringCompare getInstance() {
-        return stringCompare;
+        return STRING_COMPARE;
     }
 
     /**

@@ -37,7 +37,7 @@ public enum EventFeature {
     ENDURANCE_SNAPSHOT, ENDURANCE_REAL_TIME;
 
     @Getter
-    private int mark;
+    private final int mark;
 
     EventFeature() {
         this.mark = (1 << this.ordinal());

@@ -13,32 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.core;
+package cn.ruleengine.client.result;
 
+
+import lombok.Data;
+
+import java.io.Serializable;
 
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2020/8/10
+ * @author 丁乾文
+ * @create 2020/11/7
  * @since 1.0.0
  */
-public interface OutPut {
+@Data
+public class Output implements Serializable {
+
+    private static final long serialVersionUID = 7567203804311496569L;
 
     /**
      * 输出的参数值
-     *
-     * @return 输出值
      */
-    Object getValue();
+    private Object value;
 
     /**
      * 规则输出值的classType
-     *
-     * @return 数据类型
      */
-    String getClassType();
+    private String classType;
 
 }

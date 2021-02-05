@@ -23,7 +23,7 @@ import java.util.Objects;
 public class Precondition implements ConditionCompare{
 
     @Getter
-    private List<Condition> precondition = new ArrayList<>();
+    private final List<Condition> precondition = new ArrayList<>();
 
     /**
      * 比较前提条件

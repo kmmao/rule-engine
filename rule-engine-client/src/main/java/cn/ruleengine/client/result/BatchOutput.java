@@ -13,51 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.core;
+package cn.ruleengine.client.result;
 
+
+import lombok.Data;
 import org.springframework.lang.Nullable;
+
+import java.io.Serializable;
 
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2020/8/10
+ * @author 丁乾文
+ * @create 2020/11/7
  * @since 1.0.0
  */
-public class DefaultOutPut implements OutPut {
+@Data
+public class BatchOutput implements Serializable {
 
-
-    private Object value;
-    private String classType;
-
-    public DefaultOutPut(@Nullable Object value) {
-        if (value == null) {
-            return;
-        }
-        this.value = value;
-        this.classType = value.getClass().getName();
-    }
+    private static final long serialVersionUID = -6098570767368919540L;
 
     /**
-     * 输出的参数值
-     *
-     * @return 输出值
+     * 规则执行状态，是否执行成功，或者遇到了异常
      */
-    @Override
-    public Object getValue() {
-        return this.value;
-    }
+    private Boolean isDone = true;
+    /**
+     * isDone=false规则执行错误消息
+     */
+    private String message;
 
     /**
-     * 规则输出值的classType
-     *
-     * @return 数据类型
+     * 标记规则使用，防止传入规则与规则输出结果顺序错误时
+     * 通过此标记区分
      */
-    @Override
-    public String getClassType() {
-        return this.classType;
-    }
+    @Nullable
+    private String symbol;
+
+    /**
+     * 规则执行结果
+     */
+    private Output output;
 
 }

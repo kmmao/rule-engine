@@ -13,35 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.client.result;
+package cn.ruleengine.core;
 
-
-import lombok.Data;
-
-import java.io.Serializable;
+import org.springframework.lang.Nullable;
 
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author 丁乾文
- * @create 2020/11/7
+ * @author dingqianwen
+ * @date 2020/8/10
  * @since 1.0.0
  */
-@Data
-public class OutPut implements Serializable {
+public class DefaultOutput implements Output {
 
-    private static final long serialVersionUID = 7567203804311496569L;
+
+    private Object value;
+    private String classType;
+
+    public DefaultOutput(@Nullable Object value) {
+        if (value == null) {
+            return;
+        }
+        this.value = value;
+        this.classType = value.getClass().getName();
+    }
 
     /**
      * 输出的参数值
+     *
+     * @return 输出值
      */
-    private Object value;
+    @Override
+    public Object getValue() {
+        return this.value;
+    }
 
     /**
      * 规则输出值的classType
+     *
+     * @return 数据类型
      */
-    private String classType;
+    @Override
+    public String getClassType() {
+        return this.classType;
+    }
 
 }

@@ -16,7 +16,7 @@
 package cn.ruleengine.core.listener;
 
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.Output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,9 +58,9 @@ public interface ExecuteListener<T> {
      *
      * @param t      执行的规则
      * @param input  输入参数
-     * @param outPut 规则执行结果
+     * @param output 规则执行结果
      */
-    default void after(T t, Input input, OutPut outPut) {
+    default void after(T t, Input input, Output output) {
 
     }
 

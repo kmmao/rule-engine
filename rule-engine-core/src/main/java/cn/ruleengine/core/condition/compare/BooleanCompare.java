@@ -37,10 +37,10 @@ public class BooleanCompare implements Compare {
 
     }
 
-    private static BooleanCompare booleanCompare = new BooleanCompare();
+    private static final BooleanCompare BOOLEAN_COMPARE = new BooleanCompare();
 
     public static BooleanCompare getInstance() {
-        return booleanCompare;
+        return BOOLEAN_COMPARE;
     }
 
     /**

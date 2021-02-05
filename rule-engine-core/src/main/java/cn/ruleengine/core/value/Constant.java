@@ -15,6 +15,7 @@
  */
 package cn.ruleengine.core.value;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import lombok.Getter;
@@ -88,7 +89,7 @@ public class Constant implements Value {
                 if (curValueColl.size() != constantValueColl.size()) {
                     return false;
                 }
-                if (!curValueColl.containsAll(constantValueColl)) {
+                if (!CollUtil.containsAll(curValueColl, constantValueColl)) {
                     return false;
                 }
                 break;

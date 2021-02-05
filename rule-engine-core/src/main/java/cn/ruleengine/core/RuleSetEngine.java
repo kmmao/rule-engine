@@ -80,7 +80,7 @@ public class RuleSetEngine implements Engine {
     }
 
     @Override
-    public OutPut execute(Input input, String workspaceCode, String code) {
+    public Output execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String code) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(workspaceCode);
         Objects.requireNonNull(code);
@@ -92,9 +92,9 @@ public class RuleSetEngine implements Engine {
         ExecuteListener<RuleSet> listener = this.configuration.getRuleSetListener();
         listener.before(ruleSet, input);
         try {
-            DefaultOutPut outPut = new DefaultOutPut(ruleSet.execute(input, this.configuration));
-            listener.after(ruleSet, input, outPut);
-            return outPut;
+            DefaultOutput output = new DefaultOutput(ruleSet.execute(input, this.configuration));
+            listener.after(ruleSet, input, output);
+            return output;
         } catch (Exception exception) {
             listener.onException(ruleSet, input, exception);
             throw exception;

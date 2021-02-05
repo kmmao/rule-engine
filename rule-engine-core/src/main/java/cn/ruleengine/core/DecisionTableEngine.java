@@ -93,10 +93,10 @@ public class DecisionTableEngine implements Engine {
      * @param input             输入参数
      * @param workspaceCode     工作空间code
      * @param decisionTableCode 决策表code
-     * @return OutPut
+     * @return Output
      */
     @Override
-    public OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String decisionTableCode) {
+    public Output execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String decisionTableCode) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(workspaceCode);
         Objects.requireNonNull(decisionTableCode);
@@ -109,9 +109,9 @@ public class DecisionTableEngine implements Engine {
         listener.before(decisionTable, input);
         try {
             List<Object> actions = decisionTable.execute(input, this.configuration);
-            DefaultOutPut outPut = new DefaultOutPut(actions);
-            listener.after(decisionTable, input, outPut);
-            return outPut;
+            DefaultOutput output = new DefaultOutput(actions);
+            listener.after(decisionTable, input, output);
+            return output;
         } catch (Exception exception) {
             listener.onException(decisionTable, input, exception);
             throw exception;

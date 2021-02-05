@@ -53,9 +53,9 @@ public enum Operator {
     ENDS_WITH("以..结束", "ends with");
 
     @Getter
-    public String explanation;
+    private final String explanation;
     @Getter
-    public String symbol;
+    private final String symbol;
 
     /**
      * 根据枚举name 获取枚举对象

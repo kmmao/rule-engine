@@ -43,11 +43,11 @@ public enum ValueType {
     COLLECTION("集合", "COLLECTION", Arrays.asList(Operator.EQ, Operator.IN, Operator.NOT_IN, Operator.CONTAIN, Operator.NOT_CONTAIN));
 
     @Getter
-    private String name;
+    private final String name;
     @Getter
-    public String value;
+    private final String value;
     @Getter
-    public List<Operator> symbol;
+    private final List<Operator> symbol;
 
     public Class<?> getClassType() {
         switch (value) {

@@ -1,20 +1,16 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
-import cn.ruleengine.core.DefaultInput;
-import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleSetEngine;
-import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.web.service.RuleEngineOutService;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.vo.output.BatchExecuteRequest;
 import cn.ruleengine.web.vo.output.ExecuteRequest;
 import cn.ruleengine.web.vo.output.IsExistsRequest;
-import cn.ruleengine.web.vo.workspace.AccessKey;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -26,14 +22,13 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Service
-public class RuleSetOutServiceImpl implements RuleEngineOutService {
+public class RuleSetOutServiceImpl extends RuleEngineOutService {
 
-    @Resource
-    private RuleSetEngine ruleSetEngine;
-    @Resource
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
-    @Resource
-    private WorkspaceService workspaceService;
+
+    public RuleSetOutServiceImpl(@Qualifier("ruleSetEngine") RuleSetEngine ruleSetEngine, ThreadPoolTaskExecutor threadPoolTaskExecutor, WorkspaceService workspaceService) {
+        super(ruleSetEngine, threadPoolTaskExecutor, workspaceService);
+    }
+
 
     /**
      * 执行单个规则集，获取执行结果
@@ -43,15 +38,7 @@ public class RuleSetOutServiceImpl implements RuleEngineOutService {
      */
     @Override
     public Object execute(ExecuteRequest executeRequest) {
-        log.info("开始执行规则集，入参：{}", executeRequest);
-        String workspaceCode = executeRequest.getWorkspaceCode();
-        AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
-        if (!accessKey.equals(executeRequest.getAccessKeyId(), executeRequest.getAccessKeySecret())) {
-            throw new ValidException("AccessKey Verification failed");
-        }
-        Input input = new DefaultInput();
-        input.putAll(executeRequest.getParam());
-        return this.ruleSetEngine.execute(input, workspaceCode, executeRequest.getCode());
+        return super.execute(executeRequest);
     }
 
     /**
@@ -62,7 +49,7 @@ public class RuleSetOutServiceImpl implements RuleEngineOutService {
      */
     @Override
     public Object batchExecute(BatchExecuteRequest batchExecuteRequest) {
-        throw new UnsupportedOperationException();
+        return super.batchExecute(batchExecuteRequest);
     }
 
     /**
@@ -73,12 +60,7 @@ public class RuleSetOutServiceImpl implements RuleEngineOutService {
      */
     @Override
     public Boolean isExists(IsExistsRequest isExistsRequest) {
-        String workspaceCode = isExistsRequest.getWorkspaceCode();
-        AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
-        if (!accessKey.equals(isExistsRequest.getAccessKeyId(), isExistsRequest.getAccessKeySecret())) {
-            throw new ValidException("AccessKey Verification failed");
-        }
-        return this.ruleSetEngine.isExists(isExistsRequest.getWorkspaceCode(), isExistsRequest.getCode());
+        return super.isExists(isExistsRequest);
     }
 
 }

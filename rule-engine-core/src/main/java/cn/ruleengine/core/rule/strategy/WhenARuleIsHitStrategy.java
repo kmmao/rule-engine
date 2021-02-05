@@ -21,13 +21,13 @@ import java.util.List;
 @Slf4j
 public class WhenARuleIsHitStrategy implements RuleSetStrategy {
 
-    private static WhenARuleIsHitStrategy whenARuleIsHitStrategy = new WhenARuleIsHitStrategy();
+    private static final WhenARuleIsHitStrategy WHEN_A_RULE_IS_HIT_STRATEGY = new WhenARuleIsHitStrategy();
 
     private WhenARuleIsHitStrategy() {
     }
 
     public static WhenARuleIsHitStrategy getInstance() {
-        return whenARuleIsHitStrategy;
+        return WHEN_A_RULE_IS_HIT_STRATEGY;
     }
 
 

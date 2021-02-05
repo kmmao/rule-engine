@@ -1,8 +1,8 @@
 package cn.ruleengine.client;
 
 import cn.ruleengine.client.fegin.GeneralRuleInterface;
-import cn.ruleengine.client.result.BatchOutPut;
-import cn.ruleengine.client.result.OutPut;
+import cn.ruleengine.client.result.BatchOutput;
+import cn.ruleengine.client.result.Output;
 import feign.Feign;
 import feign.Request;
 import feign.Retryer;
@@ -43,7 +43,7 @@ public class AppTest {
         RuleMode ruleMode = new RuleMode();
         ruleMode.setPhone("1343493849384");
         GeneralRule generalRule = this.ruleEngineClient.generalRule();
-        OutPut execute = generalRule.execute(ruleMode);
+        Output execute = generalRule.execute(ruleMode);
         System.out.println(execute);
     }
 
@@ -68,8 +68,8 @@ public class AppTest {
             ruleModes.add(ruleMode);
         }
         GeneralRule generalRule = this.ruleEngineClient.generalRule();
-        List<BatchOutPut> batchOutPuts = generalRule.batchExecute(100, -1L, ruleModes);
-        batchOutPuts.forEach(System.out::println);
+        List<BatchOutput> batchOutputs = generalRule.batchExecute(100, -1L, ruleModes);
+        batchOutputs.forEach(System.out::println);
     }
 
 }

@@ -2,7 +2,7 @@ package cn.ruleengine.core.decisiontable;
 
 import cn.ruleengine.core.DecisionTableEngine;
 import cn.ruleengine.core.DefaultInput;
-import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.Output;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.value.Constant;
@@ -86,9 +86,9 @@ public class DecisionTableTest {
 
         DefaultInput input = new DefaultInput();
         input.put("test", "sd");
-        OutPut outPut = decisionTableEngine.execute(input, "test", "test");
-        System.out.println(outPut.getClassType());
-        System.out.println(outPut.getValue());
+        Output output = decisionTableEngine.execute(input, "test", "test");
+        System.out.println(output.getClassType());
+        System.out.println(output.getValue());
     }
 
 }

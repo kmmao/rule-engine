@@ -16,7 +16,7 @@
 package cn.ruleengine.core.listener;
 
 import cn.ruleengine.core.Input;
-import cn.ruleengine.core.OutPut;
+import cn.ruleengine.core.Output;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -39,7 +39,7 @@ public class DefaultExecuteListener<T> implements ExecuteListener<T> {
     }
 
     @Override
-    public void after(T rule, Input input, OutPut outPut) {
+    public void after(T rule, Input input, Output output) {
 
     }
 

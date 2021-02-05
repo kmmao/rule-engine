@@ -20,13 +20,13 @@ import java.util.List;
 @Slf4j
 public class AllRuleStrategy implements RuleSetStrategy {
 
-    private static AllRuleStrategy allRuleStrategy = new AllRuleStrategy();
+    private static final AllRuleStrategy ALL_RULE_STRATEGY = new AllRuleStrategy();
 
     private AllRuleStrategy() {
     }
 
     public static AllRuleStrategy getInstance() {
-        return allRuleStrategy;
+        return ALL_RULE_STRATEGY;
     }
 
     @Override

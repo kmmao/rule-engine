@@ -35,7 +35,7 @@ public enum VariableType {
     ELEMENT(0), VARIABLE(1), CONSTANT(2), FUNCTION(3);
 
     @Getter
-    private Integer type;
+    private final Integer type;
 
 
     public static VariableType getByType(Integer type) {

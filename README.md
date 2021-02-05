@@ -105,8 +105,8 @@ public class RuleTest {
         phoneTestRule.setPhone("134000000000");
         // 调用执行引擎中的规则
         GeneralRule generalRule = this.ruleEngineClient.generalRule();
-        OutPut outPut = generalRule.execute(phoneTestRule);
-        System.out.println(outPut);
+        Output output = generalRule.execute(phoneTestRule);
+        System.out.println(output);
     }
 
 }

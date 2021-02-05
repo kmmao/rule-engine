@@ -30,7 +30,7 @@ public enum RuleSetStrategyType {
     WHEN_A_RULE_EXECUTE_FAILS(4);
 
     @Getter
-    private Integer value;
+    private final Integer value;
 
     RuleSetStrategyType(Integer value) {
         this.value = value;

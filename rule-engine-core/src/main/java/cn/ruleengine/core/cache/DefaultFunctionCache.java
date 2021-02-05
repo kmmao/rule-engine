@@ -31,7 +31,7 @@ public class DefaultFunctionCache implements FunctionCache {
     /**
      * 默认使用LRUCache 存储函数缓存信息
      */
-    private LRUCache<String, Object> cache;
+    private final LRUCache<String, Object> cache;
 
     public DefaultFunctionCache(int capacity) {
         cache = CacheUtil.newLRUCache(capacity);

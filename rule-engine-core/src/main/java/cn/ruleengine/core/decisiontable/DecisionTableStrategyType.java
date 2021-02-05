@@ -42,7 +42,7 @@ public enum DecisionTableStrategyType {
     HIGHEST_PRIORITY_ALL(3);
 
     @Getter
-    private Integer value;
+    private final Integer value;
 
     DecisionTableStrategyType(Integer value) {
         this.value = value;

@@ -99,7 +99,7 @@ public class GeneralRuleEngine implements Engine {
      * @return 规则执行结果
      */
     @Override
-    public OutPut execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String ruleCode) {
+    public Output execute(@NonNull Input input, @NonNull String workspaceCode, @NonNull String ruleCode) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(workspaceCode);
         Objects.requireNonNull(ruleCode);
@@ -112,9 +112,9 @@ public class GeneralRuleEngine implements Engine {
         listener.before(generalRule, input);
         try {
             Object action = generalRule.execute(input, this.configuration);
-            DefaultOutPut outPut = new DefaultOutPut(action);
-            listener.after(generalRule, input, outPut);
-            return outPut;
+            DefaultOutput output = new DefaultOutput(action);
+            listener.after(generalRule, input, output);
+            return output;
         } catch (Exception exception) {
             listener.onException(generalRule, input, exception);
             throw exception;

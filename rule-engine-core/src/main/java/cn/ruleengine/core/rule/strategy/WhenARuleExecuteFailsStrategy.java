@@ -20,13 +20,13 @@ import java.util.List;
 public class WhenARuleExecuteFailsStrategy implements RuleSetStrategy {
 
 
-    private static WhenARuleExecuteFailsStrategy whenARuleExecuteFailsStrategy = new WhenARuleExecuteFailsStrategy();
+    private static final WhenARuleExecuteFailsStrategy WHEN_A_RULE_EXECUTE_FAILS_STRATEGY = new WhenARuleExecuteFailsStrategy();
 
     private WhenARuleExecuteFailsStrategy() {
     }
 
     public static WhenARuleExecuteFailsStrategy getInstance() {
-        return whenARuleExecuteFailsStrategy;
+        return WHEN_A_RULE_EXECUTE_FAILS_STRATEGY;
     }
 
     @Override

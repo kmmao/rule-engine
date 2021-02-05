@@ -38,6 +38,6 @@ public class BatchExecuteResult extends Result {
     /**
      * 返回数据
      */
-    private List<BatchOutPut> data;
+    private List<BatchOutput> data;
 
 }

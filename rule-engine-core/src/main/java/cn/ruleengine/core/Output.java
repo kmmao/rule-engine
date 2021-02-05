@@ -13,47 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ruleengine.client.result;
+package cn.ruleengine.core;
 
-
-import lombok.Data;
-import org.springframework.lang.Nullable;
-
-import java.io.Serializable;
 
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author 丁乾文
- * @create 2020/11/7
+ * @author dingqianwen
+ * @date 2020/8/10
  * @since 1.0.0
  */
-@Data
-public class BatchOutPut implements Serializable {
-
-    private static final long serialVersionUID = -6098570767368919540L;
+public interface Output {
 
     /**
-     * 规则执行状态，是否执行成功，或者遇到了异常
+     * 输出的参数值
+     *
+     * @return 输出值
      */
-    private Boolean isDone = true;
-    /**
-     * isDone=false规则执行错误消息
-     */
-    private String message;
+    Object getValue();
 
     /**
-     * 标记规则使用，防止传入规则与规则输出结果顺序错误时
-     * 通过此标记区分
+     * 规则输出值的classType
+     *
+     * @return 数据类型
      */
-    @Nullable
-    private String symbol;
-
-    /**
-     * 规则执行结果
-     */
-    private OutPut outPut;
+    String getClassType();
 
 }

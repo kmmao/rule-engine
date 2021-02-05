@@ -34,6 +34,6 @@ public class BatchExecuteResponse {
     /**
      * 规则执行结果
      */
-    private Object outPut;
+    private Object output;
 
 }
