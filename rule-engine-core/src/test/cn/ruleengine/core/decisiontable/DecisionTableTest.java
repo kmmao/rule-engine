@@ -82,7 +82,7 @@ public class DecisionTableTest {
         }
 
         DecisionTableEngine decisionTableEngine = new DecisionTableEngine(new RuleEngineConfiguration());
-        decisionTableEngine.addDecisionTable(decisionTable);
+        decisionTableEngine.add(decisionTable);
 
         DefaultInput input = new DefaultInput();
         input.put("test", "sd");

@@ -1,9 +1,12 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
 import cn.ruleengine.core.*;
+import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.rule.RuleSet;
+import cn.ruleengine.web.enums.DataStatus;
 import cn.ruleengine.web.service.RunTestService;
-import cn.ruleengine.web.service.ruleset.RuleSetResolveService;
+import cn.ruleengine.web.store.entity.RuleEngineRuleSetPublish;
+import cn.ruleengine.web.store.manager.RuleEngineRuleSetPublishManager;
 import cn.ruleengine.web.vo.generalrule.RunTestRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,9 +27,9 @@ import java.util.Map;
 public class RuleSetRunTestServiceImpl implements RunTestService {
 
     @Resource
-    private RuleSetResolveService ruleSetResolveService;
-    @Resource
     private RuleEngineConfiguration ruleEngineConfiguration;
+    @Resource
+    private RuleEngineRuleSetPublishManager ruleEngineRuleSetPublishManager;
 
     /**
      * 规则集模拟运行
@@ -36,7 +39,23 @@ public class RuleSetRunTestServiceImpl implements RunTestService {
      */
     @Override
     public Object run(RunTestRequest runTestRequest) {
-        log.info("模拟运行规则集：{}", runTestRequest.getRuleCode());
+        log.info("模拟运行规则集：{}", runTestRequest.getCode());
+        RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
+                .eq(RuleEngineRuleSetPublish::getStatus, runTestRequest.getStatus())
+                .eq(RuleEngineRuleSetPublish::getRuleSetCode, runTestRequest.getCode())
+                .eq(RuleEngineRuleSetPublish::getWorkspaceCode, runTestRequest.getWorkspaceCode())
+                .one();
+        if (ruleSetPublish == null) {
+            // 如果待发布找不到，用已发布  此场景出现在只有一个已发布的时候
+            ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
+                    .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
+                    .eq(RuleEngineRuleSetPublish::getRuleSetCode, runTestRequest.getCode())
+                    .eq(RuleEngineRuleSetPublish::getWorkspaceCode, runTestRequest.getWorkspaceCode())
+                    .one();
+            if (ruleSetPublish == null) {
+                throw new ValidException("找不到可运行的规则集数据:{},{},{}", runTestRequest.getWorkspaceCode(), runTestRequest.getCode(), runTestRequest.getStatus());
+            }
+        }
         Input input = new DefaultInput();
         Map<String, Object> params = runTestRequest.getParam();
         for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -45,11 +64,11 @@ public class RuleSetRunTestServiceImpl implements RunTestService {
         log.info("初始化规则集引擎");
         RuleEngineConfiguration ruleEngineConfiguration = new RuleEngineConfiguration();
         RuleSetEngine engine = new RuleSetEngine(ruleEngineConfiguration);
-        RuleSet rule = this.ruleSetResolveService.getRuleSetById(runTestRequest.getId());
+        RuleSet rule = RuleSet.buildRuleSet(ruleSetPublish.getData());
         engine.add(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
-        return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getRuleCode());
+        return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getCode());
     }
 
 }

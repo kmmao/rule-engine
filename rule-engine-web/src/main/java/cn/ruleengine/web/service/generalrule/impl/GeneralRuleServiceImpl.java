@@ -181,6 +181,12 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         return true;
     }
 
+    /**
+     * 保存结果
+     *
+     * @param ruleId 规则id
+     * @param action 结果
+     */
     private void saveAction(Integer ruleId, ConfigValue action) {
         RuleEngineRule ruleEngineRule = new RuleEngineRule();
         ruleEngineRule.setId(ruleId);
@@ -462,7 +468,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         if (ruleEngineGeneralRule == null) {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
-        if (ruleEngineGeneralRule.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getType().equals(DataStatus.PUBLISHED.getStatus())) {
+        if (ruleEngineGeneralRule.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
             RuleEngineGeneralRulePublish engineRulePublish = this.ruleEngineGeneralRulePublishManager.lambdaQuery()
                     .eq(RuleEngineGeneralRulePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                     .eq(RuleEngineGeneralRulePublish::getGeneralRuleId, id)

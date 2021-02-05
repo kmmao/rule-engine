@@ -3,16 +3,17 @@ package cn.ruleengine.web.service.decisiontable.impl;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.DecisionTableEngine;
+import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.decisiontable.*;
 import cn.ruleengine.core.exception.ValidException;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.DataStatus;
+import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.listener.body.DecisionTableMessageBody;
 import cn.ruleengine.web.listener.event.DecisionTableEvent;
 import cn.ruleengine.web.service.ReferenceDataService;
 import cn.ruleengine.web.service.ValueResolve;
-import cn.ruleengine.web.service.decisiontable.DecisionTableResolveService;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
 import cn.ruleengine.web.service.ParameterService;
 import cn.ruleengine.web.store.entity.RuleEngineDecisionTable;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -61,8 +63,6 @@ public class DecisionTableServiceImpl implements DecisionTableService {
     private DecisionTableEngine decisionTableEngine;
     @Resource
     private ApplicationEventPublisher eventPublisher;
-    @Resource
-    private DecisionTableResolveService decisionTableResolveService;
     @Resource
     private ValueResolve valueResolve;
     @Resource
@@ -300,8 +300,8 @@ public class DecisionTableServiceImpl implements DecisionTableService {
                 ruleEngineDecisionTable.setCurrentVersion(VersionUtils.getNextVersion(ruleEngineDecisionTable.getCurrentVersion()));
             }
         }
-        ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
+        ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
         String referenceDataJson = JSON.toJSONString(referenceDataService.countReferenceData(releaseRequest.getTableData()));
         ruleEngineDecisionTable.setReferenceData(referenceDataJson);
@@ -317,7 +317,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTablePublish.setDecisionTableCode(ruleEngineDecisionTable.getCode());
         ruleEngineDecisionTablePublish.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
         ruleEngineDecisionTablePublish.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
-        DecisionTable decisionTable = this.decisionTableResolveService.decisionTableProcess(ruleEngineDecisionTable);
+        DecisionTable decisionTable = this.decisionTableProcess(ruleEngineDecisionTable);
         ruleEngineDecisionTablePublish.setData(decisionTable.toJson());
         ruleEngineDecisionTablePublish.setStatus(ruleEngineDecisionTable.getStatus());
         ruleEngineDecisionTablePublish.setReferenceData(referenceDataJson);
@@ -326,6 +326,70 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         this.ruleEngineDecisionTablePublishManager.save(ruleEngineDecisionTablePublish);
         return true;
     }
+
+    /**
+     * 处理引擎决策表
+     *
+     * @param ruleEngineDecisionTable 规则引擎决策表
+     * @return 决策表
+     */
+    public DecisionTable decisionTableProcess(RuleEngineDecisionTable ruleEngineDecisionTable) {
+        TableData tableData = JSON.parseObject(ruleEngineDecisionTable.getTableData(), TableData.class);
+        DecisionTable decisionTable = new DecisionTable();
+        decisionTable.setId(ruleEngineDecisionTable.getId());
+        decisionTable.setCode(ruleEngineDecisionTable.getCode());
+        decisionTable.setName(ruleEngineDecisionTable.getName());
+        decisionTable.setDescription(ruleEngineDecisionTable.getDescription());
+        decisionTable.setWorkspaceId(ruleEngineDecisionTable.getWorkspaceId());
+        decisionTable.setWorkspaceCode(ruleEngineDecisionTable.getWorkspaceCode());
+        decisionTable.setStrategyType(DecisionTableStrategyType.getByValue(ruleEngineDecisionTable.getStrategyType()));
+        List<CollConditionHeads> collConditionHeads = tableData.getCollConditionHeads();
+        for (CollConditionHeads collConditionHead : collConditionHeads) {
+            CollHead collHead = new CollHead();
+            ConfigValue leftValue = collConditionHead.getLeftValue();
+            collHead.setName(collConditionHead.getName());
+            collHead.setLeftValue(this.valueResolve.getValue(leftValue.getType(), leftValue.getValueType(), leftValue.getValue()));
+            collHead.setOperator(Operator.getByName(collConditionHead.getSymbol()));
+            decisionTable.addCollHead(collHead);
+        }
+        // 首先过滤掉没有结果的
+        List<Rows> rows = tableData.getRows().stream().filter(f -> {
+            ConfigValue result = f.getResult();
+            if (result.getType() == null) {
+                return false;
+            }
+            if (StrUtil.isBlank(result.getValue())) {
+                return false;
+            }
+            return !StrUtil.isBlank(result.getValueType());
+        }).collect(Collectors.toList());
+        for (int i = 0; i < rows.size(); i++) {
+            Rows row = rows.get(i);
+            Row decisionTableRow = new Row();
+            decisionTableRow.setOrder(i);
+            decisionTableRow.setPriority(row.getPriority());
+            List<ConfigValue> conditions = row.getConditions();
+            for (ConfigValue condition : conditions) {
+                if (condition.getType() == null) {
+                    // 空的单元格
+                    decisionTableRow.addColl(new Coll());
+                } else {
+                    Value value = this.valueResolve.getValue(condition.getType(), condition.getValueType(), condition.getValue());
+                    decisionTableRow.addColl(new Coll(value));
+                }
+            }
+            ConfigValue result = row.getResult();
+            Value value = this.valueResolve.getValue(result.getType(), result.getValueType(), result.getValue());
+            decisionTableRow.setAction(value);
+            decisionTable.addRow(decisionTableRow);
+        }
+        DefaultAction defaultAction = tableData.getCollResultHead().getDefaultAction();
+        if (EnableEnum.ENABLE.getStatus().equals(defaultAction.getEnableDefaultAction())) {
+            decisionTable.setDefaultActionValue(this.valueResolve.getValue(defaultAction.getType(), defaultAction.getValueType(), defaultAction.getValue()));
+        }
+        return decisionTable;
+    }
+
 
     /**
      * 获取决策表展示信息
@@ -341,7 +405,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             throw new ValidException("找不到预览的规则数据:{}", id);
         }
         // 如果只有已发布
-        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getType().equals(DataStatus.PUBLISHED.getStatus())) {
+        if (ruleEngineDecisionTable.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
             RuleEngineDecisionTablePublish ruleEngineDecisionTablePublish = this.ruleEngineDecisionTablePublishManager.lambdaQuery()
                     .eq(RuleEngineDecisionTablePublish::getStatus, DataStatus.PUBLISHED.getStatus())
                     .eq(RuleEngineDecisionTablePublish::getDecisionTableId, id)

@@ -23,10 +23,18 @@ public class RunTestRequest {
      */
     @NotNull
     private Integer id;
+
+    /**
+     * DataStatus
+     */
+    @NotNull
+    private Integer status;
+
     @NotEmpty
     private String workspaceCode;
+
     @NotEmpty
-    private String ruleCode;
+    private String code;
 
     private Map<String, Object> param = new HashMap<>();
 

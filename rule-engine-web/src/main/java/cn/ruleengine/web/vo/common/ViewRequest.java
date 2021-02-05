@@ -18,6 +18,6 @@ public class ViewRequest {
     /**
      * DataStatus
      */
-    private Integer type;
+    private Integer status;
 
 }

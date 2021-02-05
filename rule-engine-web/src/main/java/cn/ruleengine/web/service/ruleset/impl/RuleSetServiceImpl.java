@@ -526,7 +526,7 @@ public class RuleSetServiceImpl implements RuleSetService {
             throw new ValidException("找不到预览的规则集数据:{}", id);
         }
         // 如果只有已发布
-        if (ruleEngineRuleSet.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getType().equals(DataStatus.PUBLISHED.getStatus())) {
+        if (ruleEngineRuleSet.getStatus().equals(DataStatus.PUBLISHED.getStatus()) || viewRequest.getStatus().equals(DataStatus.PUBLISHED.getStatus())) {
             RuleEngineRuleSetPublish ruleSetPublish = this.ruleEngineRuleSetPublishManager.lambdaQuery()
                     .eq(RuleEngineRuleSetPublish::getStatus, DataStatus.PUBLISHED.getStatus())
                     .eq(RuleEngineRuleSetPublish::getRuleSetId, id)

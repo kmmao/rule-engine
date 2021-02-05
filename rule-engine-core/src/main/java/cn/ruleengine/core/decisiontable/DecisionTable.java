@@ -74,6 +74,8 @@ public class DecisionTable extends DataSupport implements JsonParse {
 
     /**
      * 规则运行发生异常，邮件接收人
+     *
+     * @deprecated 后面用DataSupport中的AbnormalAlarm替代
      */
     @JsonIgnore
     @Deprecated
