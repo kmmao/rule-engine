@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.service.ConditionService;
+import cn.ruleengine.web.service.ParameterService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineConditionGroupCondition;
@@ -71,6 +72,8 @@ public class ConditionServiceImpl implements ConditionService {
     private ValueResolve valueResolve;
     @Resource
     private RuleEngineConfiguration ruleEngineConfiguration;
+    @Resource
+    private ParameterService parameterService;
 
 
     /**
@@ -396,28 +399,7 @@ public class ConditionServiceImpl implements ConditionService {
         if (ruleEngineCondition == null) {
             throw new ValidException("规则条件找不到：{}", id);
         }
-        Set<Integer> elementIds = new HashSet<>();
-        // 左边的
-        this.conditionAllElementId(elementIds, ruleEngineCondition.getLeftType(), ruleEngineCondition.getLeftValue());
-        // 右边的
-        this.conditionAllElementId(elementIds, ruleEngineCondition.getRightType(), ruleEngineCondition.getRightValue());
-        if (CollUtil.isEmpty(elementIds)) {
-            return Collections.emptySet();
-        }
-        List<RuleEngineElement> ruleEngineElements = this.ruleEngineElementManager.lambdaQuery().in(RuleEngineElement::getId, elementIds)
-                .eq(RuleEngineElement::getWorkspaceId, workspace.getId()).list();
-        if (CollUtil.isEmpty(ruleEngineElements)) {
-            return Collections.emptySet();
-        }
-        Set<Parameter> parameters = new HashSet<>(ruleEngineElements.size());
-        for (RuleEngineElement ruleEngineElement : ruleEngineElements) {
-            Parameter parameter = new Parameter();
-            parameter.setName(ruleEngineElement.getName());
-            parameter.setCode(ruleEngineElement.getCode());
-            parameter.setValueType(ruleEngineElement.getValueType());
-            parameters.add(parameter);
-        }
-        return parameters;
+        return this.parameterService.getParameter(ruleEngineCondition);
     }
 
     /**
@@ -452,38 +434,5 @@ public class ConditionServiceImpl implements ConditionService {
         return condition.compare(input, configuration);
     }
 
-    /**
-     * 获取条件中所有的元素
-     *
-     * @param elementIds 元素id
-     * @param type       值类型
-     * @param value      value
-     */
-    private void conditionAllElementId(Set<Integer> elementIds, Integer type, String value) {
-        if (VariableType.VARIABLE.getType().equals(type)) {
-            Value val = this.ruleEngineConfiguration.getEngineVariable().getVariable(Integer.valueOf(value));
-            if (val instanceof Function) {
-                Function function = (Function) val;
-                Map<String, Value> param = function.getParam();
-                Collection<Value> values = param.values();
-                for (Value v : values) {
-                    if (v instanceof Element) {
-                        elementIds.add(((Element) v).getElementId());
-                    } else if (v instanceof Variable) {
-                        try {
-                            String varId = ((Variable) v).getVariableId().toString();
-                            this.conditionAllElementId(elementIds, VariableType.VARIABLE.getType(), varId);
-                            // 后面改为最大引用链不超过20，否则报错
-                        } catch (StackOverflowError e) {
-                            log.error("堆栈溢出错误", e);
-                            throw new ValidException("请检查规则变量是否存在循环引用");
-                        }
-                    }
-                }
-            }
-        } else if (VariableType.ELEMENT.getType().equals(type)) {
-            elementIds.add(Integer.valueOf(value));
-        }
-    }
 
 }

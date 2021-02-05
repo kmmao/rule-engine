@@ -8,10 +8,8 @@ import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleSet;
-import cn.ruleengine.core.value.Element;
-import cn.ruleengine.core.value.Function;
-import cn.ruleengine.core.value.Value;
-import cn.ruleengine.core.value.Variable;
+import cn.ruleengine.core.value.*;
+import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.manager.RuleEngineElementManager;
 import cn.ruleengine.core.condition.Condition;
@@ -155,6 +153,7 @@ public class ParameterService {
                         Element element = (Element) v;
                         elementIds.add(element.getElementId());
                     } else if (v instanceof Variable) {
+                        // 可优化
                         try {
                             this.getFromVariableElement(elementIds, v);
                         } catch (StackOverflowError e) {
@@ -184,6 +183,59 @@ public class ParameterService {
         }
         Rule defaultRule = ruleSet.getDefaultRule();
         this.getConditionElement(elementIds, defaultRule);
+        return this.getParameters(elementIds);
+    }
+
+    /**
+     * 获取条件中所有的元素
+     *
+     * @param elementIds 元素id
+     * @param type       值类型
+     * @param value      value
+     */
+    private void conditionAllElementId(Set<Integer> elementIds, Integer type, String value) {
+        if (VariableType.VARIABLE.getType().equals(type)) {
+            Value val = this.ruleEngineConfiguration.getEngineVariable().getVariable(Integer.valueOf(value));
+            if (val instanceof Function) {
+                Function function = (Function) val;
+                Map<String, Value> param = function.getParam();
+                Collection<Value> values = param.values();
+                for (Value v : values) {
+                    if (v instanceof Element) {
+                        elementIds.add(((Element) v).getElementId());
+                    } else if (v instanceof Variable) {
+                        // 可优化
+                        try {
+                            String varId = ((Variable) v).getVariableId().toString();
+                            this.conditionAllElementId(elementIds, VariableType.VARIABLE.getType(), varId);
+                            // 后面改为最大引用链不超过20，否则报错
+                        } catch (StackOverflowError e) {
+                            log.error("堆栈溢出错误", e);
+                            throw new ValidException("请检查规则变量是否存在循环引用");
+                        }
+                    }
+                }
+            }
+        } else if (VariableType.ELEMENT.getType().equals(type)) {
+            elementIds.add(Integer.valueOf(value));
+        }
+    }
+
+    /**
+     * 获取条件中的元素
+     *
+     * @param ruleEngineCondition 条件
+     * @return list
+     */
+    public Set<Parameter> getParameter(RuleEngineCondition ruleEngineCondition) {
+        Set<Integer> elementIds = new HashSet<>();
+        // 左边的
+        this.conditionAllElementId(elementIds, ruleEngineCondition.getLeftType(), ruleEngineCondition.getLeftValue());
+        // 右边的
+        this.conditionAllElementId(elementIds, ruleEngineCondition.getRightType(), ruleEngineCondition.getRightValue());
+        if (CollUtil.isEmpty(elementIds)) {
+            return Collections.emptySet();
+        }
         return this.getParameters(elementIds);
     }
 
