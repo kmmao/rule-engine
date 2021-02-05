@@ -144,6 +144,7 @@ auth:
     secretKey: rule
     #token失效时间(毫秒单位)
     keepTime: -1 #废弃，由redis维护
+    issuer: ruleengine
   redis.token:
     keyPrefix: "rule-engine:token:"
     keepTime: 3600000

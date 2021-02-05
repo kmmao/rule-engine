@@ -47,7 +47,7 @@ public class JWTUtils {
     /**
      * 代表token的有效时间
      */
-    public static long keepTime;
+    private static long keepTime;
 
     /**
      * @param environment environment

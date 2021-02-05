@@ -162,7 +162,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
 
     /**
-     * 当前工作空间AccessKey
+     * 根据工作空间code获取AccessKey
      *
      * @param code 工作空间code
      * @return AccessKey

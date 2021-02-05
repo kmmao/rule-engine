@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private EmailClient emailClient;
     @Resource
-    private AliOSSClient aliOSSClient;
+    private AliOSSClient aliOssClient;
     @Resource
     private RoleService roleService;
 
@@ -55,6 +55,8 @@ public class UserServiceImpl implements UserService {
     public String tokenKeyPrefix;
     @Value("${auth.redis.token.keepTime:3600000}")
     public Long redisTokenKeepTime;
+    @Value("${auth.jwt.issuer:ruleengine}")
+    private String issuer;
 
     /**
      * 注册时验证码存入redis的前缀
@@ -82,7 +84,7 @@ public class UserServiceImpl implements UserService {
         if (!(ruleEngineUser.getPassword().equals(MD5Utils.encrypt(loginRequest.getPassword())))) {
             throw new LoginException("登录密码错误!");
         }
-        String token = JWTUtils.genderToken(String.valueOf(ruleEngineUser.getId()), "rule-engine", ruleEngineUser.getUsername());
+        String token = JWTUtils.genderToken(String.valueOf(ruleEngineUser.getId()), this.issuer, ruleEngineUser.getUsername());
         HttpServletResponse response = HttpServletUtils.getResponse();
         response.setHeader(HttpServletUtils.ACCESS_CONTROL_EXPOSE_HEADERS, AbstractTokenInterceptor.TOKEN);
         response.setHeader(AbstractTokenInterceptor.TOKEN, token);
@@ -251,7 +253,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String uploadAvatar(MultipartFile file) throws IOException {
-        return this.aliOSSClient.upload(file.getInputStream(), file.getOriginalFilename());
+        return this.aliOssClient.upload(file.getInputStream(), file.getOriginalFilename());
     }
 
     /**
