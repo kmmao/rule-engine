@@ -1,6 +1,5 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.ConditionSetService;
@@ -8,11 +7,11 @@ import cn.ruleengine.web.service.generalrule.GeneralRuleResolveService;
 import cn.ruleengine.web.service.ValueResolve;
 import cn.ruleengine.web.store.entity.*;
 import cn.ruleengine.web.store.manager.*;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉

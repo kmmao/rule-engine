@@ -57,15 +57,18 @@ public class GeneralRuleMessageListener {
         switch (ruleMessageBody.getType()) {
             case UPDATE:
                 log.info("开始更新规则：{}", ruleCode);
-                this.generalRuleEngine.addGeneralRule(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
+                this.generalRuleEngine.add(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
+                log.info("更新完毕：{}", ruleCode);
                 break;
             case LOAD:
                 log.info("开始加载规则：{}", ruleCode);
-                this.generalRuleEngine.addGeneralRule(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
+                this.generalRuleEngine.add(rulePublishService.getPublishGeneralRule(workspaceCode, ruleCode));
+                log.info("加载完毕：{}", ruleCode);
                 break;
             case REMOVE:
                 log.info("开始移除规则：{}", ruleCode);
                 this.generalRuleEngine.remove(workspaceCode, ruleCode);
+                log.info("移除完毕：{}", ruleCode);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + ruleMessageBody.getType());

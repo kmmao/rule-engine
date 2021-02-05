@@ -1,6 +1,6 @@
 package cn.ruleengine.web.vo.generalrule;
 
-import cn.ruleengine.core.rule.Parameter;
+import cn.ruleengine.web.vo.common.Parameter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

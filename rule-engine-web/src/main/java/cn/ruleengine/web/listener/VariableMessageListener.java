@@ -60,14 +60,17 @@ public class VariableMessageListener {
             case REMOVE:
                 log.info("开始移除变量：{}", id);
                 engineVariable.removeVariable(id);
+                log.info("移除完毕：{}", id);
                 break;
             case UPDATE:
                 log.info("开始更新变量：{}", id);
                 engineVariable.addVariable(id, variableResolveService.getVarById(id));
+                log.info("更新完毕：{}", id);
                 break;
             case LOAD:
                 log.info("开始加载变量：{}", id);
                 engineVariable.addVariable(id, variableResolveService.getVarById(id));
+                log.info("加载完毕：{}", id);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + variableMessageBody.getType());

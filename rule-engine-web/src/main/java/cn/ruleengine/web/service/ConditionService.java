@@ -1,13 +1,13 @@
 package cn.ruleengine.web.service;
 
 
-import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.web.vo.base.PageRequest;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.common.ExecuteTestRequest;
+import cn.ruleengine.web.vo.common.Parameter;
 import cn.ruleengine.web.vo.condition.*;
 
 import java.util.Collection;

@@ -16,7 +16,6 @@
 package cn.ruleengine.web.controller;
 
 
-import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.enums.DataPermissionType;
@@ -28,6 +27,7 @@ import cn.ruleengine.web.vo.base.Param;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.PlainResult;
 import cn.ruleengine.web.vo.common.ExecuteTestRequest;
+import cn.ruleengine.web.vo.common.Parameter;
 import cn.ruleengine.web.vo.condition.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -17,7 +17,7 @@ package cn.ruleengine.core.decisiontable.strategey;
 
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
-import cn.ruleengine.core.decisiontable.CollHeadCompare;
+import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,7 @@ public class AllPriorityStrategy implements DecisionTableStrategy {
      * @return 命中的结果值
      */
     @Override
-    public List<Object> compute(@NonNull Map<Integer, CollHeadCompare> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
+    public List<Object> compute(@NonNull Map<Integer, CollHead.Comparator> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         List<Object> actions = new ArrayList<>();
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
             // 一个row可以看做一个规则

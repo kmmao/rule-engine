@@ -4,6 +4,7 @@ import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.condition.Precondition;
 import cn.ruleengine.core.value.Value;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
@@ -53,6 +54,8 @@ public class GeneralRule extends Rule {
     /**
      * 规则运行发生异常，邮件接收人
      */
+    @JsonIgnore
+    @Deprecated
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
     /**

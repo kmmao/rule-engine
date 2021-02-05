@@ -17,6 +17,8 @@ package cn.ruleengine.core.decisiontable;
 
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
+import cn.ruleengine.core.condition.Compare;
+import cn.ruleengine.core.condition.ConditionCompareFactory;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.value.Value;
 import lombok.Data;
@@ -54,6 +56,35 @@ public class CollHead {
 
     public Object getLeftValue(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         return this.leftValue.getValue(input, configuration);
+    }
+
+    /**
+     * 表头比较器
+     */
+    public static class Comparator extends CollHead {
+
+        private Object lValue;
+
+        public void setValue(Object lValue) {
+            this.lValue = lValue;
+        }
+
+        public Object getValue() {
+            return this.lValue;
+        }
+
+        /**
+         * 表头比较器
+         *
+         * @param rValue 单元格数据
+         * @return true 条件成立
+         */
+        public boolean compare(Object rValue) {
+            Value leftValue = super.getLeftValue();
+            Compare compare = ConditionCompareFactory.getCompare(leftValue.getValueType());
+            return compare.compare(lValue, super.getOperator(), rValue);
+        }
+
     }
 
 }

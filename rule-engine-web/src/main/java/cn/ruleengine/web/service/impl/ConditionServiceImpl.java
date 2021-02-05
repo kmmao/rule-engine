@@ -2,7 +2,6 @@ package cn.ruleengine.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
-import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.core.value.*;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.service.ConditionService;
@@ -22,6 +21,7 @@ import cn.ruleengine.web.vo.base.PageBase;
 import cn.ruleengine.web.vo.base.PageResult;
 import cn.ruleengine.web.vo.base.Rows;
 import cn.ruleengine.web.vo.common.ExecuteTestRequest;
+import cn.ruleengine.web.vo.common.Parameter;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.user.UserData;
 import cn.ruleengine.web.vo.variable.ParamValue;

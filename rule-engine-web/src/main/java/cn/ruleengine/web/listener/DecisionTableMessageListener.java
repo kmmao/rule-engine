@@ -59,15 +59,18 @@ public class DecisionTableMessageListener {
         switch (decisionTableMessageBody.getType()) {
             case UPDATE:
                 log.info("开始更新决策表：{}", decisionTableCode);
-                this.decisionTableEngine.addDecisionTable(decisionTablePublishService.getPublishDecisionTable(workspaceCode, decisionTableCode));
+                this.decisionTableEngine.add(decisionTablePublishService.getPublishDecisionTable(workspaceCode, decisionTableCode));
+                log.info("更新完毕：{}", decisionTableCode);
                 break;
             case LOAD:
                 log.info("开始加载决策表：{}", decisionTableCode);
-                this.decisionTableEngine.addDecisionTable(decisionTablePublishService.getPublishDecisionTable(workspaceCode, decisionTableCode));
+                this.decisionTableEngine.add(decisionTablePublishService.getPublishDecisionTable(workspaceCode, decisionTableCode));
+                log.info("加载完毕：{}", decisionTableCode);
                 break;
             case REMOVE:
                 log.info("开始移除决策表：{}", decisionTableCode);
                 this.decisionTableEngine.remove(workspaceCode, decisionTableCode);
+                log.info("移除完毕：{}", decisionTableCode);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + decisionTableMessageBody.getType());

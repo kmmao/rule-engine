@@ -1,10 +1,11 @@
 package cn.ruleengine.web.vo.ruleset;
 
-import cn.ruleengine.core.rule.Parameter;
+import cn.ruleengine.web.vo.common.Parameter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Set;
+
 
 /**
  * 〈一句话功能简述〉<br>

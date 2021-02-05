@@ -19,14 +19,10 @@ package cn.ruleengine.core;
 import cn.ruleengine.core.exception.EngineException;
 import cn.ruleengine.core.listener.ExecuteListener;
 import cn.ruleengine.core.rule.GeneralRule;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -39,19 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.0.0
  */
 @Slf4j
-public class GeneralRuleEngine implements Engine {
-
-
-    /**
-     * 启动时加载的规则
-     */
-    private final Map<String, Map<String, GeneralRule>> workspaceMap = new ConcurrentHashMap<>();
-
-    /**
-     * 规则引擎运行所需的参数
-     */
-    @Setter
-    private RuleEngineConfiguration configuration;
+public class GeneralRuleEngine extends Engine<GeneralRule> {
 
     /**
      * 可传入配置信息，包括规则监听器，规则变量...
@@ -59,37 +43,9 @@ public class GeneralRuleEngine implements Engine {
      * @param configuration 规则引擎运行所需配置参数
      */
     public GeneralRuleEngine(@NonNull RuleEngineConfiguration configuration) {
-        Objects.requireNonNull(configuration);
-        this.configuration = configuration;
+        super(configuration);
     }
 
-
-    /**
-     * 从引擎中根据规则code查询一个规则
-     *
-     * @param workspaceCode 工作空间code
-     * @param ruleCode      规则code
-     * @return Rule
-     */
-    public GeneralRule getGeneralRule(String workspaceCode, String ruleCode) {
-        Objects.requireNonNull(workspaceCode);
-        Objects.requireNonNull(ruleCode);
-        Map<String, GeneralRule> workspaceMap = this.workspaceMap.get(workspaceCode);
-        if (workspaceMap == null) {
-            throw new EngineException("Can't find this workspace：" + workspaceCode);
-        }
-        return workspaceMap.get(ruleCode);
-    }
-
-    /**
-     * 获取规则引擎运行所需的参数
-     *
-     * @return RuleEngineConfiguration
-     */
-    @Override
-    public RuleEngineConfiguration getConfiguration() {
-        return this.configuration;
-    }
 
     /**
      * 规则执行，当条件全部成立时，返回规则执行结果{@link GeneralRule#getActionValue()}
@@ -103,15 +59,16 @@ public class GeneralRuleEngine implements Engine {
         Objects.requireNonNull(input);
         Objects.requireNonNull(workspaceCode);
         Objects.requireNonNull(ruleCode);
-        GeneralRule generalRule = this.getGeneralRule(workspaceCode, ruleCode);
+        GeneralRule generalRule = super.get(workspaceCode, ruleCode);
         if (generalRule == null) {
             throw new EngineException("no rule:{}", ruleCode);
         }
         log.info("开始执行规则:{}", generalRule.getCode());
-        ExecuteListener<GeneralRule> listener = this.configuration.getGeneralRuleListener();
+        ExecuteListener<GeneralRule> listener = this.getConfiguration().getGeneralRuleListener();
         listener.before(generalRule, input);
         try {
-            Object action = generalRule.execute(input, this.configuration);
+            Object action = generalRule.execute(input, this.getConfiguration());
+            log.info("规则执行完毕:{},{}", generalRule.getCode(), action);
             DefaultOutput output = new DefaultOutput(action);
             listener.after(generalRule, input, output);
             return output;
@@ -121,66 +78,13 @@ public class GeneralRuleEngine implements Engine {
         }
     }
 
-    /**
-     * 是否存在某规则
-     *
-     * @param ruleCode 规则code
-     * @return true存在
-     */
-    @Override
-    public boolean isExists(String workspaceCode, String ruleCode) {
-        if (workspaceCode == null || ruleCode == null) {
-            return false;
-        }
-        if (!this.workspaceMap.containsKey(workspaceCode)) {
-            return false;
-        }
-        return this.workspaceMap.get(workspaceCode).containsKey(ruleCode);
-    }
-
-    /**
-     * 添加规则
-     *
-     * @param generalRule 规则配置信息
-     */
-    public synchronized void addGeneralRule(@NonNull GeneralRule generalRule) {
-        Objects.requireNonNull(generalRule);
-        String workspaceCode = Objects.requireNonNull(generalRule.getWorkspaceCode());
-        String ruleCode = Objects.requireNonNull(generalRule.getCode());
-        if (!this.workspaceMap.containsKey(workspaceCode)) {
-            this.workspaceMap.put(workspaceCode, new ConcurrentHashMap<>(20));
-        }
-        this.workspaceMap.get(workspaceCode).put(ruleCode, generalRule);
-    }
-
-    /**
-     * 添加多个规则
-     *
-     * @param rules 规则配置信息列表
-     */
-    public void addMultipleGeneralRule(@NonNull List<GeneralRule> rules) {
-        Objects.requireNonNull(rules);
-        rules.forEach(this::addGeneralRule);
-    }
-
-    /**
-     * 从规则引擎删除一个规则
-     *
-     * @param ruleCode 规则code
-     */
-    @Override
-    public void remove(String workspaceCode, @NonNull String ruleCode) {
-        if (this.workspaceMap.containsKey(workspaceCode)) {
-            this.workspaceMap.get(workspaceCode).remove(ruleCode);
-        }
-    }
 
     /**
      * 销毁规则引擎
      */
     @Override
     public void close() {
-        this.workspaceMap.clear();
+        super.close();
         log.info("The rules engine has been destroyed");
     }
 

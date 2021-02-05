@@ -19,7 +19,7 @@ package cn.ruleengine.core.decisiontable.strategey;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.Coll;
-import cn.ruleengine.core.decisiontable.CollHeadCompare;
+import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
 import org.springframework.lang.NonNull;
@@ -46,7 +46,7 @@ public interface DecisionTableStrategy {
      * @param configuration      规则引擎配置信息
      * @return 命中的结果值
      */
-    List<Object> compute(@NonNull Map<Integer, CollHeadCompare> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration);
+    List<Object> compute(@NonNull Map<Integer, CollHead.Comparator> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration);
 
     /**
      * 获取row的执行结果
@@ -57,7 +57,7 @@ public interface DecisionTableStrategy {
      * @param configuration      规则引擎配置信息
      * @return action
      */
-    default Value getActionByRow(Map<Integer, CollHeadCompare> collHeadCompareMap, Row row, Input input, RuleEngineConfiguration configuration) {
+    default Value getActionByRow(Map<Integer, CollHead.Comparator> collHeadCompareMap, Row row, Input input, RuleEngineConfiguration configuration) {
         List<Coll> colls = row.getColls();
         // 校验此行单元格条件是否成立
         for (int i = 0; i < colls.size(); i++) {
@@ -67,7 +67,7 @@ public interface DecisionTableStrategy {
                 continue;
             }
             // 获取到表头比较器，与下面单元格比较
-            CollHeadCompare collHeadCompare = collHeadCompareMap.get(i);
+            CollHead.Comparator collHeadCompare = collHeadCompareMap.get(i);
             /*
              * 右值可以有固定值变量，固定值，无元素 input=null
              * 更新：决策表单元格变量可以为函数型变量

@@ -46,7 +46,7 @@ public class DecisionTableRunTestServiceImpl implements RunTestService {
         RuleEngineConfiguration ruleEngineConfiguration = new RuleEngineConfiguration();
         DecisionTableEngine engine = new DecisionTableEngine(ruleEngineConfiguration);
         DecisionTable decisionTable = this.decisionTableResolveService.getDecisionTableById(runTestRequest.getId());
-        engine.addDecisionTable(decisionTable);
+        engine.add(decisionTable);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
         return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getRuleCode());

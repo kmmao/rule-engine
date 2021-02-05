@@ -6,11 +6,12 @@ import lombok.Data;
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author 丁乾文
- * @create 2020/12/28
+ * @author dingqianwen
+ * @date 2021/2/5
  * @since 1.0.0
  */
 @Data
+@Deprecated
 public class AbnormalAlarm {
     /**
      * 是否启用

@@ -73,7 +73,7 @@ public class EngineConfig {
     public GeneralRuleEngine generalRuleEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化普通规则引擎");
         GeneralRuleEngine ruleEngine = new GeneralRuleEngine(ruleEngineConfiguration);
-        ruleEngine.addMultipleGeneralRule(this.rulePublishService.getAllPublishGeneralRule());
+        ruleEngine.addMultiple(this.rulePublishService.getAllPublishGeneralRule());
         log.info("普通规则引擎初始化完毕");
         return ruleEngine;
     }
@@ -87,7 +87,7 @@ public class EngineConfig {
     public DecisionTableEngine decisionTableEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化决策表引擎");
         DecisionTableEngine ruleEngine = new DecisionTableEngine(ruleEngineConfiguration);
-        ruleEngine.addMultipleDecisionTable(this.decisionTablePublishService.getAllPublishDecisionTable());
+        ruleEngine.addMultiple(this.decisionTablePublishService.getAllPublishDecisionTable());
         log.info("决策表引擎初始化完毕");
         return ruleEngine;
     }
@@ -101,7 +101,7 @@ public class EngineConfig {
     public RuleSetEngine ruleSetEngine(RuleEngineConfiguration ruleEngineConfiguration) {
         log.info("开始初始化规则集引擎");
         RuleSetEngine ruleSetEngine = new RuleSetEngine(ruleEngineConfiguration);
-        ruleSetEngine.addMultipleRuleSet(this.ruleSetPublishService.getAllPublishRuleSet());
+        ruleSetEngine.addMultiple(this.ruleSetPublishService.getAllPublishRuleSet());
         log.info("规则集引擎初始化完毕");
         return ruleSetEngine;
     }

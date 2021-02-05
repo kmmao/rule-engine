@@ -15,12 +15,14 @@
  */
 package cn.ruleengine.core.rule;
 
+import cn.ruleengine.core.DataSupport;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.condition.ConditionSet;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -35,25 +37,11 @@ import org.springframework.lang.Nullable;
  * @date 2020/3/9
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
-public class Rule implements JsonParse {
+public class Rule extends DataSupport implements JsonParse {
 
-    /**
-     * 规则id
-     */
-    private Integer id;
-
-    /**
-     * 规则Code
-     */
-    private String code;
-    /**
-     * 规则名称
-     */
-    private String name;
-
-    private String description;
 
     /**
      * 当条件全部满足时候返回此规则结果
@@ -71,6 +59,7 @@ public class Rule implements JsonParse {
      * @param configuration 规则引擎配置
      * @return 规则返回值
      */
+    @Override
     @Nullable
     public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         // 比较规则条件集

@@ -1,4 +1,4 @@
-package cn.ruleengine.core.rule;
+package cn.ruleengine.web.vo.common;
 
 import lombok.Data;
 

@@ -60,15 +60,18 @@ public class RuleSetMessageListener {
         switch (ruleSetMessageBody.getType()) {
             case UPDATE:
                 log.info("开始更新规则集：{}", ruleCode);
-                this.ruleSetEngine.addRuleSet(ruleSetPublishService.getPublishRuleSet(workspaceCode, ruleCode));
+                this.ruleSetEngine.add(ruleSetPublishService.getPublishRuleSet(workspaceCode, ruleCode));
+                log.info("更新完毕：{}", ruleCode);
                 break;
             case LOAD:
                 log.info("开始加载规则集：{}", ruleCode);
-                this.ruleSetEngine.addRuleSet(ruleSetPublishService.getPublishRuleSet(workspaceCode, ruleCode));
+                this.ruleSetEngine.add(ruleSetPublishService.getPublishRuleSet(workspaceCode, ruleCode));
+                log.info("加载完毕：{}", ruleCode);
                 break;
             case REMOVE:
                 log.info("开始移除规则集：{}", ruleCode);
                 this.ruleSetEngine.remove(workspaceCode, ruleCode);
+                log.info("移除完毕：{}", ruleCode);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + ruleSetMessageBody.getType());

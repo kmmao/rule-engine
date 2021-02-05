@@ -1,6 +1,5 @@
 package cn.ruleengine.web.vo.ruleset;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

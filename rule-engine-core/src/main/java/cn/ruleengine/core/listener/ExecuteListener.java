@@ -15,6 +15,7 @@
  */
 package cn.ruleengine.core.listener;
 
+import cn.ruleengine.core.DataSupport;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.Output;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @date 2020/8/3
  * @since 1.0.0
  */
-public interface ExecuteListener<T> {
+public interface ExecuteListener<T extends DataSupport> {
 
     Logger log = LoggerFactory.getLogger(ExecuteListener.class);
 

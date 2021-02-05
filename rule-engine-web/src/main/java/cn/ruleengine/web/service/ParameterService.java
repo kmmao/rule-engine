@@ -6,7 +6,6 @@ import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.DecisionTable;
 import cn.ruleengine.core.rule.GeneralRule;
-import cn.ruleengine.core.rule.Parameter;
 import cn.ruleengine.core.rule.Rule;
 import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.value.Element;
@@ -19,6 +18,7 @@ import cn.ruleengine.core.condition.Condition;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
 import cn.ruleengine.core.exception.ValidException;
+import cn.ruleengine.web.vo.common.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

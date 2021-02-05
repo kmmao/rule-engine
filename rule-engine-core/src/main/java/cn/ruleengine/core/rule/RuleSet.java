@@ -16,12 +16,15 @@
 package cn.ruleengine.core.rule;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.DataSupport;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.rule.strategy.RuleSetStrategy;
 import cn.ruleengine.core.rule.strategy.RuleSetStrategyFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -40,33 +43,10 @@ import java.util.Objects;
  * @create 2020/12/27
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
-public class RuleSet implements JsonParse {
-
-    /**
-     * 规则集id
-     */
-    private Integer id;
-
-    /**
-     * 规则集Code
-     */
-    private String code;
-    /**
-     * 规则集名称
-     */
-    private String name;
-
-    private String description;
-    /**
-     * 工作空间
-     */
-    private Integer workspaceId;
-    /**
-     * 工作空间code
-     */
-    private String workspaceCode;
+public class RuleSet extends DataSupport implements JsonParse {
 
     /**
      * 规则集
@@ -83,6 +63,8 @@ public class RuleSet implements JsonParse {
      */
     private RuleSetStrategyType strategyType = RuleSetStrategyType.ALL_RULE;
 
+    @JsonIgnore
+    @Deprecated
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
 
@@ -91,6 +73,7 @@ public class RuleSet implements JsonParse {
         this.rules.add(rule);
     }
 
+    @Override
     @Nullable
     public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         long startTime = System.currentTimeMillis();

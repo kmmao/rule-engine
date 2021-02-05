@@ -49,7 +49,7 @@ public class GeneralRuleRunTestServiceImpl implements RunTestService {
         RuleEngineConfiguration ruleEngineConfiguration = new RuleEngineConfiguration();
         GeneralRuleEngine engine = new GeneralRuleEngine(ruleEngineConfiguration);
         GeneralRule rule = this.ruleResolveService.getGeneralRuleById(runTestRequest.getId());
-        engine.addGeneralRule(rule);
+        engine.add(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
         return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getRuleCode());

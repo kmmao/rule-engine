@@ -89,10 +89,20 @@ public class EngineVariable implements Closeable {
     }
 
     /**
+     * 变量size
+     *
+     * @return size
+     */
+    public int size() {
+        return this.variableMap.size();
+    }
+
+    /**
      * 清除规则引擎中所有的变量信息
      */
     @Override
     public void close() {
         this.variableMap.clear();
     }
+
 }

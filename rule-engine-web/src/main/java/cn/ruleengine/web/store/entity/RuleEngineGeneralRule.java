@@ -1,6 +1,5 @@
 package cn.ruleengine.web.store.entity;
 
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
@@ -68,7 +67,7 @@ public class RuleEngineGeneralRule implements Serializable {
     /**
      * 注意，规则模拟运行不会触发
      * <p>
-     * {@link AbnormalAlarm}
+     * AbnormalAlarm
      */
     private String abnormalAlarm;
 

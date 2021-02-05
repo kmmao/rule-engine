@@ -16,6 +16,7 @@
 package cn.ruleengine.core.decisiontable;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.ruleengine.core.DataSupport;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategy;
@@ -24,7 +25,9 @@ import cn.ruleengine.core.exception.DecisionTableException;
 import cn.ruleengine.core.JsonParse;
 import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.value.Value;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -40,35 +43,10 @@ import java.util.*;
  * @date 2020/12/18
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
-public class DecisionTable implements JsonParse {
-
-    /**
-     * 规则id
-     */
-    private Integer id;
-
-    /**
-     * 规则Code
-     */
-    private String code;
-    /**
-     * 规则名称
-     */
-    private String name;
-
-    private String description;
-
-    /**
-     * 工作空间
-     */
-    private Integer workspaceId;
-
-    /**
-     * 工作空间code
-     */
-    private String workspaceCode;
+public class DecisionTable extends DataSupport implements JsonParse {
 
     /**
      * 执行策略
@@ -97,6 +75,8 @@ public class DecisionTable implements JsonParse {
     /**
      * 规则运行发生异常，邮件接收人
      */
+    @JsonIgnore
+    @Deprecated
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
     /**
@@ -141,6 +121,7 @@ public class DecisionTable implements JsonParse {
      * @param configuration 引擎配置信息
      * @return 决策表执行结果
      */
+    @Override
     @Nullable
     public List<Object> execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         long startTime = System.currentTimeMillis();
@@ -148,14 +129,14 @@ public class DecisionTable implements JsonParse {
             // 获取执行策略执行决策表
             DecisionTableStrategy strategy = DecisionTableStrategyFactory.getInstance(this.strategyType);
             // 计算表头值，获取到表头比较器，与下面单元格比较
-            Map<Integer, CollHeadCompare> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
+            Map<Integer, CollHead.Comparator> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
             List<Object> actions = strategy.compute(collHeadCompareMap, this.decisionTree, input, configuration);
             if (CollUtil.isNotEmpty(actions)) {
                 return actions;
             }
-            if (Objects.nonNull(this.defaultActionValue)) {
+            if (Objects.nonNull(this.getDefaultActionValue())) {
                 log.info("结果未命中，存在默认结果，返回默认结果");
-                return Collections.singletonList(this.defaultActionValue.getValue(input, configuration));
+                return Collections.singletonList(this.getDefaultActionValue().getValue(input, configuration));
             }
             log.info("结果未命中，不存在默认结果，返回:null");
             return null;
@@ -175,12 +156,12 @@ public class DecisionTable implements JsonParse {
      * @param configuration 引擎配置信息
      * @return Map<Integer, CollHeadCompare>
      */
-    private Map<Integer, CollHeadCompare> getCollHeadCompare(Input input, RuleEngineConfiguration configuration) {
-        Map<Integer, CollHeadCompare> collHeadCompareMap = new LinkedHashMap<>();
+    private Map<Integer, CollHead.Comparator> getCollHeadCompare(Input input, RuleEngineConfiguration configuration) {
+        Map<Integer, CollHead.Comparator> collHeadCompareMap = new LinkedHashMap<>();
         for (int index = 0; index < this.collHeads.size(); index++) {
             CollHead collHead = this.collHeads.get(index);
             Object value = collHead.getLeftValue(input, configuration);
-            CollHeadCompare collHeadCompare = new CollHeadCompare();
+            CollHead.Comparator collHeadCompare = new CollHead.Comparator();
             collHeadCompare.setLeftValue(collHead.getLeftValue());
             collHeadCompare.setOperator(collHead.getOperator());
             collHeadCompare.setValue(value);

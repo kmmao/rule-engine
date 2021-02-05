@@ -46,7 +46,7 @@ public class RuleSetRunTestServiceImpl implements RunTestService {
         RuleEngineConfiguration ruleEngineConfiguration = new RuleEngineConfiguration();
         RuleSetEngine engine = new RuleSetEngine(ruleEngineConfiguration);
         RuleSet rule = this.ruleSetResolveService.getRuleSetById(runTestRequest.getId());
-        engine.addRuleSet(rule);
+        engine.add(rule);
         // 加载变量
         engine.getConfiguration().setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
         return engine.execute(input, runTestRequest.getWorkspaceCode(), runTestRequest.getRuleCode());
