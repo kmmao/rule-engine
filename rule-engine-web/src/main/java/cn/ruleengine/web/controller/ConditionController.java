@@ -18,8 +18,7 @@ package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.web.vo.base.IdRequest;
 import cn.ruleengine.web.vo.base.PageRequest;
@@ -77,7 +76,7 @@ public class ConditionController {
      * @param idRequest 条件id
      * @return ConditionResponse
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("get")
     @ApiOperation("根据id查询条件")
     public PlainResult<ConditionBody> getById(@RequestBody @Valid IdRequest idRequest) {
@@ -93,7 +92,7 @@ public class ConditionController {
      * @return true
      */
     @ReSubmitLock
-    @DataPermission(id = "#updateConditionRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#updateConditionRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("update")
     @ApiOperation("根据id更新条件")
     public PlainResult<Boolean> update(@RequestBody @Valid UpdateConditionRequest updateConditionRequest) {
@@ -120,7 +119,7 @@ public class ConditionController {
      * @param idRequest 条件id
      * @return true：删除成功
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.DELETE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.DELETE)
     @PostMapping("delete")
     @ApiOperation("根据id删除条件")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {
@@ -135,7 +134,7 @@ public class ConditionController {
      * @param idRequest 条件id
      * @return list
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getParameter")
     @ApiOperation("根据id获取条件中的元素")
     public PlainResult<Set<Parameter>> getParameter(@RequestBody @Valid IdRequest idRequest) {
@@ -150,7 +149,7 @@ public class ConditionController {
      * @param executeTestRequest 参数
      * @return true/false
      */
-    @DataPermission(id = "#executeTestRequest.id", dataType = DataPermissionType.CONDITION, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#executeTestRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("run")
     @ApiOperation("测试运行条件")
     public PlainResult<Boolean> run(@RequestBody @Valid ExecuteTestRequest executeTestRequest) {

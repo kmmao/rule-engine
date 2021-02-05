@@ -18,8 +18,7 @@ package cn.ruleengine.web.controller.generalrule;
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.annotation.SystemLog;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.generalrule.GeneralRuleService;
 import cn.ruleengine.web.vo.base.IdRequest;
 import cn.ruleengine.web.vo.base.PageRequest;
@@ -74,7 +73,7 @@ public class GeneralRuleController {
      * @return 规则id
      */
     @ReSubmitLock
-    @DataPermission(id = "#ruleDefinition.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#ruleDefinition.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("saveOrUpdateRuleDefinition")
     @ApiOperation("保存或者更新规则定义信息")
     public BaseResult saveOrUpdateRuleDefinition(@Valid @RequestBody GeneralRuleDefinition ruleDefinition) {
@@ -89,7 +88,7 @@ public class GeneralRuleController {
      * @param idRequest 规则id
      * @return 规则定义信息
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getRuleDefinition")
     @ApiOperation("查询规则定义信息")
     public BaseResult getRuleDefinition(@Valid @RequestBody IdRequest idRequest) {
@@ -105,7 +104,7 @@ public class GeneralRuleController {
      * @return true
      */
     @ReSubmitLock
-    @DataPermission(id = "#generalRuleBody.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#generalRuleBody.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
     @ApiOperation("生成普通规则代发布")
     public BaseResult generationRelease(@Valid @RequestBody GeneralRuleBody generalRuleBody) {
@@ -122,7 +121,7 @@ public class GeneralRuleController {
      */
     @ReSubmitLock
     @SystemLog
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布规则")
     public BaseResult publish(@Valid @RequestBody IdRequest idRequest) {
@@ -138,7 +137,7 @@ public class GeneralRuleController {
      * @return true执行成功
      */
     @ReSubmitLock
-    @DataPermission(id = "#generalRuleBody.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#generalRuleBody.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("updateRule")
     @ApiOperation("更新规则信息")
     public BaseResult updateRule(@Valid @RequestBody GeneralRuleBody generalRuleBody) {
@@ -153,7 +152,7 @@ public class GeneralRuleController {
      * @param idRequest 规则id
      * @return 规则信息
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getRuleConfig")
     @ApiOperation("获取规则配置信息")
     public BaseResult getRuleConfig(@Valid @RequestBody IdRequest idRequest) {
@@ -168,7 +167,7 @@ public class GeneralRuleController {
      * @param viewRequest 规则id
      * @return GetRuleResponse
      */
-    @DataPermission(id = "#viewRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#viewRequest.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("view")
     @ApiOperation("预览规则")
     public BaseResult view(@Valid @RequestBody ViewRequest viewRequest) {
@@ -184,7 +183,7 @@ public class GeneralRuleController {
      * @param idRequest 规则id
      * @return true
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.GENERAL_RULE, type = PermissionType.DELETE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.DELETE)
     @PostMapping("delete")
     @ApiOperation("删除规则")
     public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {

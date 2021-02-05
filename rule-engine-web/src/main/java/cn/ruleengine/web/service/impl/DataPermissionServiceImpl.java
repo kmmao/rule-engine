@@ -2,8 +2,7 @@ package cn.ruleengine.web.service.impl;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.service.DataPermissionService;
 import cn.ruleengine.web.service.WorkspaceService;
@@ -52,8 +51,8 @@ public class DataPermissionServiceImpl implements DataPermissionService {
      */
     @Override
     public Boolean validDataPermission(Serializable id, DataPermission dataPermission) {
-        DataPermissionType dataPermissionType = dataPermission.dataType();
-        PermissionType type = dataPermission.type();
+        Permission.DataType dataPermissionType = dataPermission.dataType();
+        Permission.OperationType operationType = dataPermission.operationType();
         UserData userData = Context.getCurrentUser();
         Integer userId = userData.getId();
         switch (dataPermissionType) {
@@ -66,7 +65,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 if (Objects.equals(ruleEngineElement.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineElement.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineElement.getWorkspaceId(), operationType);
             case VARIABLE:
                 RuleEngineVariable ruleEngineVariable = this.ruleEngineVariableManager.getById(id);
                 // 不影响后续逻辑
@@ -76,7 +75,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 if (Objects.equals(ruleEngineVariable.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineVariable.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineVariable.getWorkspaceId(), operationType);
             case FUNCTION:
                 break;
             case CONDITION:
@@ -88,7 +87,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 if (Objects.equals(ruleEngineCondition.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineCondition.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineCondition.getWorkspaceId(), operationType);
             case GENERAL_RULE:
                 RuleEngineGeneralRule ruleEngineGeneralRule = this.ruleEngineGeneralRuleManager.getById(id);
                 // 不影响后续逻辑
@@ -98,7 +97,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 if (Objects.equals(ruleEngineGeneralRule.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineGeneralRule.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineGeneralRule.getWorkspaceId(), operationType);
             case DECISION_TABLE:
                 RuleEngineDecisionTable ruleEngineDecisionTable = this.ruleEngineDecisionTableManager.getById(id);
                 // 不影响后续逻辑
@@ -108,7 +107,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 if (Objects.equals(ruleEngineDecisionTable.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineDecisionTable.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineDecisionTable.getWorkspaceId(), operationType);
             case RULE_SET:
                 RuleEngineRuleSet ruleEngineRuleSet = this.ruleEngineRuleSetManager.getById(id);
                 // 不影响后续逻辑
@@ -118,7 +117,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
                 if (Objects.equals(ruleEngineRuleSet.getCreateUserId(), userId)) {
                     return true;
                 }
-                return this.permissionTypeProcess(userId, ruleEngineRuleSet.getWorkspaceId(), type);
+                return this.permissionTypeProcess(userId, ruleEngineRuleSet.getWorkspaceId(), operationType);
             case ELEMENT_GROUP:
                 break;
             default:
@@ -130,13 +129,13 @@ public class DataPermissionServiceImpl implements DataPermissionService {
     /**
      * 根据权限类型校验相应规则
      *
-     * @param userId      用户id
-     * @param workspaceId 工作空间id
-     * @param type        权限类型
+     * @param userId        用户id
+     * @param workspaceId   工作空间id
+     * @param operationType 操作类型
      * @return true有权限
      */
-    private boolean permissionTypeProcess(Integer userId, Integer workspaceId, PermissionType type) {
-        switch (type) {
+    private boolean permissionTypeProcess(Integer userId, Integer workspaceId, Permission.OperationType operationType) {
+        switch (operationType) {
             case ADD:
                 // 任意人都可以添加
                 break;
@@ -157,7 +156,7 @@ public class DataPermissionServiceImpl implements DataPermissionService {
             case SELECT:
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + type);
+                throw new IllegalStateException("Unexpected value: " + operationType);
         }
         return false;
     }

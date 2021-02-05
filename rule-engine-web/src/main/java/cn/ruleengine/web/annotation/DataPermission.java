@@ -15,8 +15,7 @@
  */
 package cn.ruleengine.web.annotation;
 
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -47,13 +46,13 @@ public @interface DataPermission {
      *
      * @return DataPermissionType
      */
-    DataPermissionType dataType();
+    Permission.DataType dataType();
 
     /**
-     * 权限类型
+     * 操作类型
      *
      * @return PermissionType
      */
-    PermissionType type();
+    Permission.OperationType operationType();
 
 }

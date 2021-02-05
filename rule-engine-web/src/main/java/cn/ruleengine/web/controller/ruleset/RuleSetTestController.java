@@ -16,8 +16,7 @@
 package cn.ruleengine.web.controller.ruleset;
 
 import cn.ruleengine.web.annotation.DataPermission;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.RunTestService;
 import cn.ruleengine.web.vo.base.BaseResult;
 import cn.ruleengine.web.vo.base.PlainResult;
@@ -56,7 +55,7 @@ public class RuleSetTestController {
      * @param runTestRequest 规则集参数信息
      * @return result
      */
-    @DataPermission(id = "#runTestRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#runTestRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("run")
     @ApiOperation("模拟运行")
     public BaseResult fun(@RequestBody @Valid RunTestRequest runTestRequest) {

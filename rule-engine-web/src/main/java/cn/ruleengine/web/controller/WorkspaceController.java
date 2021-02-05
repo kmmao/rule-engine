@@ -24,7 +24,6 @@ import cn.ruleengine.web.vo.base.PlainResult;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
-import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
 import cn.ruleengine.web.vo.workspace.Workspace;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>

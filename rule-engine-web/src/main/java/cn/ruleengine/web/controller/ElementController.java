@@ -17,8 +17,7 @@ package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.ElementService;
 import cn.ruleengine.web.vo.base.IdRequest;
 import cn.ruleengine.web.vo.base.PageRequest;
@@ -85,7 +84,7 @@ public class ElementController {
      * @param idRequest 元素id
      * @return GetElementResponse
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.ELEMENT, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("get")
     @ApiOperation("根据id查询元素")
     public PlainResult<GetElementResponse> get(@RequestBody @Valid IdRequest idRequest) {
@@ -101,7 +100,7 @@ public class ElementController {
      * @return true
      */
     @ReSubmitLock
-    @DataPermission(id = "#updateElementRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#updateElementRequest.id", dataType = Permission.DataType.ELEMENT, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("update")
     @ApiOperation("根据id更新元素")
     public PlainResult<Boolean> update(@RequestBody @Valid UpdateElementRequest updateElementRequest) {
@@ -116,7 +115,7 @@ public class ElementController {
      * @param idRequest 元素id
      * @return true
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.ELEMENT, type = PermissionType.DELETE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.ELEMENT, operationType = Permission.OperationType.DELETE)
     @PostMapping("delete")
     @ApiOperation("根据id删除元素")
     public PlainResult<Boolean> delete(@RequestBody @Valid IdRequest idRequest) {

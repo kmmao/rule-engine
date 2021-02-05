@@ -18,8 +18,7 @@ package cn.ruleengine.web.controller.ruleset;
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.annotation.SystemLog;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.ruleset.RuleSetService;
 import cn.ruleengine.web.vo.base.IdRequest;
 import cn.ruleengine.web.vo.base.PageRequest;
@@ -76,7 +75,7 @@ public class RuleSetController {
      * @return 规则集id
      */
     @ReSubmitLock
-    @DataPermission(id = "#ruleSetDefinition.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#ruleSetDefinition.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("saveOrUpdateRuleSetDefinition")
     @ApiOperation("保存或者更新规则集定义信息")
     public BaseResult saveOrUpdateRuleSetDefinition(@Valid @RequestBody RuleSetDefinition ruleSetDefinition) {
@@ -91,7 +90,7 @@ public class RuleSetController {
      * @param idRequest 规则集id
      * @return 规则集定义信息
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getRuleSetDefinition")
     @ApiOperation("查询规则集定义信息")
     public BaseResult getRuleSetDefinition(@Valid @RequestBody IdRequest idRequest) {
@@ -108,7 +107,7 @@ public class RuleSetController {
      * @return true
      */
     @ReSubmitLock
-    @DataPermission(id = "#ruleSetBody.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#ruleSetBody.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
     @ApiOperation("生成规则集代发布")
     public BaseResult generationRelease(@Valid @RequestBody RuleSetBody ruleSetBody) {
@@ -125,7 +124,7 @@ public class RuleSetController {
      */
     @ReSubmitLock
     @SystemLog
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布规则集")
     public BaseResult publish(@Valid @RequestBody IdRequest idRequest) {
@@ -141,7 +140,7 @@ public class RuleSetController {
      * @return true执行成功
      */
     @ReSubmitLock
-    @DataPermission(id = "#ruleSetBody.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#ruleSetBody.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("updateRuleSet")
     @ApiOperation("更新规则集信息")
     public BaseResult updateRuleSet(@Valid @RequestBody RuleSetBody ruleSetBody) {
@@ -156,7 +155,7 @@ public class RuleSetController {
      * @param idRequest 规则集id
      * @return 规则集信息
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getRuleSetConfig")
     @ApiOperation("获取规则集配置信息")
     public BaseResult getRuleSetConfig(@Valid @RequestBody IdRequest idRequest) {
@@ -171,7 +170,7 @@ public class RuleSetController {
      * @param viewRequest 规则集id
      * @return ViewRuleSetResponse
      */
-    @DataPermission(id = "#viewRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#viewRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("view")
     @ApiOperation("获取规则集信息")
     public BaseResult view(@Valid @RequestBody ViewRequest viewRequest) {
@@ -179,13 +178,14 @@ public class RuleSetController {
         plainResult.setData(ruleSetService.view(viewRequest));
         return plainResult;
     }
+
     /**
      * 删除规则集
      *
      * @param idRequest 规则集id
      * @return true
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.RULE_SET, type = PermissionType.DELETE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.DELETE)
     @PostMapping("delete")
     @ApiOperation("删除规则集")
     public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {

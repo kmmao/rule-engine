@@ -3,8 +3,7 @@ package cn.ruleengine.web.controller.decisiontable;
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.annotation.SystemLog;
-import cn.ruleengine.web.enums.DataPermissionType;
-import cn.ruleengine.web.enums.PermissionType;
+import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.decisiontable.DecisionTableService;
 import cn.ruleengine.web.vo.base.IdRequest;
 import cn.ruleengine.web.vo.base.PageRequest;
@@ -59,7 +58,7 @@ public class DecisionTableController {
      * @return 决策表id
      */
     @ReSubmitLock
-    @DataPermission(id = "#decisionTableDefinition.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#decisionTableDefinition.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("saveOrUpdateDecisionTableDefinition")
     @ApiOperation("保存或者更新决策表定义信息")
     public BaseResult saveOrUpdateDecisionTableDefinition(@Valid @RequestBody DecisionTableDefinition decisionTableDefinition) {
@@ -74,7 +73,7 @@ public class DecisionTableController {
      * @param idRequest 决策表id
      * @return DecisionTableDefinition
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getDecisionTableDefinition")
     @ApiOperation("查询决策表定义信息")
     public BaseResult getDecisionTableDefinition(@Valid @RequestBody IdRequest idRequest) {
@@ -103,7 +102,7 @@ public class DecisionTableController {
      * @param idRequest 决策表id
      * @return true
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.DELETE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.DELETE)
     @PostMapping("delete")
     @ApiOperation("删除决策表")
     public BaseResult delete(@Valid @RequestBody IdRequest idRequest) {
@@ -119,7 +118,7 @@ public class DecisionTableController {
      * @return true执行成功
      */
     @ReSubmitLock
-    @DataPermission(id = "#updateDecisionTableRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#updateDecisionTableRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("updateDecisionTable")
     @ApiOperation("更新决策表信息")
     public BaseResult updateDecisionTable(@Valid @RequestBody UpdateDecisionTableRequest updateDecisionTableRequest) {
@@ -134,7 +133,7 @@ public class DecisionTableController {
      * @param idRequest 决策表id
      * @return 决策表信息
      */
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("getDecisionTableConfig")
     @ApiOperation("获取决策表配置信息")
     public BaseResult getDecisionTableConfig(@Valid @RequestBody IdRequest idRequest) {
@@ -151,7 +150,7 @@ public class DecisionTableController {
      * @return true
      */
     @ReSubmitLock
-    @DataPermission(id = "#releaseRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#releaseRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("generationRelease")
     @ApiOperation("生成决策表代发布")
     public BaseResult generationRelease(@Valid @RequestBody GenerationReleaseRequest releaseRequest) {
@@ -166,7 +165,7 @@ public class DecisionTableController {
      * @param viewRequest 决策表id
      * @return ViewDecisionTableResponse
      */
-    @DataPermission(id = "#viewRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#viewRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("view")
     @ApiOperation("获取决策表展示信息")
     public BaseResult view(@Valid @RequestBody ViewRequest viewRequest) {
@@ -183,7 +182,7 @@ public class DecisionTableController {
      */
     @ReSubmitLock
     @SystemLog
-    @DataPermission(id = "#idRequest.id", dataType = DataPermissionType.DECISION_TABLE, type = PermissionType.VALID_WORKSPACE)
+    @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布决策表")
     public BaseResult publish(@Valid @RequestBody IdRequest idRequest) {
