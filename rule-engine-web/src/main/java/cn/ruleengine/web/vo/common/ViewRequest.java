@@ -2,6 +2,8 @@ package cn.ruleengine.web.vo.common;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -13,11 +15,13 @@ import lombok.Data;
 @Data
 public class ViewRequest {
 
+    @NotNull
     private Integer id;
 
     /**
      * DataStatus
      */
+    @NotNull
     private Integer status;
 
 }
