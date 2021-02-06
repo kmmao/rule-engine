@@ -31,7 +31,7 @@ public class GeneratorMybatisPlus {
                 .setUsername("")
                 .setTypeConvert(new MySqlTypeConvert())
                 .setPassword("")
-                .setDriverName("com.mysql.jdbc.Driver");
+                .setDriverName("com.mysql.cj.jdbc.Driver");
         generateByTables(false, dataSourceConfig, packageName,
                 "rule_engine_rule");
 

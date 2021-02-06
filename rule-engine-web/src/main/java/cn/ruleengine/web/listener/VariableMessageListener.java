@@ -15,8 +15,8 @@
  */
 package cn.ruleengine.web.listener;
 
-import cn.ruleengine.core.GeneralRuleEngine;
 import cn.ruleengine.core.EngineVariable;
+import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.web.listener.body.VariableMessageBody;
 import cn.ruleengine.web.service.VariableResolveService;
 import cn.ruleengine.web.config.rabbit.RabbitTopicConfig;
@@ -43,7 +43,7 @@ import javax.annotation.Resource;
 public class VariableMessageListener {
 
     @Resource
-    private GeneralRuleEngine defaultEngine;
+    private RuleEngineConfiguration ruleEngineConfiguration;
     @Resource
     private VariableResolveService variableResolveService;
 
@@ -54,7 +54,7 @@ public class VariableMessageListener {
     )
     public void message(VariableMessageBody variableMessageBody) {
         log.info("变量消息：{}", variableMessageBody);
-        EngineVariable engineVariable = defaultEngine.getEngineVariable();
+        EngineVariable engineVariable = this.ruleEngineConfiguration.getEngineVariable();
         Integer id = variableMessageBody.getId();
         switch (variableMessageBody.getType()) {
             case REMOVE:

@@ -93,15 +93,6 @@ public abstract class Engine<T extends DataSupport> implements Closeable {
 
 
     /**
-     * 获取规则引擎变量
-     *
-     * @return 规则引擎变量
-     */
-    public EngineVariable getEngineVariable() {
-        return this.configuration.getEngineVariable();
-    }
-
-    /**
      * 是否存在某规则/决策表
      *
      * @param workspaceCode 工作空间code
