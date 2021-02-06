@@ -33,8 +33,7 @@ Github：https://github.com/rule-engine/rule-engine/issues
     - RabbitMQ
     - Redis、Redisson
     - MySQL 5.7.9
-    - Mybatis-plus
-    - Mybatis-plus-generator
+    - Mybatis-plus（后期有时间可能去除Mybatis-plus）
     - Maven 3.3
     - Swagger  
 
