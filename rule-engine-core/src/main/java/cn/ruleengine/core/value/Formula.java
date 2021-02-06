@@ -69,7 +69,7 @@ public class Formula implements Value {
      * 使用方式：
      * <blockquote>
      * <pre>
-     *      expression = "#element1 - #element2 * 3"
+     *      expression = "(#element1 - #element2) * 3"
      *      input = {"element1":3,"element2":1}
      *      return 6;
      * </pre>
