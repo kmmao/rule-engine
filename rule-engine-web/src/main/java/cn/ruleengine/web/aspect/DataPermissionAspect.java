@@ -57,12 +57,9 @@ public class DataPermissionAspect {
     private DataPermissionService dataPermissionService;
 
     /**
-     * 解析spel表达式
+     * spel表达式解析器
      */
     private final ExpressionParser parser = new SpelExpressionParser();
-    /**
-     * 将方法参数纳入Spring管理
-     */
     private final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
 
     /**
@@ -87,7 +84,6 @@ public class DataPermissionAspect {
         if (params == null || params.length == 0) {
             throw new ValidationException("没有获取到任何参数");
         }
-        // 将参数纳入Spring管理
         EvaluationContext context = new StandardEvaluationContext();
         for (int len = 0; len < params.length; len++) {
             context.setVariable(params[len], args[len]);

@@ -59,6 +59,13 @@ public interface Input {
     Object get(String key);
 
     /**
+     * 获取所有的参数
+     *
+     * @return map
+     */
+    Map<String, Object> getAll();
+
+    /**
      * 清除所有参数
      */
     void clear();

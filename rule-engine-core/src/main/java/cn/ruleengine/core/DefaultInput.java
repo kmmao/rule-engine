@@ -16,6 +16,7 @@
 package cn.ruleengine.core;
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +76,17 @@ public class DefaultInput implements Input {
     @Override
     public Object get(String key) {
         return this.inputParam.get(key);
+    }
+
+
+    /**
+     * 获取所有的参数
+     *
+     * @return map
+     */
+    @Override
+    public Map<String, Object> getAll() {
+        return Collections.unmodifiableMap(this.inputParam);
     }
 
     /**
