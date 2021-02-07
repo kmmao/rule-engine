@@ -39,6 +39,9 @@ public class Variable implements Value {
      */
     private ValueType valueType;
 
+    /**
+     * json反序列化使用
+     */
     Variable() {
     }
 

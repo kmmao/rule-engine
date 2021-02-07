@@ -41,6 +41,9 @@ public class Element implements Value {
      */
     private ValueType valueType;
 
+    /**
+     * json反序列化使用
+     */
     Element() {
     }
 

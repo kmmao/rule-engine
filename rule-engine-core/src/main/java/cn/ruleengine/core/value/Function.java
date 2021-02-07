@@ -93,6 +93,9 @@ public class Function implements Value {
     @Getter
     private Map<String, Value> param;
 
+    /**
+     * json反序列化使用
+     */
     Function() {
     }
 

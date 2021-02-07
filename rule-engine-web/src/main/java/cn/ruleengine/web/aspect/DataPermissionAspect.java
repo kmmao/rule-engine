@@ -31,7 +31,7 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -84,7 +84,7 @@ public class DataPermissionAspect {
         if (params == null || params.length == 0) {
             throw new ValidationException("没有获取到任何参数");
         }
-        EvaluationContext context = new StandardEvaluationContext();
+        EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
         for (int len = 0; len < params.length; len++) {
             context.setVariable(params[len], args[len]);
         }
