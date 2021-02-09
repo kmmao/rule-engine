@@ -63,11 +63,8 @@ public class RuleSet extends DataSupport implements JsonParse {
      */
     private RuleSetStrategyType strategyType = RuleSetStrategyType.ALL_RULE;
 
-    /**
-     * @deprecated 后面用DataSupport中的AbnormalAlarm替代
-     */
+
     @JsonIgnore
-    @Deprecated
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
 

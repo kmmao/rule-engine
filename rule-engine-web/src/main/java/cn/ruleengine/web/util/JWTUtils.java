@@ -20,14 +20,13 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -41,7 +40,7 @@ import java.util.Objects;
 public class JWTUtils {
 
     /**
-     * token加密时使用的密钥
+     * token加密时使用的secretKey
      */
     private static String secretKey;
     /**
@@ -49,13 +48,14 @@ public class JWTUtils {
      */
     private static long keepTime;
 
-    /**
-     * @param environment environment
-     */
     @Autowired
-    public JWTUtils(Environment environment) {
-        JWTUtils.secretKey = environment.getProperty("auth.jwt.secretKey");
-        JWTUtils.keepTime = Integer.parseInt(Objects.requireNonNull(environment.getProperty("auth.jwt.keepTime")));
+    public void setSecretKey(@Value("${auth.jwt.secretKey}") String secretKey) {
+        JWTUtils.secretKey = secretKey;
+    }
+
+    @Autowired
+    public void setKeepTime(@Value("${auth.jwt.keepTime}") Long keepTime) {
+        JWTUtils.keepTime = keepTime;
     }
 
     /**

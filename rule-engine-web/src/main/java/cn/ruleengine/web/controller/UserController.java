@@ -107,7 +107,7 @@ public class UserController {
     @Deprecated
     @PostMapping("logout")
     @ApiOperation("退出登录")
-    public PlainResult<?> logout() {
+    public PlainResult<Boolean> logout() {
         PlainResult<Boolean> plainResult = new PlainResult<>();
         plainResult.setData(userService.logout());
         return plainResult;

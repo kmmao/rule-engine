@@ -81,6 +81,7 @@ public class RateLimitAspect {
                     throw new RuntimeException("选择根据用户限流,但是并没有获取到用户登录信息!");
                 }
                 key += userData.getId().toString();
+                break;
             case URL_IP:
                 HttpServletRequest request = HttpServletUtils.getRequest();
                 key += request.getRequestURI() + request.getRemoteAddr();

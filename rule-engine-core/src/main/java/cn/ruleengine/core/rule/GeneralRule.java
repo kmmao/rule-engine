@@ -53,11 +53,8 @@ public class GeneralRule extends Rule {
 
     /**
      * 规则运行发生异常，邮件接收人
-     *
-     * @deprecated 后面用DataSupport中的AbnormalAlarm替代
      */
     @JsonIgnore
-    @Deprecated
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
     /**

@@ -23,7 +23,6 @@ import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategy;
 import cn.ruleengine.core.decisiontable.strategey.DecisionTableStrategyFactory;
 import cn.ruleengine.core.exception.DecisionTableException;
 import cn.ruleengine.core.JsonParse;
-import cn.ruleengine.core.rule.AbnormalAlarm;
 import cn.ruleengine.core.value.Value;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -74,11 +73,8 @@ public class DecisionTable extends DataSupport implements JsonParse {
 
     /**
      * 规则运行发生异常，邮件接收人
-     *
-     * @deprecated 后面用DataSupport中的AbnormalAlarm替代
-     */
+     **/
     @JsonIgnore
-    @Deprecated
     private AbnormalAlarm abnormalAlarm = new AbnormalAlarm();
 
     /**

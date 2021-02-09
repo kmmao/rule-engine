@@ -58,21 +58,21 @@ public abstract class DataSupport {
     protected abstract Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration);
 
 
-//    @Data
-//    public static class AbnormalAlarm {
-//        /**
-//         * 是否启用
-//         */
-//        private Boolean enable = false;
-//        /**
-//         * 邮件接收人
-//         */
-//        private String[] email;
-//
-//        /**
-//         * 规则执行超时阈值，默认3秒
-//         */
-//        private long timeOutThreshold = 3000;
-//    }
+    @Data
+    public static class AbnormalAlarm {
+        /**
+         * 是否启用
+         */
+        private Boolean enable = false;
+        /**
+         * 邮件接收人
+         */
+        private String[] email;
+
+        /**
+         * 规则执行超时阈值，默认3秒
+         */
+        private long timeOutThreshold = 3000;
+    }
 
 }

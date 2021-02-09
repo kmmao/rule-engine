@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +41,7 @@ import java.util.List;
 public class StringToCollectionFunction {
 
     @Executor
-    public List<?> executor(@Valid Params params) {
+    public List<? extends Serializable> executor(@Valid Params params) {
         String regex = params.getRegex();
         return Arrays.asList(params.getValue().split(regex));
     }
