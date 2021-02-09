@@ -1,11 +1,8 @@
 package cn.ruleengine.web.service;
 
-import cn.ruleengine.core.Output;
+import cn.ruleengine.core.*;
 import cn.ruleengine.web.vo.output.BatchExecuteRequest;
 import cn.ruleengine.web.vo.output.BatchExecuteResponse;
-import cn.ruleengine.core.DefaultInput;
-import cn.ruleengine.core.Engine;
-import cn.ruleengine.core.Input;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -24,12 +21,12 @@ import java.util.concurrent.CountDownLatch;
 public class BatchExecuteTask implements Runnable {
 
     private final List<BatchExecuteRequest.ExecuteInfo> infoList;
-    private final Engine engine;
+    private final Engine<?> engine;
     private final List<BatchExecuteResponse> outputs;
     private final CountDownLatch countDownLatch;
     private final String workspaceCode;
 
-    public BatchExecuteTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteResponse> outputs, Engine engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
+    public BatchExecuteTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteResponse> outputs, Engine<?> engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
         this.workspaceCode = workspaceCode;
         this.countDownLatch = countDownLatch;
         this.outputs = outputs;

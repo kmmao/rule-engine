@@ -32,11 +32,11 @@ import java.util.concurrent.TimeUnit;
 public abstract class RuleEngineOutService {
 
 
-    private final Engine engine;
+    private final Engine<?> engine;
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private final WorkspaceService workspaceService;
 
-    public RuleEngineOutService(Engine engine, ThreadPoolTaskExecutor threadPoolTaskExecutor, WorkspaceService workspaceService) {
+    public RuleEngineOutService(Engine<?> engine, ThreadPoolTaskExecutor threadPoolTaskExecutor, WorkspaceService workspaceService) {
         this.engine = engine;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.workspaceService = workspaceService;

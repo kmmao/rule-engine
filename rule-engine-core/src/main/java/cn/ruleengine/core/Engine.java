@@ -18,7 +18,6 @@ package cn.ruleengine.core;
 
 import cn.ruleengine.core.exception.EngineException;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
@@ -51,8 +50,7 @@ public abstract class Engine<T extends DataSupport> implements Closeable {
      * 规则引擎运行所需的参数
      */
     @Getter
-    @Setter
-    private RuleEngineConfiguration configuration;
+    private final RuleEngineConfiguration configuration;
 
     /**
      * 可传入配置信息，包括规则监听器，规则变量...

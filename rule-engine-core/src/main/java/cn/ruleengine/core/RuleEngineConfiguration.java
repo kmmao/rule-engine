@@ -22,9 +22,11 @@ import cn.ruleengine.core.listener.ExecuteListener;
 import cn.ruleengine.core.cache.FunctionCache;
 import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.GeneralRule;
-import lombok.Data;
+import lombok.Getter;
+import org.springframework.lang.NonNull;
 
 import java.io.Closeable;
+import java.util.Objects;
 
 
 /**
@@ -35,7 +37,7 @@ import java.io.Closeable;
  * @date 2020/8/14
  * @since 1.0.0
  */
-@Data
+@Getter
 public class RuleEngineConfiguration implements Closeable {
 
     /**
@@ -63,6 +65,31 @@ public class RuleEngineConfiguration implements Closeable {
      */
     private EngineVariable engineVariable = new EngineVariable();
 
+
+    public void setDecisionTableExecuteListener(@NonNull ExecuteListener<DecisionTable> decisionTableExecuteListener) {
+        Objects.requireNonNull(decisionTableExecuteListener);
+        this.decisionTableExecuteListener = decisionTableExecuteListener;
+    }
+
+    public void setRuleSetListener(@NonNull ExecuteListener<RuleSet> ruleSetListener) {
+        Objects.requireNonNull(ruleSetListener);
+        this.ruleSetListener = ruleSetListener;
+    }
+
+    public void setGeneralRuleListener(@NonNull ExecuteListener<GeneralRule> generalRuleListener) {
+        Objects.requireNonNull(generalRuleListener);
+        this.generalRuleListener = generalRuleListener;
+    }
+
+    public void setFunctionCache(@NonNull FunctionCache functionCache) {
+        Objects.requireNonNull(functionCache);
+        this.functionCache = functionCache;
+    }
+
+    public void setEngineVariable(@NonNull EngineVariable engineVariable) {
+        Objects.requireNonNull(engineVariable);
+        this.engineVariable = engineVariable;
+    }
 
     @Override
     public void close() {

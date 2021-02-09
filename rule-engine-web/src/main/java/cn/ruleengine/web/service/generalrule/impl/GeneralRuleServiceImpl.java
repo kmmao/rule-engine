@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.generalrule.impl;
 
 
 import cn.hutool.core.util.StrUtil;
+import cn.ruleengine.core.GeneralRuleEngine;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.web.config.Context;
 import cn.ruleengine.web.enums.EnableEnum;
@@ -30,7 +31,6 @@ import cn.ruleengine.web.vo.generalrule.DefaultAction;
 
 
 import cn.hutool.core.lang.Validator;
-import cn.ruleengine.core.Engine;
 import cn.ruleengine.core.exception.ValidException;
 
 import com.alibaba.fastjson.JSON;
@@ -65,7 +65,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
     @Resource
     private RuleEngineRuleMapper ruleEngineRuleMapper;
     @Resource
-    private Engine engine;
+    private GeneralRuleEngine generalRuleEngine;
     @Resource
     private ParameterService parameterService;
     @Resource
@@ -209,7 +209,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             return false;
         }
         // 从引擎中移除规则
-        if (this.engine.isExists(ruleEngineGeneralRule.getWorkspaceCode(), ruleEngineGeneralRule.getCode())) {
+        if (this.generalRuleEngine.isExists(ruleEngineGeneralRule.getWorkspaceCode(), ruleEngineGeneralRule.getCode())) {
             GeneralRuleMessageBody ruleMessageBody = new GeneralRuleMessageBody();
             ruleMessageBody.setType(GeneralRuleMessageBody.Type.REMOVE);
             ruleMessageBody.setWorkspaceId(ruleEngineGeneralRule.getWorkspaceId());

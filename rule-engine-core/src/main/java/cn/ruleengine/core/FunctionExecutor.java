@@ -50,7 +50,7 @@ public class FunctionExecutor {
     /**
      * 函数方法参数解析
      */
-    private final static FunctionExecuteMethodParamsParser EXECUTE_METHOD_PARAMS_PARSER = new FunctionExecuteMethodParamsParser();
+    private final static MethodParamsParser METHOD_PARAMS_PARSER = new MethodParamsParser();
 
     private FunctionExecutor() {
 
@@ -70,7 +70,7 @@ public class FunctionExecutor {
     public Object executor(Object abstractFunction, Method executor, Method failureStrategy, Map<String, Object> paramValue) {
         log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramValue);
         Executor executorAnnotation = executor.getAnnotation(Executor.class);
-        Object[] executorMethodArgs = EXECUTE_METHOD_PARAMS_PARSER.getBindArgs(executor.getParameters(), paramValue);
+        Object[] executorMethodArgs = METHOD_PARAMS_PARSER.getBindArgs(executor.getParameters(), paramValue);
         try {
             int maxAttempts = executorAnnotation.maxAttempts();
             int i = 0;
@@ -113,7 +113,7 @@ public class FunctionExecutor {
                             if (Arrays.equals(failureStrategy.getParameters(), executor.getParameters())) {
                                 return failureStrategy.invoke(abstractFunction, executorMethodArgs);
                             }
-                            Object[] failureStrategyMethodArgs = EXECUTE_METHOD_PARAMS_PARSER.getBindArgs(failureStrategy.getParameters(), paramValue);
+                            Object[] failureStrategyMethodArgs = METHOD_PARAMS_PARSER.getBindArgs(failureStrategy.getParameters(), paramValue);
                             return failureStrategy.invoke(abstractFunction, failureStrategyMethodArgs);
                         } catch (IllegalAccessException ex) {
                             throw new FunctionException("失败策略方法非法访问异常{}", ex.getMessage());
@@ -133,7 +133,7 @@ public class FunctionExecutor {
     /**
      * 函数方法参数解析
      */
-    private static class FunctionExecuteMethodParamsParser {
+    private static class MethodParamsParser {
 
         /**
          * 参数绑定用，基本数据类型绑定解析
