@@ -39,7 +39,7 @@ public @interface Executor {
      * <p>
      * 如果重试全部失败，则寻找FailureStrategy执行
      *
-     * @return 默认只会重试1次
+     * @return 默认不重试
      */
     int maxAttempts() default 0;
 
