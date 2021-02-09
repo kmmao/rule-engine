@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.ruleset.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
@@ -117,16 +118,9 @@ public class RuleSetServiceImpl implements RuleSetService {
             }
             return wrapper;
         }, m -> {
-            ListRuleSetResponse listRuleResponse = new ListRuleSetResponse();
-            listRuleResponse.setId(m.getId());
-            listRuleResponse.setName(m.getName());
-            listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setCurrentVersion(m.getCurrentVersion());
-            listRuleResponse.setPublishVersion(m.getPublishVersion());
-            listRuleResponse.setStatus(m.getStatus());
-            listRuleResponse.setCreateUserName(m.getCreateUserName());
-            listRuleResponse.setCreateTime(m.getCreateTime());
-            return listRuleResponse;
+            ListRuleSetResponse listRuleSetResponse = new ListRuleSetResponse();
+            BeanUtil.copyProperties(m, listRuleSetResponse);
+            return listRuleSetResponse;
         });
     }
 

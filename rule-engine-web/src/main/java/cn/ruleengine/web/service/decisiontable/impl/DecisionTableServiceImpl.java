@@ -1,5 +1,6 @@
 package cn.ruleengine.web.service.decisiontable.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.DecisionTableEngine;
@@ -103,13 +104,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
             return wrapper;
         }, m -> {
             ListDecisionTableResponse decisionTableResponse = new ListDecisionTableResponse();
-            decisionTableResponse.setId(m.getId());
-            decisionTableResponse.setCode(m.getCode());
-            decisionTableResponse.setName(m.getName());
-            decisionTableResponse.setCurrentVersion(m.getCurrentVersion());
-            decisionTableResponse.setPublishVersion(m.getPublishVersion());
-            decisionTableResponse.setStatus(m.getStatus());
-            decisionTableResponse.setCreateTime(m.getCreateTime());
+            BeanUtil.copyProperties(m, decisionTableResponse);
             return decisionTableResponse;
         });
     }

@@ -1,8 +1,14 @@
 package cn.ruleengine.web.function.json;
 
+import cn.hutool.core.lang.Validator;
 import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
+import cn.ruleengine.core.annotation.Param;
+import cn.ruleengine.core.condition.compare.BooleanCompare;
+import cn.ruleengine.core.exception.ValueException;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -14,12 +20,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Function
-public class ParseJsonBooleanFunction {
+public class ParseJsonBooleanFunction implements JsonEval {
 
     @Executor
-    public String executor() {
-        // TODO: 2020/12/13 使用场景不多，暂不开发
-        return null;
+    public Boolean executor(@Param(value = "jsonString", required = false) String jsonString,
+                            @Param(value = "jsonValuePath", required = false) String jsonValuePath) {
+        Object value = this.eval(jsonString, jsonValuePath);
+        // 返回null 而不是String.valueOf后的null字符
+        if (Validator.isEmpty(value)) {
+            return null;
+        }
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        } else if (Objects.equals(String.valueOf(value), BooleanCompare.TRUE)) {
+            return true;
+        } else if (Objects.equals(String.valueOf(value), BooleanCompare.FALSE)) {
+            return false;
+        }
+        throw new ValueException("{}只能是Boolean类型", value);
     }
 
 }

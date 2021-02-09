@@ -48,9 +48,9 @@ public enum ErrorCodeEnum {
     RULE8930(8930, "无数据权限异常");
 
     @Getter
-    private int code;
+    private final int code;
     @Getter
-    private String msg;
+    private final String msg;
 
     ErrorCodeEnum(int code, String msg) {
         this.code = code;

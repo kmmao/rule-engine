@@ -19,6 +19,6 @@ public enum VerifyCodeType {
     FORGOT(0), REGISTER(1);
 
     @Getter
-    private Integer value;
+    private final Integer value;
 
 }

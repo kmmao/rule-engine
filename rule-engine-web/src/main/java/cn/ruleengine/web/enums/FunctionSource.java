@@ -19,6 +19,6 @@ public enum FunctionSource {
     SYSTEM(0), JAVA_CODE(1);
 
     @Getter
-    private Integer value;
+    private final Integer value;
 
 }

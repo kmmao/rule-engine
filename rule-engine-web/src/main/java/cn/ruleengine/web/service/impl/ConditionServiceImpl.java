@@ -227,8 +227,7 @@ public class ConditionServiceImpl implements ConditionService {
             listConditionResponse.setName(m.getName());
             listConditionResponse.setDescription(m.getDescription());
             listConditionResponse.setCreateTime(m.getCreateTime());
-
-            ConfigBean configBean = getConfigBean(m, variableMap, elementMap);
+            ConfigBean configBean = this.getConfigBean(m, variableMap, elementMap);
             listConditionResponse.setConfig(configBean);
             // 获取符号说明
             String symbol = Operator.getByName(m.getSymbol()).getExplanation();

@@ -18,7 +18,7 @@ public enum EnableEnum {
     ENABLE(0), DISABLE(1);
 
     @Getter
-    private Integer status;
+    private final Integer status;
 
     EnableEnum(Integer status) {
         this.status = status;

@@ -18,7 +18,7 @@ public class ApiException extends RuntimeException {
     private static final long serialVersionUID = 6405345374923437770L;
 
     @Getter
-    private int code;
+    private final int code;
 
     /**
      * 例如:

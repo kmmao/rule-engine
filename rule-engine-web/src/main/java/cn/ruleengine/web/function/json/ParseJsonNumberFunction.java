@@ -31,6 +31,19 @@ public class ParseJsonNumberFunction implements JsonEval {
         if (Validator.isEmpty(value)) {
             return null;
         }
+        // 11111111111111.00
+        if (value instanceof BigDecimal) {
+            return (BigDecimal) value;
+        }
+        // 11111111111111
+        if (value instanceof Long) {
+            return new BigDecimal((Long) value);
+        }
+        // 1111111
+        if (value instanceof Integer) {
+            return new BigDecimal((Integer) value);
+        }
+        // '0.11' or '1111111' ....
         String string = String.valueOf(value);
         if (!NumberUtil.isNumber(string)) {
             throw new ValidationException("从JSON获取的值无法转为NUMBER类型，请检查！");

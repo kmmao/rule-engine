@@ -1,6 +1,7 @@
 package cn.ruleengine.web.service.generalrule.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.GeneralRuleEngine;
 import cn.ruleengine.core.rule.GeneralRule;
@@ -114,14 +115,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
             return wrapper;
         }, m -> {
             ListGeneralRuleResponse listRuleResponse = new ListGeneralRuleResponse();
-            listRuleResponse.setId(m.getId());
-            listRuleResponse.setName(m.getName());
-            listRuleResponse.setCode(m.getCode());
-            listRuleResponse.setCurrentVersion(m.getCurrentVersion());
-            listRuleResponse.setPublishVersion(m.getPublishVersion());
-            listRuleResponse.setCreateUserName(m.getCreateUserName());
-            listRuleResponse.setStatus(m.getStatus());
-            listRuleResponse.setCreateTime(m.getCreateTime());
+            BeanUtil.copyProperties(m, listRuleResponse);
             return listRuleResponse;
         });
     }

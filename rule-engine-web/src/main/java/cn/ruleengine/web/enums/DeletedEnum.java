@@ -18,7 +18,7 @@ public enum DeletedEnum {
     ENABLE(0), DISABLE(1);
 
     @Getter
-    private Integer status;
+    private final Integer status;
 
     DeletedEnum(Integer status) {
         this.status = status;
