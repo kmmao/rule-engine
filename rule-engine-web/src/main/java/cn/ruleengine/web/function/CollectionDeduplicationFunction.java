@@ -6,7 +6,6 @@ import cn.ruleengine.core.annotation.Function;
 import cn.ruleengine.core.annotation.Param;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,10 +20,10 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Function
-public class CollectionDeduplicationFunction {
+public class CollectionDeduplicationFunction<T> {
 
     @Executor
-    public List<? extends Serializable> executor(@Param(value = "list", required = false) List<? extends Serializable> list) {
+    public List<T> executor(@Param(value = "list", required = false) List<T> list) {
         if (CollUtil.isEmpty(list)) {
             return Collections.emptyList();
         }
