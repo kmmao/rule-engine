@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Function
-public class StringToPinyinFunction {
+public class ChineseCharacterToPinyinFunction {
 
     @Executor
     public String executor(@Param(value = "string", required = false) String string,
