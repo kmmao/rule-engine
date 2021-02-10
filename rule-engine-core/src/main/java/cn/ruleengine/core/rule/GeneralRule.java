@@ -69,9 +69,9 @@ public class GeneralRule extends Rule {
     public Object execute(@NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
         long startTime = System.currentTimeMillis();
         try {
-            log.info("开始计算前提条件");
+            log.debug("开始计算前提条件");
             if (this.precondition.compare(input, configuration)) {
-                log.info("前提条件成立");
+                log.debug("前提条件成立");
                 Object action = super.execute(input, configuration);
                 if (action != null) {
                     // 条件全部命中时候执行
@@ -80,16 +80,18 @@ public class GeneralRule extends Rule {
             }
             Value defaultValue = this.getDefaultActionValue();
             if (Objects.nonNull(defaultValue)) {
-                log.info("结果未命中，存在默认结果，返回默认结果");
+                log.debug("结果未命中，存在默认结果，返回默认结果");
                 return defaultValue.getValue(input, configuration);
             }
-            log.info("结果未命中，不存在默认结果，返回:null");
+            log.debug("结果未命中，不存在默认结果，返回:null");
             return null;
         } finally {
             long cost = System.currentTimeMillis() - startTime;
-            log.info("普通规则计算耗时:{}ms", cost);
+            if (log.isDebugEnabled()) {
+                log.debug("普通规则计算耗时:{}ms", cost);
+            }
             if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
-                log.warn("警告：规则执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
+                log.warn("警告：规则执行超过最大阈值，请检查规则配置，规则Code:" + this.getCode());
             }
         }
     }

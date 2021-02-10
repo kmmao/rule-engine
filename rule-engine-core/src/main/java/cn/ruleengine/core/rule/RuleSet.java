@@ -79,22 +79,24 @@ public class RuleSet extends DataSupport implements JsonParse {
         long startTime = System.currentTimeMillis();
         try {
             RuleSetStrategy ruleSetStrategy = RuleSetStrategyFactory.getInstance(this.strategyType);
-            List<Object> actions = ruleSetStrategy.compute(rules, input, configuration);
+            List<Object> actions = ruleSetStrategy.compute(this.rules, input, configuration);
             if (CollUtil.isNotEmpty(actions)) {
                 return actions;
             }
             Rule defaultRule = this.getDefaultRule();
             if (Objects.nonNull(defaultRule)) {
-                log.info("结果未命中，存在默认规则，返回默认规则结果");
+                log.debug("结果未命中，存在默认规则，返回默认规则结果");
                 return defaultRule.execute(input, configuration);
             }
-            log.info("结果未命中，不存在默认规则，返回:null");
+            log.debug("结果未命中，不存在默认规则，返回:null");
             return null;
         } finally {
             long cost = System.currentTimeMillis() - startTime;
-            log.info("引擎计算耗时:{}ms", cost);
+            if (log.isDebugEnabled()) {
+                log.debug("引擎计算耗时:{}ms", cost);
+            }
             if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
-                log.warn("警告：规则集执行超过最大阈值，请检查规则配置，规则Code:{}", this.getCode());
+                log.warn("警告：规则集执行超过最大阈值，请检查规则配置，规则Code:" + this.getCode());
             }
         }
     }

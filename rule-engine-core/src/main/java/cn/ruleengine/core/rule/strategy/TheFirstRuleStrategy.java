@@ -33,17 +33,23 @@ public class TheFirstRuleStrategy implements RuleSetStrategy {
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
         // 当没有任何规则时
         if (CollUtil.isEmpty(rules)) {
-            log.info("规则集为空");
+            log.debug("规则集为空");
             return Collections.emptyList();
         }
         Rule rule = rules.iterator().next();
-        log.info("执行规则：{}", rule.getName());
+        log.debug("执行规则：" + rule.getName());
         Object action = rule.execute(input, configuration);
-        if (action != null) {
-            log.info("规则：{} 命中结果：{}", rule.getName(), action);
-            return Collections.singletonList(action);
+        // 如果结果为空
+        if (action == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("规则：{} 未命中命中结果", rule.getName());
+            }
+            return null;
         }
-        return Collections.emptyList();
+        if (log.isDebugEnabled()) {
+            log.debug("规则：{} 命中结果：{}", rule.getName(), action);
+        }
+        return Collections.singletonList(action);
     }
 
 }

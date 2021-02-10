@@ -33,13 +33,15 @@ public class WhenARuleExecuteFailsStrategy implements RuleSetStrategy {
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
         List<Object> actions = new ArrayList<>();
         for (Rule rule : rules) {
-            log.info("执行规则：{}", rule.getName());
+            log.debug("执行规则：" + rule.getName());
             Object action = rule.execute(input, configuration);
             if (action != null) {
-                log.info("规则：{} 命中结果：{}", rule.getName(), action);
+                if (log.isDebugEnabled()) {
+                    log.debug("规则：{} 命中结果：{}", rule.getName(), action);
+                }
                 actions.add(action);
             } else {
-                log.info("存在不成立规则：{}", rule.getName());
+                log.debug("存在不成立规则：" + rule.getName());
                 // 当有一个规则执行不成立时，终止执行
                 return actions;
             }

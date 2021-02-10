@@ -34,11 +34,13 @@ public class WhenARuleIsHitStrategy implements RuleSetStrategy {
     @Override
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
         for (Rule rule : rules) {
-            log.info("执行规则：{}", rule.getName());
+            log.debug("执行规则：" + rule.getName());
             Object action = rule.execute(input, configuration);
             // 当有一个规则执行结果被命中，则终止执行
             if (action != null) {
-                log.info("规则：{} 命中结果：{}", rule.getName(), action);
+                if (log.isDebugEnabled()) {
+                    log.debug("规则：{} 命中结果：{}", rule.getName(), action);
+                }
                 return Collections.singletonList(action);
             }
         }

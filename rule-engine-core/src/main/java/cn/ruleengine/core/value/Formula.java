@@ -118,7 +118,7 @@ public class Formula implements Value {
      */
     @Override
     public Object getValue(Input input, RuleEngineConfiguration configuration) {
-        log.info("开始处理表达式：{}", this.getValue());
+        log.debug("开始处理表达式：" + this.getValue());
         EvaluationContext context = this.getEvaluationContext();
         Map<String, Object> params = input.getAll();
         for (Map.Entry<String, Object> param : params.entrySet()) {

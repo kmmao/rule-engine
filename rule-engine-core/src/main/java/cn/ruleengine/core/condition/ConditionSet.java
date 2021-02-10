@@ -37,7 +37,7 @@ import java.util.Objects;
  */
 @ToString
 @Slf4j
-public class ConditionSet implements ConditionCompare{
+public class ConditionSet implements ConditionCompare {
 
     /**
      * 条件
@@ -60,20 +60,27 @@ public class ConditionSet implements ConditionCompare{
     @Override
     public boolean compare(Input input, RuleEngineConfiguration configuration) {
         if (CollUtil.isEmpty(this.conditionGroups)) {
-            log.info("条件组为空，没有条件，返回True");
+            if (log.isDebugEnabled()) {
+                log.debug("条件组为空，没有条件，返回True");
+            }
             return true;
         }
         for (int index = 0; index < this.conditionGroups.size(); index++) {
-            log.info("开始验证条件组:{}", index);
+            log.debug("开始验证条件组:" + index);
             //条件组是或者关系，有一个为true,直接返回
             if (this.conditionGroups.get(index).compare(input, configuration)) {
-                log.info("条件组:{}成立", index);
+                if (log.isDebugEnabled()) {
+                    log.debug("条件组:{}成立", index);
+                }
                 return true;
             } else {
-                log.info("条件组:{}不成立", index);
+                if (log.isDebugEnabled()) {
+                    log.debug("条件组:{}不成立", index);
+                }
             }
         }
-        log.info("所有条件不成立");
+        // debug
+        log.debug("所有条件不成立");
         return false;
     }
 

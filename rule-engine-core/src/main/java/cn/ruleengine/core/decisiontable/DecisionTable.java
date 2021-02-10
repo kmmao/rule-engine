@@ -133,14 +133,16 @@ public class DecisionTable extends DataSupport implements JsonParse {
                 return actions;
             }
             if (Objects.nonNull(this.getDefaultActionValue())) {
-                log.info("结果未命中，存在默认结果，返回默认结果");
+                log.debug("结果未命中，存在默认结果，返回默认结果");
                 return Collections.singletonList(this.getDefaultActionValue().getValue(input, configuration));
             }
-            log.info("结果未命中，不存在默认结果，返回:null");
+            log.debug("结果未命中，不存在默认结果，返回:null");
             return null;
         } finally {
             long cost = System.currentTimeMillis() - startTime;
-            log.info("决策表计算耗时:{}ms", cost);
+            if (log.isDebugEnabled()) {
+                log.debug("决策表计算耗时:{}ms", cost);
+            }
             if (cost >= this.getAbnormalAlarm().getTimeOutThreshold()) {
                 log.warn("警告：决策表执行超过最大阈值，请检查决策表配置，决策表Code:{}", this.getCode());
             }

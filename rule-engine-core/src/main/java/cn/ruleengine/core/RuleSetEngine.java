@@ -65,12 +65,14 @@ public class RuleSetEngine extends Engine<RuleSet> {
         if (ruleSet == null) {
             throw new EngineException("no ruleSet:{}", code);
         }
-        log.info("开始执行规则集:{}", ruleSet.getCode());
+        log.debug("开始执行规则集:" + ruleSet.getCode());
         ExecuteListener<RuleSet> listener = this.getConfiguration().getRuleSetListener();
         listener.before(ruleSet, input);
         try {
             Object action = ruleSet.execute(input, this.getConfiguration());
-            log.info("规则集执行完毕:{},{}", ruleSet.getCode(), action);
+            if (log.isDebugEnabled()) {
+                log.debug("规则集执行完毕:{},{}", ruleSet.getCode(), action);
+            }
             DefaultOutput output = new DefaultOutput(action);
             listener.after(ruleSet, input, output);
             return output;

@@ -61,7 +61,7 @@ public class EngineVariable implements Closeable {
     public Value getVariable(@NonNull Integer id) {
         Objects.requireNonNull(id);
         if (!this.variableMap.containsKey(id)) {
-            throw new ValueException("No such variable：{}", id);
+            throw new ValueException("No such variable：" + id);
         }
         return variableMap.get(id);
     }

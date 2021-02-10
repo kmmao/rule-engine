@@ -68,7 +68,9 @@ public class FunctionExecutor {
      * @return 函数执行结果
      */
     public Object executor(Object abstractFunction, Method executor, Method failureStrategy, Map<String, Object> paramValue) {
-        log.info("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramValue);
+        if (log.isDebugEnabled()) {
+            log.debug("开始解析并执行函数：{}，函数入参：{}", abstractFunction, paramValue);
+        }
         Executor executorAnnotation = executor.getAnnotation(Executor.class);
         Object[] executorMethodArgs = METHOD_PARAMS_PARSER.getBindArgs(executor.getParameters(), paramValue);
         try {
@@ -107,7 +109,7 @@ public class FunctionExecutor {
                 Class<? extends Throwable>[] failureFor = executorAnnotation.failureFor();
                 for (Class<? extends Throwable> aClass : failureFor) {
                     if (aClass.isAssignableFrom(targetException.getClass())) {
-                        log.info("开始执行函数失败策略方法");
+                        log.debug("开始执行函数失败策略方法");
                         try {
                             // 如果失败策略方法参数与执行方法参数类型相同时
                             if (Arrays.equals(failureStrategy.getParameters(), executor.getParameters())) {

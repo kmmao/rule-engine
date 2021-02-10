@@ -20,7 +20,7 @@ import java.util.Objects;
  * @since 1.0.0
  */
 @Slf4j
-public class Precondition implements ConditionCompare{
+public class Precondition implements ConditionCompare {
 
     @Getter
     private final List<Condition> precondition = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Precondition implements ConditionCompare{
         }
         for (Condition condition : this.precondition) {
             if (!condition.compare(input, configuration)) {
-                log.info("前提条件不成立:{}", condition.getName());
+                log.debug("前提条件不成立:" + condition.getName());
                 return false;
             }
         }

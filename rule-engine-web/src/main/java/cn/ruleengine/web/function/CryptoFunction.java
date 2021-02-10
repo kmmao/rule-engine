@@ -5,7 +5,7 @@ import cn.ruleengine.core.annotation.Executor;
 import cn.ruleengine.core.annotation.Function;
 import cn.ruleengine.core.annotation.Param;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.DigestUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 
 /**
@@ -14,7 +14,8 @@ import org.springframework.util.DigestUtils;
  * <p>
  * 对field的值进行加密。
  * <p>
- * 第二个参数String为算法字符串。可选：MD2、MD5、SHA1、SHA-256、SHA-384、SHA-512
+ * string     加密字符串
+ * cryptoType 算法字符串,可选：MD2、MD5、SHA1、SHA-256、SHA-384、SHA-512，忽略大小写，默认MD5
  *
  * @author dingqianwen
  * @date 2021/2/9
@@ -37,18 +38,20 @@ public class CryptoFunction {
         if (StrUtil.isBlank(string)) {
             return string;
         }
-        switch (cryptoType) {
-            case "SHA-512":
-                // TODO: 2021/2/9 待完成
-            case "SHA1":
-                // TODO: 2021/2/9 待完成
-            case "SHA-256":
-                // TODO: 2021/2/9 待完成
-            case "MD5":
-                // MD5 ..
-            default:
-                // 默认MD5
-                return DigestUtils.md5DigestAsHex(string.getBytes());
+        // 忽略大小写
+        if ("MD2".equalsIgnoreCase(cryptoType)) {
+            return DigestUtils.md2Hex(string);
+        } else if ("SHA-384".equalsIgnoreCase(cryptoType)) {
+            return DigestUtils.sha384Hex(string);
+        } else if ("SHA-512".equalsIgnoreCase(cryptoType)) {
+            return DigestUtils.sha512Hex(string);
+        } else if ("SHA1".equalsIgnoreCase(cryptoType)) {
+            return DigestUtils.sha1Hex(string);
+        } else if ("SHA-256".equalsIgnoreCase(cryptoType)) {
+            return DigestUtils.sha256Hex(string);
+        } else {
+            // md5 ...
+            return DigestUtils.md5Hex(string);
         }
     }
 

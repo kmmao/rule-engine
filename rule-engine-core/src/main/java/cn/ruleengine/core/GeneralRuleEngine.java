@@ -63,12 +63,14 @@ public class GeneralRuleEngine extends Engine<GeneralRule> {
         if (generalRule == null) {
             throw new EngineException("no rule:{}", ruleCode);
         }
-        log.info("开始执行规则:{}", generalRule.getCode());
+        log.debug("开始执行规则:" + generalRule.getCode());
         ExecuteListener<GeneralRule> listener = this.getConfiguration().getGeneralRuleListener();
         listener.before(generalRule, input);
         try {
             Object action = generalRule.execute(input, this.getConfiguration());
-            log.info("规则执行完毕:{},{}", generalRule.getCode(), action);
+            if (log.isDebugEnabled()) {
+                log.debug("规则执行完毕:{},{}", generalRule.getCode(), action);
+            }
             DefaultOutput output = new DefaultOutput(action);
             listener.after(generalRule, input, output);
             return output;
