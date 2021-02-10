@@ -6,6 +6,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Slf4j
-@ConditionalOnExpression("#{environment.getProperty('spring.rabbitmq.host')!=null}")
+@ConditionalOnProperty("spring.rabbitmq.host")
 @EnableRabbit
 @Component
 @Import(RabbitAutoConfiguration.class) // 当配置了rabbitmq配置时启用

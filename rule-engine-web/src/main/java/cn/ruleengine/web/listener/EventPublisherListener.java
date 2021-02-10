@@ -28,6 +28,8 @@ import javax.annotation.Resource;
  * 集群时，规则发布之类的没必要集成kafka，只要能保证消息不丢都可以
  * <p>
  * 如果只启动一台服务，没必要配置rabbit
+ * <p>
+ * 此处可以使用SpringCloud Stream
  *
  * @author 丁乾文
  * @create 2020-12-23 17:50

@@ -74,9 +74,6 @@ public class Element implements Value {
             return false;
         }
         Element element = (Element) other;
-        if (this.getValueType() != element.getValueType()) {
-            return false;
-        }
-        return element.getElementCode().equals(this.getElementCode());
+        return element.getElementId().equals(this.getElementId());
     }
 }

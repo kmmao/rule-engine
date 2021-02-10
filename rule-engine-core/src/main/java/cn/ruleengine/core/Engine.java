@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
 import java.io.Closeable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +43,6 @@ public abstract class Engine<T extends DataSupport> implements Closeable {
     /**
      * 启动时加载的规则/决策表
      */
-    @Getter
     private final Map<String, Map<String, T>> workspaceMap = new ConcurrentHashMap<>();
 
 
@@ -60,6 +60,11 @@ public abstract class Engine<T extends DataSupport> implements Closeable {
     public Engine(@NonNull RuleEngineConfiguration configuration) {
         Objects.requireNonNull(configuration);
         this.configuration = configuration;
+    }
+
+
+    public Map<String, Map<String, T>> getWorkspaceMap() {
+        return Collections.unmodifiableMap(this.workspaceMap);
     }
 
     /**
@@ -142,15 +147,6 @@ public abstract class Engine<T extends DataSupport> implements Closeable {
         if (this.workspaceMap.containsKey(workspaceCode)) {
             this.workspaceMap.get(workspaceCode).remove(ruleSetCode);
         }
-    }
-
-    /**
-     * 规则/决策表size
-     *
-     * @return size
-     */
-    public int size() {
-        return this.workspaceMap.size();
     }
 
     /**

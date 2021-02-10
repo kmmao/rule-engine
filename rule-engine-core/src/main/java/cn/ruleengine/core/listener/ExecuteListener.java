@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * <p>
+ * 监听器业务逻辑将影响引擎处理性能，业务尽可能使用异步管道操作
  *
  * @author dingqianwen
  * @date 2020/8/3
