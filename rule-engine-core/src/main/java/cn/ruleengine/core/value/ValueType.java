@@ -40,7 +40,11 @@ public enum ValueType {
     /**
      * =:两个集合内容相同
      */
-    COLLECTION("集合", "COLLECTION", Arrays.asList(Operator.EQ, Operator.IN, Operator.NOT_IN, Operator.CONTAIN, Operator.NOT_CONTAIN));
+    COLLECTION("集合", "COLLECTION", Arrays.asList(Operator.EQ, Operator.IN, Operator.NOT_IN, Operator.CONTAIN, Operator.NOT_CONTAIN)),
+    /**
+     * 应对网友需求编写增加日期类型
+     */
+    DATE("日期", "DATE", Arrays.asList(Operator.GT, Operator.LT, Operator.EQ, Operator.NE, Operator.GE, Operator.LE));
 
     @Getter
     private final String name;
@@ -59,6 +63,8 @@ public enum ValueType {
                 return Number.class;
             case "COLLECTION":
                 return Collection.class;
+            case "DATE":
+                return Date.class;
             default:
                 throw new IllegalStateException("Unexpected value: " + value);
         }
@@ -74,8 +80,11 @@ public enum ValueType {
                 return NUMBER;
             case "COLLECTION":
                 return COLLECTION;
+            case "DATE":
+                return DATE;
             default:
                 throw new IllegalStateException("Unexpected value: " + value);
         }
     }
+
 }

@@ -34,6 +34,18 @@ import java.util.Objects;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * 表达式
+ * <p>
+ * 注意：目前表达式只能引用元素
+ * <p>
+ * 使用方式：
+ * <blockquote>
+ * <pre>
+ *      expression = "(#element1 - #element2) * 3"
+ *      input = {"element1":3,"element2":1}
+ *      return 6;
+ * </pre>
+ * </blockquote>
  *
  * @author 丁乾文
  * @create 2021/2/6
@@ -99,18 +111,7 @@ public class Formula implements Value {
     }
 
     /**
-     * 表达式
-     * <p>
-     * 注意：目前表达式只能引用元素
-     * <p>
-     * 使用方式：
-     * <blockquote>
-     * <pre>
-     *      expression = "(#element1 - #element2) * 3"
-     *      input = {"element1":3,"element2":1}
-     *      return 6;
-     * </pre>
-     * </blockquote>
+     * 解析表达式值
      *
      * @param input         上下文
      * @param configuration 规则配置信息
@@ -133,7 +134,7 @@ public class Formula implements Value {
      *
      * @return EvaluationContext
      */
-    public EvaluationContext getEvaluationContext() {
+    private EvaluationContext getEvaluationContext() {
         switch (this.evaluationContextType) {
             case SIMPLE_EVALUATION_READ_ONLY:
                 return SimpleEvaluationContext.forReadOnlyDataBinding().build();

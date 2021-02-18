@@ -32,7 +32,13 @@ public enum VariableType {
     /**
      * VARIABLE,ELEMENT,CONSTANT,FUNCTION
      */
-    ELEMENT(0), VARIABLE(1), CONSTANT(2), FUNCTION(3);
+    ELEMENT(0), VARIABLE(1), CONSTANT(2), FUNCTION(3),
+    /**
+     * 表达式
+     *
+     * @see Formula
+     */
+    FORMULA(4);
 
     @Getter
     private final Integer type;
@@ -48,6 +54,8 @@ public enum VariableType {
                 return CONSTANT;
             case 3:
                 return FUNCTION;
+            case 4:
+                return FORMULA;
             default:
                 throw new IllegalStateException("Unexpected value: " + type);
         }

@@ -15,72 +15,47 @@
  */
 package cn.ruleengine.core.condition.compare;
 
-
+import cn.hutool.core.util.NumberUtil;
 import cn.ruleengine.core.condition.Compare;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.exception.ConditionException;
 
-import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
- * @author dingqianwen
- * @date 2020/4/6
+ * @author 丁乾文
+ * @create 2021/2/18
  * @since 1.0.0
  */
-public class NumberCompare implements Compare {
+public class DateCompare implements Compare {
 
-
-    private NumberCompare() {
-
+    private DateCompare() {
     }
 
-    private static final NumberCompare NUMBER_COMPARE = new NumberCompare();
+    private static final DateCompare DATE_COMPARE = new DateCompare();
 
-    public static NumberCompare getInstance() {
-        return NUMBER_COMPARE;
+    public static DateCompare getInstance() {
+        return DATE_COMPARE;
     }
 
-    /**
-     * number类型条件比较
-     *
-     * @param leftValue  条件左值
-     * @param operator   比较符号
-     * @param rightValue 条件右值
-     * @return true条件成立
-     */
     @Override
     public boolean compare(Object leftValue, Operator operator, Object rightValue) {
         if (leftValue == null || rightValue == null) {
             return false;
         }
-        if (!(leftValue instanceof Number) || !(rightValue instanceof Number)) {
-            throw new ConditionException("左值/右值必须是NUMBER");
-        }
-        //处理数据类型转换为BigDecimal后运算
-        BigDecimal lValue;
-        BigDecimal rValue;
-        // 比较器兼容 new BigDecimal(String.valueOf(rightValue))
-        if (leftValue instanceof BigDecimal) {
-            lValue = (BigDecimal) leftValue;
-        } else {
-            lValue = new BigDecimal(String.valueOf(leftValue));
-        }
-        if (rightValue instanceof BigDecimal) {
-            rValue = (BigDecimal) rightValue;
-        } else {
-            rValue = new BigDecimal(String.valueOf(rightValue));
-        }
+        Date lValue = this.convertDate(leftValue);
+        Date rValue = this.convertDate(rightValue);
         int compare = lValue.compareTo(rValue);
         switch (operator) {
             case EQ:
                 return compare == 0;
-            case NE:
-                return compare != 0;
             case GT:
                 return compare > 0;
+            case NE:
+                return compare != 0;
             case LT:
                 return compare < 0;
             case GE:
@@ -89,6 +64,29 @@ public class NumberCompare implements Compare {
                 return compare == 0 || compare < 0;
             default:
                 throw new IllegalStateException("Unexpected value: " + operator);
+        }
+    }
+
+    /**
+     *
+     * 转换日期对象
+     * <p>
+     * 比较器兼容valueObject instanceof Number与valueObject instanceof String && NumberUtil.isNumber((String) valueObject)
+     *
+     * @param valueObject 兼容日期对象以及时间戳
+     * @return Date
+     */
+    private Date convertDate(Object valueObject) {
+        // 一般都是Date类型
+        if (valueObject instanceof Date) {
+            return (Date) valueObject;
+        }
+        // 比较器兼容处理时间戳格式
+        String valueStr = String.valueOf(valueObject);
+        if (valueObject instanceof Number || NumberUtil.isNumber(valueStr)) {
+            return new Date(Long.parseLong(valueStr));
+        } else {
+            throw new ConditionException("左值/右值必须是DATE或者时间戳");
         }
     }
 

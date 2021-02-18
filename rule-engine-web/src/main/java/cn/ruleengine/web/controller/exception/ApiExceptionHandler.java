@@ -8,6 +8,7 @@ import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.LoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
 import cn.ruleengine.web.vo.base.BaseResult;
+import jodd.util.StringPool;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -54,7 +55,7 @@ public class ApiExceptionHandler {
         BaseResult result = BaseResult.err();
         log.error("Exception", e);
         // 抛出的未知异常 加上RequestId
-        result.setMessage(ErrorCodeEnum.RULE500.getMsg().concat(MDCLogInterceptor.getRequestId()));
+        result.setMessage(ErrorCodeEnum.RULE500.getMsg().concat(StringPool.AT).concat(MDCLogInterceptor.getRequestId()));
         result.setCode(ErrorCodeEnum.RULE500.getCode());
         return result;
     }

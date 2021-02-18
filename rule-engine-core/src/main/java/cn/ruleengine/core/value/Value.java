@@ -23,10 +23,7 @@ import cn.ruleengine.core.exception.ValueException;
 import cn.ruleengine.core.condition.compare.BooleanCompare;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -87,7 +84,7 @@ public interface Value {
                 if (NumberUtil.isNumber(valueStr)) {
                     return new BigDecimal(valueStr);
                 }
-                throw new ValueException("{}只能是Number类型", value);
+                throw new ValueException(value + "只能是Number类型");
             case STRING:
                 return valueStr;
             case BOOLEAN:
@@ -101,10 +98,20 @@ public interface Value {
                 } else if (Objects.equals(valueStr, BooleanCompare.FALSE)) {
                     return false;
                 }
-                throw new ValueException("{}只能是Boolean类型", value);
+                throw new ValueException(value + "只能是Boolean类型");
+            case DATE:
+                if (Validator.isEmpty(value)) {
+                    return null;
+                }
+                if (value instanceof Date) {
+                    return value;
+                } else if (value instanceof Number || NumberUtil.isNumber(valueStr)) {
+                    return new Date(Long.parseLong(valueStr));
+                }
+                throw new ValueException(value + "只能是DATE类型或者时间戳");
             default:
-                throw new ValueException("不支持的数据类型{}", valueType);
+                throw new ValueException("不支持的数据类型" + valueType);
         }
-
     }
+
 }

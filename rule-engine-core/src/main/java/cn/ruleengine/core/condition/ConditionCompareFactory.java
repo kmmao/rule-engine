@@ -15,10 +15,7 @@
  */
 package cn.ruleengine.core.condition;
 
-import cn.ruleengine.core.condition.compare.BooleanCompare;
-import cn.ruleengine.core.condition.compare.StringCompare;
-import cn.ruleengine.core.condition.compare.NumberCompare;
-import cn.ruleengine.core.condition.compare.CollectionCompare;
+import cn.ruleengine.core.condition.compare.*;
 import cn.ruleengine.core.value.ValueType;
 import org.springframework.lang.NonNull;
 
@@ -48,6 +45,8 @@ public class ConditionCompareFactory {
                 return StringCompare.getInstance();
             case COLLECTION:
                 return CollectionCompare.getInstance();
+            case DATE:
+                return DateCompare.getInstance();
             default:
                 throw new IllegalStateException("Unexpected value: " + valueType);
         }
