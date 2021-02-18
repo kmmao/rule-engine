@@ -2,6 +2,7 @@ package cn.ruleengine.web.service.ruleset.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.ruleengine.common.VersionUtils;
 import cn.ruleengine.core.condition.ConditionGroup;
 import cn.ruleengine.core.condition.ConditionSet;
 import cn.ruleengine.core.rule.Rule;
@@ -9,7 +10,6 @@ import cn.ruleengine.core.rule.RuleSet;
 import cn.ruleengine.core.rule.RuleSetStrategyType;
 import cn.ruleengine.web.enums.EnableEnum;
 import cn.ruleengine.web.service.*;
-import cn.ruleengine.web.util.VersionUtils;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.ruleset.RuleBody;

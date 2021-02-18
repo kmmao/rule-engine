@@ -66,12 +66,12 @@ public class Function implements Value {
      * 函数执行主方法
      */
     @Getter
-    private Method executor;
+    private Method executorMethod;
     /**
      * 函数失败策略方法
      */
     @Getter
-    private Method failureStrategy;
+    private Method failureStrategyMethod;
 
     /**
      * 函数缓存key生成
@@ -191,7 +191,7 @@ public class Function implements Value {
      */
     public Object executor(Map<String, Object> paramValue) {
         FunctionExecutor functionExecutor = FunctionExecutor.getInstance();
-        return functionExecutor.executor(this.abstractFunction, this.executor, this.failureStrategy, paramValue);
+        return functionExecutor.executor(this.abstractFunction, this.executorMethod, this.failureStrategyMethod, paramValue);
     }
 
     /**
@@ -202,18 +202,18 @@ public class Function implements Value {
         for (Method method : methods) {
             if (method.isAnnotationPresent(Executor.class)) {
                 //如果已经存在，则抛出异常
-                if (this.executor != null) {
+                if (this.executorMethod != null) {
                     throw new FunctionException("函数中存在多个@Executor");
                 }
-                this.executor = method;
+                this.executorMethod = method;
             }
         }
         String functionName = this.abstractFunction.getClass().getSimpleName();
-        if (this.executor == null) {
+        if (this.executorMethod == null) {
             throw new FunctionException("{}中没有找到可执行函数方法", functionName);
         }
-        if (!Modifier.isPublic(this.executor.getModifiers())) {
-            this.executor.setAccessible(true);
+        if (!Modifier.isPublic(this.executorMethod.getModifiers())) {
+            this.executorMethod.setAccessible(true);
         }
     }
 
@@ -225,20 +225,20 @@ public class Function implements Value {
         for (Method method : methods) {
             if (method.isAnnotationPresent(FailureStrategy.class)) {
                 //如果已经存在，则抛出异常
-                if (this.failureStrategy != null) {
+                if (this.failureStrategyMethod != null) {
                     throw new FunctionException("函数中存在多个@FailureStrategy");
                 }
-                this.failureStrategy = method;
+                this.failureStrategyMethod = method;
             }
         }
-        if (this.failureStrategy == null) {
+        if (this.failureStrategyMethod == null) {
             return;
         }
-        if (!this.executor.getReturnType().equals(this.failureStrategy.getReturnType())) {
-            throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executor.getReturnType(), failureStrategy.getReturnType());
+        if (!this.executorMethod.getReturnType().equals(this.failureStrategyMethod.getReturnType())) {
+            throw new FunctionException("失败策略方法与函数主方法返回值不一致，函数主方法返回值类型{},失败策略方法返回值类型{}", executorMethod.getReturnType(), failureStrategyMethod.getReturnType());
         }
-        if (!Modifier.isPublic(this.failureStrategy.getModifiers())) {
-            this.failureStrategy.setAccessible(true);
+        if (!Modifier.isPublic(this.failureStrategyMethod.getModifiers())) {
+            this.failureStrategyMethod.setAccessible(true);
         }
     }
 

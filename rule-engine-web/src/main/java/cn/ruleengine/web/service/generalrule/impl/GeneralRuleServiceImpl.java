@@ -3,6 +3,7 @@ package cn.ruleengine.web.service.generalrule.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.ruleengine.common.VersionUtils;
 import cn.ruleengine.core.GeneralRuleEngine;
 import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.web.config.Context;
@@ -18,7 +19,6 @@ import cn.ruleengine.web.store.mapper.RuleEngineRuleMapper;
 import cn.ruleengine.web.store.mapper.RuleEngineGeneralRuleMapper;
 
 import cn.ruleengine.web.util.PageUtils;
-import cn.ruleengine.web.util.VersionUtils;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
