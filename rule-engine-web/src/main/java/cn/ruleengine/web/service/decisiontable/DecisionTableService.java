@@ -1,10 +1,8 @@
 package cn.ruleengine.web.service.decisiontable;
 
-import cn.ruleengine.web.vo.base.PageRequest;
-import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.decisiontable.*;
-import cn.ruleengine.web.vo.generalrule.GetGeneralRuleResponse;
 
 /**
  * 〈一句话功能简述〉<br>

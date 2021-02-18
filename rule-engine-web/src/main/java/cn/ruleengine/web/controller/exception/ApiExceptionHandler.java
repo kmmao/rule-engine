@@ -7,7 +7,7 @@ import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.LoginException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
-import cn.ruleengine.web.vo.base.BaseResult;
+import cn.ruleengine.common.vo.*;
 import jodd.util.StringPool;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

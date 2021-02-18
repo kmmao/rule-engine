@@ -17,8 +17,7 @@ package cn.ruleengine.web.controller;
 
 
 import cn.ruleengine.web.service.SymbolService;
-import cn.ruleengine.web.vo.base.Param;
-import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.symbol.SymbolResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

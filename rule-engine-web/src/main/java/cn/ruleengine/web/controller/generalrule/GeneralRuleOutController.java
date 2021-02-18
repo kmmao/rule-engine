@@ -18,8 +18,7 @@ package cn.ruleengine.web.controller.generalrule;
 
 import cn.ruleengine.web.annotation.NoAuth;
 import cn.ruleengine.web.service.RuleEngineOutService;
-import cn.ruleengine.web.vo.base.BaseResult;
-import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.output.BatchExecuteRequest;
 import cn.ruleengine.web.vo.output.ExecuteRequest;
 import cn.ruleengine.web.vo.output.IsExistsRequest;

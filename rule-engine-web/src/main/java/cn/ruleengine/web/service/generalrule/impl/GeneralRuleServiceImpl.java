@@ -22,9 +22,7 @@ import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.convert.BasicConversion;
-import cn.ruleengine.web.vo.base.PageRequest;
-import cn.ruleengine.web.vo.base.PageBase;
-import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.generalrule.*;
 import cn.ruleengine.core.condition.ConditionGroup;
 

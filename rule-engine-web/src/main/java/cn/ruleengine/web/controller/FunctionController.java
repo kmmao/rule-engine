@@ -17,10 +17,7 @@ package cn.ruleengine.web.controller;
 
 
 import cn.ruleengine.web.service.FunctionService;
-import cn.ruleengine.web.vo.base.IdRequest;
-import cn.ruleengine.web.vo.base.PageRequest;
-import cn.ruleengine.web.vo.base.PageResult;
-import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;

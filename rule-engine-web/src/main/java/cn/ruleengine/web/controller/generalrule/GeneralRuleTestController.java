@@ -18,8 +18,7 @@ package cn.ruleengine.web.controller.generalrule;
 import cn.ruleengine.web.annotation.DataPermission;
 import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.RunTestService;
-import cn.ruleengine.web.vo.base.BaseResult;
-import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.common.vo.*;
 
 import cn.ruleengine.web.vo.generalrule.RunTestRequest;
 import io.swagger.annotations.Api;

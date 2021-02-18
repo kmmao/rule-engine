@@ -1,7 +1,6 @@
 package cn.ruleengine.web.service;
 
-import cn.ruleengine.web.vo.base.PageRequest;
-import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;

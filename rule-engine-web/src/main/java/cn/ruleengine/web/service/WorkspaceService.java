@@ -1,13 +1,11 @@
 package cn.ruleengine.web.service;
 
-import cn.ruleengine.web.vo.base.PageRequest;
-import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.workspace.AccessKey;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceRequest;
 import cn.ruleengine.web.vo.workspace.ListWorkspaceResponse;
 import cn.ruleengine.web.vo.workspace.Workspace;
 
-import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>

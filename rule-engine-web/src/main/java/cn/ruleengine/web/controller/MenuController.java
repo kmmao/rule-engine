@@ -16,9 +16,7 @@
 package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.service.MenuService;
-import cn.ruleengine.web.vo.base.IdRequest;
-import cn.ruleengine.web.vo.base.BaseResult;
-import cn.ruleengine.web.vo.base.PlainResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.menu.ListMenuResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

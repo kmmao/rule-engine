@@ -1,7 +1,6 @@
 package cn.ruleengine.web.service.generalrule;
 
-import cn.ruleengine.web.vo.base.PageRequest;
-import cn.ruleengine.web.vo.base.PageResult;
+import cn.ruleengine.common.vo.*;
 import cn.ruleengine.web.vo.common.ViewRequest;
 import cn.ruleengine.web.vo.generalrule.*;
 
