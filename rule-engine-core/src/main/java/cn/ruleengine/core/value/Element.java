@@ -38,6 +38,9 @@ public class Element implements Value {
 
     /**
      * 值类型
+     * <p>
+     * 注意，如果为日期类型元素，入参只能为时间戳，如果入参想为【yyyy-MM-dd HH:mm:ss】格式后期可以提相关需求！
+     * 但是一般调用方可以自己处理后再请求 new Date().getTime()
      */
     private ValueType valueType;
 

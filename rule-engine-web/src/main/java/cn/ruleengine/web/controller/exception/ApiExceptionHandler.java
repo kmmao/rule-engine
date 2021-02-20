@@ -288,7 +288,7 @@ public class ApiExceptionHandler {
      */
     @ExceptionHandler(value = LoginException.class)
     public BaseResult loginException(LoginException e) {
-        log.debug("loginException:{}", e.getMessage());
+        log.debug("loginException:" + e.getMessage());
         BaseResult result = BaseResult.err();
         result.setMessage(e.getMessage());
         result.setCode(ErrorCodeEnum.RULE99990101.getCode());
@@ -303,7 +303,7 @@ public class ApiExceptionHandler {
      */
     @ExceptionHandler(value = ValidException.class)
     public BaseResult validException(ValidException e) {
-        log.error("ValidException", e);
+        log.warn("ValidException:" + e.getMessage());
         BaseResult result = BaseResult.err();
         result.setMessage(e.getMessage());
         result.setCode(ErrorCodeEnum.RULE99990099.getCode());
