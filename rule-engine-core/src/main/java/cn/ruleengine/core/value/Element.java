@@ -17,6 +17,7 @@ package cn.ruleengine.core.value;
 
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
+import cn.ruleengine.core.condition.compare.DateCompare;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -41,6 +42,9 @@ public class Element implements Value {
      * <p>
      * 注意，如果为日期类型元素，入参只能为时间戳，如果入参想为【yyyy-MM-dd HH:mm:ss】格式后期可以提相关需求！
      * 但是一般调用方可以自己处理后再请求 new Date().getTime()
+     * <p>
+     * 增强日期：
+     * 支持以下几种日期类型：{@link DateCompare#PARSE_PATTERNS}
      */
     private ValueType valueType;
 

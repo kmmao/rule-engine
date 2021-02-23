@@ -32,6 +32,15 @@ import java.util.Date;
  */
 public class DateCompare implements Compare {
 
+    /**
+     * 支持以下格式日期
+     */
+    public static final String[] PARSE_PATTERNS = {
+            "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM",
+            "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
+            "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
+
+
     private DateCompare() {
     }
 
@@ -68,7 +77,6 @@ public class DateCompare implements Compare {
     }
 
     /**
-     *
      * 转换日期对象
      * <p>
      * 比较器兼容valueObject instanceof Number与valueObject instanceof String && NumberUtil.isNumber((String) valueObject)
