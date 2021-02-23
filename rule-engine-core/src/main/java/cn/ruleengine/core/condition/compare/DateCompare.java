@@ -20,6 +20,7 @@ import cn.ruleengine.core.condition.Compare;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.exception.ConditionException;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -32,6 +33,10 @@ import java.util.Date;
  */
 public class DateCompare implements Compare {
 
+    /**
+     * 默认格式
+     */
+    public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
     /**
      * 支持以下格式日期
      */
@@ -94,8 +99,55 @@ public class DateCompare implements Compare {
         if (valueObject instanceof Number || NumberUtil.isNumber(valueStr)) {
             return new Date(Long.parseLong(valueStr));
         } else {
-            throw new ConditionException("左值/右值必须是DATE或者时间戳");
+            throw new ConditionException("左值/右值日期格式错误");
         }
+    }
+
+    public static class DateTime extends Date {
+
+        private static final long serialVersionUID = -2186215242020570057L;
+
+        /**
+         * 给定日期的构造
+         *
+         * @param date 日期
+         */
+        public DateTime(Date date) {
+            this(date.getTime());
+        }
+
+        public DateTime(long timeMillis) {
+            super(timeMillis);
+        }
+
+        /**
+         * 转换JDK date为 DateTime
+         *
+         * @param date JDK Date
+         * @return DateTime
+         */
+        public static DateTime of(Date date) {
+            if (date instanceof DateTime) {
+                return (DateTime) date;
+            }
+            return new DateTime(date);
+        }
+
+        public static DateTime of(long timeMillis) {
+            return new DateTime(timeMillis);
+        }
+
+        /**
+         * 转为"yyyy-MM-dd HH:mm:ss " 格式字符串
+         *
+         * @return "yyyy-MM-dd HH:mm:ss " 格式字符串
+         */
+        @Override
+        public String toString() {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateCompare.DEFAULT_PATTERN);
+            return simpleDateFormat.format(this);
+        }
+
     }
 
 }

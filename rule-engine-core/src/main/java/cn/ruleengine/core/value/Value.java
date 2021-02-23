@@ -107,19 +107,20 @@ public interface Value {
                     return null;
                 }
                 if (value instanceof Date) {
-                    return value;
+                    return DateCompare.DateTime.of((Date) value);
                 }
                 // {@link DateCompare#PARSE_PATTERNS}
                 try {
-                    return DateUtils.parseDate(valueStr, DateCompare.PARSE_PATTERNS);
+                    Date date = DateUtils.parseDate(valueStr, DateCompare.PARSE_PATTERNS);
+                    return DateCompare.DateTime.of(date);
                 } catch (ParseException ignored) {
                     // ignored
                 }
                 // 判断是否为时间戳
                 if (value instanceof Number || NumberUtil.isNumber(valueStr)) {
-                    return new Date(Long.parseLong(valueStr));
+                    return DateCompare.DateTime.of(Long.parseLong(valueStr));
                 }
-                throw new ValueException(value + "只能是DATE类型或者时间戳");
+                throw new ValueException(value + "日期格式错误");
             default:
                 throw new ValueException("不支持的数据类型" + valueType);
         }

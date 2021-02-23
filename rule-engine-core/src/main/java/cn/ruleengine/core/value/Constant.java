@@ -99,6 +99,8 @@ public class Constant implements Value {
                     return false;
                 }
                 break;
+            case DATE:
+                return Objects.equals(curValue, constantValue);
             default:
                 throw new IllegalStateException("Unexpected value: " + constant.getValueType());
         }
