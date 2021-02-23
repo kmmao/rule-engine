@@ -44,7 +44,7 @@ public class Element implements Value {
      * 但是一般调用方可以自己处理后再请求 new Date().getTime()
      * <p>
      * 增强日期：
-     * 支持以下几种日期类型：{@link DateCompare#PARSE_PATTERNS}
+     * 支持以下几种日期类型：{@link DateCompare.DateTime#PARSE_PATTERNS}
      */
     private ValueType valueType;
 

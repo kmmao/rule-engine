@@ -19,7 +19,9 @@ import cn.hutool.core.util.NumberUtil;
 import cn.ruleengine.core.condition.Compare;
 import cn.ruleengine.core.condition.Operator;
 import cn.ruleengine.core.exception.ConditionException;
+import org.apache.commons.lang3.time.DateUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,19 +34,6 @@ import java.util.Date;
  * @since 1.0.0
  */
 public class DateCompare implements Compare {
-
-    /**
-     * 默认格式
-     */
-    public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    /**
-     * 支持以下格式日期
-     */
-    public static final String[] PARSE_PATTERNS = {
-            "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM",
-            "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
-            "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
-
 
     private DateCompare() {
     }
@@ -60,8 +49,11 @@ public class DateCompare implements Compare {
         if (leftValue == null || rightValue == null) {
             return false;
         }
-        Date lValue = this.convertDate(leftValue);
-        Date rValue = this.convertDate(rightValue);
+        if (!(leftValue instanceof Date) || !(rightValue instanceof Date)) {
+            throw new ConditionException("左值/右值必须是Date");
+        }
+        Date lValue = (Date) leftValue;
+        Date rValue = (Date) rightValue;
         int compare = lValue.compareTo(rValue);
         switch (operator) {
             case EQ:
@@ -81,31 +73,25 @@ public class DateCompare implements Compare {
         }
     }
 
-    /**
-     * 转换日期对象
-     * <p>
-     * 比较器兼容valueObject instanceof Number与valueObject instanceof String && NumberUtil.isNumber((String) valueObject)
-     *
-     * @param valueObject 兼容日期对象以及时间戳
-     * @return Date
-     */
-    private Date convertDate(Object valueObject) {
-        // 一般都是Date类型
-        if (valueObject instanceof Date) {
-            return (Date) valueObject;
-        }
-        // 比较器兼容处理时间戳格式
-        String valueStr = String.valueOf(valueObject);
-        if (valueObject instanceof Number || NumberUtil.isNumber(valueStr)) {
-            return new Date(Long.parseLong(valueStr));
-        } else {
-            throw new ConditionException("左值/右值日期格式错误");
-        }
-    }
 
+    /**
+     * 增强 Date
+     */
     public static class DateTime extends Date {
 
         private static final long serialVersionUID = -2186215242020570057L;
+
+        /**
+         * 默认格式
+         */
+        public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
+        /**
+         * 支持以下格式日期
+         */
+        public static final String[] PARSE_PATTERNS = {
+                "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM",
+                "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
+                "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
 
         /**
          * 给定日期的构造
@@ -133,8 +119,44 @@ public class DateCompare implements Compare {
             return new DateTime(date);
         }
 
+        /**
+         * 时间戳 转为 DateTime
+         *
+         * @param timeMillis 时间戳
+         * @return DateTime
+         */
         public static DateTime of(long timeMillis) {
             return new DateTime(timeMillis);
+        }
+
+        /**
+         * 兼容以下类型：Date，DateTime，【PARSE_PATTERNS】，时间戳
+         *
+         * @param object 日期时间
+         * @return DateTime
+         */
+        public static DateTime of(Object object) {
+            if (object == null) {
+                return null;
+            }
+            if (object instanceof Date) {
+                return of((Date) object);
+            }
+            // 2021-01-01 00:00:00
+            if (object instanceof String) {
+                // {@link DateCompare#PARSE_PATTERNS}
+                try {
+                    Date date = DateUtils.parseDate(String.valueOf(object), PARSE_PATTERNS);
+                    return new DateTime(date);
+                } catch (ParseException ignored) {
+                    // ignored
+                }
+            }
+            // 判断是否为时间戳
+            if (object instanceof Number || NumberUtil.isNumber(String.valueOf(object))) {
+                return new DateTime(Long.parseLong(String.valueOf(object)));
+            }
+            return null;
         }
 
         /**
@@ -144,7 +166,7 @@ public class DateCompare implements Compare {
          */
         @Override
         public String toString() {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateCompare.DEFAULT_PATTERN);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DEFAULT_PATTERN);
             return simpleDateFormat.format(this);
         }
 

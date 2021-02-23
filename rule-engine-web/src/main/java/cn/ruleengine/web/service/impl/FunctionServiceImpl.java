@@ -150,7 +150,7 @@ public class FunctionServiceImpl implements FunctionService {
             Object abstractFunction = this.applicationContext.getBean(executor);
             // 执行函数入参
             Map<String, Object> paramValue = this.getParamValue(executeTestRequest.getParamValues());
-            Function function = new Function(abstractFunction);
+            Function function = new Function(abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()));
             return function.executor(paramValue);
         } else {
             throw new ValidException("容器中找不到{}函数", executor);

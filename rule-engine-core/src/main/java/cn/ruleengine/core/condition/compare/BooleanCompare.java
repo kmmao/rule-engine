@@ -57,7 +57,7 @@ public class BooleanCompare implements Compare {
             return false;
         }
         if (!(leftValue instanceof Boolean) || !(rightValue instanceof Boolean)) {
-            throw new ConditionException("左值/右值必须是BOOLEAN");
+            throw new ConditionException("左值/右值必须是Boolean");
         }
         switch (operator) {
             case EQ:
