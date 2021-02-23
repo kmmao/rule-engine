@@ -19,10 +19,13 @@ import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.NumberUtil;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
+import cn.ruleengine.core.condition.compare.DateCompare;
 import cn.ruleengine.core.exception.ValueException;
 import cn.ruleengine.core.condition.compare.BooleanCompare;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -104,11 +107,20 @@ public interface Value {
                     return null;
                 }
                 if (value instanceof Date) {
-                    return value;
-                } else if (value instanceof Number || NumberUtil.isNumber(valueStr)) {
-                    return new Date(Long.parseLong(valueStr));
+                    return DateCompare.DateTime.of((Date) value);
                 }
-                throw new ValueException(value + "只能是DATE类型或者时间戳");
+                // {@link DateCompare#PARSE_PATTERNS}
+                try {
+                    Date date = DateUtils.parseDate(valueStr, DateCompare.PARSE_PATTERNS);
+                    return DateCompare.DateTime.of(date);
+                } catch (ParseException ignored) {
+                    // ignored
+                }
+                // 判断是否为时间戳
+                if (value instanceof Number || NumberUtil.isNumber(valueStr)) {
+                    return DateCompare.DateTime.of(Long.parseLong(valueStr));
+                }
+                throw new ValueException(value + "日期格式错误");
             default:
                 throw new ValueException("不支持的数据类型" + valueType);
         }
