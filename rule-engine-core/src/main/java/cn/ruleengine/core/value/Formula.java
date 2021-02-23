@@ -126,7 +126,8 @@ public class Formula implements Value {
             context.setVariable(param.getKey(), param.getValue());
         }
         Class<?> classType = this.valueType.getClassType();
-        return this.expression.getValue(context, classType);
+        Object value = this.expression.getValue(context, classType);
+        return this.dataConversion(value, this.valueType);
     }
 
     /**

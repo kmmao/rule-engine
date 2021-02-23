@@ -22,10 +22,8 @@ import cn.ruleengine.core.Input;
 import cn.ruleengine.core.condition.compare.DateCompare;
 import cn.ruleengine.core.exception.ValueException;
 import cn.ruleengine.core.condition.compare.BooleanCompare;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -78,9 +76,6 @@ public interface Value {
                     return Arrays.asList(valueStr.split(","));
                 }
             case NUMBER:
-                if (Validator.isEmpty(value)) {
-                    return null;
-                }
                 if (value instanceof BigDecimal) {
                     return value;
                 }
@@ -91,9 +86,6 @@ public interface Value {
             case STRING:
                 return valueStr;
             case BOOLEAN:
-                if (Validator.isEmpty(value)) {
-                    return null;
-                }
                 if (value instanceof Boolean) {
                     return value;
                 } else if (Objects.equals(valueStr, BooleanCompare.TRUE)) {
@@ -103,22 +95,9 @@ public interface Value {
                 }
                 throw new ValueException(value + "只能是Boolean类型");
             case DATE:
-                if (Validator.isEmpty(value)) {
-                    return null;
-                }
-                if (value instanceof Date) {
-                    return DateCompare.DateTime.of((Date) value);
-                }
-                // {@link DateCompare#PARSE_PATTERNS}
-                try {
-                    Date date = DateUtils.parseDate(valueStr, DateCompare.PARSE_PATTERNS);
-                    return DateCompare.DateTime.of(date);
-                } catch (ParseException ignored) {
-                    // ignored
-                }
-                // 判断是否为时间戳
-                if (value instanceof Number || NumberUtil.isNumber(valueStr)) {
-                    return DateCompare.DateTime.of(Long.parseLong(valueStr));
+                DateCompare.DateTime dateTime = DateCompare.DateTime.of(value);
+                if (dateTime != null) {
+                    return dateTime;
                 }
                 throw new ValueException(value + "日期格式错误");
             default:

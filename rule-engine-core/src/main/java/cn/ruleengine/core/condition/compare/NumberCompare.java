@@ -56,23 +56,11 @@ public class NumberCompare implements Compare {
         if (leftValue == null || rightValue == null) {
             return false;
         }
-        if (!(leftValue instanceof Number) || !(rightValue instanceof Number)) {
-            throw new ConditionException("左值/右值必须是NUMBER");
+        if (!(leftValue instanceof BigDecimal) || !(rightValue instanceof BigDecimal)) {
+            throw new ConditionException("左值/右值必须是BigDecimal");
         }
-        //处理数据类型转换为BigDecimal后运算
-        BigDecimal lValue;
-        BigDecimal rValue;
-        // 比较器兼容 new BigDecimal(String.valueOf(rightValue))
-        if (leftValue instanceof BigDecimal) {
-            lValue = (BigDecimal) leftValue;
-        } else {
-            lValue = new BigDecimal(String.valueOf(leftValue));
-        }
-        if (rightValue instanceof BigDecimal) {
-            rValue = (BigDecimal) rightValue;
-        } else {
-            rValue = new BigDecimal(String.valueOf(rightValue));
-        }
+        BigDecimal lValue = (BigDecimal) leftValue;
+        BigDecimal rValue = (BigDecimal) rightValue;
         int compare = lValue.compareTo(rValue);
         switch (operator) {
             case EQ:

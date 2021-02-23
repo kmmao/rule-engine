@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -99,11 +99,13 @@ public class Function implements Value {
     Function() {
     }
 
-    public Function(Object abstractFunction) {
-        this(null, abstractFunction, null, null);
+    public Function(Object abstractFunction, ValueType valueType) {
+        this(null, abstractFunction, valueType, null);
     }
 
     public Function(Integer id, Object abstractFunction, ValueType valueType, Map<String, Value> param) {
+        Objects.requireNonNull(abstractFunction);
+        Objects.requireNonNull(valueType);
         this.id = id;
         this.valueType = valueType;
         this.param = param;
@@ -175,16 +177,12 @@ public class Function implements Value {
         } else {
             value = this.executor(paramValue);
         }
-        return Optional.ofNullable(value).map(m -> {
-            if (!valueType.getClassType().isAssignableFrom(m.getClass())) {
-                throw new FunctionException("The return type of the function does not match the set type");
-            }
-            return m;
-        }).orElse(null);
+        // 函数返回值转为引擎可以执行类型
+        return this.dataConversion(value, this.valueType);
     }
 
     /**
-     * 执行函数
+     * 执行函数,并通过dataConversion解析转换
      *
      * @param paramValue 函数值
      * @return 函数返回结果

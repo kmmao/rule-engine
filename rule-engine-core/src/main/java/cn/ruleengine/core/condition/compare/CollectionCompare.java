@@ -60,7 +60,7 @@ public class CollectionCompare implements Compare {
             return false;
         }
         if (!(leftValue instanceof Collection)) {
-            throw new ConditionException("左值必须是COLLECTION");
+            throw new ConditionException("左值必须是Collection");
         }
         Collection<?> leftValueColl = (Collection<?>) leftValue;
         switch (operator) {

@@ -55,7 +55,7 @@ public class StringCompare implements Compare {
             return false;
         }
         if (!(leftValue instanceof String) || !(rightValue instanceof String)) {
-            throw new ConditionException("左值/右值必须是STRING");
+            throw new ConditionException("左值/右值必须是String");
         }
         String leftValueStr = (String) leftValue;
         String rightValueStr = (String) rightValue;
