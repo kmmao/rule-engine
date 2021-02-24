@@ -95,6 +95,10 @@ public interface Value {
                 }
                 throw new ValueException(value + "只能是Boolean类型");
             case DATE:
+                // 如果为空字符
+                if (Validator.isEmpty(value)) {
+                    return null;
+                }
                 DateCompare.DateTime dateTime = DateCompare.DateTime.of(value);
                 if (dateTime != null) {
                     return dateTime;
