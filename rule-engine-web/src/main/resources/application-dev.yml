@@ -23,7 +23,7 @@ spring:
     name: rule-engine-web
   jackson:
     time-zone: Asia/Shanghai
-    #date-format: yyyy-MM-dd HH:mm:ss
+    date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
