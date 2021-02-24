@@ -63,46 +63,60 @@ public interface Value {
     default Object dataConversion(Object value, ValueType valueType) {
         Objects.requireNonNull(valueType);
         // 如果为null 或者字符
-        if (Validator.isEmpty(value)) {
-            /*
-             * 为空时集合返回一个 Collections.emptyList() 而不是 null
-             * <br>
-             * 主要应对：如果集合[1，2，3] CONTAIN [] 返回true
-             */
-            if (valueType == ValueType.COLLECTION) {
-                return Collections.emptyList();
-            }
+        if (Objects.isNull(value)) {
             return null;
         }
+        // to string , obj.toString()
+        String valueString = String.valueOf(value);
         // 根据valueType 解析值 获取对应的类型
-        String valueStr = String.valueOf(value);
         switch (valueType) {
             case COLLECTION:
+                /*
+                 * 为空时集合返回一个 Collections.emptyList() 而不是 null
+                 * <br>
+                 * 主要应对：如果集合[1，2，3] CONTAIN [] 返回true
+                 */
+                if (valueString.isEmpty()) {
+                    return Collections.emptyList();
+                }
                 if (value instanceof Collection) {
                     return value;
                 } else {
-                    return Arrays.asList(valueStr.split(","));
+                    return Arrays.asList(valueString.split(","));
                 }
             case NUMBER:
+                // 如果为空字符
+                if (valueString.isEmpty()) {
+                    return null;
+                }
                 if (value instanceof BigDecimal) {
                     return value;
                 }
-                if (NumberUtil.isNumber(valueStr)) {
-                    return new BigDecimal(valueStr);
+                if (NumberUtil.isNumber(valueString)) {
+                    return new BigDecimal(valueString);
                 }
                 throw new ValueException(value + "只能是Number类型");
             case STRING:
-                return valueStr;
+                // string 类型直接返回
+                return valueString;
             case BOOLEAN:
+                // 如果为空字符
+                if (valueString.isEmpty()) {
+                    return null;
+                }
                 if (value instanceof Boolean) {
                     return value;
-                } else if (Objects.equals(valueStr, BooleanCompare.TRUE)) {
+                } else if (Objects.equals(valueString, BooleanCompare.TRUE)) {
                     return true;
-                } else if (Objects.equals(valueStr, BooleanCompare.FALSE)) {
+                } else if (Objects.equals(valueString, BooleanCompare.FALSE)) {
                     return false;
                 }
                 throw new ValueException(value + "只能是Boolean类型");
             case DATE:
+                // 如果为空字符
+                if (valueString.isEmpty()) {
+                    return null;
+                }
                 DateCompare.DateTime dateTime = DateCompare.DateTime.of(value);
                 if (dateTime != null) {
                     return dateTime;
