@@ -22,7 +22,6 @@ public class TimeOfDayFunction {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
         int hour = Integer.parseInt(simpleDateFormat.format(date));
-        System.out.println(hour);
         if (hour >= 0 && hour < 6) {
             return "凌晨";
         }
