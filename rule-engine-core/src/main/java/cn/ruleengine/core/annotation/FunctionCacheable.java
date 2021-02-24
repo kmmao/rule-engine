@@ -34,6 +34,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FunctionCacheable {
+
     /**
      * 是否启用函数缓存
      *
@@ -54,4 +55,5 @@ public @interface FunctionCacheable {
      * @return class
      */
     Class<? extends KeyGenerator> keyGenerator() default DefaultKeyGenerator.class;
+
 }

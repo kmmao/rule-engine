@@ -36,7 +36,26 @@ import java.lang.annotation.Target;
 @Component
 public @interface Function {
 
+    /**
+     * 函数存在Spring容器中的Bean名称
+     *
+     * @return 默认首字母小写
+     */
     @AliasFor(annotation = Component.class)
     String value() default "";
+
+    /**
+     * 函数名称
+     *
+     * @return name
+     */
+    String name() default "";
+
+    /**
+     * 函数描述
+     *
+     * @return description
+     */
+    String description() default "";
 
 }
