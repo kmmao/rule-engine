@@ -61,15 +61,23 @@ public interface Value {
      * @return 转换后的数据
      */
     default Object dataConversion(Object value, ValueType valueType) {
-        if (Objects.isNull(value)) {
+        Objects.requireNonNull(valueType);
+        // 如果为null 或者字符
+        if (Validator.isEmpty(value)) {
+            /*
+             * 为空时集合返回一个 Collections.emptyList() 而不是 null
+             * <br>
+             * 主要应对：如果集合[1，2，3] CONTAIN [] 返回true
+             */
+            if (valueType == ValueType.COLLECTION) {
+                return Collections.emptyList();
+            }
             return null;
         }
+        // 根据valueType 解析值 获取对应的类型
         String valueStr = String.valueOf(value);
         switch (valueType) {
             case COLLECTION:
-                if (Validator.isEmpty(value)) {
-                    return Collections.emptyList();
-                }
                 if (value instanceof Collection) {
                     return value;
                 } else {
@@ -95,10 +103,6 @@ public interface Value {
                 }
                 throw new ValueException(value + "只能是Boolean类型");
             case DATE:
-                // 如果为空字符
-                if (Validator.isEmpty(value)) {
-                    return null;
-                }
                 DateCompare.DateTime dateTime = DateCompare.DateTime.of(value);
                 if (dateTime != null) {
                     return dateTime;
