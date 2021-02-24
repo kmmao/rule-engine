@@ -37,6 +37,9 @@ import java.util.stream.Stream;
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
+ * 函数执行器
+ * <p>
+ * 单线程测试 每1毫秒可执行100次左右函数
  *
  * @author dingqianwen
  * @date 2020/7/19
@@ -151,6 +154,8 @@ public class FunctionExecutor {
                 add(Double.class);
                 add(BigDecimal.class);
                 add(Boolean.class);
+                // 新增日期类型解析
+                add(Date.class);
             }
 
         };
@@ -215,11 +220,22 @@ public class FunctionExecutor {
         @SneakyThrows
         private Object paramConvertBasicType(Parameter parameter, Map<String, Object> paramValue) {
             Class<?> parameterType = parameter.getType();
-            Object value = paramValue.get(getParameterName(parameter));
+            // 参数值
+            Object value = paramValue.get(this.getParameterName(parameter));
+            // 校验，例如如果为空是否抛出异常
             this.paramValid(parameter, value);
-            Object instance = parameterType.getConstructor(String.class).newInstance(String.valueOf(value));
-            return Optional.ofNullable(value).map(m -> instance).orElse(null);
+            if (value == null) {
+                return null;
+            }
+            // 类型一致情况
+            if (parameterType.equals(value.getClass())) {
+                return value;
+            }
+            // 类型不一致情况尝试使用String构造下
+            Constructor<?> constructor = parameterType.getConstructor(String.class);
+            return constructor.newInstance(String.valueOf(value));
         }
+
 
         /**
          * 参数转换为集合
@@ -231,7 +247,7 @@ public class FunctionExecutor {
         private Collection<?> paramConvertCollection(Parameter parameter, Map<String, Object> paramValue) {
             Class<?> parameterType = parameter.getType();
             Type parameterParameterizedType = parameter.getParameterizedType();
-            Collection<?> value = (Collection<?>) paramValue.get(getParameterName(parameter));
+            Collection<?> value = (Collection<?>) paramValue.get(this.getParameterName(parameter));
             // 校验集合参数
             this.paramValid(parameter, value);
             // bug 修复，空集合参数导致空指针问题
