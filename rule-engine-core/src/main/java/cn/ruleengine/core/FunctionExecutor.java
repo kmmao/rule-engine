@@ -20,6 +20,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.ruleengine.core.annotation.Executor;
+import cn.ruleengine.core.condition.compare.DateCompare;
 import cn.ruleengine.core.exception.FunctionException;
 import cn.ruleengine.core.annotation.Param;
 import cn.ruleengine.core.exception.ValidException;
@@ -156,6 +157,7 @@ public class FunctionExecutor {
                 add(Boolean.class);
                 // 新增日期类型解析
                 add(Date.class);
+                add(DateCompare.DateTime.class);
             }
 
         };
@@ -228,7 +230,7 @@ public class FunctionExecutor {
                 return null;
             }
             // 类型一致情况
-            if (parameterType.equals(value.getClass())) {
+            if (parameterType.isAssignableFrom(value.getClass())) {
                 return value;
             }
             // 类型不一致情况尝试使用String构造下
