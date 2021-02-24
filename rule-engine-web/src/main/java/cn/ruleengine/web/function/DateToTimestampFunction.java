@@ -18,7 +18,7 @@ import java.util.Date;
 public class DateToTimestampFunction {
 
     @Executor
-    public Long executor(@Param(value = "date", required = false) Date date) {
+    public Long executor(@Param(value = "date") Date date) {
         return date.getTime();
     }
 
