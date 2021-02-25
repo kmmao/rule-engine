@@ -125,7 +125,12 @@ public class PhoneTestRule {
 
 我们默认使用Feign请求，当然你也可以自定义，只需要在项目中配置如下代码：
 ```java
+@Component
+@Import({RestTemplate.class})
 public class RuleEngineClientConfig {
+
+    @Resource
+    private RestTemplate restTemplate;
 
     @Bean
     public GeneralRuleInterface generalRuleInterface() {
@@ -156,6 +161,7 @@ public class RuleEngineClientConfig {
 
 
 ### 下一步进展
+ - 优化代码，提高配置体验（进行中）
  - 规则版本（开发中）  
  - 规则监控（待开发）  
  - 评分卡（待开发）  
