@@ -109,23 +109,21 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public Workspace currentWorkspace() {
         UserData userData = Context.getCurrentUser();
         RBucket<Workspace> bucket = this.redissonClient.getBucket(CURRENT_WORKSPACE + userData.getId());
-        if (bucket.isExists()) {
-            Workspace workspace = bucket.get();
-            log.info("当前工作空间：" + workspace);
-            return workspace;
-        } else {
+        Workspace workspace = bucket.get();
+        if (workspace == null) {
             RuleEngineWorkspace ruleEngineWorkspace = this.ruleEngineWorkspaceMapper.getFirstWorkspace();
             if (ruleEngineWorkspace != null) {
-                Workspace workspace = new Workspace();
+                workspace = new Workspace();
                 workspace.setId(ruleEngineWorkspace.getId());
                 workspace.setName(ruleEngineWorkspace.getName());
                 workspace.setCode(ruleEngineWorkspace.getCode());
                 bucket.set(workspace);
-                return workspace;
             } else {
                 throw new ValidException("没有可用工作空间");
             }
         }
+        log.info("当前工作空间：" + workspace);
+        return workspace;
     }
 
     /**
