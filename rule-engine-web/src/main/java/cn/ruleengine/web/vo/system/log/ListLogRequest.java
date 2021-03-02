@@ -14,6 +14,8 @@ import lombok.Data;
 public class ListLogRequest {
 
 
+    private String tag;
+
     /**
      * 精确
      */

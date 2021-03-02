@@ -22,6 +22,8 @@ public class GetLogResponse {
 
     private String username;
 
+    private String tag;
+
     private String description;
 
     /**

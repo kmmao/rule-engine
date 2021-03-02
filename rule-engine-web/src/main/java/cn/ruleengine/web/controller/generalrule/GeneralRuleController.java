@@ -115,7 +115,7 @@ public class GeneralRuleController {
      * @return true
      */
     @ReSubmitLock
-    @SystemLog
+    @SystemLog(tag = "普通规则发布")
     @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.GENERAL_RULE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布规则")

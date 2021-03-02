@@ -176,7 +176,7 @@ public class DecisionTableController {
      * @return true
      */
     @ReSubmitLock
-    @SystemLog
+    @SystemLog(tag = "决策表发布")
     @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.DECISION_TABLE, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布决策表")

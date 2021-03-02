@@ -55,6 +55,9 @@ public class SystemLogServiceImpl implements SystemLogService {
             if (Validator.isNotEmpty(query.getRequestUrl())) {
                 lambda.like(RuleEngineSystemLog::getRequestUrl, query.getRequestUrl());
             }
+            if (Validator.isNotEmpty(query.getTag())) {
+                lambda.eq(RuleEngineSystemLog::getTag, query.getTag());
+            }
             return logQueryWrapper;
         }, m -> {
             ListLogResponse listLogResponse = new ListLogResponse();

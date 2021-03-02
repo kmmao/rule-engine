@@ -22,6 +22,8 @@ public class ListLogResponse {
 
     private String username;
 
+    private String tag;
+
     private String description;
 
     /**

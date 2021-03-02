@@ -320,7 +320,9 @@ CREATE TABLE `rule_engine_rule_set_rule` (
 CREATE TABLE `rule_engine_system_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int(11) DEFAULT NULL,
+  `username` varchar(50) DEFAULT NULL,
   `description` varchar(300) DEFAULT NULL,
+  `tag` varchar(50) DEFAULT NULL,
   `ip` varchar(30) NOT NULL COMMENT '请求ip',
   `browser` varchar(50) DEFAULT NULL COMMENT '浏览器',
   `browser_version` varchar(50) DEFAULT NULL COMMENT '浏览器版本',

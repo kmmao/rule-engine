@@ -75,7 +75,7 @@ public class UserController {
      * @return true表示登录成功
      */
     @NoAuth
-    @SystemLog
+    @SystemLog(tag = "用户登录")
     @RateLimit(limit = 3)
     @PostMapping("login")
     @ApiOperation("用户登录")

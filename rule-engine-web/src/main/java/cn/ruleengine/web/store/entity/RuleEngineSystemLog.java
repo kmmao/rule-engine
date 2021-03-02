@@ -35,6 +35,8 @@ public class RuleEngineSystemLog implements Serializable {
 
     private String description;
 
+    private String tag;
+
     /**
      * 请求ip
      */

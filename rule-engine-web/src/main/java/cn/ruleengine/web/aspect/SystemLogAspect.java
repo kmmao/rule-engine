@@ -65,6 +65,7 @@ public class SystemLogAspect {
         log.setDescription(systemLog.description());
         //请求开始时间
         log.setCreateTime(new Date());
+        log.setTag(systemLog.tag());
         //请求用户id and username
         UserData userData = Context.getCurrentUser();
         if (userData != null) {

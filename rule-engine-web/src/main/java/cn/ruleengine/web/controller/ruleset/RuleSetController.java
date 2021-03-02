@@ -118,7 +118,7 @@ public class RuleSetController {
      * @return true
      */
     @ReSubmitLock
-    @SystemLog
+    @SystemLog(tag = "规则集发布")
     @DataPermission(id = "#idRequest.id", dataType = Permission.DataType.RULE_SET, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("publish")
     @ApiOperation("发布规则集")

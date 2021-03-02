@@ -31,6 +31,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SystemLog {
+
+    /**
+     * 标签，为日志分组
+     *
+     * @return String
+     */
+    String tag() default "其它";
+
     /**
      * 日志说明
      *
