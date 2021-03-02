@@ -65,8 +65,12 @@ public class SystemLogAspect {
         log.setDescription(systemLog.description());
         //请求开始时间
         log.setCreateTime(new Date());
-        //请求用户id
-        log.setUserId(Optional.ofNullable(Context.getCurrentUser()).map(UserData::getId).orElse(null));
+        //请求用户id and username
+        UserData userData = Context.getCurrentUser();
+        if (userData != null) {
+            log.setUserId(userData.getId());
+            log.setUsername(userData.getUsername());
+        }
         //请求ip地址
         log.setIp(IPUtils.getRequestIp());
         //浏览器

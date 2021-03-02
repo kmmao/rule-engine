@@ -1,32 +1,21 @@
-package cn.ruleengine.web.store.entity;
+package cn.ruleengine.web.vo.system.log;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
+ * 〈一句话功能简述〉<br>
+ * 〈〉
  *
- * </p>
- *
- * @author dqw
- * @since 2020-07-29
+ * @author dingqianwen
+ * @date 2021/3/2
+ * @since 1.0.0
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class RuleEngineSystemLog implements Serializable {
+public class ListLogResponse {
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private Integer userId;
@@ -99,15 +88,8 @@ public class RuleEngineSystemLog implements Serializable {
      */
     private String requestId;
 
-    @TableField(fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateTime;
-
-    @TableLogic
-    @TableField(fill = FieldFill.INSERT)
-    private Integer deleted;
 
 
 }
