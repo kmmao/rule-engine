@@ -63,9 +63,11 @@ public class RuleSetEngine extends Engine<RuleSet> {
         Objects.requireNonNull(code);
         RuleSet ruleSet = super.get(workspaceCode, code);
         if (ruleSet == null) {
-            throw new EngineException("no ruleSet:{}", code);
+            throw new EngineException("no rule set:{}", code);
         }
-        log.debug("开始执行规则集:" + ruleSet.getCode());
+        if (log.isDebugEnabled()) {
+            log.debug("开始执行规则集:" + ruleSet.getCode());
+        }
         ExecuteListener<RuleSet> listener = this.getConfiguration().getRuleSetListener();
         listener.before(ruleSet, input);
         try {
@@ -88,7 +90,7 @@ public class RuleSetEngine extends Engine<RuleSet> {
     @Override
     public void close() {
         super.close();
-        log.info("The rules engine has been destroyed");
+        log.info("The rule set engine has been destroyed");
     }
 
 

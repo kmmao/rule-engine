@@ -61,9 +61,11 @@ public class GeneralRuleEngine extends Engine<GeneralRule> {
         Objects.requireNonNull(ruleCode);
         GeneralRule generalRule = super.get(workspaceCode, ruleCode);
         if (generalRule == null) {
-            throw new EngineException("no rule:{}", ruleCode);
+            throw new EngineException("no general rule:{}", ruleCode);
         }
-        log.debug("开始执行规则:" + generalRule.getCode());
+        if (log.isDebugEnabled()) {
+            log.debug("开始执行规则:" + generalRule.getCode());
+        }
         ExecuteListener<GeneralRule> listener = this.getConfiguration().getGeneralRuleListener();
         listener.before(generalRule, input);
         try {
@@ -87,7 +89,7 @@ public class GeneralRuleEngine extends Engine<GeneralRule> {
     @Override
     public void close() {
         super.close();
-        log.info("The rules engine has been destroyed");
+        log.info("The general rule engine has been destroyed");
     }
 
 }

@@ -62,7 +62,9 @@ public class DecisionTableEngine extends Engine<DecisionTable> {
         if (decisionTable == null) {
             throw new EngineException("no decision table:{}", decisionTableCode);
         }
-        log.debug("开始执行决策表:" + decisionTable.getCode());
+        if (log.isDebugEnabled()) {
+            log.debug("开始执行决策表:" + decisionTable.getCode());
+        }
         ExecuteListener<DecisionTable> listener = this.getConfiguration().getDecisionTableExecuteListener();
         listener.before(decisionTable, input);
         try {

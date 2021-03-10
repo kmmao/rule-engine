@@ -65,27 +65,51 @@ public class RuleEngineConfiguration implements Closeable {
      */
     private EngineVariable engineVariable = new EngineVariable();
 
-
+    /**
+     * 设置决策表执行监听器
+     *
+     * @param decisionTableExecuteListener 决策表执行监听器
+     */
     public void setDecisionTableExecuteListener(@NonNull ExecuteListener<DecisionTable> decisionTableExecuteListener) {
         Objects.requireNonNull(decisionTableExecuteListener);
         this.decisionTableExecuteListener = decisionTableExecuteListener;
     }
 
+    /**
+     * 设置规则集执行监听器
+     *
+     * @param ruleSetListener 规则集执行监听器
+     */
     public void setRuleSetListener(@NonNull ExecuteListener<RuleSet> ruleSetListener) {
         Objects.requireNonNull(ruleSetListener);
         this.ruleSetListener = ruleSetListener;
     }
 
+    /**
+     * 设置普通规则执行监听器
+     *
+     * @param generalRuleListener 普通规则执行监听器
+     */
     public void setGeneralRuleListener(@NonNull ExecuteListener<GeneralRule> generalRuleListener) {
         Objects.requireNonNull(generalRuleListener);
         this.generalRuleListener = generalRuleListener;
     }
 
+    /**
+     * 设置函数缓存实现类
+     *
+     * @param functionCache 函数缓存实现类
+     */
     public void setFunctionCache(@NonNull FunctionCache functionCache) {
         Objects.requireNonNull(functionCache);
         this.functionCache = functionCache;
     }
 
+    /**
+     * 设置规则引擎变量
+     *
+     * @param engineVariable 规则引擎变量
+     */
     public void setEngineVariable(@NonNull EngineVariable engineVariable) {
         Objects.requireNonNull(engineVariable);
         this.engineVariable = engineVariable;

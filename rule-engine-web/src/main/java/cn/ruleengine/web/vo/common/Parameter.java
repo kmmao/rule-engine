@@ -13,8 +13,19 @@ import lombok.Data;
 @Data
 public class Parameter {
 
+    /**
+     * 元素名称
+     */
     private String name;
+
+    /**
+     * 元素code
+     */
     private String code;
+
+    /**
+     * 元素类型
+     */
     private String valueType;
 
 }
