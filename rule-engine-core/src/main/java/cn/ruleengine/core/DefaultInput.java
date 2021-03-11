@@ -36,10 +36,10 @@ public class DefaultInput implements Input {
     /**
      * 项目中使用到的运行参数
      */
-    private Map<String, Object> inputParam = new HashMap<>();
+    private final Map<String, Object> inputParam;
 
     public DefaultInput() {
-
+        this.inputParam = new HashMap<>();
     }
 
     public DefaultInput(Map<String, Object> inputParam) {
