@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,8 @@ public class GeneralRuleBody {
     @NotNull
     private Integer id;
 
-    private List<ConditionGroupConfig> conditionGroup;
+    @Valid
+    private List<ConditionGroupConfig> conditionGroup = new ArrayList<>(1);
 
     @NotNull
     private ConfigValue action;

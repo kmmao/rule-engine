@@ -2,6 +2,9 @@ package cn.ruleengine.web.vo.condition;
 
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -14,7 +17,11 @@ import lombok.Data;
 public class ConditionGroupCondition {
 
     private Integer id;
+
+    @NotNull
     private Integer orderNo;
+
+    @Valid
     private ConditionBody condition;
 
 }

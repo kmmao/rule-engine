@@ -83,6 +83,10 @@ public class ReferenceDataService {
     private void countReferenceData(ReferenceData referenceData, List<ConditionGroupConfig> conditionGroup) {
         for (ConditionGroupConfig conditionGroupConfig : conditionGroup) {
             List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
+            // 已知bug修复
+            if (CollUtil.isEmpty(conditionGroupCondition)) {
+                continue;
+            }
             for (ConditionGroupCondition groupCondition : conditionGroupCondition) {
                 ConditionBody condition = groupCondition.getCondition();
                 ConfigBean config = condition.getConfig();

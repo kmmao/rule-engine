@@ -2,6 +2,10 @@ package cn.ruleengine.web.vo.condition;
 
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,11 +18,19 @@ import java.util.List;
  */
 @Data
 public class ConditionGroupConfig {
+
     private Integer id;
+
+    @NotBlank(message = "条件组名称不能为空")
     private String name;
+
+    @NotNull
     private Integer orderNo;
+
     /**
      * 条件组与条件关系
      */
-    private List<ConditionGroupCondition> conditionGroupCondition;
+    @Valid
+    private List<ConditionGroupCondition> conditionGroupCondition = new ArrayList<>(1);
+
 }
