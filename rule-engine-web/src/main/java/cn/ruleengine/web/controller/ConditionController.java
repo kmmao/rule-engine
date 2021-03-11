@@ -21,7 +21,6 @@ import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.enums.Permission;
 import cn.ruleengine.web.service.ConditionService;
 import cn.ruleengine.common.vo.*;
-import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.common.Parameter;
 import cn.ruleengine.web.vo.condition.*;
 import io.swagger.annotations.Api;
@@ -142,15 +141,15 @@ public class ConditionController {
     /**
      * 测试运行条件
      *
-     * @param executeTestRequest 参数
+     * @param executeConditionRequest 参数
      * @return true/false
      */
-    @DataPermission(id = "#executeTestRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.VALID_WORKSPACE)
+    @DataPermission(id = "#executeConditionRequest.id", dataType = Permission.DataType.CONDITION, operationType = Permission.OperationType.VALID_WORKSPACE)
     @PostMapping("run")
     @ApiOperation("测试运行条件")
-    public PlainResult<Boolean> run(@RequestBody @Valid ExecuteTestRequest executeTestRequest) {
+    public PlainResult<Boolean> run(@RequestBody @Valid ExecuteConditionRequest executeConditionRequest) {
         PlainResult<Boolean> plainResult = new PlainResult<>();
-        plainResult.setData(this.conditionService.run(executeTestRequest));
+        plainResult.setData(this.conditionService.run(executeConditionRequest));
         return plainResult;
     }
 

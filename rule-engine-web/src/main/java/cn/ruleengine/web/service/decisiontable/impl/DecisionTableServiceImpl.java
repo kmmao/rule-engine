@@ -241,7 +241,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTable.setStrategyType(updateDecisionTableRequest.getStrategyType());
         ruleEngineDecisionTable.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(updateDecisionTableRequest.getTableData()));
-        ruleEngineDecisionTable.setReferenceData(JSON.toJSONString(referenceDataService.countReferenceData(updateDecisionTableRequest.getTableData())));
+        ruleEngineDecisionTable.setReferenceData(this.referenceDataService.countReferenceData(updateDecisionTableRequest.getTableData()).toJson());
         return this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
     }
 
@@ -297,7 +297,7 @@ public class DecisionTableServiceImpl implements DecisionTableService {
         ruleEngineDecisionTable.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineDecisionTable.setStrategyType(releaseRequest.getStrategyType());
         ruleEngineDecisionTable.setTableData(JSON.toJSONString(releaseRequest.getTableData()));
-        String referenceDataJson = JSON.toJSONString(referenceDataService.countReferenceData(releaseRequest.getTableData()));
+        String referenceDataJson = this.referenceDataService.countReferenceData(releaseRequest.getTableData()).toJson();
         ruleEngineDecisionTable.setReferenceData(referenceDataJson);
         this.ruleEngineDecisionTableManager.updateById(ruleEngineDecisionTable);
         // 删除原有待发布规则

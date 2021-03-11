@@ -168,7 +168,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleEngineGeneralRule.setDefaultActionValue(defaultAction.getValue());
         ruleEngineGeneralRule.setDefaultActionValueType(defaultAction.getValueType());
         ruleEngineGeneralRule.setDefaultActionType(defaultAction.getType());
-        ruleEngineGeneralRule.setReferenceData(JSON.toJSONString(referenceDataService.countReferenceData(generalRuleBody)));
+        ruleEngineGeneralRule.setReferenceData(this.referenceDataService.countReferenceData(generalRuleBody).toJson());
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         return true;
     }
@@ -328,7 +328,7 @@ public class GeneralRuleServiceImpl implements GeneralRuleService {
         ruleEngineGeneralRule.setDefaultActionValue(defaultAction.getValue());
         ruleEngineGeneralRule.setDefaultActionValueType(defaultAction.getValueType());
         ruleEngineGeneralRule.setDefaultActionType(defaultAction.getType());
-        String referenceData = JSON.toJSONString(referenceDataService.countReferenceData(generalRuleBody));
+        String referenceData = this.referenceDataService.countReferenceData(generalRuleBody).toJson();
         ruleEngineGeneralRule.setReferenceData(referenceData);
         this.ruleEngineGeneralRuleMapper.updateRuleById(ruleEngineGeneralRule);
         // 添加新的待发布数据

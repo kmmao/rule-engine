@@ -4,6 +4,9 @@ import java.util.*;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
+import cn.ruleengine.core.RuleEngineConfiguration;
+import cn.ruleengine.core.value.Constant;
+import cn.ruleengine.core.value.Value;
 import cn.ruleengine.core.value.ValueType;
 import cn.ruleengine.web.service.FunctionService;
 import cn.ruleengine.web.store.entity.RuleEngineFunction;
@@ -12,14 +15,12 @@ import cn.ruleengine.web.store.manager.RuleEngineFunctionManager;
 import cn.ruleengine.web.store.manager.RuleEngineFunctionParamManager;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.common.vo.*;
-import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.function.*;
 import cn.ruleengine.web.vo.variable.ParamValue;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.ruleengine.core.exception.ValidException;
-import cn.ruleengine.core.value.Constant;
 import cn.ruleengine.core.value.Function;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -140,37 +141,30 @@ public class FunctionServiceImpl implements FunctionService {
      * @return result
      */
     @Override
-    public Object run(ExecuteTestRequest executeTestRequest) {
-        RuleEngineFunction engineFunction = this.ruleEngineFunctionManager.getById(executeTestRequest.getId());
+    public Object run(ExecuteFunctionRequest executeTestRequest) {
+        Integer functionId = executeTestRequest.getId();
+        RuleEngineFunction engineFunction = this.ruleEngineFunctionManager.getById(functionId);
         if (engineFunction == null) {
-            throw new ValidException("不存在函数：{}", executeTestRequest.getId());
+            throw new ValidException("不存在函数：{}", functionId);
         }
         String executor = engineFunction.getExecutor();
         if (this.applicationContext.containsBean(executor)) {
             Object abstractFunction = this.applicationContext.getBean(executor);
-            // 执行函数入参
-            Map<String, Object> paramValue = this.getParamValue(executeTestRequest.getParamValues());
-            Function function = new Function(abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()));
-            return function.executor(paramValue);
+            // 函数测试均为固定值
+            List<ParamValue> paramValues = executeTestRequest.getParamValues();
+            Map<String, Value> param = new HashMap<>(paramValues.size());
+            for (ParamValue paramValue : paramValues) {
+                Constant constant = new Constant(paramValue.getValue(), ValueType.getByValue(paramValue.getValueType()));
+                param.put(paramValue.getCode(), constant);
+            }
+            Function function = new Function(functionId, abstractFunction, ValueType.getByValue(engineFunction.getReturnValueType()), param);
+            // 无元素 input==null
+            return function.getValue(null, new RuleEngineConfiguration());
         } else {
             throw new ValidException("容器中找不到{}函数", executor);
         }
     }
 
-    /**
-     * 处理函数值
-     *
-     * @param paramValue 函数参数值
-     * @return map
-     */
-    private Map<String, Object> getParamValue(List<ParamValue> paramValue) {
-        Map<String, Object> paramMap = new HashMap<>(paramValue.size());
-        for (ParamValue value : paramValue) {
-            Constant constant = new Constant(value.getValue(), ValueType.getByValue(value.getValueType()));
-            paramMap.put(value.getCode(), constant.getValue());
-        }
-        return paramMap;
-    }
 
     /**
      * 处理函数参数

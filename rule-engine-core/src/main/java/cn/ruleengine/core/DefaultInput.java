@@ -16,9 +16,12 @@
 package cn.ruleengine.core;
 
 
+import cn.hutool.core.collection.CollUtil;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -33,7 +36,15 @@ public class DefaultInput implements Input {
     /**
      * 项目中使用到的运行参数
      */
-    private final Map<String, Object> inputParam = new HashMap<>();
+    private Map<String, Object> inputParam = new HashMap<>();
+
+    public DefaultInput() {
+
+    }
+
+    public DefaultInput(Map<String, Object> inputParam) {
+        this.inputParam = Objects.requireNonNull(inputParam);
+    }
 
     /**
      * 添加一个输入参数
@@ -53,6 +64,9 @@ public class DefaultInput implements Input {
      */
     @Override
     public void putAll(Map<String, Object> inputParam) {
+        if (CollUtil.isEmpty(inputParam)) {
+            return;
+        }
         this.inputParam.putAll(inputParam);
     }
 

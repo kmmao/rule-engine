@@ -1,4 +1,4 @@
-package cn.ruleengine.web.vo.common;
+package cn.ruleengine.web.vo.function;
 
 import cn.ruleengine.web.vo.variable.ParamValue;
 import lombok.Data;
@@ -16,9 +16,9 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-public class ExecuteTestRequest {
+public class ExecuteFunctionRequest {
 
-    @NotNull
+    @NotNull(message = "函数ID不能为空")
     private Integer id;
 
     /**

@@ -91,7 +91,7 @@ public class Function implements Value {
     private long liveOutTime;
 
     @Getter
-    private Map<String, Value> param;
+    private Map<String, Value> params;
 
     /**
      * json反序列化使用
@@ -99,16 +99,12 @@ public class Function implements Value {
     Function() {
     }
 
-    public Function(Object abstractFunction, ValueType valueType) {
-        this(null, abstractFunction, valueType, null);
-    }
-
-    public Function(Integer id, Object abstractFunction, ValueType valueType, Map<String, Value> param) {
+    public Function(Integer id, Object abstractFunction, ValueType valueType, Map<String, Value> params) {
         Objects.requireNonNull(abstractFunction);
         Objects.requireNonNull(valueType);
         this.id = id;
         this.valueType = valueType;
-        this.param = param;
+        this.params = params;
         this.abstractFunction = abstractFunction;
         this.abstractFunctionClass = abstractFunction.getClass();
         this.abstractFunctionSimpleName = this.abstractFunctionClass.getSimpleName();
@@ -153,8 +149,8 @@ public class Function implements Value {
     @Override
     public Object getValue(Input input, RuleEngineConfiguration configuration) {
         //处理函数入参
-        Map<String, Object> paramValue = new HashMap<>(this.param.size());
-        for (Map.Entry<String, Value> entry : this.param.entrySet()) {
+        Map<String, Object> paramValue = new HashMap<>(this.params.size());
+        for (Map.Entry<String, Value> entry : this.params.entrySet()) {
             paramValue.put(entry.getKey(), entry.getValue().getValue(input, configuration));
         }
         Object value;
@@ -182,12 +178,12 @@ public class Function implements Value {
     }
 
     /**
-     * 执行函数,并通过dataConversion解析转换
+     * 执行函数
      *
      * @param paramValue 函数值
      * @return 函数返回结果
      */
-    public Object executor(Map<String, Object> paramValue) {
+    private Object executor(Map<String, Object> paramValue) {
         FunctionExecutor functionExecutor = FunctionExecutor.getInstance();
         return functionExecutor.executor(this.abstractFunction, this.executorMethod, this.failureStrategyMethod, paramValue);
     }

@@ -5,7 +5,6 @@ import cn.ruleengine.web.store.entity.RuleEngineCondition;
 import cn.ruleengine.web.store.entity.RuleEngineElement;
 import cn.ruleengine.web.store.entity.RuleEngineVariable;
 import cn.ruleengine.common.vo.*;
-import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.common.Parameter;
 import cn.ruleengine.web.vo.condition.*;
 
@@ -116,9 +115,9 @@ public interface ConditionService {
     /**
      * 测试运行条件
      *
-     * @param executeTestRequest 参数
+     * @param executeConditionRequest 参数
      * @return true/false
      */
-    Boolean run(ExecuteTestRequest executeTestRequest);
+    Boolean run(ExecuteConditionRequest executeConditionRequest);
 
 }

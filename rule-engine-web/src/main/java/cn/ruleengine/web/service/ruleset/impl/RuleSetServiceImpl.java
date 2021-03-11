@@ -224,7 +224,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleEngineRuleSet.setStrategyType(ruleSetBody.getStrategyType());
         ruleEngineRuleSet.setStatus(DataStatus.WAIT_PUBLISH.getStatus());
         ruleEngineRuleSet.setEnableDefaultRule(ruleSetBody.getEnableDefaultRule());
-        String referenceData = JSON.toJSONString(referenceDataService.countReferenceData(ruleSetBody));
+        String referenceData = this.referenceDataService.countReferenceData(ruleSetBody).toJson();
         ruleEngineRuleSet.setReferenceData(referenceData);
         // 以下代码性能可优化
         this.deleteRuleSetRule(ruleEngineRuleSet);
@@ -383,7 +383,7 @@ public class RuleSetServiceImpl implements RuleSetService {
         ruleEngineRuleSet.setStrategyType(ruleSetBody.getStrategyType());
         ruleEngineRuleSet.setStatus(DataStatus.EDIT.getStatus());
         ruleEngineRuleSet.setEnableDefaultRule(ruleSetBody.getEnableDefaultRule());
-        ruleEngineRuleSet.setReferenceData(JSON.toJSONString(referenceDataService.countReferenceData(ruleSetBody)));
+        ruleEngineRuleSet.setReferenceData(this.referenceDataService.countReferenceData(ruleSetBody).toJson());
         List<RuleBody> ruleSet = ruleSetBody.getRuleSet();
         // 以下代码性能可优化
         this.deleteRuleSetRule(ruleEngineRuleSet);

@@ -1,7 +1,7 @@
 package cn.ruleengine.web.service;
 
 import cn.ruleengine.common.vo.*;
-import cn.ruleengine.web.vo.common.ExecuteTestRequest;
+import cn.ruleengine.web.vo.function.ExecuteFunctionRequest;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;
 import cn.ruleengine.web.vo.function.ListFunctionResponse;
@@ -38,5 +38,6 @@ public interface FunctionService {
      * @param executeTestRequest 函数入参值
      * @return result
      */
-    Object run(ExecuteTestRequest executeTestRequest);
+    Object run(ExecuteFunctionRequest executeTestRequest);
+
 }

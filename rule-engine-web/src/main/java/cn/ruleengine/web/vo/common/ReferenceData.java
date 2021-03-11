@@ -2,6 +2,7 @@ package cn.ruleengine.web.vo.common;
 
 import cn.ruleengine.core.value.VariableType;
 import cn.ruleengine.web.vo.condition.ConfigValue;
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -26,6 +27,14 @@ public class ReferenceData {
         this.conditionIds.add(id);
     }
 
+    public void addVariableId(Integer id) {
+        this.variableIds.add(id);
+    }
+
+    public void addElementId(Integer id) {
+        this.elementIds.add(id);
+    }
+
     public void resolve(ConfigValue configValue) {
         if (configValue == null) {
             return;
@@ -39,10 +48,19 @@ public class ReferenceData {
             return;
         }
         if (VariableType.ELEMENT.getType().equals(type)) {
-            this.elementIds.add(Integer.valueOf(value));
+            this.addElementId(Integer.valueOf(value));
         } else if (VariableType.VARIABLE.getType().equals(type)) {
-            this.variableIds.add(Integer.valueOf(value));
+            this.addVariableId(Integer.valueOf(value));
         }
+    }
+
+    /**
+     * 转为json
+     *
+     * @return json
+     */
+    public String toJson() {
+        return JSON.toJSONString(this);
     }
 
 }

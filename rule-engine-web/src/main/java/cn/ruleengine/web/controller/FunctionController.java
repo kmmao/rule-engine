@@ -18,7 +18,7 @@ package cn.ruleengine.web.controller;
 
 import cn.ruleengine.web.service.FunctionService;
 import cn.ruleengine.common.vo.*;
-import cn.ruleengine.web.vo.common.ExecuteTestRequest;
+import cn.ruleengine.web.vo.function.ExecuteFunctionRequest;
 import cn.ruleengine.web.vo.function.GetFunctionResponse;
 import cn.ruleengine.web.vo.function.ListFunctionRequest;
 import cn.ruleengine.web.vo.function.ListFunctionResponse;
@@ -82,7 +82,7 @@ public class FunctionController {
      */
     @PostMapping("run")
     @ApiOperation("函数模拟测试")
-    public PlainResult<Object> run(@Valid @RequestBody ExecuteTestRequest executeTestRequest) {
+    public PlainResult<Object> run(@Valid @RequestBody ExecuteFunctionRequest executeTestRequest) {
         PlainResult<Object> plainResult = new PlainResult<>();
         plainResult.setData(functionService.run(executeTestRequest));
         return plainResult;

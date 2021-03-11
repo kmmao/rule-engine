@@ -55,22 +55,22 @@ public class ParameterService {
         List<CollHead> collHeads = decisionTable.getCollHeads();
         for (CollHead collHead : collHeads) {
             Value value = collHead.getLeftValue();
-            this.getFromVariableElement(elementIds, value);
+            this.listElement(elementIds, value);
         }
         if (decisionTable.getDefaultActionValue() != null) {
-            this.getFromVariableElement(elementIds, decisionTable.getDefaultActionValue());
+            this.listElement(elementIds, decisionTable.getDefaultActionValue());
         }
         // 目前先这么做，因为决策表单元格中使用函数型变量很少
         Set<Value> valueSet = new HashSet<>();
         decisionTable.getDecisionTree().values().stream().flatMap(Collection::stream).forEach(f -> {
             f.getColls().forEach(c -> {
                 if (!valueSet.contains(c.getRightValue())) {
-                    this.getFromVariableElement(elementIds, c.getRightValue());
+                    this.listElement(elementIds, c.getRightValue());
                     valueSet.add(c.getRightValue());
                 }
             });
         });
-        return this.getParameters(elementIds);
+        return this.convert(elementIds);
     }
 
     /**
@@ -79,7 +79,7 @@ public class ParameterService {
      * @param elementIds 元素id
      * @return Parameter
      */
-    private Set<Parameter> getParameters(Set<Integer> elementIds) {
+    private Set<Parameter> convert(Set<Integer> elementIds) {
         if (CollUtil.isEmpty(elementIds)) {
             return Collections.emptySet();
         }
@@ -102,13 +102,13 @@ public class ParameterService {
     public Set<Parameter> getParameters(GeneralRule rule) {
         Set<Integer> elementIds = new HashSet<>();
         // bug 修复 感谢qq昵称懂先生及时报出问题
-        this.getConditionElement(elementIds, rule);
+        this.listElement(elementIds, rule);
         // 默认结果
         Value defaultActionValue = rule.getDefaultActionValue();
         if (defaultActionValue != null) {
-            this.getFromVariableElement(elementIds, defaultActionValue);
+            this.listElement(elementIds, defaultActionValue);
         }
-        return this.getParameters(elementIds);
+        return this.convert(elementIds);
     }
 
     /**
@@ -117,7 +117,7 @@ public class ParameterService {
      * @param elementIds 元素id
      * @param rule       规则
      */
-    private void getConditionElement(Set<Integer> elementIds, Rule rule) {
+    private void listElement(Set<Integer> elementIds, Rule rule) {
         if (rule == null) {
             return;
         }
@@ -126,13 +126,30 @@ public class ParameterService {
         for (ConditionGroup conditionGroup : conditionGroups) {
             List<Condition> conditions = conditionGroup.getConditions();
             for (Condition condition : conditions) {
-                this.getFromVariableElement(elementIds, condition.getRightValue());
-                this.getFromVariableElement(elementIds, condition.getLeftValue());
+                this.listElement(elementIds, condition.getRightValue());
+                this.listElement(elementIds, condition.getLeftValue());
             }
         }
         // 规则结果
         Value value = rule.getActionValue();
-        this.getFromVariableElement(elementIds, value);
+        this.listElement(elementIds, value);
+    }
+
+    /**
+     * 规则set调用接口，以及规则set入参
+     *
+     * @param ruleSet ruleSet
+     * @return Parameter
+     */
+    public Set<Parameter> getParameters(RuleSet ruleSet) {
+        Set<Integer> elementIds = new HashSet<>();
+        List<Rule> rules = ruleSet.getRules();
+        for (Rule rule : rules) {
+            this.listElement(elementIds, rule);
+        }
+        Rule defaultRule = ruleSet.getDefaultRule();
+        this.listElement(elementIds, defaultRule);
+        return this.convert(elementIds);
     }
 
     /**
@@ -141,21 +158,20 @@ public class ParameterService {
      * @param elementIds 元素id
      * @param value      value
      */
-    private void getFromVariableElement(Set<Integer> elementIds, Value value) {
+    private void listElement(Set<Integer> elementIds, Value value) {
         if (value instanceof Variable) {
             Value val = this.ruleEngineConfiguration.getEngineVariable().getVariable(((Variable) value).getVariableId());
             if (val instanceof Function) {
                 Function function = (Function) val;
-                Map<String, Value> param = function.getParam();
+                Map<String, Value> param = function.getParams();
                 Collection<Value> values = param.values();
                 for (Value v : values) {
                     if (v instanceof Element) {
-                        Element element = (Element) v;
-                        elementIds.add(element.getElementId());
+                        elementIds.add(((Element) v).getElementId());
                     } else if (v instanceof Variable) {
                         // 可优化
                         try {
-                            this.getFromVariableElement(elementIds, v);
+                            this.listElement(elementIds, v);
                         } catch (StackOverflowError e) {
                             log.error("堆栈溢出错误", e);
                             throw new ValidException("请检查规则变量是否存在循环引用");
@@ -170,35 +186,18 @@ public class ParameterService {
     }
 
     /**
-     * 规则set调用接口，以及规则set入参
-     *
-     * @param ruleSet ruleSet
-     * @return Parameter
-     */
-    public Set<Parameter> getParameters(RuleSet ruleSet) {
-        Set<Integer> elementIds = new HashSet<>();
-        List<Rule> rules = ruleSet.getRules();
-        for (Rule rule : rules) {
-            this.getConditionElement(elementIds, rule);
-        }
-        Rule defaultRule = ruleSet.getDefaultRule();
-        this.getConditionElement(elementIds, defaultRule);
-        return this.getParameters(elementIds);
-    }
-
-    /**
-     * 获取条件中所有的元素
+     * 统计元素/变量中使用到的元素id
      *
      * @param elementIds 元素id
      * @param type       值类型
      * @param value      value
      */
-    private void conditionAllElementId(Set<Integer> elementIds, Integer type, String value) {
+    private void listElement(Set<Integer> elementIds, Integer type, String value) {
         if (VariableType.VARIABLE.getType().equals(type)) {
             Value val = this.ruleEngineConfiguration.getEngineVariable().getVariable(Integer.valueOf(value));
             if (val instanceof Function) {
                 Function function = (Function) val;
-                Map<String, Value> param = function.getParam();
+                Map<String, Value> param = function.getParams();
                 Collection<Value> values = param.values();
                 for (Value v : values) {
                     if (v instanceof Element) {
@@ -207,7 +206,7 @@ public class ParameterService {
                         // 可优化
                         try {
                             String varId = ((Variable) v).getVariableId().toString();
-                            this.conditionAllElementId(elementIds, VariableType.VARIABLE.getType(), varId);
+                            this.listElement(elementIds, VariableType.VARIABLE.getType(), varId);
                             // 后面改为最大引用链不超过20，否则报错
                         } catch (StackOverflowError e) {
                             log.error("堆栈溢出错误", e);
@@ -227,16 +226,16 @@ public class ParameterService {
      * @param ruleEngineCondition 条件
      * @return list
      */
-    public Set<Parameter> getParameter(RuleEngineCondition ruleEngineCondition) {
+    public Set<Parameter> getParameters(RuleEngineCondition ruleEngineCondition) {
         Set<Integer> elementIds = new HashSet<>();
         // 左边的
-        this.conditionAllElementId(elementIds, ruleEngineCondition.getLeftType(), ruleEngineCondition.getLeftValue());
+        this.listElement(elementIds, ruleEngineCondition.getLeftType(), ruleEngineCondition.getLeftValue());
         // 右边的
-        this.conditionAllElementId(elementIds, ruleEngineCondition.getRightType(), ruleEngineCondition.getRightValue());
+        this.listElement(elementIds, ruleEngineCondition.getRightType(), ruleEngineCondition.getRightValue());
         if (CollUtil.isEmpty(elementIds)) {
             return Collections.emptySet();
         }
-        return this.getParameters(elementIds);
+        return this.convert(elementIds);
     }
 
 }

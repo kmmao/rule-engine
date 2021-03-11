@@ -18,11 +18,9 @@ import cn.ruleengine.web.store.manager.RuleEngineVariableManager;
 import cn.ruleengine.web.store.mapper.RuleEngineConditionMapper;
 import cn.ruleengine.web.util.PageUtils;
 import cn.ruleengine.common.vo.*;
-import cn.ruleengine.web.vo.common.ExecuteTestRequest;
 import cn.ruleengine.web.vo.common.Parameter;
 import cn.ruleengine.web.vo.condition.*;
 import cn.ruleengine.web.vo.user.UserData;
-import cn.ruleengine.web.vo.variable.ParamValue;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -395,7 +393,7 @@ public class ConditionServiceImpl implements ConditionService {
         if (ruleEngineCondition == null) {
             throw new ValidException("规则条件找不到：{}", id);
         }
-        return this.parameterService.getParameter(ruleEngineCondition);
+        return this.parameterService.getParameters(ruleEngineCondition);
     }
 
     /**
@@ -405,19 +403,13 @@ public class ConditionServiceImpl implements ConditionService {
      * @return true/false
      */
     @Override
-    public Boolean run(ExecuteTestRequest executeTestRequest) {
+    public Boolean run(ExecuteConditionRequest executeTestRequest) {
         Integer conditionId = executeTestRequest.getId();
         RuleEngineCondition ruleEngineCondition = this.ruleEngineConditionManager.getById(conditionId);
         if (ruleEngineCondition == null) {
             throw new ValidException("规则条件找不到：{}", conditionId);
         }
-        List<ParamValue> paramValues = executeTestRequest.getParamValues();
-        Input input = new DefaultInput();
-        if (CollUtil.isNotEmpty(paramValues)) {
-            for (ParamValue paramValue : paramValues) {
-                input.put(paramValue.getCode(), paramValue.getValue());
-            }
-        }
+        Input input = new DefaultInput(executeTestRequest.getParams());
         RuleEngineConfiguration configuration = new RuleEngineConfiguration();
         configuration.setEngineVariable(this.ruleEngineConfiguration.getEngineVariable());
         Condition condition = new Condition();

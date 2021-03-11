@@ -55,6 +55,12 @@ public class ReferenceDataService {
         return referenceData;
     }
 
+    /**
+     * 统计规则集引用的变量以及元素id
+     *
+     * @param ruleSetBody 规则集
+     * @return ReferenceData
+     */
     public ReferenceData countReferenceData(RuleSetBody ruleSetBody) {
         ReferenceData referenceData = new ReferenceData();
         RuleBody defaultRule = ruleSetBody.getDefaultRule();
@@ -68,6 +74,12 @@ public class ReferenceDataService {
         return referenceData;
     }
 
+    /**
+     * 条件组引用的变量以及元素
+     *
+     * @param referenceData  referenceData
+     * @param conditionGroup 条件组
+     */
     private void countReferenceData(ReferenceData referenceData, List<ConditionGroupConfig> conditionGroup) {
         for (ConditionGroupConfig conditionGroupConfig : conditionGroup) {
             List<ConditionGroupCondition> conditionGroupCondition = conditionGroupConfig.getConditionGroupCondition();
@@ -82,6 +94,12 @@ public class ReferenceDataService {
         }
     }
 
+    /**
+     * 统计普通规则引用的变量以及元素id
+     *
+     * @param generalRuleBody 普通规则
+     * @return ReferenceData
+     */
     public ReferenceData countReferenceData(GeneralRuleBody generalRuleBody) {
         ReferenceData referenceData = new ReferenceData();
         referenceData.resolve(generalRuleBody.getAction());
