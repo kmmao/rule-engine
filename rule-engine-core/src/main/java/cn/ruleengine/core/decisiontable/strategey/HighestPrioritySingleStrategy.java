@@ -36,13 +36,13 @@ import java.util.*;
 @Slf4j
 public class HighestPrioritySingleStrategy implements DecisionTableStrategy {
 
-    private static final HighestPrioritySingleStrategy HIGHEST_PRIORITY_SINGLE_STRATEGY = new HighestPrioritySingleStrategy();
+    private static final HighestPrioritySingleStrategy INSTANCE = new HighestPrioritySingleStrategy();
 
     private HighestPrioritySingleStrategy() {
     }
 
     public static HighestPrioritySingleStrategy getInstance() {
-        return HIGHEST_PRIORITY_SINGLE_STRATEGY;
+        return INSTANCE;
     }
 
     /**
@@ -66,7 +66,7 @@ public class HighestPrioritySingleStrategy implements DecisionTableStrategy {
                 }
             }
         }
-        return Collections.emptyList();
+        return null;
     }
 
 }

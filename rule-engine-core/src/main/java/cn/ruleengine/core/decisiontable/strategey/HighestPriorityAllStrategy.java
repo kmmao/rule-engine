@@ -20,7 +20,6 @@ import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.Row;
-import cn.ruleengine.core.value.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
@@ -37,13 +36,13 @@ import java.util.*;
 @Slf4j
 public class HighestPriorityAllStrategy implements DecisionTableStrategy {
 
-    private static final HighestPriorityAllStrategy HIGHEST_PRIORITY_ALL_STRATEGY = new HighestPriorityAllStrategy();
+    private static final HighestPriorityAllStrategy INSTANCE = new HighestPriorityAllStrategy();
 
     private HighestPriorityAllStrategy() {
     }
 
     public static HighestPriorityAllStrategy getInstance() {
-        return HIGHEST_PRIORITY_ALL_STRATEGY;
+        return INSTANCE;
     }
 
 
@@ -58,21 +57,16 @@ public class HighestPriorityAllStrategy implements DecisionTableStrategy {
      */
     @Override
     public List<Object> compute(@NonNull Map<Integer, CollHead.Comparator> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
-        List<Object> actions = new ArrayList<>();
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
-            // 一个row可以看做一个规则
-            for (Row row : tree.getValue()) {
-                Value action = this.getActionByRow(collHeadCompareMap, row, input, configuration);
-                Optional.ofNullable(action).ifPresent(p -> {
-                    actions.add(action.getValue(input, configuration));
-                });
-            }
+            // 查询此优先级内所有结果
+            List<Object> priorityAllAction = this.getAllActionByPriority(collHeadCompareMap, input, configuration, tree.getValue());
             // 如果此优先级找到了数据，则跳出
-            if (!actions.isEmpty()) {
-                return actions;
+            if (priorityAllAction != null) {
+                return priorityAllAction;
             }
         }
-        return actions;
+        // 没有命中任何结果
+        return null;
     }
 
 }

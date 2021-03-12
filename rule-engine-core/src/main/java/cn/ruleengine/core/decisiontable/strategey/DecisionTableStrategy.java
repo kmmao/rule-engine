@@ -24,6 +24,7 @@ import cn.ruleengine.core.decisiontable.Row;
 import cn.ruleengine.core.value.Value;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +81,30 @@ public interface DecisionTableStrategy {
         }
         // 所有条件成立，返回结果
         return row.getAction();
+    }
+
+    /**
+     * 获取选中所有结果
+     *
+     * @param collHeadCompareMap 表头比较器
+     * @param input              决策表输入参数
+     * @param configuration      规则引擎配置信息
+     * @param rows               规则行
+     * @return actions
+     */
+    default List<Object> getAllActionByPriority(Map<Integer, CollHead.Comparator> collHeadCompareMap, Input input, RuleEngineConfiguration configuration, List<Row> rows) {
+        List<Object> actions = null;
+        // 一个row可以看做一个规则
+        for (Row row : rows) {
+            Value action = this.getActionByRow(collHeadCompareMap, row, input, configuration);
+            if (action != null) {
+                if (actions == null) {
+                    actions = new ArrayList<>();
+                }
+                actions.add(action.getValue(input, configuration));
+            }
+        }
+        return actions;
     }
 
 }

@@ -20,28 +20,35 @@ import java.util.List;
 @Slf4j
 public class AllRuleStrategy implements RuleSetStrategy {
 
-    private static final AllRuleStrategy ALL_RULE_STRATEGY = new AllRuleStrategy();
+    private static final AllRuleStrategy INSTANCE = new AllRuleStrategy();
 
     private AllRuleStrategy() {
     }
 
     public static AllRuleStrategy getInstance() {
-        return ALL_RULE_STRATEGY;
+        return INSTANCE;
     }
 
     @Override
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
-        List<Object> actions = new ArrayList<>();
+        List<Object> actions = null;
         for (Rule rule : rules) {
-            log.debug("执行规则：" + rule.getName());
+            if (log.isDebugEnabled()) {
+                log.debug("执行规则：" + rule.getName());
+            }
             Object action = rule.execute(input, configuration);
             if (action != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("规则：{} 命中结果：{}", rule.getName(), action);
+                }
+                // 如果匹配到值，初始化一个arraylist
+                if (actions == null) {
+                    actions = new ArrayList<>();
                 }
                 actions.add(action);
             }
         }
         return actions;
     }
+
 }

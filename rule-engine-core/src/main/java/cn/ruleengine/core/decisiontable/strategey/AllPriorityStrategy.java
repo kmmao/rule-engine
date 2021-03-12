@@ -19,7 +19,6 @@ import cn.ruleengine.core.Input;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.decisiontable.CollHead;
 import cn.ruleengine.core.decisiontable.Row;
-import cn.ruleengine.core.value.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
@@ -36,13 +35,13 @@ import java.util.*;
 @Slf4j
 public class AllPriorityStrategy implements DecisionTableStrategy {
 
-    private static final AllPriorityStrategy ALL_PRIORITY_STRATEGY = new AllPriorityStrategy();
+    private static final AllPriorityStrategy INSTANCE = new AllPriorityStrategy();
 
     private AllPriorityStrategy() {
     }
 
     public static AllPriorityStrategy getInstance() {
-        return ALL_PRIORITY_STRATEGY;
+        return INSTANCE;
     }
 
     /**
@@ -56,14 +55,18 @@ public class AllPriorityStrategy implements DecisionTableStrategy {
      */
     @Override
     public List<Object> compute(@NonNull Map<Integer, CollHead.Comparator> collHeadCompareMap, @NonNull Map<Integer, List<Row>> decisionTree, @NonNull Input input, @NonNull RuleEngineConfiguration configuration) {
-        List<Object> actions = new ArrayList<>();
+        List<Object> actions = null;
         for (Map.Entry<Integer, List<Row>> tree : decisionTree.entrySet()) {
-            // 一个row可以看做一个规则
-            for (Row row : tree.getValue()) {
-                Value action = this.getActionByRow(collHeadCompareMap, row, input, configuration);
-                Optional.ofNullable(action).ifPresent(p -> {
-                    actions.add(action.getValue(input, configuration));
-                });
+            // 查询此优先级内所有结果
+            List<Object> priorityAllAction = this.getAllActionByPriority(collHeadCompareMap, input, configuration, tree.getValue());
+            if (priorityAllAction == null) {
+                continue;
+            }
+            // 如果查询到结果
+            if (actions == null) {
+                actions = priorityAllAction;
+            } else {
+                actions.addAll(priorityAllAction);
             }
         }
         return actions;

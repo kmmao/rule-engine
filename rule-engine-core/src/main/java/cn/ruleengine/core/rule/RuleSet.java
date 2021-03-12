@@ -15,7 +15,6 @@
  */
 package cn.ruleengine.core.rule;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.DataSupport;
 import cn.ruleengine.core.Input;
 import cn.ruleengine.core.JsonParse;
@@ -80,7 +79,8 @@ public class RuleSet extends DataSupport implements JsonParse {
         try {
             RuleSetStrategy ruleSetStrategy = RuleSetStrategyFactory.getInstance(this.strategyType);
             List<Object> actions = ruleSetStrategy.compute(this.rules, input, configuration);
-            if (CollUtil.isNotEmpty(actions)) {
+            // 如果规则集只要命中一个结果，则返回这个结果
+            if (actions != null) {
                 return actions;
             }
             Rule defaultRule = this.getDefaultRule();

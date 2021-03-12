@@ -129,7 +129,8 @@ public class DecisionTable extends DataSupport implements JsonParse {
             // 计算表头值，获取到表头比较器，与下面单元格比较
             Map<Integer, CollHead.Comparator> collHeadCompareMap = this.getCollHeadCompare(input, configuration);
             List<Object> actions = strategy.compute(collHeadCompareMap, this.decisionTree, input, configuration);
-            if (CollUtil.isNotEmpty(actions)) {
+            // 如果匹配到数据则返回
+            if (actions != null) {
                 return actions;
             }
             if (Objects.nonNull(this.getDefaultActionValue())) {

@@ -21,20 +21,22 @@ import java.util.List;
 @Slf4j
 public class WhenARuleIsHitStrategy implements RuleSetStrategy {
 
-    private static final WhenARuleIsHitStrategy WHEN_A_RULE_IS_HIT_STRATEGY = new WhenARuleIsHitStrategy();
+    private static final WhenARuleIsHitStrategy INSTANCE = new WhenARuleIsHitStrategy();
 
     private WhenARuleIsHitStrategy() {
     }
 
     public static WhenARuleIsHitStrategy getInstance() {
-        return WHEN_A_RULE_IS_HIT_STRATEGY;
+        return INSTANCE;
     }
 
 
     @Override
     public List<Object> compute(List<Rule> rules, Input input, RuleEngineConfiguration configuration) {
         for (Rule rule : rules) {
-            log.debug("执行规则：" + rule.getName());
+            if (log.isDebugEnabled()) {
+                log.debug("执行规则：" + rule.getName());
+            }
             Object action = rule.execute(input, configuration);
             // 当有一个规则执行结果被命中，则终止执行
             if (action != null) {
