@@ -40,7 +40,7 @@ Github：https://github.com/rule-engine/rule-engine/issues
 ### 技术栈/版本介绍：
 
 - 所涉及的相关的技术有：
-    - SpringBoot 2.1.2
+    - SpringBoot 2.2.11
     - RabbitMQ
     - Redis、Redisson
     - MySQL 5.7.9
