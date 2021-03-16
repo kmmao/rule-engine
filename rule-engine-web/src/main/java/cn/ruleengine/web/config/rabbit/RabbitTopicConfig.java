@@ -6,6 +6,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Slf4j
+@ConditionalOnBean(RabbitConfig.class)
 @Component
 public class RabbitTopicConfig {
 

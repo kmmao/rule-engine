@@ -16,7 +16,7 @@
 package cn.ruleengine.web.aspect;
 
 import cn.ruleengine.web.config.Context;
-import cn.ruleengine.web.enums.ErrorCodeEnum;
+import cn.ruleengine.web.exception.ReSubmitException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import cn.ruleengine.web.annotation.ReSubmitLock;
 import cn.ruleengine.web.vo.user.UserData;
@@ -31,7 +31,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.ValidationException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +81,7 @@ public class ReSubmitLockAspect {
         RLock rLock = redissonClient.getLock(lockKey);
         if (!rLock.tryLock(0L, time, TimeUnit.MILLISECONDS)) {
             log.warn("{}方法锁已经存在，请勿重复操作！", method.getName());
-            throw new ValidationException(ErrorCodeEnum.RULE10011038.getMsg());
+            throw new ReSubmitException();
         }
         try {
             log.info("{}方法加锁成功，Lock Key:{}", method.getName(), lockKey);
@@ -92,4 +91,5 @@ public class ReSubmitLockAspect {
             log.info("{}方法锁已经移除，Lock Key:{}", method.getName(), lockKey);
         }
     }
+
 }

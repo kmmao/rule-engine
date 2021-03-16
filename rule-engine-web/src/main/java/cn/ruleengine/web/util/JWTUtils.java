@@ -125,4 +125,5 @@ public class JWTUtils {
         return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
                 .parseClaimsJws(token).getBody();
     }
+
 }

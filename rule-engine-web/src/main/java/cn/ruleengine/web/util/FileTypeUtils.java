@@ -55,4 +55,5 @@ public class FileTypeUtils {
         }
         return "application/octet-stream";
     }
+
 }

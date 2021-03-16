@@ -38,6 +38,7 @@ import java.util.Enumeration;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IPUtils {
+
     /**
      * 服务端的ip地址
      */
@@ -97,4 +98,5 @@ public class IPUtils {
         }
         return clientIp;
     }
+
 }

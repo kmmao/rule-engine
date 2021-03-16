@@ -28,6 +28,7 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -63,7 +64,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
     public static final ThreadLocal<UserData> USER = new ThreadLocal<>();
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         //如果配置文件中开启了验证权限
         if (!enable()) {
             return true;
@@ -138,7 +139,7 @@ public abstract class AbstractTokenInterceptor extends HandlerInterceptorAdapter
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception exception) {
         USER.remove();
     }
 

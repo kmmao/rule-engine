@@ -18,6 +18,7 @@ package cn.ruleengine.web.interceptor;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -41,14 +42,14 @@ public class MDCLogInterceptor extends HandlerInterceptorAdapter {
     private final static String REQUEST_ID = "requestId";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         String uuid = UUID.randomUUID().toString();
         MDC.put(REQUEST_ID, REQUEST_ID.concat(StringPool.COLON).concat(uuid));
         return true;
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception exception) {
         MDC.clear();
     }
 

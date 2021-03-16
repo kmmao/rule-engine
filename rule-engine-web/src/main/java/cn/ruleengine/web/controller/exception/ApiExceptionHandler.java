@@ -6,6 +6,7 @@ import cn.ruleengine.web.enums.ErrorCodeEnum;
 import cn.ruleengine.web.exception.ApiException;
 import cn.ruleengine.web.exception.DataPermissionException;
 import cn.ruleengine.web.exception.LoginException;
+import cn.ruleengine.web.exception.ReSubmitException;
 import cn.ruleengine.web.interceptor.MDCLogInterceptor;
 import cn.ruleengine.common.vo.*;
 import jodd.util.StringPool;
@@ -292,6 +293,20 @@ public class ApiExceptionHandler {
         BaseResult result = BaseResult.err();
         result.setMessage(e.getMessage());
         result.setCode(ErrorCodeEnum.RULE99990101.getCode());
+        return result;
+    }
+
+    /**
+     * 重复提交异常
+     *
+     * @param e e
+     * @return BaseResult
+     */
+    @ExceptionHandler(value = ReSubmitException.class)
+    public BaseResult reSubmitException(ReSubmitException e) {
+        BaseResult result = BaseResult.err();
+        result.setMessage(e.getMessage());
+        result.setCode(e.getCode());
         return result;
     }
 

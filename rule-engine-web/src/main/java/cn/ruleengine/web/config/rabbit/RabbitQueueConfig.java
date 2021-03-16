@@ -1,6 +1,7 @@
 package cn.ruleengine.web.config.rabbit;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @create 2019/11/1
  * @since 1.0.0
  */
+@ConditionalOnBean(RabbitConfig.class)
 @Component
 public class RabbitQueueConfig {
 

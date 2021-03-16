@@ -45,7 +45,7 @@ public class ResponseUtils {
     public static void responseJson(Object object) {
         HttpServletResponse response = HttpServletUtils.getResponse();
         response.setCharacterEncoding(Charset.defaultCharset().name());
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         try (PrintWriter writer = response.getWriter()) {
             writer.write(JSON.toJSONString(object));
             writer.flush();

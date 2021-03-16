@@ -1,5 +1,6 @@
 package cn.ruleengine.web.config;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.ruleengine.web.interceptor.AuthInterceptor;
 import cn.ruleengine.web.service.WorkspaceService;
 import cn.ruleengine.web.vo.user.UserData;
@@ -50,6 +51,25 @@ public class Context implements ApplicationContextAware {
     public static Workspace getCurrentWorkspace() {
         WorkspaceService workspaceService = applicationContext.getBean(WorkspaceService.class);
         return workspaceService.currentWorkspace();
+    }
+
+    /**
+     * 获取当前的环境配置，无配置返回null
+     *
+     * @return 当前的环境配置
+     */
+    public static String[] getActiveProfiles() {
+        return applicationContext.getEnvironment().getActiveProfiles();
+    }
+
+    /**
+     * 获取当前的环境配置，当有多个环境配置时，只获取第一个
+     *
+     * @return 当前的环境配置
+     */
+    public static String getActiveProfile() {
+        final String[] activeProfiles = getActiveProfiles();
+        return ArrayUtil.isNotEmpty(activeProfiles) ? activeProfiles[0] : null;
     }
 
 }

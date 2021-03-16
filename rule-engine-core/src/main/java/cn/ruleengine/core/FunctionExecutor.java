@@ -288,6 +288,7 @@ public class FunctionExecutor {
             if (!Modifier.isPublic(constructor.getModifiers())) {
                 constructor.setAccessible(true);
             }
+            // 如果类型不匹配则可能引起问题 例如Bean中属性List<BigDecimal> list，但是传入的为字符串list=a,b,c
             Object newInstance = constructor.newInstance();
             BeanUtil.copyProperties(paramValue, newInstance);
             //如果参数前面有Valid注解

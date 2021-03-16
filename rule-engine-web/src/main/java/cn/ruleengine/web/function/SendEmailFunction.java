@@ -17,7 +17,6 @@ package cn.ruleengine.web.function;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.annotation.Executor;
-import cn.ruleengine.core.annotation.FailureStrategy;
 import cn.ruleengine.core.annotation.Function;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -100,12 +99,6 @@ public class SendEmailFunction {
             throw e;
         }
         return true;
-    }
-
-    @FailureStrategy
-    public boolean failureStrategy() {
-        log.warn("邮件发送失败，默认返回false");
-        return false;
     }
 
     @Data
