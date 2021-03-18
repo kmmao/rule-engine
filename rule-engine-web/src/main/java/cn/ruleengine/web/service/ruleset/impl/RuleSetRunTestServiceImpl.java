@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -56,11 +55,7 @@ public class RuleSetRunTestServiceImpl implements RunTestService {
                 throw new ValidException("找不到可运行的规则集数据:{},{},{}", runTestRequest.getWorkspaceCode(), runTestRequest.getCode(), runTestRequest.getStatus());
             }
         }
-        Input input = new DefaultInput();
-        Map<String, Object> params = runTestRequest.getParam();
-        for (Map.Entry<String, Object> param : params.entrySet()) {
-            input.put(param.getKey(), param.getValue());
-        }
+        Input input = new DefaultInput(runTestRequest.getParam());
         log.info("初始化规则集引擎");
         RuleEngineConfiguration ruleEngineConfiguration = new RuleEngineConfiguration();
         RuleSetEngine engine = new RuleSetEngine(ruleEngineConfiguration);

@@ -27,7 +27,9 @@ import org.springframework.stereotype.Service;
 public class GeneralRuleOutServiceImpl extends RuleEngineOutService {
 
 
-    public GeneralRuleOutServiceImpl(@Qualifier("generalRuleEngine") GeneralRuleEngine generalRuleEngine, ThreadPoolTaskExecutor threadPoolTaskExecutor, WorkspaceService workspaceService) {
+    public GeneralRuleOutServiceImpl(@Qualifier("generalRuleEngine") GeneralRuleEngine generalRuleEngine,
+                                     ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                                     WorkspaceService workspaceService) {
         super(generalRuleEngine, threadPoolTaskExecutor, workspaceService);
     }
 

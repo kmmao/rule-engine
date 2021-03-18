@@ -6,7 +6,6 @@ import cn.ruleengine.web.vo.output.BatchExecuteResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -26,7 +25,10 @@ public class BatchExecuteTask implements Runnable {
     private final CountDownLatch countDownLatch;
     private final String workspaceCode;
 
-    public BatchExecuteTask(String workspaceCode, CountDownLatch countDownLatch, List<BatchExecuteResponse> outputs, Engine<?> engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
+    public BatchExecuteTask(String workspaceCode,
+                            CountDownLatch countDownLatch,
+                            List<BatchExecuteResponse> outputs,
+                            Engine<?> engine, List<BatchExecuteRequest.ExecuteInfo> infoList) {
         this.workspaceCode = workspaceCode;
         this.countDownLatch = countDownLatch;
         this.outputs = outputs;
@@ -37,11 +39,7 @@ public class BatchExecuteTask implements Runnable {
     @Override
     public void run() {
         for (BatchExecuteRequest.ExecuteInfo executeInfo : this.infoList) {
-            Input input = new DefaultInput();
-            Map<String, Object> params = executeInfo.getParam();
-            for (Map.Entry<String, Object> param : params.entrySet()) {
-                input.put(param.getKey(), param.getValue());
-            }
+            Input input = new DefaultInput(executeInfo.getParam());
             // 封装规则执行结果
             BatchExecuteResponse ruleResponse = new BatchExecuteResponse();
             ruleResponse.setSymbol(executeInfo.getSymbol());

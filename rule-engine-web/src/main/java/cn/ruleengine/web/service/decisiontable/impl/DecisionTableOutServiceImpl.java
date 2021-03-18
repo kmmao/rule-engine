@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class DecisionTableOutServiceImpl extends RuleEngineOutService {
 
-    public DecisionTableOutServiceImpl(@Qualifier("decisionTableEngine") DecisionTableEngine decisionTableEngine, ThreadPoolTaskExecutor threadPoolTaskExecutor, WorkspaceService workspaceService) {
+    public DecisionTableOutServiceImpl(@Qualifier("decisionTableEngine") DecisionTableEngine decisionTableEngine,
+                                       ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                                       WorkspaceService workspaceService) {
         super(decisionTableEngine, threadPoolTaskExecutor, workspaceService);
     }
 

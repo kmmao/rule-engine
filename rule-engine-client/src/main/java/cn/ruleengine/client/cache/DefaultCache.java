@@ -23,28 +23,21 @@ package cn.ruleengine.client.cache;
  * @create 2020/12/11
  * @since 1.0.0
  */
-public interface Cache {
+public class DefaultCache implements Cache {
 
-    /**
-     * 添加缓存的方法
-     *
-     * @param key     缓存key
-     * @param value   缓存的value
-     * @param timeout 缓存的有效时间
-     */
-    void put(String key, Object value, long timeout);
+    @Override
+    public void put(String key, Object value, long timeout) {
 
-    /**
-     * 获取缓存的方法
-     *
-     * @param key 缓存的key
-     * @return 缓存的value
-     */
-    Object get(String key);
+    }
 
-    /**
-     * 清除所有缓存信息
-     */
-    void clear();
+    @Override
+    public Object get(String key) {
+        return null;
+    }
+
+    @Override
+    public void clear() {
+
+    }
 
 }

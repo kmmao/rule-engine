@@ -51,12 +51,12 @@ public abstract class RuleEngineOutService {
     public Object execute(ExecuteRequest executeRequest) {
         log.info("开始执行，入参：{}", executeRequest);
         String workspaceCode = executeRequest.getWorkspaceCode();
+        // 后期改为jwt方式校验 这个后期有多远就看以后某一天心情好了，或者有时间了就可以编写。。。。。。。
         AccessKey accessKey = this.workspaceService.accessKey(workspaceCode);
         if (!accessKey.equals(executeRequest.getAccessKeyId(), executeRequest.getAccessKeySecret())) {
             throw new ValidException("AccessKey Verification failed");
         }
-        Input input = new DefaultInput();
-        input.putAll(executeRequest.getParam());
+        Input input = new DefaultInput(executeRequest.getParam());
         return this.engine.execute(input, workspaceCode, executeRequest.getCode());
     }
 

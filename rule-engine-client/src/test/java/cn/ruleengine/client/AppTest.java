@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class AppTest {
 
-    private RuleEngineClient ruleEngineClient = new RuleEngineClient() {
+    private final RuleEngineClient ruleEngineClient = new RuleEngineClient() {
         {
             RuleEngineProperties ruleEngineProperties = new RuleEngineProperties();
             //ruleEngineProperties.setUrl("http://localhost");

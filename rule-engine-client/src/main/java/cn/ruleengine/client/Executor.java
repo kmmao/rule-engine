@@ -44,8 +44,8 @@ public class Executor {
     /**
      * 调用规则引擎中的规则
      *
-     * @param code 规则code
-     * @param input    规则参数
+     * @param code  规则code
+     * @param input 规则参数
      * @return 规则结果
      */
     public Output execute(@NonNull String code, @NonNull Map<String, Object> input) {
@@ -162,7 +162,6 @@ public class Executor {
      * @return BatchOutput
      * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
      */
-    @SneakyThrows
     public List<BatchOutput> batchExecute(@NonNull Integer threadSegNumber, @NonNull Long timeout, @NonNull List<Object> models) {
         Objects.requireNonNull(threadSegNumber);
         Objects.requireNonNull(timeout);
@@ -176,6 +175,26 @@ public class Executor {
         batchParam.setAccessKeySecret(this.ruleEngineProperties.getAccessKeySecret());
         batchParam.setThreadSegNumber(threadSegNumber);
         batchParam.setTimeout(timeout);
+        // 解析模型为可执行数据
+        List<BatchParam.ExecuteInfo> executeInfos = this.processModels(models);
+        batchParam.setExecuteInfos(executeInfos);
+        log.info("batchExecute param is " + batchParam);
+        BatchExecuteResult result = this.baseInterface.batchExecute(batchParam);
+        log.info("batchExecute result is " + result);
+        if (!result.isSuccess()) {
+            throw new ExecuteException(result.getMessage());
+        }
+        return result.getData();
+    }
+
+    /**
+     * 解析模型数据
+     *
+     * @param models model
+     * @return list
+     */
+    @SneakyThrows
+    private List<BatchParam.ExecuteInfo> processModels(List<Object> models) {
         List<BatchParam.ExecuteInfo> executeInfos = new ArrayList<>(models.size());
         for (Object model : models) {
             this.validRuleModel(model);
@@ -204,14 +223,7 @@ public class Executor {
             executeInfo.setParam(param);
             executeInfos.add(executeInfo);
         }
-        batchParam.setExecuteInfos(executeInfos);
-        log.info("batchExecute param is " + batchParam);
-        BatchExecuteResult result = this.baseInterface.batchExecute(batchParam);
-        log.info("batchExecute result is " + result);
-        if (!result.isSuccess()) {
-            throw new ExecuteException(result.getMessage());
-        }
-        return result.getData();
+        return executeInfos;
     }
 
     /**
