@@ -15,24 +15,17 @@
  */
 package cn.ruleengine.web.aspect;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.ruleengine.web.util.HttpServletUtils;
 import com.alibaba.fastjson.JSON;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
 /**
@@ -62,20 +55,7 @@ public class RequestLogAspect {
         try {
             sb.append("┏━━━━━━━━请求日志━━━━━━━━\n");
             sb.append("┣ 链接: ").append(HttpServletUtils.getRequest().getRequestURL()).append("\n");
-            /*
-             * 以下代码就是测试用玩的，性能影响其实也微乎其微，生产环境可以选择去除
-             * <br>
-             * 如果有什么更好更快的实现方式，欢迎提出宝贵建议
-             * <br>
-             * 其实也没啥用，想去就去掉吧！
-             */
-            Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-            // 获取调用的方法所在行号
-            int methodLineNumber = this.getMethodLineNumber(method, joinPoint.getArgs());
-            Class<?> declaringClass = method.getDeclaringClass();
-            sb.append("┣ 地址: ").append(declaringClass.getName()).append("(").append(declaringClass.getSimpleName()).append(".java:").append(methodLineNumber).append(")").append("\n");
-            // end
-            sb.append("┣ 参数: ").append(JSON.toJSONString(argsExcludeClass(joinPoint.getArgs()))).append("\n");
+            sb.append("┣ 参数: ").append(JSON.toJSONString(this.argsExcludeClass(joinPoint.getArgs()))).append("\n");
             Object proceed = joinPoint.proceed();
             sb.append("┣ 结果: ").append(JSON.toJSONString(proceed)).append("\n");
             return proceed;
@@ -95,37 +75,12 @@ public class RequestLogAspect {
      * @param args 参数
      * @return Object[]
      */
-    private static Object[] argsExcludeClass(Object[] args) {
+    private Object[] argsExcludeClass(Object[] args) {
         return Stream.of(args)
                 .filter(f -> !(f instanceof HttpServletResponse))
                 .filter(f -> !(f instanceof HttpServletRequest))
                 .filter(f -> !(f instanceof MultipartFile))
                 .filter(f -> !(f instanceof Exception)).toArray();
-    }
-
-    /**
-     * 获取调用的方法所在行号
-     *
-     * @param method 方法
-     * @param args   方法参数，如果不传，则默认调用若干个重载方法中的第一个
-     * @return 行号
-     * @throws NotFoundException NotFoundException
-     */
-    private int getMethodLineNumber(Method method, Object[] args) throws NotFoundException {
-        ClassPool classPool = ClassPool.getDefault();
-        Class<?> declaringClass = method.getDeclaringClass();
-        CtClass ctClass = classPool.get(declaringClass.getName());
-        CtMethod declaredMethod;
-        if (ArrayUtil.isEmpty(args)) {
-            declaredMethod = ctClass.getDeclaredMethod(method.getName());
-        } else {
-            CtClass[] ctClasses = new CtClass[args.length];
-            for (int i = 0; i < args.length; i++) {
-                ctClasses[i] = classPool.get(args[i].getClass().getName());
-            }
-            declaredMethod = ctClass.getDeclaredMethod(method.getName(), ctClasses);
-        }
-        return declaredMethod.getMethodInfo().getLineNumber(0) - 1;
     }
 
 
