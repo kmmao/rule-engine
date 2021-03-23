@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,6 +82,14 @@ public class ConditionGroup implements ConditionCompare {
             log.debug(conditionName + "条件成立");
         }
         return true;
+    }
+
+    public List<Condition> getConditions() {
+        return Collections.unmodifiableList(this.conditions);
+    }
+
+    public void setConditions(List<Condition> conditions) {
+        this.conditions = Objects.requireNonNull(conditions);
     }
 
 }

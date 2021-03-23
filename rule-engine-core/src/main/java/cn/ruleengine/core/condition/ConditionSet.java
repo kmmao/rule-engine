@@ -18,12 +18,12 @@ package cn.ruleengine.core.condition;
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
-import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,13 +42,8 @@ public class ConditionSet implements ConditionCompare {
     /**
      * 条件
      */
-    @Getter
     private final List<ConditionGroup> conditionGroups = new ArrayList<>();
 
-    public void addConditionGroup(@NonNull ConditionGroup conditionGroup) {
-        Objects.requireNonNull(conditionGroup);
-        this.conditionGroups.add(conditionGroup);
-    }
 
     /**
      * 条件集运算，条件组与条件组为｜｜（或关系）
@@ -66,7 +61,9 @@ public class ConditionSet implements ConditionCompare {
             return true;
         }
         for (int index = 0; index < this.conditionGroups.size(); index++) {
-            log.debug("开始验证条件组:" + index);
+            if (log.isDebugEnabled()) {
+                log.debug("开始验证条件组:" + index);
+            }
             //条件组是或者关系，有一个为true,直接返回
             if (this.conditionGroups.get(index).compare(input, configuration)) {
                 if (log.isDebugEnabled()) {
@@ -79,9 +76,19 @@ public class ConditionSet implements ConditionCompare {
                 }
             }
         }
-        // debug
-        log.debug("所有条件不成立");
+        if (log.isDebugEnabled()) {
+            log.debug("所有条件不成立");
+        }
         return false;
+    }
+
+    public void addConditionGroup(@NonNull ConditionGroup conditionGroup) {
+        Objects.requireNonNull(conditionGroup);
+        this.conditionGroups.add(conditionGroup);
+    }
+
+    public List<ConditionGroup> getConditionGroups() {
+        return Collections.unmodifiableList(conditionGroups);
     }
 
 }

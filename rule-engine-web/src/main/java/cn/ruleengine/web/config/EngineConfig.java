@@ -16,6 +16,8 @@
 package cn.ruleengine.web.config;
 
 import cn.ruleengine.core.*;
+import cn.ruleengine.core.listener.ExecuteListener;
+import cn.ruleengine.core.rule.GeneralRule;
 import cn.ruleengine.web.service.decisiontable.DecisionTablePublishService;
 import cn.ruleengine.core.cache.DefaultFunctionCache;
 
@@ -56,10 +58,12 @@ public class EngineConfig {
      * @return RuleEngineConfiguration
      */
     @Bean(destroyMethod = "close")
-    public RuleEngineConfiguration ruleEngineConfiguration() {
+    public RuleEngineConfiguration ruleEngineConfiguration(Listener.GeneralExecuteListener generalExecuteListener) {
         RuleEngineConfiguration configuration = new RuleEngineConfiguration();
         configuration.getEngineVariable().addMultipleVariable(this.variableResolveService.getAllVariable());
         configuration.setFunctionCache(new DefaultFunctionCache(1000));
+        // 普通规则执行监听器
+        configuration.setGeneralRuleListener(generalExecuteListener);
         return configuration;
     }
 
@@ -104,6 +108,31 @@ public class EngineConfig {
         ruleSetEngine.addMultiple(this.ruleSetPublishService.getAllPublishRuleSet());
         log.info("规则集引擎初始化完毕");
         return ruleSetEngine;
+    }
+
+    @Component
+    public static class Listener {
+
+        @Component
+        public static class GeneralExecuteListener implements ExecuteListener<GeneralRule> {
+
+            @Override
+            public void before(GeneralRule generalRule, Input input) {
+
+            }
+
+            @Override
+            public void onException(GeneralRule generalRule, Input input, Exception exception) {
+
+            }
+
+            @Override
+            public void after(GeneralRule generalRule, Input input, Output output) {
+
+            }
+
+        }
+
     }
 
 }

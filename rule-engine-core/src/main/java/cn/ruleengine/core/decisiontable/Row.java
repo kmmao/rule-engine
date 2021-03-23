@@ -19,7 +19,9 @@ import cn.ruleengine.core.value.Value;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -56,6 +58,14 @@ public class Row {
 
     public void addColl(Coll coll) {
         this.colls.add(coll);
+    }
+
+    public List<Coll> getColls() {
+        return Collections.unmodifiableList(colls);
+    }
+
+    public void setColls(List<Coll> colls) {
+        this.colls = Objects.requireNonNull(colls);
     }
 
 }

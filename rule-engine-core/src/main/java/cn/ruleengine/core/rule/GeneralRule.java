@@ -123,4 +123,8 @@ public class GeneralRule extends Rule {
         this.setActionValue(generalRule.getActionValue());
     }
 
+    public void setPrecondition(Precondition precondition) {
+        this.precondition = Objects.requireNonNull(precondition);
+    }
+
 }

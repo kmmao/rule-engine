@@ -3,11 +3,11 @@ package cn.ruleengine.core.condition;
 import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +22,7 @@ import java.util.Objects;
 @Slf4j
 public class Precondition implements ConditionCompare {
 
-    @Getter
+
     private final List<Condition> precondition = new ArrayList<>();
 
     /**
@@ -55,6 +55,10 @@ public class Precondition implements ConditionCompare {
         Objects.requireNonNull(condition);
         Condition.verify(condition);
         this.precondition.add(condition);
+    }
+
+    public List<Condition> getPrecondition() {
+        return Collections.unmodifiableList(this.precondition);
     }
 
 }

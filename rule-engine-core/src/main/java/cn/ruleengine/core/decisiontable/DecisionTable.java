@@ -15,7 +15,6 @@
  */
 package cn.ruleengine.core.decisiontable;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.ruleengine.core.DataSupport;
 import cn.ruleengine.core.RuleEngineConfiguration;
 import cn.ruleengine.core.Input;
@@ -191,5 +190,8 @@ public class DecisionTable extends DataSupport implements JsonParse {
         this.setDefaultActionValue(decisionTable.getDefaultActionValue());
     }
 
+    public List<CollHead> getCollHeads() {
+        return Collections.unmodifiableList(collHeads);
+    }
 
 }

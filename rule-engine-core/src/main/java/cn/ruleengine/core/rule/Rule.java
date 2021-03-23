@@ -28,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.util.Objects;
+
 
 /**
  * 〈一句话功能简述〉<br>
@@ -91,6 +93,11 @@ public class Rule extends DataSupport implements JsonParse {
         this.setDescription(rule.getDescription());
         this.setConditionSet(rule.getConditionSet());
         this.setActionValue(rule.getActionValue());
+    }
+
+
+    public void setConditionSet(ConditionSet conditionSet) {
+        this.conditionSet = Objects.requireNonNull(conditionSet);
     }
 
 
