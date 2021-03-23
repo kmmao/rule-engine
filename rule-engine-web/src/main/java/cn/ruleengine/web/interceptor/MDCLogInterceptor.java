@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +44,13 @@ public class MDCLogInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        String uuid = UUID.randomUUID().toString();
-        MDC.put(REQUEST_ID, REQUEST_ID.concat(StringPool.COLON).concat(uuid));
+        // 如果上游系统传入requestId则使用上游系统的requestId
+        String requestId = request.getHeader(REQUEST_ID);
+        if (StringUtils.isEmpty(requestId)) {
+            // 否则生成一个
+            requestId = UUID.randomUUID().toString();
+        }
+        MDC.put(REQUEST_ID, REQUEST_ID.concat(StringPool.COLON).concat(requestId));
         return true;
     }
 
