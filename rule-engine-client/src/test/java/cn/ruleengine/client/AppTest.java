@@ -56,7 +56,7 @@ public class AppTest {
 
     @Test
     public void batch() {
-        List<Object> ruleModes = new ArrayList<>();
+        List<RuleMode> ruleModes = new ArrayList<>();
         {
             RuleMode ruleMode = new RuleMode();
             ruleMode.setPhone("1343493849384");

@@ -149,7 +149,7 @@ public class Executor {
      * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
      */
     @SneakyThrows
-    public List<BatchOutput> batchExecute(@NonNull List<Object> models) {
+    public List<BatchOutput> batchExecute(@NonNull List<?> models) {
         return this.batchExecute(100, -1L, models);
     }
 
@@ -162,7 +162,7 @@ public class Executor {
      * @return BatchOutput
      * @see BatchSymbol 标记规则使用，防止传入规则与规则输出结果顺序错误时,作用在属性上
      */
-    public List<BatchOutput> batchExecute(@NonNull Integer threadSegNumber, @NonNull Long timeout, @NonNull List<Object> models) {
+    public List<BatchOutput> batchExecute(@NonNull Integer threadSegNumber, @NonNull Long timeout, @NonNull List<?> models) {
         Objects.requireNonNull(threadSegNumber);
         Objects.requireNonNull(timeout);
         Objects.requireNonNull(models);
@@ -194,7 +194,7 @@ public class Executor {
      * @return list
      */
     @SneakyThrows
-    private List<BatchParam.ExecuteInfo> processModels(List<Object> models) {
+    private List<BatchParam.ExecuteInfo> processModels(List<?> models) {
         List<BatchParam.ExecuteInfo> executeInfos = new ArrayList<>(models.size());
         for (Object model : models) {
             this.validRuleModel(model);

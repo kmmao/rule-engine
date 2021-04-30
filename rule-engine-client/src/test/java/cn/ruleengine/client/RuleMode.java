@@ -15,9 +15,12 @@
  */
 package cn.ruleengine.client;
 
+import cn.ruleengine.client.model.BatchSymbol;
 import cn.ruleengine.client.model.ElementField;
 import cn.ruleengine.client.model.Model;
 import lombok.Data;
+
+import java.util.UUID;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -35,5 +38,10 @@ public class RuleMode {
     @ElementField(code = "phone")
     private String phone;
 
+    /**
+     * 批量时对数据做个区分
+     */
+    @BatchSymbol
+    private String uuid = UUID.randomUUID().toString();
 
 }
